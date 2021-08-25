@@ -4,10 +4,20 @@ export default interface MatchStats {
    */
   team: string;
   /**
-   * Position of this team in the league / championship.
+   * Position of this team in the current league / championship.
    */
   leaguePosition: number;
+  /**
+   * Time played in seconds.
+   */
+  playedTime: number;
+  /**
+   * Expected goals.
+   */
   xG: number;
+  /**
+   * Expected goals shot by the other team.
+   */
   xGA: number;
 }
 

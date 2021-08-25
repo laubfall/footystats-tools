@@ -14,5 +14,7 @@
     "postinstall": "yarn electron-rebuild"
   },
   "license": "MIT",
-  "dependencies": {}
+  "devDependencies": {
+    "@types/papaparse": "^5.2.6"
+  }
 }

@@ -2,3 +2,14 @@
 # yarn lockfile v1
 
 
+"@types/node@*":
+  "integrity" "sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-16.7.1.tgz"
+  "version" "16.7.1"
+
+"@types/papaparse@^5.2.6":
+  "integrity" "sha512-xGKSd0UTn58N1h0+zf8mW863Rv8BvXcGibEgKFtBIXZlcDXAmX/T4RdDO2mwmrmOypUDt5vRgo2v32a78JdqUA=="
+  "resolved" "https://registry.npmjs.org/@types/papaparse/-/papaparse-5.2.6.tgz"
+  "version" "5.2.6"
+  dependencies:
+    "@types/node" "*"
