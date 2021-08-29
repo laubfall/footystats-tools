@@ -1,10 +1,7 @@
-import { INFLUENCER_POINTS } from '../../constants';
+import INFLUENCER_POINTS from '../../constants';
 import { BetType } from '../../types/Bet';
 import BetPredictionContext from '../../types/prediction/BetPredictionContext';
-import {
-  BetInfluencerCalculation,
-  NotExecutedCause,
-} from '../../types/prediction/BetResultInflunencer';
+import { BetInfluencerCalculation, NotExecutedCause } from '../../types/prediction/BetResultInflunencer';
 
 function preCheck(ctx: BetPredictionContext): NotExecutedCause {
   if (
@@ -21,26 +18,25 @@ function preCheck(ctx: BetPredictionContext): NotExecutedCause {
 function overBet(ctx: BetPredictionContext): BetInfluencerCalculation {
   const preCheckResult = preCheck(ctx);
   if (preCheckResult !== NotExecutedCause.EXECUTED) {
-    return { amount: 0, notExecutedCause: preCheckResult };
+    return {
+      amount: 0,
+      notExecutedCause: preCheckResult,
+    };
   }
 
   const awayPos = ctx.match.away.leaguePosition;
   const homePos = ctx.match.home.leaguePosition;
 
-  const awayPosPerc = 100 - (100 * awayPos) / ctx.match.leagueTeamsCount;
-  const homePosPerc = 100 - (100 * homePos) / ctx.match.leagueTeamsCount;
+  const diff = Math.abs(homePos - awayPos);
 
+  // e.g. leagueCnt 20 h 1 a 10 = 9
+  // 20 / 9
+  const result = diff / ctx.match.leagueTeamsCount;
   return {
-    amount: (INFLUENCER_POINTS * ((awayPosPerc + homePosPerc) / 2)) / 100,
-  };
+    amount: result * INFLUENCER_POINTS,
+  }
 }
 
-/**
- * LeaguePositionInfluencer takes a look at the individual position of both teams in their current league.
- *
- * @param ctx Mandatory. bet ctx.
- * @returns Influencer result.
- */
 export default function calculateInfluence(
   ctx: BetPredictionContext
 ): BetInfluencerCalculation {
