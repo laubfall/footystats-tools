@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import prediction from '../../../app/services/prediction/PredictionService';
-import { OVER } from '../../../app/types/Bet';
+import { OVER } from '../../../app/types/prediction/Bet';
 import BetPredictionContext from '../../../app/types/prediction/BetPredictionContext';
 
 describe('PredictionService Tests', () => {
