@@ -1,5 +1,5 @@
 import BetPredictionContext from '../../types/prediction/BetPredictionContext';
-import BetResultInfluencer from '../../types/prediction/BetResultInflunencer';
+import BetResultInfluencer from '../../types/prediction/BetResultInfluencer';
 import calculateInfluenceLeaguePosition from './LeaguePositionInfluencer';
 
 const betResultInfluencer: BetResultInfluencer[] = [

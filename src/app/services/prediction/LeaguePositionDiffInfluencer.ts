@@ -1,7 +1,10 @@
 import INFLUENCER_POINTS from '../../constants';
-import { BetType } from '../../types/Bet';
+import { BetType } from '../../types/prediction/Bet';
 import BetPredictionContext from '../../types/prediction/BetPredictionContext';
-import { BetInfluencerCalculation, NotExecutedCause } from '../../types/prediction/BetResultInflunencer';
+import {
+  BetInfluencerCalculation,
+  NotExecutedCause,
+} from '../../types/prediction/BetResultInfluencer';
 
 function preCheck(ctx: BetPredictionContext): NotExecutedCause {
   if (
