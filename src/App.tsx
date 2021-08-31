@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../assets/icon.svg';
 import './App.global.css';
+import { tmpStats } from './app/services/application/AppService';
 
 const Hello = () => {
   return (
@@ -9,7 +10,7 @@ const Hello = () => {
       <div className="Hello">
         <img width="200px" alt="icon" src={icon} />
       </div>
-      <h1>electron-react-boilerplate</h1>
+      <h1>{tmpStats()}</h1>
       <div className="Hello">
         <a
           href="https://electron-react-boilerplate.js.org/"

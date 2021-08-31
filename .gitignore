@@ -48,3 +48,7 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+
+# Visual Studio Code
+.vscode/tasks-context.json
