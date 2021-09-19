@@ -1,7 +1,10 @@
 import Papa from 'papaparse';
 import fs from 'fs';
 
-export function importFile<T>(path: string, markAsImported: boolean): T[] {
+export default function importFile<T>(
+  path: string,
+  markAsImported: boolean
+): T[] {
   const buffer = fs.readFileSync(`${__dirname}/${path}`);
   const parseResult = Papa.parse<T>(buffer.toString(), {
     header: true,
@@ -9,5 +12,3 @@ export function importFile<T>(path: string, markAsImported: boolean): T[] {
   });
   return parseResult.data;
 }
-
-export default importFile;
