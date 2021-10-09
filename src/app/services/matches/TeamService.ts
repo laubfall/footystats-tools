@@ -1,3 +1,9 @@
-export default function addNewTeam(commonName: string, country: string, league: string){
+/**
+ * TODO necessary?
+ */
 
-}
+export default function addNewTeam(
+  commonName: string,
+  country: string,
+  league: string
+) {}
