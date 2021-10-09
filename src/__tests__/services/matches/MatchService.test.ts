@@ -1,11 +1,9 @@
 import { fromUnixTime } from 'date-fns';
-import * as StorageService from '../../../app/services/application/StorageService';
+import storeMock from '../../__utilities__/StorageServiceMock';
 import {
   matchesByDay,
   readMatches,
 } from '../../../app/services/matches/MatchService';
-
-jest.mock('../../../app/services/application/StorageService');
 
 describe('Test the match service', () => {
   it('Load matches', () => {
@@ -13,10 +11,7 @@ describe('Test the match service', () => {
       '../../../../testdata/matches_expanded-1630235153-username.csv'
     );
 
-    const store = (StorageService as unknown) as jest.Mocked<
-      typeof StorageService
-    >;
-
+    const store = storeMock;
     const matches = store.store.mock.calls[0][1];
     store.load.mockImplementation((key: string) => matches);
 
