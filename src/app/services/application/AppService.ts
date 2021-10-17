@@ -4,25 +4,22 @@
  * This is typically the steps that are needed to make in order
  * to provide user functionality.
  */
-function accessStorage() {
-  const isRenderer = process && process.type === 'renderer';
-  if (isRenderer === true) {
-    return window.localStorage;
-  }
-  // eslint-disable-next-line global-require
-  const { localStorage } = require('electron-browser-storage');
-  return localStorage;
-}
 
-const as = accessStorage();
-function loadStats() {
-  as.setItem('stats', 'hello_stats5');
-}
+import { Country } from '../../types/application/AppControll';
 
-export function tmpStats(): string {
-  return as.getItem('stats');
+/**
+ * Application provide countries based on the already imported footystat csv files.
+ * Services that read footystats csv files check if imported data contains information
+ * about countries and add the country to the app store (if it does not exist already).
+ * @param name Mandatory. Name of the country. Method check case insensitive if the country
+ * exists inside the app store.
+ */
+export function addAvailableCountry(name: string) {}
+
+export function availableCountries(): Country[] {
+  return [];
 }
 
 export default function startApplication() {
-  loadStats();
+  // TODO
 }
