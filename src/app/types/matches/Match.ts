@@ -22,9 +22,9 @@ export default interface Match {
   'Over15 2HG Average': number;
   'Average Corners': number;
   'Average Cards': number;
-  'Average Over 8.5 Corners': number;
-  'Average Over 9.5 Corners': number;
-  'Average Over 10.5 Corners': number;
+  'Average Over 8dot5 Corners': number;
+  'Average Over 9dot5 Corners': number;
+  'Average Over 10dot5 Corners': number;
   'Match Status': number;
   'Result - Home Team Goals': number;
   'Result - Away Team Goals': number;

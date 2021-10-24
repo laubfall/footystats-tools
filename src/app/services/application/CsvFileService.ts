@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
+import lodash, { isNumber, toNumber } from 'lodash';
 
 const IMPORTED_PREFIX = 'imported_';
 
@@ -28,6 +29,8 @@ export function importFile<T>(
   const parseResult = Papa.parse<T>(buffer.toString(), {
     header: true,
     delimiter: ',',
+    transformHeader: (header) => lodash.replace(header, '.', 'dot'), // Otherwise objects can not be stored inside nedb.
+    dynamicTyping: true, // guess the type of the field (e.g. numbers will be stored without quotes)
   });
 
   if (markAsImported) {

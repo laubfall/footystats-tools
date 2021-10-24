@@ -250,12 +250,14 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.176",
     "date-fns": "^2.25.0",
     "electron-browser-storage": "^1.0.7",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
     "history": "^5.0.0",
+    "lodash": "^4.17.21",
     "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
     "papaparse": "^5.3.1",
