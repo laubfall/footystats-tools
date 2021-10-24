@@ -2,10 +2,9 @@ import { add } from 'date-fns';
 import Match from '../../types/matches/Match';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
+import config from '../../../config';
 
-const dbService = new DbStoreService<Match>(
-  'C:/Users/Daniel/Desktop/matchNedb.data'
-);
+const dbService = new DbStoreService<Match>(`${config.db}matchNedb.data`);
 
 export function readMatches(path: string) {
   if (alreadyImported(path)) {

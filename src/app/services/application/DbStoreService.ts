@@ -1,4 +1,5 @@
 import AsyncNedb from 'nedb-async';
+import config from '../../../config';
 
 export interface Document {
   type: string;
@@ -6,7 +7,7 @@ export interface Document {
 
 function loadDb(): AsyncNedb<unknown> {
   const db = new AsyncNedb({
-    filename: 'C:/Users/Daniel/Desktop/nedb.data',
+    filename: `${config.db}/nedb.data`,
     autoload: true,
   });
   return db;
