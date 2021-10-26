@@ -1,4 +1,4 @@
-export default interface Match {
+export default interface MatchStats {
   date_unix: number;
   date_GMT: number;
   Country: string;

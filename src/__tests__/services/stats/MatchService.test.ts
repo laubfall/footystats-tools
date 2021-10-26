@@ -4,7 +4,7 @@ import {
   dbService,
   matchesByDay,
   readMatches,
-} from '../../../app/services/matches/MatchService';
+} from '../../../app/services/stats/MatchStatsService';
 
 describe('Test the match service', () => {
   beforeAll(() => {

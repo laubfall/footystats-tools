@@ -1,4 +1,4 @@
-import { readTeamStats } from '../../../app/services/stats/StatsService';
+import { readTeamStats } from '../../../app/services/stats/TeamStatsService';
 
 describe('Test the stats service', () => {
   it('Load team stats', () => {
