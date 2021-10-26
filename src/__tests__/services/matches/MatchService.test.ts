@@ -1,11 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { fromUnixTime } from 'date-fns';
 import {
+  dbService,
   matchesByDay,
   readMatches,
 } from '../../../app/services/matches/MatchService';
 
 describe('Test the match service', () => {
+  beforeAll(() => {
+    dbService.removeDb();
+  })
+
   it('Load matches', async () => {
     readMatches(
       '../../../../testdata/matches_expanded-1630235153-username.csv'

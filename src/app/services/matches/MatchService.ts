@@ -4,7 +4,14 @@ import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
 import config from '../../../config';
 
-const dbService = new DbStoreService<Match>(`${config.db}matchNedb.data`);
+interface UniqueMatch extends Match {
+  unique: string;
+}
+
+export const dbService = new DbStoreService<UniqueMatch>(
+  `${config.db}matchNedb.data`
+);
+dbService.createUniqueIndex('unique');
 
 export function readMatches(path: string) {
   if (alreadyImported(path)) {
@@ -12,7 +19,14 @@ export function readMatches(path: string) {
   }
 
   const matches = importFile<Match>(path, false);
-  dbService.insertAll(matches);
+  const uniqueMatches: UniqueMatch[] = matches.map((m) => {
+    return {
+      ...m,
+      unique:
+        m.date_unix.toString() + m.League + m['Home Team'] + m['Away Team'],
+    };
+  });
+  dbService.insertAll(uniqueMatches);
 }
 
 export async function matchesByDay(day: Date): Promise<Match[]> {

@@ -1,29 +1,5 @@
 import AsyncNedb from 'nedb-async';
-import config from '../../../config';
-
-export interface Document {
-  type: string;
-}
-
-function loadDb(): AsyncNedb<unknown> {
-  const db = new AsyncNedb({
-    filename: `${config.db}/nedb.data`,
-    autoload: true,
-  });
-  return db;
-}
-
-const DB: AsyncNedb<any> = loadDb();
-
-export function insert(doc: Document) {
-  const type = (doc as any).constructor.name;
-  doc.type = type;
-  DB.insert(doc);
-}
-
-export function load(typeName: string) {
-  return DB.asyncFind({ type: typeName });
-}
+import fs from 'fs';
 
 export class DbStoreService<D> {
   private dbFile: string;
@@ -43,12 +19,20 @@ export class DbStoreService<D> {
     return db;
   }
 
+  public createUniqueIndex(uniqueProperty: string) {
+    this.DB.ensureIndex({ fieldName: uniqueProperty, unique: true });
+  }
+
   public insert(doc: D) {
     this.DB.insert(doc, (err, d) => console.log(err));
   }
 
   public insertAll(docs: D[]) {
     docs.forEach((d) => this.insert(d));
+  }
+
+  public removeDb() {
+    fs.rmSync(this.dbFile);
   }
 
   public async loadAll(): Promise<D[]> {
@@ -59,3 +43,5 @@ export class DbStoreService<D> {
     return this.DB.asyncFind<D>(filter);
   }
 }
+
+export default DbStoreService;
