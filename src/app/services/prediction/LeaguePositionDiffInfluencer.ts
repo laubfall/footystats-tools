@@ -1,4 +1,4 @@
-import INFLUENCER_POINTS from '../../constants';
+import { INFLUENCER_POINTS } from '../../constants';
 import { BetType } from '../../types/prediction/Bet';
 import BetPredictionContext from '../../types/prediction/BetPredictionContext';
 import {
@@ -7,11 +7,7 @@ import {
 } from '../../types/prediction/BetResultInfluencer';
 
 function preCheck(ctx: BetPredictionContext): NotExecutedCause {
-  if (
-    !ctx.match?.away?.leaguePosition ||
-    !ctx.match?.home?.leaguePosition ||
-    !ctx.match?.leagueTeamsCount
-  ) {
+  if (!ctx.teamStats || !ctx.leagueStats) {
     return NotExecutedCause.NOT_ENOUGH_INFORMATION;
   }
 
@@ -27,17 +23,17 @@ function overBet(ctx: BetPredictionContext): BetInfluencerCalculation {
     };
   }
 
-  const awayPos = ctx.match.away.leaguePosition;
-  const homePos = ctx.match.home.leaguePosition;
+  const awayPos = ctx.teamStats.league_position_away;
+  const homePos = ctx.teamStats.league_position_home;
 
   const diff = Math.abs(homePos - awayPos);
 
   // e.g. leagueCnt 20 h 1 a 10 = 9
   // 20 / 9
-  const result = diff / ctx.match.leagueTeamsCount;
+  const result = diff / ctx.leagueStats.number_of_clubs;
   return {
     amount: result * INFLUENCER_POINTS,
-  }
+  };
 }
 
 export default function calculateInfluence(

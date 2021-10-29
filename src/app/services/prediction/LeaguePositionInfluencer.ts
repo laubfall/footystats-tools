@@ -7,11 +7,7 @@ import {
 } from '../../types/prediction/BetResultInfluencer';
 
 function preCheck(ctx: BetPredictionContext): NotExecutedCause {
-  if (
-    !ctx.match?.away?.leaguePosition ||
-    !ctx.match?.home?.leaguePosition ||
-    !ctx.match?.leagueTeamsCount
-  ) {
+  if (!ctx.teamStats || !ctx.leagueStats) {
     return NotExecutedCause.NOT_ENOUGH_INFORMATION;
   }
 
@@ -24,11 +20,11 @@ function overBet(ctx: BetPredictionContext): BetInfluencerCalculation {
     return { amount: 0, notExecutedCause: preCheckResult };
   }
 
-  const awayPos = ctx.match.away.leaguePosition;
-  const homePos = ctx.match.home.leaguePosition;
+  const awayPos = ctx.teamStats.league_position_away;
+  const homePos = ctx.teamStats.league_position_home;
 
-  const awayPosPerc = 100 - (100 * awayPos) / ctx.match.leagueTeamsCount;
-  const homePosPerc = 100 - (100 * homePos) / ctx.match.leagueTeamsCount;
+  const awayPosPerc = 100 - (100 * awayPos) / ctx.leagueStats.number_of_clubs;
+  const homePosPerc = 100 - (100 * homePos) / ctx.leagueStats.number_of_clubs;
 
   return {
     amount: (INFLUENCER_POINTS * ((awayPosPerc + homePosPerc) / 2)) / 100,
