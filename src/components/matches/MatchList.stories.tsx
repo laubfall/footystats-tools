@@ -5,4 +5,12 @@ export default {
   title: 'Components/matches',
 };
 
-export const Primary = () => <MatchList />;
+const matchListEntries = [
+  {
+    awayTeam: 'team away',
+    homeTeam: 'team home',
+    betPredictions: [{ betName: 'over1.5', prediction: 40 }],
+  },
+];
+
+export const Primary = () => <MatchList entries={matchListEntries} />;
