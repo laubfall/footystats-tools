@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
 
 export interface BetPrediction {
   betName: string;
@@ -19,7 +20,16 @@ export interface MatchListProps {
 export const MatchList = ({ entries }: MatchListProps) => (
   <>
     {entries.map((e) => (
-      <>{e.awayTeam}</>
+      <>
+        <Row>
+          <Col>{e.awayTeam}</Col>
+          <Col>
+            <Button name="test" value="test" variant="secondary">
+              fkdsljf
+            </Button>
+          </Col>
+        </Row>
+      </>
     ))}
   </>
 );
