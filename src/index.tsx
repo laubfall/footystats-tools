@@ -1,6 +1,12 @@
 import React from 'react';
 import { render } from 'react-dom';
-import App from './App';
+import { HashRouter } from 'react-router-dom';
+import { App } from './App';
 import '../assets/scss/App.scss';
 
-render(<App />, document.getElementById('root'));
+render(
+  <HashRouter>
+    <App />
+  </HashRouter>,
+  document.getElementById('root')
+);
