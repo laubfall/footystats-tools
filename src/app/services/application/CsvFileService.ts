@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
-import lodash, { isNumber, join, slice, split, toNumber } from 'lodash';
+import lodash, { isNumber, join, slice, split, startsWith } from 'lodash';
 import { loadConfig } from './ConfigurationService';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { Country, Season, League } from '../../types/application/AppControll';
@@ -10,9 +10,9 @@ const IMPORTED_PREFIX = 'imported_';
 
 export interface CsvFileInformation {
   type: CsvFileType;
-  country: Country;
-  season: Season;
-  league: League;
+  country?: Country;
+  season?: Season;
+  league?: League;
 }
 
 function csvFileTypeByName(name: string): CsvFileType | undefined {
@@ -25,6 +25,8 @@ function csvFileTypeByName(name: string): CsvFileType | undefined {
       return CsvFileType.TEAM_STATS;
     case 'team2':
       return CsvFileType.TEAM_2_STATS;
+    case 'matches_expanded':
+      return CsvFileType.MATCHES;
     default:
       return undefined;
   }
@@ -33,6 +35,12 @@ function csvFileTypeByName(name: string): CsvFileType | undefined {
 export function csvFileInformationByFileName(
   fileName: string
 ): CsvFileInformation {
+  if (startsWith(fileName, 'matches_expanded')) {
+    return {
+      type: CsvFileType.MATCHES,
+    };
+  }
+
   const fileNameWithoutExt = fileName.slice(0, fileName.length - 3);
   const splittedFileName = split(fileNameWithoutExt, '-');
   const { length } = splittedFileName;
