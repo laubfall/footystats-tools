@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { includes } from 'lodash';
 
 export enum InvalidConfigurations {
   DATABASE_DIRECTORY_DOESNOT_EXIST,
@@ -23,5 +24,9 @@ export default class Configuration {
     }
 
     return invalidConfigs;
+  }
+
+  public includes(invalid: InvalidConfigurations): boolean {
+    return includes(this.validate(), invalid);
   }
 }

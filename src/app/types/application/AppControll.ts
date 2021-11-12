@@ -17,4 +17,6 @@ export interface League {
 export interface Season {
   name: string;
   league: League;
+  yearFrom: string;
+  yearTo: string;
 }

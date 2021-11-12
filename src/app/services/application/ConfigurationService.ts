@@ -7,8 +7,12 @@ export const saveConfig = (configuration: Configuration) => {
   store(STORAGE_KEY, JSON.stringify(configuration));
 };
 
-export const loadConfig = () => {
-  return load(STORAGE_KEY);
+export const loadConfig = (): Configuration => {
+  const rawConfig = load(STORAGE_KEY);
+  if (!rawConfig) {
+    return new Configuration();
+  }
+  return JSON.parse(rawConfig);
 };
 
 export default loadConfig;

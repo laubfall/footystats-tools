@@ -1,9 +1,69 @@
 import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
-import lodash, { isNumber, toNumber } from 'lodash';
+import lodash, { isNumber, join, slice, split, toNumber } from 'lodash';
+import { loadConfig } from './ConfigurationService';
+import { CsvFileType } from '../../types/application/CsvFileType';
+import { Country, Season, League } from '../../types/application/AppControll';
 
 const IMPORTED_PREFIX = 'imported_';
+
+export interface CsvFileInformation {
+  type: CsvFileType;
+  country: Country;
+  season: Season;
+  league: League;
+}
+
+function csvFileTypeByName(name: string): CsvFileType | undefined {
+  switch (name) {
+    case 'matches':
+      return CsvFileType.MATCH;
+    case 'league':
+      return CsvFileType.LEAGUE;
+    case 'team':
+      return CsvFileType.TEAM;
+    case 'team2':
+      return CsvFileType.TEAM_2;
+    default:
+      return undefined;
+  }
+}
+
+export function csvFileInformationByFileName(
+  fileName: string
+): CsvFileInformation {
+  const fileNameWithoutExt = fileName.slice(0, fileName.length - 3);
+  const splittedFileName = split(fileNameWithoutExt, '-');
+  const { length } = splittedFileName;
+
+  const country = { name: splittedFileName[0] };
+  const ln = () => join(slice(splittedFileName, 1, length - 6 + 1), '-');
+  const cvi: CsvFileInformation = {
+    type: csvFileTypeByName(splittedFileName[length - 5]),
+    country,
+    league: {
+      country,
+      name: ln(),
+    },
+    season: {
+      yearFrom: splittedFileName[length - 4],
+      yearTo: splittedFileName[length - 2],
+      name: join(slice(splittedFileName, length - 4, length - 1), '-'),
+      league: {
+        country,
+        name: ln(),
+      },
+    },
+  };
+
+  return cvi;
+}
+
+export function watchImportDirectory() {
+  const config = loadConfig();
+  fs.watch(config.importDirectory, undefined, (event, fileName) => {});
+}
 
 export function alreadyImported(pathToFile: string): boolean {
   const fileName = path.basename(pathToFile);
