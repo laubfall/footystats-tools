@@ -8,7 +8,7 @@ describe('Tests for CsvFileService', () => {
     );
 
     expect(cfi).not.toBeNull();
-    expect(cfi.type).toEqual(CsvFileType.MATCH);
+    expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
     expect(cfi.country.name).toEqual('france');
     expect(cfi.league.name).toEqual('ligue-1');
     expect(cfi.season.name).toEqual('2020-to-2021');
@@ -22,7 +22,7 @@ describe('Tests for CsvFileService', () => {
     );
 
     expect(cfi).not.toBeNull();
-    expect(cfi.type).toEqual(CsvFileType.LEAGUE);
+    expect(cfi.type).toEqual(CsvFileType.LEAGUE_STATS);
     expect(cfi.country.name).toEqual('scotland');
     expect(cfi.league.name).toEqual('premiership');
     expect(cfi.season.name).toEqual('2020-to-2021');
@@ -36,7 +36,7 @@ describe('Tests for CsvFileService', () => {
     );
 
     expect(cfi).not.toBeNull();
-    expect(cfi.type).toEqual(CsvFileType.MATCH);
+    expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
     expect(cfi.country.name).toEqual('india');
     expect(cfi.league.name).toEqual('indian-super-league');
     expect(cfi.season.name).toEqual('2020-to-2021');

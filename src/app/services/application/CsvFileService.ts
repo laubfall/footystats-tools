@@ -18,13 +18,13 @@ export interface CsvFileInformation {
 function csvFileTypeByName(name: string): CsvFileType | undefined {
   switch (name) {
     case 'matches':
-      return CsvFileType.MATCH;
+      return CsvFileType.MATCH_STATS;
     case 'league':
-      return CsvFileType.LEAGUE;
+      return CsvFileType.LEAGUE_STATS;
     case 'team':
-      return CsvFileType.TEAM;
+      return CsvFileType.TEAM_STATS;
     case 'team2':
-      return CsvFileType.TEAM_2;
+      return CsvFileType.TEAM_2_STATS;
     default:
       return undefined;
   }
