@@ -2,7 +2,6 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
 import lodash, { isNumber, join, slice, split, startsWith } from 'lodash';
-import { loadConfig } from './ConfigurationService';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { Country, Season, League } from '../../types/application/AppControll';
 
@@ -66,11 +65,6 @@ export function csvFileInformationByFileName(
   };
 
   return cvi;
-}
-
-export function watchImportDirectory() {
-  const config = loadConfig();
-  fs.watch(config.importDirectory, undefined, (event, fileName) => {});
 }
 
 export function alreadyImported(pathToFile: string): boolean {

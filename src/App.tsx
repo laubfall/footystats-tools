@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Routes } from 'react-router';
+import { HashRouter } from 'react-router-dom';
 import { ConfigurationView } from './components/configuration/ConfigurationView';
 import { MatchList } from './components/matches/MatchList';
 import { Menu } from './components/Menu';
@@ -16,17 +17,19 @@ export const App = () => {
 
   return (
     <>
-      <Menu />
-      <Routes>
-        <Route path="/">
-          <Route path="configuration" element={<ConfigurationView />} />
-          <Route
-            index
-            path="matchList"
-            element={<MatchList entries={matchListEntries} />}
-          />
-        </Route>
-      </Routes>
+      <HashRouter>
+        <Menu />
+        <Routes>
+          <Route path="/">
+            <Route path="configuration" element={<ConfigurationView />} />
+            <Route
+              index
+              path="matchList"
+              element={<MatchList entries={matchListEntries} />}
+            />
+          </Route>
+        </Routes>
+      </HashRouter>
     </>
   );
 };

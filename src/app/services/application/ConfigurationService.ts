@@ -9,7 +9,7 @@ export const saveConfig = (configuration: Configuration) => {
 
 export const loadConfig = (): Configuration => {
   const rawConfig = load(STORAGE_KEY);
-  if (!rawConfig) {
+  if (!rawConfig || rawConfig === '') {
     return new Configuration();
   }
   return JSON.parse(rawConfig);
