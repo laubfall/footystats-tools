@@ -1,3 +1,10 @@
+/* @license
+Papa Parse
+v5.3.1
+https://github.com/mholt/PapaParse
+License: MIT
+*/
+
 /*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
 
 /**
