@@ -25,7 +25,7 @@ function csvFileTypeByName(name: string): CsvFileType | undefined {
     case 'team2':
       return CsvFileType.TEAM_2_STATS;
     case 'matches_expanded':
-      return CsvFileType.MATCHES;
+      return CsvFileType.LEAGUE_MATCH_STATS;
     default:
       return undefined;
   }
@@ -36,7 +36,7 @@ export function csvFileInformationByFileName(
 ): CsvFileInformation {
   if (startsWith(fileName, 'matches_expanded')) {
     return {
-      type: CsvFileType.MATCHES,
+      type: CsvFileType.LEAGUE_MATCH_STATS,
     };
   }
 

@@ -50,6 +50,6 @@ describe('Tests for CsvFileService', () => {
     );
 
     expect(cfi).not.toBeNull();
-    expect(cfi.type).toEqual(CsvFileType.MATCHES);
+    expect(cfi.type).toEqual(CsvFileType.LEAGUE_MATCH_STATS);
   });
 });

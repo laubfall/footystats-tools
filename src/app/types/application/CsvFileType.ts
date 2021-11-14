@@ -3,7 +3,7 @@ export enum CsvFileType {
   TEAM_STATS,
   TEAM_2_STATS,
   LEAGUE_STATS,
-  MATCHES,
+  LEAGUE_MATCH_STATS,
 }
 
 export default CsvFileType;

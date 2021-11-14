@@ -21,7 +21,7 @@ function startImportDirectoryWatch(config: Configuration): boolean {
   watchImportDirectory(config.importDirectory, (e, f) => {
     const fi = csvFileInformationByFileName(f);
     switch (fi.type) {
-      case CsvFileType.MATCHES:
+      case CsvFileType.LEAGUE_MATCH_STATS:
         break;
       default:
         break;
