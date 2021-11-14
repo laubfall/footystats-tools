@@ -146,6 +146,9 @@
       "node_modules",
       "src/node_modules"
     ],
+    "modulePathIgnorePatterns": [
+      "src/config"
+    ],
     "setupFiles": [
       "./.erb/scripts/CheckBuildsExist.js"
     ]
