@@ -23,6 +23,8 @@ function startImportDirectoryWatch(config: Configuration): boolean {
     switch (fi.type) {
       case CsvFileType.LEAGUE_MATCH_STATS:
         break;
+      case CsvFileType.MATCH_STATS:
+        break;
       default:
         break;
     }
