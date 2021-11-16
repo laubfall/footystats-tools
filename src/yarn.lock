@@ -3,13 +3,18 @@
 
 
 "@types/node@*":
-  "integrity" "sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-16.7.1.tgz"
-  "version" "16.7.1"
+  version "16.7.1"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.1.tgz"
+  integrity sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A==
 
 "@types/papaparse@^5.2.6":
-  "integrity" "sha512-xGKSd0UTn58N1h0+zf8mW863Rv8BvXcGibEgKFtBIXZlcDXAmX/T4RdDO2mwmrmOypUDt5vRgo2v32a78JdqUA=="
-  "resolved" "https://registry.npmjs.org/@types/papaparse/-/papaparse-5.2.6.tgz"
-  "version" "5.2.6"
+  version "5.2.6"
+  resolved "https://registry.npmjs.org/@types/papaparse/-/papaparse-5.2.6.tgz"
+  integrity sha512-xGKSd0UTn58N1h0+zf8mW863Rv8BvXcGibEgKFtBIXZlcDXAmX/T4RdDO2mwmrmOypUDt5vRgo2v32a78JdqUA==
   dependencies:
     "@types/node" "*"
+
+"@types/tmp@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.2.2.tgz#424537a3b91828cb26aaf697f21ae3cd1b69f7e7"
+  integrity sha512-MhSa0yylXtVMsyT8qFpHA1DLHj4DvQGH5ntxrhHSh8PxUVNi35Wk+P5hVgqbO2qZqOotqr9jaoPRL+iRjWYm/A==

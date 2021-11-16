@@ -17,5 +17,6 @@
   "devDependencies": {
     "@types/papaparse": "^5.2.6",
     "@types/tmp": "^0.2.2"
-  }
+  },
+  "dependencies": {}
 }
