@@ -30,6 +30,9 @@ node_modules
 # OSX
 .DS_Store
 
+# should never be created but ignore it if it exists anyway
+package-lock.json
+
 # App packaged
 release
 src/main.prod.js
@@ -38,6 +41,8 @@ src/renderer.prod.js
 src/renderer.prod.js.map
 src/style.css
 src/style.css.map
+# should never be created but ignore it if it exists anyway
+src/package-lock.json
 dist
 dll
 main.js
