@@ -1,8 +1,11 @@
-import fs from 'fs';
+import chokidar from 'chokidar';
+import { Stats } from 'fs';
 
 export default function watchImportDirectory(
   fileOrDirPatch: string,
-  onChange: (event: string, fileName: string) => void
-): fs.FSWatcher {
-  return fs.watch(fileOrDirPatch, onChange);
+  onChange: (path: string, stats?: Stats) => void
+): chokidar.FSWatcher {
+  const watcher = chokidar.watch(fileOrDirPatch);
+  watcher.on('all', onChange);
+  return watcher;
 }
