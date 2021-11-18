@@ -1,11 +1,17 @@
 import fs from 'fs';
 import { includes } from 'lodash';
 
+/**
+ * Error codes that show invalid configuration parts.
+ */
 export enum InvalidConfigurations {
   DATABASE_DIRECTORY_DOESNOT_EXIST,
   IMPORT_DIRECTORY_DOESNOT_EXIST,
 }
 
+/**
+ * User configuration, everthing a user can modify.
+ */
 export default class Configuration {
   databaseDirectory = '';
 

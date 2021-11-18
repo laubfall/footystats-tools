@@ -15,4 +15,4 @@ export const loadConfig = (): Configuration => {
   return JSON.parse(rawConfig);
 };
 
-export default loadConfig;
+export default { loadConfig, saveConfig };
