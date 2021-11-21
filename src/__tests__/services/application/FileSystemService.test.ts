@@ -15,17 +15,9 @@ describe('Test low level fs funtions', () => {
     try {
       const tmpFile = tmp.fileSync({ dir: testDir.name });
       await new Promise((resolve) => setTimeout(resolve, 20));
-      expect(onChangeMock).toHaveBeenCalledTimes(2);
+      expect(onChangeMock).toHaveBeenCalledTimes(1);
       expect(onChangeMock).toHaveBeenNthCalledWith(
         1,
-        'addDir',
-        testDir.name,
-        expect.anything()
-      );
-
-      expect(onChangeMock).toHaveBeenNthCalledWith(
-        2,
-        'add',
         tmpFile.name,
         expect.anything()
       );

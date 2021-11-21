@@ -5,6 +5,8 @@
  * to provide user functionality.
  */
 
+import { Stats } from 'fs';
+import { defaultTo } from 'lodash';
 import { loadConfig } from './ConfigurationService';
 import Configuration, {
   InvalidConfigurations,
@@ -18,8 +20,8 @@ function startImportDirectoryWatch(config: Configuration): boolean {
     return false;
   }
 
-  watchImportDirectory(config.importDirectory, (e, f) => {
-    const fi = csvFileInformationByFileName(f);
+  watchImportDirectory(config.importDirectory, (e) => {
+    const fi = csvFileInformationByFileName(e);
     switch (fi.type) {
       case CsvFileType.LEAGUE_MATCH_STATS:
         break;

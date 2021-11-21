@@ -6,6 +6,6 @@ export default function watchImportDirectory(
   onChange: (path: string, stats?: Stats) => void
 ): chokidar.FSWatcher {
   const watcher = chokidar.watch(fileOrDirPatch);
-  watcher.on('all', onChange);
+  watcher.on('add', onChange);
   return watcher;
 }

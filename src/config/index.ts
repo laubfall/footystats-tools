@@ -7,7 +7,7 @@ const cfg = require(`./config.${env}.js`);
  * Application configuration that is not modifiable by the user.
  */
 export interface Config {
-  db: string;
+  matchStatsDbFileName: string;
 }
 
 export default cfg as Config;
