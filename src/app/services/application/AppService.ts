@@ -1,37 +1,30 @@
 /**
+ * Only use these functions from the main process!
+ *
  * Functions that reflects the application behavior.
  *
  * This is typically the steps that are needed to make in order
  * to provide user functionality.
  */
 
-import { Stats } from 'fs';
-import { defaultTo } from 'lodash';
+import { BrowserWindow } from 'electron';
 import { loadConfig } from './ConfigurationService';
 import Configuration, {
   InvalidConfigurations,
 } from '../../types/application/Configuration';
 import watchImportDirectory from './FileSystemService';
-import { csvFileInformationByFileName } from './CsvFileService';
-import { CsvFileType } from '../../types/application/CsvFileType';
+import CsvDataToDBService from './CsvDataToDBService';
+
+let csvDataToDBService: CsvDataToDBService;
 
 function startImportDirectoryWatch(config: Configuration): boolean {
   if (config.includes(InvalidConfigurations.IMPORT_DIRECTORY_DOESNOT_EXIST)) {
     return false;
   }
 
-  watchImportDirectory(config.importDirectory, (e) => {
-    const fi = csvFileInformationByFileName(e);
-    switch (fi.type) {
-      case CsvFileType.LEAGUE_MATCH_STATS:
-        break;
-      case CsvFileType.MATCH_STATS:
-        break;
-      default:
-        break;
-    }
-    return null;
-  });
+  watchImportDirectory(config.importDirectory, (e) =>
+    csvDataToDBService.storeCsvData(e)
+  );
   return true;
 }
 
@@ -39,15 +32,23 @@ function loadConfigAndDispatchErrors(): Promise<Configuration> {
   const config = loadConfig();
   const ves = config.validate();
   if (ves.length > 0) {
-    // TODO dispatch errors
     return Promise.reject(ves);
   }
 
   return Promise.resolve(config);
 }
 
+function onConfigValid(cfg: Configuration) {
+  csvDataToDBService = new CsvDataToDBService(cfg);
+  startImportDirectoryWatch(cfg);
+}
+
+function onConfigInvalid(ves: InvalidConfigurations[]) {
+  BrowserWindow.getFocusedWindow()?.webContents.send('on-config');
+}
+
 export default function startApplication() {
   const config = loadConfigAndDispatchErrors();
 
-  config.then((cfg) => startImportDirectoryWatch(cfg)).catch((reason) => {});
+  config.then(onConfigValid).catch(onConfigInvalid);
 }

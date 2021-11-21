@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import startApplication from './app/services/application/AppService';
+import cfg from './config';
 
 export default class AppUpdater {
   constructor() {
@@ -70,8 +71,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: cfg.window.width,
+    height: cfg.window.height,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -129,9 +130,9 @@ app
   .whenReady()
   .then(() => {
     const res = createWindow();
-    startApplication();
     return res;
   })
+  .then(startApplication)
   .catch(console.log);
 
 app.on('activate', () => {

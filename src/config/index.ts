@@ -8,6 +8,10 @@ const cfg = require(`./config.${env}.js`);
  */
 export interface Config {
   matchStatsDbFileName: string;
+  window: {
+    width: number;
+    height: number;
+  };
 }
 
 export default cfg as Config;

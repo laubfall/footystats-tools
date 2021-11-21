@@ -1,3 +1,4 @@
+import { uniqueId } from 'lodash';
 import React from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 
@@ -21,7 +22,7 @@ export const MatchList = ({ entries }: MatchListProps) => (
   <>
     {entries.map((e) => (
       <>
-        <Row>
+        <Row key={uniqueId()}>
           <Col>{e.awayTeam}</Col>
           <Col>
             <Button name="test" value="test" variant="secondary">

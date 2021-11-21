@@ -1,6 +1,4 @@
-import { wait, waitFor } from '@testing-library/dom';
-import exp from 'constants';
-import fs, { Stats } from 'fs';
+import fs from 'fs';
 import tmp from 'tmp';
 import watchImportDirectory from '../../../app/services/application/FileSystemService';
 
@@ -14,7 +12,7 @@ describe('Test low level fs funtions', () => {
 
     try {
       const tmpFile = tmp.fileSync({ dir: testDir.name });
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       expect(onChangeMock).toHaveBeenCalledTimes(1);
       expect(onChangeMock).toHaveBeenNthCalledWith(
         1,
