@@ -1,8 +1,12 @@
 import { ipcRenderer } from 'electron';
 import { includes, size } from 'lodash';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { saveConfig } from '../../app/services/application/ConfigurationService';
+
+import {
+  loadConfig,
+  saveConfig,
+} from '../../app/services/application/ConfigurationService';
 import Configuration, {
   InvalidConfigurations,
 } from '../../app/types/application/Configuration';
@@ -16,6 +20,15 @@ export const ConfigurationView = () => {
   const [invalidConfigurations, setInvalidConfigurations] = useState<
     InvalidConfigurations[]
   >();
+
+  useEffect(() => {
+    // eslint-disable-next-line promise/catch-or-return
+    loadConfig().then((cfg) => {
+      setImportDirectory(cfg.importDirectory);
+      setDatabaseDirectory(cfg.databaseDirectory);
+      return cfg;
+    });
+  }, []);
 
   const openDirectoryDialog = (setter: (path: string) => void) => {
     ipcRenderer
@@ -45,7 +58,7 @@ export const ConfigurationView = () => {
     <>
       <Form>
         <Row className="align-items-center">
-          <Col xs="auto">
+          <Col md={6}>
             <Form.Label htmlFor="inlineFormInput" visuallyHidden>
               Pfad Importfiles
             </Form.Label>
@@ -60,8 +73,11 @@ export const ConfigurationView = () => {
               )}
               disabled
             />
+            <Form.Text muted>
+              Importdirectory for footystats csv files
+            </Form.Text>
           </Col>
-          <Col xs="auto">
+          <Col>
             <Button
               onClick={() => openDirectoryDialog(setImportDirectory)}
               className="mb-2"
@@ -71,7 +87,7 @@ export const ConfigurationView = () => {
           </Col>
         </Row>
         <Row className="align-items-center">
-          <Col xs="auto">
+          <Col md={6}>
             <Form.Label htmlFor="inlineFormInput" visuallyHidden>
               Pfad Datenbankdateien
             </Form.Label>
@@ -86,8 +102,9 @@ export const ConfigurationView = () => {
               )}
               disabled
             />
+            <Form.Text muted>Directory where we store database files</Form.Text>
           </Col>
-          <Col xs="auto">
+          <Col>
             <Button
               onClick={() => openDirectoryDialog(setDatabaseDirectory)}
               className="mb-2"
