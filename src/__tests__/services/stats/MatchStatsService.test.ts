@@ -3,7 +3,7 @@ import { fromUnixTime } from 'date-fns';
 import tmp from 'tmp';
 import { MatchStatsService } from '../../../app/services/stats/MatchStatsService';
 
-const mss = new MatchStatsService(tmp.dirSync({prefix:'MatchServiceTest'}).name);
+const mss = new MatchStatsService(tmp.dirSync({prefix:'MatchStatsServiceTest'}).name);
 
 describe('Test the match service', () => {
   beforeAll(() => {

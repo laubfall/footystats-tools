@@ -24,7 +24,11 @@ export class DbStoreService<D> {
   }
 
   public insert(doc: D) {
-    this.DB.insert(doc, (err, d) => console.log(err));
+    this.DB.insert(doc, (err, d) => {
+      if (err != null) {
+        console.log(err);
+      }
+    });
   }
 
   public insertAll(docs: D[]) {

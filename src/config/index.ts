@@ -8,6 +8,7 @@ const cfg = require(`./config.${env}.js`);
  */
 export interface Config {
   matchStatsDbFileName: string;
+  teamStatsDbFileName: string;
   window: {
     width: number;
     height: number;
