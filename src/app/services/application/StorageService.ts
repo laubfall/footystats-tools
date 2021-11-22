@@ -15,5 +15,5 @@ export function store(key: string, obj: string) {
 
 export function load(key: string) {
   const as = accessStorage();
-  return as.getItem(key);
+  return Promise.resolve(as.getItem(key));
 }

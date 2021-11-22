@@ -28,8 +28,8 @@ function startImportDirectoryWatch(config: Configuration): boolean {
   return true;
 }
 
-function loadConfigAndDispatchErrors(): Promise<Configuration> {
-  const config = loadConfig();
+async function loadConfigAndDispatchErrors(): Promise<Configuration> {
+  const config = await loadConfig();
   const ves = config.validate();
   if (ves.length > 0) {
     return Promise.reject(ves);
@@ -47,7 +47,7 @@ function onConfigInvalid(ves: InvalidConfigurations[]) {
   BrowserWindow.getFocusedWindow()?.webContents.send('on-config');
 }
 
-export default function startApplication() {
+export default async function startApplication() {
   const config = loadConfigAndDispatchErrors();
 
   config.then(onConfigValid).catch(onConfigInvalid);

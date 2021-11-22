@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import Configuration from '../../types/application/Configuration';
 import { load, store } from './StorageService';
 
@@ -7,12 +8,16 @@ export const saveConfig = (configuration: Configuration) => {
   store(STORAGE_KEY, JSON.stringify(configuration));
 };
 
-export const loadConfig = (): Configuration => {
+export const loadConfig = async (): Promise<Configuration> => {
   const rawConfig = load(STORAGE_KEY);
-  if (!rawConfig || rawConfig === '') {
-    return new Configuration();
+
+  const cfgVal = await rawConfig;
+
+  if (cfgVal == null) {
+    return Promise.resolve(new Configuration());
   }
-  return JSON.parse(rawConfig);
+  const config = plainToClass(Configuration, JSON.parse(cfgVal));
+  return Promise.resolve(config);
 };
 
 export default { loadConfig, saveConfig };
