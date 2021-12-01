@@ -1,5 +1,6 @@
 import AsyncNedb from 'nedb-async';
 import fs from 'fs';
+import cfg from '../../../config';
 
 export class DbStoreService<D> {
   private dbFile: string;
@@ -15,6 +16,7 @@ export class DbStoreService<D> {
     const db = new AsyncNedb<D>({
       filename: this.dbFile,
       autoload: true,
+      inMemoryOnly: cfg.nedb.inMemoryOnly,
     });
     return db;
   }

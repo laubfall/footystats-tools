@@ -36,7 +36,7 @@ export function csvFileInformationByFileName(
 ): CsvFileInformation {
   if (startsWith(fileName, 'matches_expanded')) {
     return {
-      type: CsvFileType.LEAGUE_MATCH_STATS,
+      type: CsvFileType.MATCH_STATS,
     };
   }
 
@@ -87,12 +87,13 @@ export function importFile<T>(
   pathToFile: string,
   markAsImported: boolean
 ): T[] {
-  const buffer = fs.readFileSync(`${__dirname}/${pathToFile}`);
+  const buffer = fs.readFileSync(pathToFile);
   const parseResult = Papa.parse<T>(buffer.toString(), {
     header: true,
     delimiter: ',',
     transformHeader: (header) => lodash.replace(header, '.', 'dot'), // Otherwise objects can not be stored inside nedb.
     dynamicTyping: true, // guess the type of the field (e.g. numbers will be stored without quotes)
+    skipEmptyLines: true,
   });
 
   if (markAsImported) {

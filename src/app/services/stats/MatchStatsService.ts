@@ -1,4 +1,5 @@
 import { add } from 'date-fns';
+import path from 'path';
 import cfg from '../../../config';
 import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
@@ -13,17 +14,20 @@ export class MatchStatsService {
 
   constructor(databasePath: string) {
     this.dbService = new DbStoreService<UniqueMatch>(
-      `${databasePath}${cfg.matchStatsDbFileName}`
+      path.join(databasePath, cfg.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
   }
 
-  public readMatches(path: string) {
-    if (alreadyImported(path)) {
+  public readMatches(pathToMatchesCsv: string) {
+    if (alreadyImported(pathToMatchesCsv)) {
       return;
     }
 
-    const matches = importFile<MatchStats>(path, false);
+    const matches = importFile<MatchStats>(
+      pathToMatchesCsv,
+      cfg.markCsvFilesAsImported
+    );
     const uniqueMatches: UniqueMatch[] = matches.map((m) => {
       return {
         ...m,

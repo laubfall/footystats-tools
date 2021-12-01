@@ -17,15 +17,10 @@ import CsvDataToDBService from './CsvDataToDBService';
 
 let csvDataToDBService: CsvDataToDBService;
 
-function startImportDirectoryWatch(config: Configuration): boolean {
-  if (config.includes(InvalidConfigurations.IMPORT_DIRECTORY_DOESNOT_EXIST)) {
-    return false;
-  }
-
+function startImportDirectoryWatch(config: Configuration) {
   watchImportDirectory(config.importDirectory, (e) =>
     csvDataToDBService.storeCsvData(e)
   );
-  return true;
 }
 
 async function loadConfigAndDispatchErrors(): Promise<Configuration> {

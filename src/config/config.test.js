@@ -3,3 +3,7 @@ const config = (module.exports = {});
 config.matchStatsDbFileName = 'matchStats.nedb';
 config.teamhStatsDbFileName = 'teamStats.nedb';
 config.window = { width: 1600, height: 1200 };
+config.markCsvFilesAsImported = false;
+config.nedb = {
+  inMemoryOnly: true,
+};

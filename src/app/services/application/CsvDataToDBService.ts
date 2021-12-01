@@ -21,6 +21,7 @@ class CsvDataToDBService {
     const fp = path.parse(pathToFile);
 
     const fi = csvFileInformationByFileName(fp.base);
+    console.log(`Try to store csv data from file: ${pathToFile}`);
     switch (fi.type) {
       case CsvFileType.LEAGUE_MATCH_STATS:
         break;

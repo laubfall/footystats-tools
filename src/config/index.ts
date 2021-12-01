@@ -13,6 +13,10 @@ export interface Config {
     width: number;
     height: number;
   };
+  markCsvFilesAsImported: boolean;
+  nedb: {
+    inMemoryOnly: boolean;
+  };
 }
 
 export default cfg as Config;
