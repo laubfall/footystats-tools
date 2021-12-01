@@ -1,5 +1,11 @@
-import { csvFileInformationByFileName } from '../../../app/services/application/CsvFileService';
+import fs from 'fs';
+import path from 'path';
+import {
+  importFile,
+  csvFileInformationByFileName,
+} from '../../../app/services/application/CsvFileService';
 import { CsvFileType } from '../../../app/types/application/CsvFileType';
+import MatchStats from '../../../app/types/stats/MatchStats';
 
 describe('Tests for CsvFileService', () => {
   it('Get CSV File Information by filename - match stats', () => {
@@ -50,6 +56,17 @@ describe('Tests for CsvFileService', () => {
     );
 
     expect(cfi).not.toBeNull();
-    expect(cfi.type).toEqual(CsvFileType.LEAGUE_MATCH_STATS);
+    expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
+  });
+  it('Import and expect File to be renamed', () => {
+    importFile<MatchStats>(
+      `${__dirname}/../../../../testdata/matches_expanded-1630235153-expectRenamed.csv`,
+      true
+    );
+
+    const stats = fs.statSync(
+      `${__dirname}/../../../../testdata/imported_matches_expanded-1630235153-expectRenamed.csv`
+    );
+    expect(stats).not.toBeNull();
   });
 });
