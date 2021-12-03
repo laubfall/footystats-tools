@@ -5,7 +5,7 @@ import lodash, { isNumber, join, slice, split, startsWith } from 'lodash';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { Country, Season, League } from '../../types/application/AppControll';
 
-const IMPORTED_PREFIX = 'imported_';
+export const IMPORTED_PREFIX = '.imported';
 
 export interface CsvFileInformation {
   type: CsvFileType;
@@ -101,7 +101,7 @@ export function importFile<T>(
     const fileName = path.basename(pathToFile);
     fs.renameSync(
       pathToFile,
-      path.format({ dir: dirName, base: fileName, ext: IMPORTED_PREFIX })
+      path.format({ dir: dirName, name: fileName, ext: IMPORTED_PREFIX })
     );
   }
 

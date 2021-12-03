@@ -3,11 +3,26 @@ import path from 'path';
 import {
   importFile,
   csvFileInformationByFileName,
+  IMPORTED_PREFIX,
 } from '../../../app/services/application/CsvFileService';
 import { CsvFileType } from '../../../app/types/application/CsvFileType';
 import MatchStats from '../../../app/types/stats/MatchStats';
 
 describe('Tests for CsvFileService', () => {
+  const pathToFileExpectedToBeRenamed = `${__dirname}/../../../../testdata/matches_expanded-1630235153-expectRenamed.csv`;
+
+  afterAll(() => {
+    const stats = fs.existsSync(
+      pathToFileExpectedToBeRenamed + IMPORTED_PREFIX
+    );
+    if (stats) {
+      fs.renameSync(
+        pathToFileExpectedToBeRenamed + IMPORTED_PREFIX,
+        pathToFileExpectedToBeRenamed
+      );
+    }
+  });
+
   it('Get CSV File Information by filename - match stats', () => {
     const cfi = csvFileInformationByFileName(
       'france-ligue-1-matches-2020-to-2021-stats.csv'
@@ -65,7 +80,7 @@ describe('Tests for CsvFileService', () => {
     );
 
     const stats = fs.statSync(
-      `${__dirname}/../../../../testdata/imported_matches_expanded-1630235153-expectRenamed.csv`
+      `${__dirname}/../../../../testdata/matches_expanded-1630235153-expectRenamed.csv.imported`
     );
     expect(stats).not.toBeNull();
   });
