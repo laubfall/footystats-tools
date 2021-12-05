@@ -14,6 +14,11 @@ import Configuration, {
 } from '../../types/application/Configuration';
 import watchImportDirectory from './FileSystemService';
 import CsvDataToDBService from './CsvDataToDBService';
+import {
+  msgInvalidConfigurations,
+  msgSimpleMessage,
+} from './Ipc2RendererService';
+import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 
 let csvDataToDBService: CsvDataToDBService;
 
@@ -21,6 +26,7 @@ function startImportDirectoryWatch(config: Configuration) {
   watchImportDirectory(config.importDirectory, (e) =>
     csvDataToDBService.storeCsvData(e)
   );
+  msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
 }
 
 async function loadConfigAndDispatchErrors(): Promise<Configuration> {
@@ -39,10 +45,11 @@ function onConfigValid(cfg: Configuration) {
 }
 
 function onConfigInvalid(ves: InvalidConfigurations[]) {
-  BrowserWindow.getFocusedWindow()?.webContents.send('on-config');
+  msgInvalidConfigurations(ves);
 }
 
 export default async function startApplication() {
+  msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
   const config = loadConfigAndDispatchErrors();
 
   config.then(onConfigValid).catch(onConfigInvalid);

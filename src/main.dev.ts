@@ -94,6 +94,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    startApplication();
   });
 
   mainWindow.on('closed', () => {
@@ -132,7 +133,6 @@ app
     const res = createWindow();
     return res;
   })
-  .then(startApplication)
   .catch(console.log);
 
 app.on('activate', () => {

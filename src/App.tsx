@@ -1,7 +1,11 @@
-import { ipcRenderer } from 'electron';
-import React from 'react';
+import React, { useState } from 'react';
+import { Alert } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
 import { HashRouter } from 'react-router-dom';
+import {
+  subscribeMsgInvalidConfiguration,
+  subscribeMsgSimpleMessage,
+} from './app/services/application/Ipc2RendererService';
 import { ConfigurationView } from './components/configuration/ConfigurationView';
 import { MatchList } from './components/matches/MatchList';
 import { Menu } from './components/Menu';
@@ -15,14 +19,19 @@ const FootyStatsTools = () => {
     },
   ];
 
+  const [alertMsg, setMsg] = useState<string>();
+
   const history = useNavigate();
 
-  ipcRenderer.on('on-config', (event) => {
+  subscribeMsgInvalidConfiguration(() => {
     history('configuration');
   });
 
+  subscribeMsgSimpleMessage((msg) => setMsg(msg.channel));
+
   return (
     <>
+      {alertMsg && <Alert variant="info">{alertMsg}</Alert>}
       <Menu />
       <Routes>
         <Route path="/">

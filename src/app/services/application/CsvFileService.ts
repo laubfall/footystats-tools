@@ -69,7 +69,7 @@ export function csvFileInformationByFileName(
 
 export function alreadyImported(pathToFile: string): boolean {
   const fileName = path.basename(pathToFile);
-  if (fileName.startsWith(IMPORTED_PREFIX)) {
+  if (fileName.endsWith(IMPORTED_PREFIX)) {
     return true;
   }
 

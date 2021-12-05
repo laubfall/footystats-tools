@@ -1,9 +1,11 @@
 import { add } from 'date-fns';
 import path from 'path';
 import cfg from '../../../config';
+import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
+import { msgSimpleMessage } from '../application/Ipc2RendererService';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
@@ -36,6 +38,7 @@ export class MatchStatsService {
       };
     });
     this.dbService.insertAll(uniqueMatches);
+    msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);
   }
 
   public async matchesByDay(day: Date): Promise<MatchStats[]> {
