@@ -17,22 +17,35 @@
       "request": "launch",
       "protocol": "inspector",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:main --inspect=5858 --remote-debugging-port=9223"],
+      "runtimeArgs": ["start:main --inspect-brk --remote-debugging-port=9223"],
       "preLaunchTask": "Start Webpack Dev"
     },
     {
-      "name": "Electron: Renderer",
+      "name": "Electron: Attach to Renderer",
       "type": "chrome",
       "request": "attach",
       "port": 9223,
       "webRoot": "${workspaceFolder}",
       "timeout": 15000
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Electron: Attach to Main",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}"
     }
   ],
   "compounds": [
     {
       "name": "Electron: All",
-      "configurations": ["Electron: Main", "Electron: Renderer"]
+      "configurations": [
+        "Electron: Main",
+        "Electron: Attach to Renderer",
+        "Electron: Attach to Main"
+      ]
     }
   ]
 }

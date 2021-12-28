@@ -6,6 +6,9 @@ const mss = new MatchStatsService("inMemory");
 
 describe('Test the match service', () => {
 
+  // TODO reason for that?
+  jest.createMockFromModule('../../../app/services/application/Ipc2RendererService');
+
   it('Load matches', async () => {
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1630235153-username.csv`);
 

@@ -6,8 +6,6 @@
  * This is typically the steps that are needed to make in order
  * to provide user functionality.
  */
-
-import { BrowserWindow } from 'electron';
 import { loadConfig } from './ConfigurationService';
 import Configuration, {
   InvalidConfigurations,
@@ -19,6 +17,9 @@ import {
   msgSimpleMessage,
 } from './Ipc2RendererService';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
+import IpcMatchStatsService from '../stats/IpcMatchStatsService';
+import { MatchStatsService } from '../stats/MatchStatsService';
+import IpcNativeGuiService from './gui/IpcNativeGuiService';
 
 let csvDataToDBService: CsvDataToDBService;
 
@@ -27,6 +28,13 @@ function startImportDirectoryWatch(config: Configuration) {
     csvDataToDBService.storeCsvData(e)
   );
   msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
+}
+
+function registerIpcInvokeServiceHandler(config: Configuration) {
+  IpcMatchStatsService.registerInvokeHandler(
+    new MatchStatsService(config.databaseDirectory)
+  );
+  IpcNativeGuiService.registerInvokeHandler();
 }
 
 async function loadConfigAndDispatchErrors(): Promise<Configuration> {
@@ -42,6 +50,7 @@ async function loadConfigAndDispatchErrors(): Promise<Configuration> {
 function onConfigValid(cfg: Configuration) {
   csvDataToDBService = new CsvDataToDBService(cfg);
   startImportDirectoryWatch(cfg);
+  registerIpcInvokeServiceHandler(cfg);
 }
 
 function onConfigInvalid(ves: InvalidConfigurations[]) {

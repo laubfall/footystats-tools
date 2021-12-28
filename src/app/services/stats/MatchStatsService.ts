@@ -11,7 +11,11 @@ interface UniqueMatch extends MatchStats {
   unique: string;
 }
 
-export class MatchStatsService {
+export interface IMatchStatsService {
+  matchesByDay(day: Date): Promise<MatchStats[]>;
+}
+
+export class MatchStatsService implements IMatchStatsService {
   readonly dbService: DbStoreService<UniqueMatch>;
 
   constructor(databasePath: string) {

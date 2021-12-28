@@ -7,18 +7,10 @@ import {
   subscribeMsgSimpleMessage,
 } from './app/services/application/Ipc2RendererService';
 import { ConfigurationView } from './components/configuration/ConfigurationView';
-import { MatchList } from './components/matches/MatchList';
+import { MatchesView } from './components/matches/MatchesView';
 import { Menu } from './components/Menu';
 
 const FootyStatsTools = () => {
-  const matchListEntries = [
-    {
-      awayTeam: 'team away',
-      homeTeam: 'team home',
-      betPredictions: [{ betName: 'over1.5', prediction: 40 }],
-    },
-  ];
-
   const [alertMsg, setMsg] = useState<string>();
 
   const history = useNavigate();
@@ -36,11 +28,7 @@ const FootyStatsTools = () => {
       <Routes>
         <Route path="/">
           <Route path="configuration" element={<ConfigurationView />} />
-          <Route
-            index
-            path="matchList"
-            element={<MatchList entries={matchListEntries} />}
-          />
+          <Route index path="matchList" element={<MatchesView />} />
         </Route>
       </Routes>
     </>

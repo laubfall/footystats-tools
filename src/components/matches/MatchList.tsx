@@ -2,35 +2,38 @@ import { uniqueId } from 'lodash';
 import React from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 
-export interface BetPrediction {
+export type BetPrediction = {
   betName: string;
   prediction: number;
-}
+};
 
-export interface MatchListEntry {
+export type MatchListEntry = {
   awayTeam: string;
   homeTeam: string;
   betPredictions: BetPrediction[];
-}
+};
 
-export interface MatchListProps {
+export type MatchListProps = {
   entries: MatchListEntry[];
-}
+};
 
 // eslint-disable-next-line import/prefer-default-export
-export const MatchList = ({ entries }: MatchListProps) => (
-  <>
-    {entries.map((e) => (
-      <>
-        <Row key={uniqueId()}>
-          <Col>{e.awayTeam}</Col>
-          <Col>
-            <Button name="test" value="test" variant="secondary">
-              fkdsljf
-            </Button>
-          </Col>
-        </Row>
-      </>
-    ))}
-  </>
-);
+export const MatchList = ({ entries }: MatchListProps) => {
+  return (
+    <>
+      {entries.map((e) => (
+        <>
+          <Row key={uniqueId()}>
+            <Col>{e.awayTeam}</Col>
+            <Col>{e.homeTeam}</Col>
+            <Col>
+              <Button name="test" value="test" variant="secondary">
+                fkdsljf
+              </Button>
+            </Col>
+          </Row>
+        </>
+      ))}
+    </>
+  );
+};

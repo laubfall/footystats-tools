@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron';
 import { includes, size } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
@@ -7,6 +6,8 @@ import {
   loadConfig,
   saveConfig,
 } from '../../app/services/application/ConfigurationService';
+import INativeGuiService from '../../app/services/application/gui/INativeGuiService';
+import IpcNativeGuiService from '../../app/services/application/gui/IpcNativeGuiService';
 import Configuration, {
   InvalidConfigurations,
 } from '../../app/types/application/Configuration';
@@ -30,18 +31,6 @@ export const ConfigurationView = () => {
     });
   }, []);
 
-  const openDirectoryDialog = (setter: (path: string) => void) => {
-    ipcRenderer
-      .invoke('open-directory-dialog')
-      .then((value: Electron.OpenDialogReturnValue) => {
-        if (value.canceled === false) {
-          setter(value.filePaths[0]);
-        }
-        return null;
-      })
-      .catch((reason) => console.log(reason));
-  };
-
   const saveConfiguration = () => {
     const config = new Configuration();
     config.importDirectory = importDirectory;
@@ -53,6 +42,8 @@ export const ConfigurationView = () => {
       saveConfig(config);
     }
   };
+
+  const nativeGuiService: INativeGuiService = new IpcNativeGuiService();
 
   return (
     <>
@@ -79,7 +70,16 @@ export const ConfigurationView = () => {
           </Col>
           <Col>
             <Button
-              onClick={() => openDirectoryDialog(setImportDirectory)}
+              onClick={() =>
+                nativeGuiService
+                  .callOpenDialog()
+                  .then((value: Electron.OpenDialogReturnValue) => {
+                    if (value?.canceled === false) {
+                      setImportDirectory(value.filePaths[0]);
+                    }
+                    return null;
+                  })
+              }
               className="mb-2"
             >
               Submit
@@ -106,7 +106,17 @@ export const ConfigurationView = () => {
           </Col>
           <Col>
             <Button
-              onClick={() => openDirectoryDialog(setDatabaseDirectory)}
+              onClick={() => {
+                nativeGuiService
+                  .callOpenDialog()
+                  .then((value: Electron.OpenDialogReturnValue) => {
+                    if (value?.canceled === false) {
+                      setDatabaseDirectory(value.filePaths[0]);
+                    }
+                    return null;
+                  })
+                  .catch((reason) => console.error(reason));
+              }}
               className="mb-2"
             >
               Submit

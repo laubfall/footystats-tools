@@ -89,13 +89,13 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    startApplication();
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
       mainWindow.show();
       mainWindow.focus();
     }
-    startApplication();
   });
 
   mainWindow.on('closed', () => {
@@ -140,10 +140,4 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
-});
-
-ipcMain.handle('open-directory-dialog', (event) => {
-  return dialog.showOpenDialog({
-    properties: ['openDirectory'],
-  });
 });
