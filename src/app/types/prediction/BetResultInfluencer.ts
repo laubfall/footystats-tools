@@ -8,17 +8,19 @@ export enum NotExecutedCause {
   DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET,
   // Error while doing calculation
   EXCEPTION,
-  // Everything went fine
-  EXECUTED,
 }
 
-export interface BetInfluencerCalculation {
+export type BetInfluencerCalculation = {
   // Influence for the chosen bet. Higher value means more influence
   amount: number;
   // when set the influencer did not calculated the influece for the chosen bet.
   notExecutedCause?: NotExecutedCause;
-}
+};
 
-export default interface BetResultInfluencer {
+export type PreCheckReturn = NotExecutedCause | undefined;
+export interface BetResultInfluencer {
+  preCheck(ctx: BetPredictionContext): PreCheckReturn;
   calculateInfluence(ctx: BetPredictionContext): BetInfluencerCalculation;
 }
+
+export default BetResultInfluencer;

@@ -26,6 +26,9 @@ export const MatchList = ({ entries }: MatchListProps) => {
           <Row key={uniqueId()}>
             <Col>{e.awayTeam}</Col>
             <Col>{e.homeTeam}</Col>
+            {e.betPredictions?.map((bp) => {
+              return <Col key={uniqueId()}>{bp.prediction}</Col>;
+            })}
             <Col>
               <Button name="test" value="test" variant="secondary">
                 fkdsljf

@@ -1,4 +1,4 @@
-enum Bet {
+export enum Bet {
   OVER_ZERO_FIVE,
   OVER_ONE_FIVE,
 }
@@ -15,5 +15,5 @@ export interface BetTypeDefinition {
 
 export const OVER: BetTypeDefinition = {
   betType: BetType.OVER,
-  bets: [Bet.OVER_ZERO_FIVE, Bet.OVER_ONE_FIVE]
-}
+  bets: [Bet.OVER_ZERO_FIVE, Bet.OVER_ONE_FIVE],
+};

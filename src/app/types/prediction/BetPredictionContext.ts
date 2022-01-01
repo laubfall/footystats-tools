@@ -5,7 +5,7 @@ import { BetTypeDefinition } from './Bet';
 
 export default interface BetPredictionContext {
   match: MatchStats;
-  teamStats: TeamStats;
-  leagueStats: LeagueStats;
+  teamStats?: TeamStats;
+  leagueStats?: LeagueStats;
   bet: BetTypeDefinition;
 }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
+import { BetType, OVER } from '../../app/types/prediction/Bet';
 import { MatchList, MatchListEntry } from './MatchList';
 
 export const MatchesView = () => {
@@ -13,11 +15,19 @@ export const MatchesView = () => {
       // eslint-disable-next-line promise/always-return
       .then((n) => {
         const r = n.map((ms) => {
+          const predictionNumber = prediction({
+            bet: OVER,
+            match: ms,
+            leagueStats: undefined,
+            teamStats: undefined,
+          });
+
           const mle: MatchListEntry = {
             awayTeam: ms['Away Team'],
             homeTeam: ms['Home Team'],
-            betPredictions: [],
+            betPredictions: [{ betName: 'Over', prediction: predictionNumber }],
           };
+
           return mle;
         });
         setMatches(r);
