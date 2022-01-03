@@ -2,28 +2,22 @@ import '@testing-library/jest-dom';
 import prediction from '../../../app/services/prediction/PredictionService';
 import { OVER } from '../../../app/types/prediction/Bet';
 import BetPredictionContext from '../../../app/types/prediction/BetPredictionContext';
+import mss from '../../TestUtils';
 
 describe('PredictionService Tests', () => {
-  it('Simple run', () => {
+  it('Simple run', async () => {
+    mss.readMatches(
+      `${__dirname}/../../../../testdata/matches_expanded-1630235153-username.csv`
+    );
+
+    const matches = await mss.matchesByDay(new Date(2021, 7, 29));
+
     const ctx: BetPredictionContext = {
       bet: OVER,
-      match: {
-        away: {
-          leaguePosition: 3,
-          team: 'Team 1',
-          xG: 1,
-          xGA: 1,
-        },
-        home: {
-          leaguePosition: 5,
-          team: 'Team 2',
-          xG: 1,
-          xGA: 1,
-        },
-        leagueTeamsCount: 20,
-      },
+      match: matches[0],
     };
     const predictionResult = prediction(ctx);
     expect(predictionResult).not.toBeNull();
+    expect(predictionResult).toBe(3);
   });
 });
