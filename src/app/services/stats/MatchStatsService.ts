@@ -1,4 +1,5 @@
 import { add } from 'date-fns';
+import { pullAll } from 'lodash';
 import path from 'path';
 import cfg from '../../../config';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
@@ -37,11 +38,14 @@ export class MatchStatsService implements IMatchStatsService {
     const uniqueMatches: UniqueMatch[] = matches.map((m) => {
       return {
         ...m,
-        unique:
-          m.date_unix.toString() + m.League + m['Home Team'] + m['Away Team'],
+        unique: this.uniqueValue(m),
       };
     });
-    this.dbService.insertAll(uniqueMatches);
+
+    uniqueMatches.forEach((um) => {
+      this.dbService.asyncUpsert({ unique: this.uniqueValue(um) }, { ...um });
+    });
+
     msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);
   }
 
@@ -49,9 +53,19 @@ export class MatchStatsService implements IMatchStatsService {
     const end = add(day, { days: 1 });
     const startSec = Math.floor(day.getTime() / 1000);
     const endSec = Math.floor(end.getTime() / 1000);
-    return this.dbService.find({
+    return this.dbService.asyncfind({
       $and: [{ date_unix: { $gte: startSec } }, { date_unix: { $lt: endSec } }],
     });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private uniqueValue(matchStats: MatchStats) {
+    return (
+      matchStats.date_unix.toString() +
+      matchStats.League +
+      matchStats['Home Team'] +
+      matchStats['Away Team']
+    );
   }
 }
 

@@ -45,8 +45,16 @@ export class DbStoreService<D> {
     return this.DB.asyncFind<D>({});
   }
 
-  public async find(filter: any): Promise<D[]> {
+  public async asyncfind(filter: any): Promise<D[]> {
     return this.DB.asyncFind<D>(filter);
+  }
+
+  public async asyncFindOne(filter: any): Promise<D> {
+    return this.DB.asyncFindOne(filter);
+  }
+
+  public asyncUpsert(query: any, updateQuery: any) {
+    return this.DB.asyncUpdate(query, updateQuery, { upsert: true });
   }
 }
 
