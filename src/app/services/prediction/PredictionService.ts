@@ -3,6 +3,7 @@ import {
   BetResultInfluencer,
   NotExecutedCause,
 } from '../../types/prediction/BetResultInfluencer';
+import LeaguePositionDiffInfluencer from './LeaguePositionDiffInfluencer';
 import LeaguePositionInfluencer from './LeaguePositionInfluencer';
 import OddsGoalsOverInfluencer from './OddsGoalsOverInfluencer';
 
@@ -11,6 +12,7 @@ import OddsGoalsOverInfluencer from './OddsGoalsOverInfluencer';
  */
 const betResultInfluencer: BetResultInfluencer[] = [
   new LeaguePositionInfluencer(),
+  new LeaguePositionDiffInfluencer(),
   new OddsGoalsOverInfluencer(),
 ];
 

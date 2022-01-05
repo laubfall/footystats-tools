@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
-import { BetType, OVER } from '../../app/types/prediction/Bet';
+import { OVER } from '../../app/types/prediction/Bet';
 import { MatchList, MatchListEntry } from './MatchList';
 
 export const MatchesView = () => {

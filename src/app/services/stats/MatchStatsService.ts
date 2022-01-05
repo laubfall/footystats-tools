@@ -1,5 +1,4 @@
 import { add } from 'date-fns';
-import { pullAll } from 'lodash';
 import path from 'path';
 import cfg from '../../../config';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
