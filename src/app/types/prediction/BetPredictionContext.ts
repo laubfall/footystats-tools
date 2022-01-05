@@ -1,11 +1,17 @@
 import LeagueStats from '../stats/LeagueStats';
 import MatchStats from '../stats/MatchStats';
 import TeamStats from '../stats/TeamStats';
-import { BetTypeDefinition } from './Bet';
 
-export default interface BetPredictionContext {
+export type BetPredictionContext = {
   match: MatchStats;
   teamStats?: TeamStats;
   leagueStats?: LeagueStats;
-  bet: BetTypeDefinition;
+  bet: Bet;
+};
+
+export enum Bet {
+  OVER_ZERO_FIVE,
+  OVER_ONE_FIVE,
 }
+
+export default BetPredictionContext;

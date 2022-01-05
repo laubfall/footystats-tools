@@ -1,7 +1,9 @@
 import '@testing-library/jest-dom';
 import prediction from '../../../app/services/prediction/PredictionService';
-import { OVER } from '../../../app/types/prediction/Bet';
-import BetPredictionContext from '../../../app/types/prediction/BetPredictionContext';
+import {
+  BetPredictionContext,
+  Bet,
+} from '../../../app/types/prediction/BetPredictionContext';
 import mss from '../../TestUtils';
 
 describe('PredictionService Tests', () => {
@@ -13,7 +15,7 @@ describe('PredictionService Tests', () => {
     const matches = await mss.matchesByDay(new Date(2021, 7, 29));
 
     const ctx: BetPredictionContext = {
-      bet: OVER,
+      bet: Bet.OVER_ONE_FIVE,
       match: matches[0],
     };
     const predictionResult = prediction(ctx);

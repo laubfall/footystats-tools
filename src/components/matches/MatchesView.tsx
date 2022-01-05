@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
-import { OVER } from '../../app/types/prediction/Bet';
+import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { MatchList, MatchListEntry } from './MatchList';
 
 export const MatchesView = () => {
@@ -16,7 +16,7 @@ export const MatchesView = () => {
       .then((n) => {
         const r = n.map((ms) => {
           const predictionNumber = prediction({
-            bet: OVER,
+            bet: Bet.OVER_ZERO_FIVE,
             match: ms,
             leagueStats: undefined,
             teamStats: undefined,

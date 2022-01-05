@@ -1,6 +1,9 @@
+import { includes } from 'lodash';
 import { INFLUENCER_POINTS } from '../../constants';
-import { BetType } from '../../types/prediction/Bet';
-import BetPredictionContext from '../../types/prediction/BetPredictionContext';
+import {
+  BetPredictionContext,
+  Bet,
+} from '../../types/prediction/BetPredictionContext';
 import {
   BetResultInfluencer,
   BetInfluencerCalculation,
@@ -28,7 +31,7 @@ class LeaguePositionInfluencer implements BetResultInfluencer {
   public calculateInfluence(
     ctx: BetPredictionContext
   ): BetInfluencerCalculation {
-    if (BetType.OVER === ctx.bet.betType) {
+    if (includes([Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE], ctx.bet)) {
       return this.overBet(ctx);
     }
     return {
