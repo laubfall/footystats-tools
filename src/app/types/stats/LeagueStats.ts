@@ -1,4 +1,4 @@
-export default interface LeagueStats {
+export type LeagueStats = {
   name: string;
   season: string;
   status: string;
@@ -70,4 +70,6 @@ export default interface LeagueStats {
   goals_min_61_to_75: number;
   goals_min_76_to_90: number;
   xg_avg_per_match: number;
-}
+};
+
+export default LeagueStats;

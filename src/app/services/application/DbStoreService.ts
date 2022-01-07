@@ -45,7 +45,7 @@ export class DbStoreService<D> {
     return this.DB.asyncFind<D>({});
   }
 
-  public async asyncfind(filter: any): Promise<D[]> {
+  public async asyncFind(filter: any): Promise<D[]> {
     return this.DB.asyncFind<D>(filter);
   }
 

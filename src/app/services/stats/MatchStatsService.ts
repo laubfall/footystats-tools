@@ -52,7 +52,7 @@ export class MatchStatsService implements IMatchStatsService {
     const end = add(day, { days: 1 });
     const startSec = Math.floor(day.getTime() / 1000);
     const endSec = Math.floor(end.getTime() / 1000);
-    return this.dbService.asyncfind({
+    return this.dbService.asyncFind({
       $and: [{ date_unix: { $gte: startSec } }, { date_unix: { $lt: endSec } }],
     });
   }

@@ -1,4 +1,4 @@
-import BetPredictionContext from '../../types/prediction/BetPredictionContext';
+import { BetPredictionContext } from '../../types/prediction/BetPredictionContext';
 import {
   BetInfluencerCalculation,
   NotExecutedCause,
