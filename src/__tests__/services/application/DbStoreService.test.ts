@@ -1,9 +1,4 @@
-import {
-  DbStoreService,
-  Document,
-  insert,
-  load,
-} from '../../../app/services/application/DbStoreService';
+import { DbStoreService } from '../../../app/services/application/DbStoreService';
 
 interface TestDocument {
   value: string;

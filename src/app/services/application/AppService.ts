@@ -21,13 +21,12 @@ import { MatchStatsService } from '../stats/MatchStatsService';
 import IpcNativeGuiService from './gui/IpcNativeGuiService';
 import inversifyContainer from '../inversify.config';
 import CsvDataToDBService from './CsvDataToDBService';
-import symbols from '../inversify.symbols';
 import IpcLeagueStatsService from '../stats/IpcLeagueStatsService';
 import LeagueStatsService from '../stats/LeagueStatsService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService = inversifyContainer.get<CsvDataToDBService>(
-    symbols.CsvDataToDBService
+    CsvDataToDBService
   );
 
   watchImportDirectory(config.importDirectory, (e) =>
@@ -38,10 +37,10 @@ function startImportDirectoryWatch(config: Configuration) {
 
 function registerConfigDependentIpcHandler() {
   IpcMatchStatsService.registerInvokeHandler(
-    inversifyContainer.get<MatchStatsService>(symbols.MatchStatsService)
+    inversifyContainer.get<MatchStatsService>(MatchStatsService)
   );
   IpcLeagueStatsService.registerInvokeHandler(
-    inversifyContainer.get<LeagueStatsService>(symbols.LeagueStatsService)
+    inversifyContainer.get<LeagueStatsService>(LeagueStatsService)
   );
 }
 
@@ -60,7 +59,7 @@ async function loadConfigAndDispatchErrors(): Promise<Configuration> {
 }
 
 function onConfigValid(cfg: Configuration) {
-  inversifyContainer.bind(symbols.Configuration).toConstantValue(cfg);
+  inversifyContainer.bind<Configuration>(Configuration).toConstantValue(cfg);
 
   startImportDirectoryWatch(cfg);
   registerConfigDependentIpcHandler();

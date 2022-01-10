@@ -7,7 +7,6 @@ import { injectable } from 'inversify';
 import { csvFileInformationByFileName } from './CsvFileService';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { MatchStatsService } from '../stats/MatchStatsService';
-import Configuration from '../../types/application/Configuration';
 import TeamStatsService from '../stats/TeamStatsService';
 import LeagueStatsService from '../stats/LeagueStatsService';
 

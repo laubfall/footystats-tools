@@ -5,6 +5,7 @@ import config from '../../../config';
 import { LeagueStats } from '../../types/stats/LeagueStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
+import Configuration from '../../types/application/Configuration';
 
 interface UniqueLeagueStats extends LeagueStats {
   unique: string;
@@ -18,9 +19,9 @@ export interface ILeagueStatsService {
 class LeagueStatsService implements ILeagueStatsService {
   readonly dbService: DbStoreService<UniqueLeagueStats>;
 
-  constructor(databasePath: string) {
+  constructor(configuration: Configuration) {
     this.dbService = new DbStoreService<UniqueLeagueStats>(
-      path.join(databasePath, config.matchStatsDbFileName)
+      path.join(configuration.databaseDirectory, config.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
   }
