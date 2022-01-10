@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
+import "reflect-metadata";
 import { fromUnixTime } from 'date-fns';
-import mss from '../../TestUtils';
+import mss from "../../TestUtils";
+
 
 describe('Test the match service', () => {
 

@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import path from 'path';
 import config from '../../../config';
 import { LeagueStats } from '../../types/stats/LeagueStats';
@@ -9,10 +10,10 @@ interface UniqueLeagueStats extends LeagueStats {
 }
 
 export interface ILeagueStatsService {
-  readLeagueStats(pathToLeagueStatsCsv: string): LeagueStats[];
   findeLeagueStatsBy(name: string, season: string): Promise<LeagueStats>;
 }
 
+@injectable()
 class LeagueStatsService implements ILeagueStatsService {
   readonly dbService: DbStoreService<UniqueLeagueStats>;
 

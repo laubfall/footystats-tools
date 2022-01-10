@@ -57,3 +57,4 @@ npm-debug.log.*
 
 # Visual Studio Code
 .vscode/tasks-context.json
+.history

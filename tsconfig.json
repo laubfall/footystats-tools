@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "CommonJS",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "esnext", "es6"],
     "declaration": true,
     "declarationMap": true,
     "noEmit": true,
@@ -20,7 +20,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "types": ["reflect-metadata"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "exclude": [
     "test",

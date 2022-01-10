@@ -1,6 +1,9 @@
+import 'reflect-metadata';
 import { add } from 'date-fns';
+import { injectable } from 'inversify';
 import path from 'path';
 import cfg from '../../../config';
+import Configuration from '../../types/application/Configuration';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
@@ -15,12 +18,13 @@ export interface IMatchStatsService {
   matchesByDay(day: Date): Promise<MatchStats[]>;
 }
 
+@injectable()
 export class MatchStatsService implements IMatchStatsService {
   readonly dbService: DbStoreService<UniqueMatch>;
 
-  constructor(databasePath: string) {
+  constructor(configuration: Configuration) {
     this.dbService = new DbStoreService<UniqueMatch>(
-      path.join(databasePath, cfg.matchStatsDbFileName)
+      path.join(configuration.databaseDirectory, cfg.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
   }

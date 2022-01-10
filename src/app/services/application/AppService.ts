@@ -11,7 +11,6 @@ import Configuration, {
   InvalidConfigurations,
 } from '../../types/application/Configuration';
 import watchImportDirectory from './FileSystemService';
-import CsvDataToDBService from './CsvDataToDBService';
 import {
   msgInvalidConfigurations,
   msgSimpleMessage,
@@ -20,19 +19,29 @@ import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import IpcMatchStatsService from '../stats/IpcMatchStatsService';
 import { MatchStatsService } from '../stats/MatchStatsService';
 import IpcNativeGuiService from './gui/IpcNativeGuiService';
-
-let csvDataToDBService: CsvDataToDBService;
+import inversifyContainer from '../inversify.config';
+import CsvDataToDBService from './CsvDataToDBService';
+import symbols from '../inversify.symbols';
+import IpcLeagueStatsService from '../stats/IpcLeagueStatsService';
+import LeagueStatsService from '../stats/LeagueStatsService';
 
 function startImportDirectoryWatch(config: Configuration) {
+  const csvDataToDBService = inversifyContainer.get<CsvDataToDBService>(
+    symbols.CsvDataToDBService
+  );
+
   watchImportDirectory(config.importDirectory, (e) =>
     csvDataToDBService.storeCsvData(e)
   );
   msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
 }
 
-function registerIpcInvokeServiceHandler(config: Configuration) {
+function registerIpcInvokeServiceHandler() {
   IpcMatchStatsService.registerInvokeHandler(
-    new MatchStatsService(config.databaseDirectory)
+    inversifyContainer.get<MatchStatsService>(symbols.MatchStatsService)
+  );
+  IpcLeagueStatsService.registerInvokeHandler(
+    inversifyContainer.get<LeagueStatsService>(symbols.LeagueStatsService)
   );
   IpcNativeGuiService.registerInvokeHandler();
 }
@@ -48,9 +57,10 @@ async function loadConfigAndDispatchErrors(): Promise<Configuration> {
 }
 
 function onConfigValid(cfg: Configuration) {
-  csvDataToDBService = new CsvDataToDBService(cfg);
+  inversifyContainer.bind(symbols.Configuration).toConstantValue(cfg);
+
   startImportDirectoryWatch(cfg);
-  registerIpcInvokeServiceHandler(cfg);
+  registerIpcInvokeServiceHandler();
 }
 
 function onConfigInvalid(ves: InvalidConfigurations[]) {

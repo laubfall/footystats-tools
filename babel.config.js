@@ -2,7 +2,12 @@
 
 const developmentEnvironments = ['development', 'test'];
 
-const developmentPlugins = [require('@babel/plugin-transform-runtime')];
+const developmentPlugins = [
+  require('@babel/plugin-transform-runtime'),
+  require('babel-plugin-transform-class-properties'),
+  require('babel-plugin-parameter-decorator'),
+  require('babel-plugin-transform-typescript-metadata'),
+];
 
 const productionPlugins = [
   require('babel-plugin-dev-expression'),

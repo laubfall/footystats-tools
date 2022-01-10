@@ -1,4 +1,6 @@
+import 'reflect-metadata';
 import fs from 'fs';
+import { injectable } from 'inversify';
 import { includes } from 'lodash';
 
 /**
@@ -12,6 +14,8 @@ export enum InvalidConfigurations {
 /**
  * User configuration, everthing a user can modify.
  */
+
+@injectable()
 export default class Configuration {
   databaseDirectory = '';
 
