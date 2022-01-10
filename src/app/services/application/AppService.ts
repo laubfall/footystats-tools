@@ -36,13 +36,16 @@ function startImportDirectoryWatch(config: Configuration) {
   msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
 }
 
-function registerIpcInvokeServiceHandler() {
+function registerConfigDependentIpcHandler() {
   IpcMatchStatsService.registerInvokeHandler(
     inversifyContainer.get<MatchStatsService>(symbols.MatchStatsService)
   );
   IpcLeagueStatsService.registerInvokeHandler(
     inversifyContainer.get<LeagueStatsService>(symbols.LeagueStatsService)
   );
+}
+
+function registerConfigIndependetIpcHandler() {
   IpcNativeGuiService.registerInvokeHandler();
 }
 
@@ -60,7 +63,7 @@ function onConfigValid(cfg: Configuration) {
   inversifyContainer.bind(symbols.Configuration).toConstantValue(cfg);
 
   startImportDirectoryWatch(cfg);
-  registerIpcInvokeServiceHandler();
+  registerConfigDependentIpcHandler();
 }
 
 function onConfigInvalid(ves: InvalidConfigurations[]) {
@@ -70,6 +73,7 @@ function onConfigInvalid(ves: InvalidConfigurations[]) {
 export default async function startApplication() {
   msgSimpleMessage(MainProcessMessageCodes.STARTED_IMPORT_DIRECTORY_WATCH);
   const config = loadConfigAndDispatchErrors();
-
   config.then(onConfigValid).catch(onConfigInvalid);
+
+  registerConfigIndependetIpcHandler();
 }
