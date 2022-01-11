@@ -45,7 +45,7 @@ src/style.css.map
 src/package-lock.json
 dist
 dll
-main.js
+./main.js
 main.js.map
 
 .idea

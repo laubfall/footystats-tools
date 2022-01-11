@@ -9,7 +9,6 @@ import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/Ipc2RendererService';
-import inversifySymbols from '../inversify.symbols';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
