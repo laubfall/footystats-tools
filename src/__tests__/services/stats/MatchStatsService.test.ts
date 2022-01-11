@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import "reflect-metadata";
 import { fromUnixTime } from 'date-fns';
-import mss from "../../TestUtils";
+import TestUtils from '../../TestUtils';
 
 
 describe('Test the match service', () => {
+  const mss = TestUtils.matchStatsService;
 
   it('Load matches', async () => {
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1630235153-username.csv`);

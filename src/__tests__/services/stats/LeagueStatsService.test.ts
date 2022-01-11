@@ -1,6 +1,6 @@
-import LeagueStatsService from '../../../app/services/stats/LeagueStatsService';
+import TestUtils from '../../TestUtils';
 
-const lss = new LeagueStatsService('inMemory');
+const lss = TestUtils.leagueStatsService;
 
 describe('Test the stats service', () => {
   it('Load team stats', async () => {

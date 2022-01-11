@@ -4,7 +4,9 @@ import {
   BetPredictionContext,
   Bet,
 } from '../../../app/types/prediction/BetPredictionContext';
-import mss from '../../TestUtils';
+import TestUtils from '../../TestUtils';
+
+const mss = TestUtils.matchStatsService;
 
 describe('PredictionService Tests', () => {
   it('Simple run', async () => {
