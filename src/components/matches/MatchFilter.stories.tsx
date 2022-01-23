@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { SingleValue } from 'react-select';
-import MatchFilter, { MatchFilterProps, SelectOption } from './MatchFilter';
+import { MatchFilter, MatchFilterProps, SelectOption } from './MatchFilter';
 
 export default {
   title: 'Components/match filter',
 };
 
 export const MatchFilterStory = () => {
-  const [selectedLeague, setSelectedLeague] = useState<
-    SingleValue<SelectOption>
-  >();
+  const [selectedLeague, setSelectedLeague] =
+    useState<SingleValue<SelectOption>>();
   const [timeFrom, setTimeFrom] = useState<Date>(new Date());
   const [timeUntil, setTimeUntil] = useState<Date>(new Date());
 
@@ -26,9 +25,9 @@ export const MatchFilterStory = () => {
   };
   return (
     <>
-      <span>{selectedLeague}</span>
-      <span>{timeFrom}</span>
-      <span>{timeUntil}</span>
+      <span>{selectedLeague?.label}</span>
+      <span>{timeFrom.toUTCString()}</span>
+      <span>{timeUntil.toUTCString()}</span>
       <MatchFilter
         leagueChanged={matchFilterProps.leagueChanged}
         leagues={matchFilterProps.leagues}

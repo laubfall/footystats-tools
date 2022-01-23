@@ -17,27 +17,23 @@ export type MatchFilterProps = {
   leagueChanged: (newSelectedLeague: SingleValue<SelectOption>) => void;
 };
 
-const MatchFilter = ({
+export const MatchFilter = ({
   leagues,
   timeFrom,
   timeUntil,
   timeFromChanged,
   timeUntilChanged,
   leagueChanged,
-}: MatchFilterProps) => {
-  return (
-    <Row>
-      <Col>
-        <Select options={leagues} onChange={leagueChanged} />
-      </Col>
-      <Col>
-        von: <DateTimePicker value={timeFrom} onChange={timeFromChanged} />
-      </Col>
-      <Col>
-        bis: <DateTimePicker value={timeUntil} onChange={timeUntilChanged} />
-      </Col>
-    </Row>
-  );
-};
-
-export default MatchFilter;
+}: MatchFilterProps) => (
+  <Row>
+    <Col>
+      <Select options={leagues} onChange={leagueChanged} />
+    </Col>
+    <Col>
+      <DateTimePicker value={timeFrom} onChange={timeFromChanged} />
+    </Col>
+    <Col>
+      <DateTimePicker value={timeUntil} onChange={timeUntilChanged} />
+    </Col>
+  </Row>
+);
