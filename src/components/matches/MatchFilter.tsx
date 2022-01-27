@@ -10,10 +10,10 @@ export type SelectOption = {
 
 export type MatchFilterProps = {
   leagues: SelectOption[];
-  timeFrom: Date;
-  timeUntil: Date;
-  timeFromChanged: (date: Date) => void;
-  timeUntilChanged: (date: Date) => void;
+  timeFrom?: Date;
+  timeUntil?: Date;
+  timeFromChanged?: (date: Date) => void;
+  timeUntilChanged?: (date: Date) => void;
   leagueChanged: (newSelectedLeague: SingleValue<SelectOption>) => void;
 };
 

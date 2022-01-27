@@ -25,9 +25,8 @@ import IpcLeagueStatsService from '../stats/IpcLeagueStatsService';
 import LeagueStatsService from '../stats/LeagueStatsService';
 
 function startImportDirectoryWatch(config: Configuration) {
-  const csvDataToDBService = inversifyContainer.get<CsvDataToDBService>(
-    CsvDataToDBService
-  );
+  const csvDataToDBService =
+    inversifyContainer.get<CsvDataToDBService>(CsvDataToDBService);
 
   watchImportDirectory(config.importDirectory, (e) =>
     csvDataToDBService.storeCsvData(e)

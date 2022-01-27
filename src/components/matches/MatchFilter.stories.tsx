@@ -26,8 +26,8 @@ export const MatchFilterStory = () => {
   return (
     <>
       <span>{selectedLeague?.label}</span>
-      <span>{timeFrom.toUTCString()}</span>
-      <span>{timeUntil.toUTCString()}</span>
+      <span>{timeFrom?.toUTCString()}</span>
+      <span>{timeUntil?.toUTCString()}</span>
       <MatchFilter
         leagueChanged={matchFilterProps.leagueChanged}
         leagues={matchFilterProps.leagues}

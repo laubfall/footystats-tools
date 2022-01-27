@@ -5,7 +5,7 @@ import cfg from '../../../config';
 export class DbStoreService<D> {
   private dbFile: string;
 
-  private DB: AsyncNedb<D>;
+  public readonly DB: AsyncNedb<D>;
 
   constructor(dbFile: string) {
     this.dbFile = dbFile;

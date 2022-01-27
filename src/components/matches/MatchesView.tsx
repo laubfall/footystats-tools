@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
-import MatchFilter from './MatchFilter';
+import { MatchFilter } from './MatchFilter';
 import { MatchList, MatchListEntry } from './MatchList';
 
 export const MatchesView = () => {
@@ -38,7 +38,10 @@ export const MatchesView = () => {
 
   return (
     <>
-      <MatchFilter />
+      <MatchFilter
+        leagueChanged={(newSelectedLeauge) => undefined}
+        leagues={[]}
+      />
       <MatchList entries={matches} />
     </>
   );

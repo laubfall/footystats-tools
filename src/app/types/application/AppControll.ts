@@ -5,18 +5,18 @@
  * These types can also be used to identify needed stats.
  */
 
-export interface Country {
+export type Country = {
   name: string;
-}
+};
 
-export interface League {
+export type League = {
   name: string;
   country: Country;
-}
+};
 
-export interface Season {
+export type Season = {
   name: string;
   league: League;
   yearFrom: string;
   yearTo: string;
-}
+};
