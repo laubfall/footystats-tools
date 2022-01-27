@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { LeagueStats } from '../../types/stats/LeagueStats';
-import { ipcRendererInvoke } from '../application/IpcRenderer2Main';
+import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import LeagueStatsService, { ILeagueStatsService } from './LeagueStatsService';
 
 class IpcLeagueStatsService implements ILeagueStatsService {

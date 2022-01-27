@@ -1,5 +1,5 @@
 import { ipcMain, OpenDialogReturnValue } from 'electron';
-import { ipcRendererInvoke, MSG_OPEN_DIALOG } from '../IpcRenderer2Main';
+import { ipcRendererInvoke, MSG_OPEN_DIALOG } from './IpcRenderer2Main';
 import INativeGuiService from './INativeGuiService';
 import NativeGuiService from './NativeGuiService';
 

@@ -14,7 +14,7 @@ import watchImportDirectory from './FileSystemService';
 import {
   msgInvalidConfigurations,
   msgSimpleMessage,
-} from './Ipc2RendererService';
+} from './gui/IpcMain2Renderer';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import IpcMatchStatsService from '../stats/IpcMatchStatsService';
 import { MatchStatsService } from '../stats/MatchStatsService';

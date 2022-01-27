@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import MatchStats from '../../types/stats/MatchStats';
-import { ipcRendererInvoke } from '../application/IpcRenderer2Main';
+import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import { MatchStatsService, IMatchStatsService } from './MatchStatsService';
 
 class IpcMatchStatsService implements IMatchStatsService {

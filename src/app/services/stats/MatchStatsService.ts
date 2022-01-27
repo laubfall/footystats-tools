@@ -8,7 +8,7 @@ import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
-import { msgSimpleMessage } from '../application/Ipc2RendererService';
+import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 
 interface UniqueMatch extends MatchStats {
   unique: string;

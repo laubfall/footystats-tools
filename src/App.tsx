@@ -5,7 +5,7 @@ import { HashRouter } from 'react-router-dom';
 import {
   subscribeMsgInvalidConfiguration,
   subscribeMsgSimpleMessage,
-} from './app/services/application/Ipc2RendererService';
+} from './app/services/application/gui/IpcMain2Renderer';
 import { ConfigurationView } from './components/configuration/ConfigurationView';
 import { MatchesView } from './components/matches/MatchesView';
 import { Menu } from './components/Menu';

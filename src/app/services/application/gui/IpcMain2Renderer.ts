@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcRenderer } from 'electron';
-import { InvalidConfigurations } from '../../types/application/Configuration';
-import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
+import { InvalidConfigurations } from '../../../types/application/Configuration';
+import { MainProcessMessageCodes } from '../../../types/application/MessageCodes';
 
 export const MSG_INVALID_CONFIGURATIONS = 'on-invalid-configs';
 
