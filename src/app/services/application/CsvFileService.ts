@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
-import lodash, { isNumber, join, slice, split, startsWith } from 'lodash';
+import lodash, { join, slice, split, startsWith } from 'lodash';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { Country, Season, League } from '../../types/application/AppControll';
 
@@ -10,8 +10,6 @@ export const IMPORTED_PREFIX = '.imported';
 export interface CsvFileInformation {
   type: CsvFileType;
   country?: Country;
-  season?: Season;
-  league?: League;
 }
 
 function csvFileTypeByName(name: string): CsvFileType | undefined {
@@ -44,23 +42,24 @@ export function csvFileInformationByFileName(
   const splittedFileName = split(fileNameWithoutExt, '-');
   const { length } = splittedFileName;
 
-  const country = { name: splittedFileName[0] };
+  const country = { name: splittedFileName[0] }; // this will fail in case of south korea...
   const ln = () => join(slice(splittedFileName, 1, length - 6 + 1), '-');
   const cvi: CsvFileInformation = {
     type: csvFileTypeByName(splittedFileName[length - 5]),
-    country,
-    league: {
-      country,
-      name: ln(),
-    },
-    season: {
-      yearFrom: splittedFileName[length - 4],
-      yearTo: splittedFileName[length - 2],
-      name: join(slice(splittedFileName, length - 4, length - 1), '-'),
-      league: {
-        country,
-        name: ln(),
-      },
+    country: {
+      name: country.name,
+      leagues: [
+        {
+          name: ln(),
+          seasons: [
+            {
+              yearFrom: splittedFileName[length - 4],
+              yearTo: splittedFileName[length - 2],
+              name: join(slice(splittedFileName, length - 4, length - 1), '-'),
+            },
+          ],
+        },
+      ],
     },
   };
 

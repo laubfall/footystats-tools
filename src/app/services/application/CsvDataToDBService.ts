@@ -37,12 +37,6 @@ class CsvDataToDBService {
         break;
     }
   }
-
-  public static addNewTeam(
-    commonName: string,
-    country: string,
-    league: string
-  ) {}
 }
 
 export default CsvDataToDBService;

@@ -31,10 +31,10 @@ describe('Tests for CsvFileService', () => {
     expect(cfi).not.toBeNull();
     expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
     expect(cfi.country?.name).toEqual('france');
-    expect(cfi.league?.name).toEqual('ligue-1');
-    expect(cfi.season?.name).toEqual('2020-to-2021');
-    expect(cfi.season?.yearFrom).toEqual('2020');
-    expect(cfi.season?.yearTo).toEqual('2021');
+    expect(cfi.country?.leagues?.[0].name).toEqual('ligue-1');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].name).toEqual('2020-to-2021');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearFrom).toEqual('2020');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearTo).toEqual('2021');
   });
 
   it('Get CSV File Information by filename - league stats - league with one token', () => {
@@ -45,10 +45,10 @@ describe('Tests for CsvFileService', () => {
     expect(cfi).not.toBeNull();
     expect(cfi.type).toEqual(CsvFileType.LEAGUE_STATS);
     expect(cfi.country?.name).toEqual('scotland');
-    expect(cfi.league?.name).toEqual('premiership');
-    expect(cfi.season?.name).toEqual('2020-to-2021');
-    expect(cfi.season?.yearFrom).toEqual('2020');
-    expect(cfi.season?.yearTo).toEqual('2021');
+    expect(cfi.country?.leagues?.[0].name).toEqual('premiership');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].name).toEqual('2020-to-2021');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearFrom).toEqual('2020');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearTo).toEqual('2021');
   });
 
   it('Get CSV File Information by filename - match stats - league with three token', () => {
@@ -59,10 +59,10 @@ describe('Tests for CsvFileService', () => {
     expect(cfi).not.toBeNull();
     expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
     expect(cfi.country?.name).toEqual('india');
-    expect(cfi.league?.name).toEqual('indian-super-league');
-    expect(cfi.season?.name).toEqual('2020-to-2021');
-    expect(cfi.season?.yearFrom).toEqual('2020');
-    expect(cfi.season?.yearTo).toEqual('2021');
+    expect(cfi.country?.leagues?.[0].name).toEqual('indian-super-league');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].name).toEqual('2020-to-2021');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearFrom).toEqual('2020');
+    expect(cfi.country?.leagues?.[0].seasons?.[0].yearTo).toEqual('2021');
   });
 
   it('Get matches CSV File Information', () => {
