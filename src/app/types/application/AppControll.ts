@@ -7,16 +7,16 @@
 
 export type Country = {
   name: string;
+  leagues?: League[];
 };
 
 export type League = {
   name: string;
-  country: Country;
+  seasons: Season[];
 };
 
 export type Season = {
   name: string;
-  league: League;
   yearFrom: string;
   yearTo: string;
 };

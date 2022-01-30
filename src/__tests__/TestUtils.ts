@@ -12,4 +12,5 @@ const lss = inversifyContainer.get<LeagueStatsService>(LeagueStatsService);
 export default {
   matchStatsService: mss,
   leagueStatsService: lss,
+  inversifyContainer,
 };
