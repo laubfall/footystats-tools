@@ -23,6 +23,8 @@ import inversifyContainer from '../inversify.config';
 import CsvDataToDBService from './CsvDataToDBService';
 import IpcLeagueStatsService from '../stats/IpcLeagueStatsService';
 import LeagueStatsService from '../stats/LeagueStatsService';
+import IpcAppControllService from './IpcAppControllService';
+import { AppControllService } from './AppControllService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService =
@@ -40,6 +42,9 @@ function registerConfigDependentIpcHandler() {
   );
   IpcLeagueStatsService.registerInvokeHandler(
     inversifyContainer.get<LeagueStatsService>(LeagueStatsService)
+  );
+  IpcAppControllService.registerInvokeHandler(
+    inversifyContainer.get<AppControllService>(AppControllService)
   );
 }
 

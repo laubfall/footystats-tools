@@ -3,7 +3,7 @@ import { Country, League, Season } from '../../types/application/AppControll';
 import Configuration from '../../types/application/Configuration';
 import DbService from './DbStoreService';
 
-export interface IAppControllService {
+export interface IAppControllService extends IIpcAppControllService {
   /**
    * Adds controll docs to the database. Checks all team docs without
    * @param country
@@ -17,19 +17,21 @@ export interface IAppControllService {
   ): Promise<boolean>;
 
   addTeam(team: string, country: Country): Promise<boolean>;
+}
 
+export interface IIpcAppControllService {
   findCountries(): Promise<Country[]>;
 }
 
 @injectable()
 export class AppControllService implements IAppControllService {
-  private countryDb: DbService<Country>;
+  private appControllDB: DbService<Country>;
 
   constructor(configuration: Configuration) {
-    this.countryDb = new DbService<Country>(
+    this.appControllDB = new DbService<Country>(
       `${configuration.databaseDirectory}/_appControll_Country.nedb`
     );
-    this.countryDb.createUniqueIndex('name');
+    this.appControllDB.createUniqueIndex('name');
   }
 
   async addCountryLeagueAndSeason(
@@ -51,10 +53,10 @@ export class AppControllService implements IAppControllService {
     };
 
     const expectedCountry: Country | undefined =
-      await this.countryDb.DB.asyncFindOne({ name: country });
+      await this.appControllDB.DB.asyncFindOne({ name: country });
 
     if (!expectedCountry || expectedCountry == null) {
-      this.countryDb.insert(c);
+      this.appControllDB.insert(c);
       return true;
     }
 
@@ -68,7 +70,7 @@ export class AppControllService implements IAppControllService {
       expectedCountry.leagues?.push(l);
     }
 
-    this.countryDb.DB.update(
+    this.appControllDB.DB.update(
       { name: country },
       { $set: { leagues: expectedCountry.leagues } }
     );
@@ -82,8 +84,6 @@ export class AppControllService implements IAppControllService {
   }
 
   findCountries(): Promise<Country[]> {
-    const c = this.countryDb.DB.getAllData();
-
-    return this.countryDb.loadAll();
+    return this.appControllDB.loadAll();
   }
 }
