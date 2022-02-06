@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import path from 'path';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
 import TeamStats from '../../types/stats/TeamStats';
@@ -15,16 +16,19 @@ export default class TeamStatsService {
 
   constructor(configuration: Configuration) {
     this.dbService = new DbStoreService<UniqueTeamStats>(
-      `${configuration.databaseDirectory}${cfg.teamStatsDbFileName}`
+      path.join(configuration.databaseDirectory, cfg.teamStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
   }
 
-  public readTeamStats(path: string): TeamStats[] {
-    if (alreadyImported(path)) {
+  public readTeamStats(importFilePath: string): TeamStats[] {
+    if (alreadyImported(importFilePath)) {
       return [];
     }
-    const teamStats = importFile<TeamStats>(path, false);
+    const teamStats = importFile<TeamStats>(
+      importFilePath,
+      cfg.markCsvFilesAsImported
+    );
 
     const uniqueTeamStats = teamStats.map((t) => {
       return {

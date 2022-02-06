@@ -1,6 +1,8 @@
 import TeamStatsService from '../../../app/services/stats/TeamStatsService';
+import TestUtils from '../../TestUtils';
 
-const tss = new TeamStatsService('inMemory');
+const tss =
+  TestUtils.inversifyContainer.get<TeamStatsService>(TeamStatsService);
 
 describe('Test the stats service', () => {
   it('Load team stats', async () => {

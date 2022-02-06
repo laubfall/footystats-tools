@@ -3,7 +3,7 @@ import fs from 'fs';
 import * as path from 'path';
 import lodash, { join, slice, split, startsWith } from 'lodash';
 import { CsvFileType } from '../../types/application/CsvFileType';
-import { Country, Season, League } from '../../types/application/AppControll';
+import { Country } from '../../types/application/AppControll';
 
 export const IMPORTED_PREFIX = '.imported';
 

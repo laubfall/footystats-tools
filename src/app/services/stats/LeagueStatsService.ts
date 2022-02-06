@@ -21,7 +21,7 @@ class LeagueStatsService implements ILeagueStatsService {
 
   constructor(configuration: Configuration) {
     this.dbService = new DbStoreService<UniqueLeagueStats>(
-      path.join(configuration.databaseDirectory, config.matchStatsDbFileName)
+      path.join(configuration.databaseDirectory, config.leagueStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
   }
@@ -37,7 +37,10 @@ class LeagueStatsService implements ILeagueStatsService {
     if (alreadyImported(pathToLeagueStatsCsv)) {
       return [];
     }
-    const leagueStats = importFile<LeagueStats>(pathToLeagueStatsCsv, false);
+    const leagueStats = importFile<LeagueStats>(
+      pathToLeagueStatsCsv,
+      config.markCsvFilesAsImported
+    );
 
     const uniqueLeagueStats = leagueStats.map((t) => {
       return {

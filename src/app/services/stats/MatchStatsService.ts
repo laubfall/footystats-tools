@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { add } from 'date-fns';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import path from 'path';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
