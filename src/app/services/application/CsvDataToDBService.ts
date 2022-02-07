@@ -4,6 +4,7 @@
 
 import path from 'path';
 import { injectable } from 'inversify';
+import log from 'electron-log';
 import {
   CsvFileInformation,
   csvFileInformationByFileName,
@@ -28,9 +29,9 @@ class CsvDataToDBService {
 
     const fi = csvFileInformationByFileName(fp.base);
     this.updateAppControllData(fi);
-    console.log(`Try to store csv data from file: ${pathToFile}`);
+    log.info(`Try to store csv data from file: ${pathToFile}`);
     switch (fi.type) {
-      case CsvFileType.LEAGUE_MATCH_STATS:
+      case CsvFileType.LEAGUE_STATS:
         this.leagueStatsService.readLeagueStats(pathToFile);
         break;
       case CsvFileType.MATCH_STATS:
@@ -40,6 +41,9 @@ class CsvDataToDBService {
         this.teamStatsService.readTeamStats(pathToFile);
         break;
       default:
+        log.warn(
+          `Don't know how to store csv data for file type ${fi.type} of file ${pathToFile}`
+        );
         break;
     }
   }

@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import path from 'path';
+import log from 'electron-log';
 import config from '../../../config';
 import { LeagueStats } from '../../types/stats/LeagueStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
@@ -50,7 +51,11 @@ class LeagueStatsService implements ILeagueStatsService {
     });
 
     uniqueLeagueStats.forEach((ul) => {
-      this.dbService.asyncUpsert({ unique: ul.unique }, { ...ul });
+      this.dbService
+        .asyncUpsert({ unique: ul.unique }, { ...ul })
+        .catch((reason) =>
+          log.error(`Failed to insert league stats to db`, reason)
+        );
     });
 
     return leagueStats;

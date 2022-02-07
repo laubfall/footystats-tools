@@ -73,6 +73,25 @@ describe('Tests for CsvFileService', () => {
     expect(cfi).not.toBeNull();
     expect(cfi.type).toEqual(CsvFileType.MATCH_STATS);
   });
+
+  it('Get CSV File Information by filename - france ligue 1', () => {
+    const cfi = csvFileInformationByFileName(
+      'france-ligue-1-league-2020-to-2021-stats.csv'
+    );
+    expect(cfi).not.toBeNull();
+    expect(cfi.type).toEqual(CsvFileType.LEAGUE_STATS);
+    expect(cfi.country?.name).toEqual('france');
+  });
+
+  it('Get CSV File Information by filename - belgium pro league', () => {
+    const cfi = csvFileInformationByFileName(
+      'belgium-pro-league-teams-2020-to-2021-stats.csv'
+    );
+    expect(cfi).not.toBeNull();
+    expect(cfi.type).toEqual(CsvFileType.TEAM_STATS);
+    expect(cfi.country?.name).toEqual('belgium');
+  });
+
   it('Import and expect File to be renamed', () => {
     importFile<MatchStats>(
       `${__dirname}/../../../../testdata/matches_expanded-1630235153-expectRenamed.csv`,

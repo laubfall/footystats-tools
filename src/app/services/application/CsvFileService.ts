@@ -2,6 +2,7 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import * as path from 'path';
 import lodash, { join, slice, split, startsWith } from 'lodash';
+import log from 'electron-log';
 import { CsvFileType } from '../../types/application/CsvFileType';
 import { Country } from '../../types/application/AppControll';
 
@@ -18,9 +19,9 @@ function csvFileTypeByName(name: string): CsvFileType | undefined {
       return CsvFileType.MATCH_STATS;
     case 'league':
       return CsvFileType.LEAGUE_STATS;
-    case 'team':
+    case 'teams':
       return CsvFileType.TEAM_STATS;
-    case 'team2':
+    case 'teams2':
       return CsvFileType.TEAM_2_STATS;
     case 'matches_expanded':
       return CsvFileType.LEAGUE_MATCH_STATS;
@@ -69,6 +70,7 @@ export function csvFileInformationByFileName(
 export function alreadyImported(pathToFile: string): boolean {
   const fileName = path.basename(pathToFile);
   if (fileName.endsWith(IMPORTED_PREFIX)) {
+    log.debug(`${pathToFile} is already imported`);
     return true;
   }
 
@@ -94,6 +96,7 @@ export function importFile<T>(
     dynamicTyping: true, // guess the type of the field (e.g. numbers will be stored without quotes)
     skipEmptyLines: true,
   });
+  log.debug(`Imported file ${pathToFile}`);
 
   if (markAsImported) {
     const dirName = path.dirname(pathToFile);
@@ -102,6 +105,7 @@ export function importFile<T>(
       pathToFile,
       path.format({ dir: dirName, name: fileName, ext: IMPORTED_PREFIX })
     );
+    log.debug(`Marked file as imported ${pathToFile}`);
   }
 
   return parseResult.data;
