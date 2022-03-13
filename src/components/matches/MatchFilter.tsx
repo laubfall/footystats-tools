@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { capitalize } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import DateTimePicker from 'react-datetime-picker';
@@ -90,8 +91,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
       const cSelOptions: SelectOption[] = [countryOptionAll];
       availableCountries.forEach((c) => {
         cSelOptions.push({
-          label: c.name,
-          value: c.name,
+          label: capitalize(c.name),
+          value: capitalize(c.name),
         });
       });
       setCountries(cSelOptions);
