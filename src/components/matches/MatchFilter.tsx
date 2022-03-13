@@ -10,11 +10,19 @@ export type SelectOption = {
   value: any;
 };
 
+export type FilterSettings = {
+  timeFrom?: Date;
+  timeUntil?: Date;
+  country: SelectOption;
+  league: SelectOption;
+};
+
 export type MatchFilterHocProps = {
   timeFromChanged?: (date: Date) => void;
   timeUntilChanged?: (date: Date) => void;
   countryChanged?: (newSelectedCountry: SingleValue<SelectOption>) => void;
   leagueChanged?: (newSelectedLeague: SingleValue<SelectOption>) => void;
+  somethingChanged?: (actualFilter: FilterSettings) => void;
 };
 
 export type MatchFilterProps = {
@@ -63,13 +71,16 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
     value: 'all',
   };
   const [selectedCountry, setSelectedCountry] =
-    useState<PropsValue<SelectOption>>(countryOptionAll);
+    useState<SelectOption>(countryOptionAll);
 
   const [leagues, setLeagues] = useState<SelectOption[]>([]);
   const leagueOptionAll: SelectOption = {
     label: 'All',
     value: 'all',
   };
+
+  const [timeFrom, setTimeFrom] = useState<Date>();
+  const [timeUntil, setTimeUntil] = useState<Date>();
 
   useEffect(() => {
     const appControllService = new IpcAppControllService();
@@ -128,6 +139,18 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
     }
   }
 
+  function onTimeFromChanged(timeFromNew: Date) {
+    if (props.somethingChanged) {
+      props.somethingChanged({
+        country: selectedCountry?.value,
+        league: undefined,
+        timeFromNew,
+        timeUntil,
+      });
+    }
+
+    setTimeFrom(timeFromNew);
+  }
   return (
     <>
       <MatchFilter
@@ -136,6 +159,10 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
         selectedCountry={selectedCountry}
         countryChanged={onChangeCountry}
         leagueChanged={onChangeLeague}
+        timeFromChanged={onTimeFromChanged}
+        timeUntilChanged={setTimeUntil}
+        timeFrom={timeFrom}
+        timeUntil={timeUntil}
       />
     </>
   );

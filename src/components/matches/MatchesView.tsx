@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
@@ -38,7 +39,14 @@ export const MatchesView = () => {
 
   return (
     <>
-      <MatchFilterHoc />
+      <Row>
+        <Col>
+          <MatchFilterHoc />
+        </Col>
+        <Col>
+          <Button name="doFilter">Filtern</Button>
+        </Col>
+      </Row>
       <MatchList entries={matches} />
     </>
   );

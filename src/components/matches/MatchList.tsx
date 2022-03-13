@@ -29,11 +29,6 @@ export const MatchList = ({ entries }: MatchListProps) => {
             {e.betPredictions?.map((bp) => {
               return <Col key={uniqueId()}>{bp.prediction}</Col>;
             })}
-            <Col>
-              <Button name="test" value="test" variant="secondary">
-                fkdsljf
-              </Button>
-            </Col>
           </Row>
         </>
       ))}
