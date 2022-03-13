@@ -14,7 +14,7 @@ export type FilterSettings = {
   timeFrom?: Date;
   timeUntil?: Date;
   country: SelectOption;
-  league: SelectOption;
+  league?: SelectOption;
 };
 
 export type MatchFilterHocProps = {
@@ -130,7 +130,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
       props.countryChanged(country);
     }
 
-    setSelectedCountry(country);
+    setSelectedCountry(country?.value);
   }
 
   function onChangeLeague(league: SingleValue<SelectOption>) {
@@ -144,13 +144,27 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
       props.somethingChanged({
         country: selectedCountry?.value,
         league: undefined,
-        timeFromNew,
+        timeFrom: timeFromNew,
         timeUntil,
       });
     }
 
     setTimeFrom(timeFromNew);
   }
+
+  function onTimeUntilChanged(timeUntilNew: Date) {
+    if (props.somethingChanged) {
+      props.somethingChanged({
+        country: selectedCountry?.value,
+        league: undefined,
+        timeFrom,
+        timeUntil: timeUntilNew,
+      });
+    }
+
+    setTimeUntil(timeUntilNew);
+  }
+
   return (
     <>
       <MatchFilter
@@ -160,7 +174,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
         countryChanged={onChangeCountry}
         leagueChanged={onChangeLeague}
         timeFromChanged={onTimeFromChanged}
-        timeUntilChanged={setTimeUntil}
+        timeUntilChanged={onTimeUntilChanged}
         timeFrom={timeFrom}
         timeUntil={timeUntil}
       />
