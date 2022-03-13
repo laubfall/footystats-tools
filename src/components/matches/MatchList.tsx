@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash';
 import React from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 
 export type BetPrediction = {
   betName: string;
@@ -10,6 +10,7 @@ export type BetPrediction = {
 export type MatchListEntry = {
   awayTeam: string;
   homeTeam: string;
+  country: string;
   betPredictions: BetPrediction[];
 };
 
@@ -26,6 +27,7 @@ export const MatchList = ({ entries }: MatchListProps) => {
           <Row key={uniqueId()}>
             <Col>{e.awayTeam}</Col>
             <Col>{e.homeTeam}</Col>
+            <Col>{e.country}</Col>
             {e.betPredictions?.map((bp) => {
               return <Col key={uniqueId()}>{bp.prediction}</Col>;
             })}

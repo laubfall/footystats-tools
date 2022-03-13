@@ -9,6 +9,7 @@ import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
+import { NDate, NString } from '../../types/General';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
@@ -16,6 +17,13 @@ interface UniqueMatch extends MatchStats {
 
 export interface IMatchStatsService {
   matchesByDay(day: Date): Promise<MatchStats[]>;
+
+  matchesByFilter(
+    country: NString,
+    league: NString,
+    from: NDate,
+    until: NDate
+  ): Promise<MatchStats[]>;
 }
 
 @injectable()
@@ -27,6 +35,33 @@ export class MatchStatsService implements IMatchStatsService {
       path.join(configuration.databaseDirectory, cfg.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
+  }
+
+  public async matchesByFilter(
+    country: NString,
+    league: NString,
+    from: NDate,
+    until: NDate
+  ): Promise<MatchStats[]> {
+    const constraints = [];
+    if (country != null) {
+      constraints.push({
+        Country: country,
+      });
+    }
+
+    if (league != null) {
+      constraints.push({
+        League: league,
+      });
+    }
+
+    let query = {};
+    if (constraints.length > 0) {
+      query = { $and: constraints };
+    }
+
+    return this.dbService.asyncFind(query);
   }
 
   public readMatches(pathToMatchesCsv: string) {

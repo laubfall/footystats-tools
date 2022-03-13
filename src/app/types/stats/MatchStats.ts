@@ -1,4 +1,4 @@
-export default interface MatchStats {
+export type MatchStats = {
   date_unix: number;
   date_GMT: number;
   Country: string;
@@ -106,4 +106,4 @@ export default interface MatchStats {
   'Away Team Overall Points Per Game (Pre-Match)': number;
   'Game Week': number;
   'Match FootyStats URL': string;
-}
+};

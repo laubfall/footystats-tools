@@ -4,17 +4,18 @@ import { Col, Row } from 'react-bootstrap';
 import DateTimePicker from 'react-datetime-picker';
 import Select, { PropsValue, SingleValue } from 'react-select';
 import IpcAppControllService from '../../app/services/application/IpcAppControllService';
+import { NString } from '../../app/types/General';
 
 export type SelectOption = {
   label: string;
-  value: any;
+  value: NString;
 };
 
 export type FilterSettings = {
   timeFrom?: Date;
   timeUntil?: Date;
-  country: SelectOption;
-  league?: SelectOption;
+  country: NString;
+  league: NString;
 };
 
 export type MatchFilterHocProps = {
@@ -68,15 +69,15 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   const [countries, setCountries] = useState<SelectOption[]>([]);
   const countryOptionAll: SelectOption = {
     label: 'All',
-    value: 'all',
+    value: null,
   };
   const [selectedCountry, setSelectedCountry] =
-    useState<SelectOption>(countryOptionAll);
+    useState<SingleValue<SelectOption>>(countryOptionAll);
 
   const [leagues, setLeagues] = useState<SelectOption[]>([]);
   const leagueOptionAll: SelectOption = {
     label: 'All',
-    value: 'all',
+    value: null,
   };
 
   const [timeFrom, setTimeFrom] = useState<Date>();
@@ -130,7 +131,16 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
       props.countryChanged(country);
     }
 
-    setSelectedCountry(country?.value);
+    if (props.somethingChanged && country != null) {
+      props.somethingChanged({
+        country: country.value,
+        league: null,
+        timeFrom,
+        timeUntil,
+      });
+    }
+
+    setSelectedCountry(country);
   }
 
   function onChangeLeague(league: SingleValue<SelectOption>) {
@@ -140,10 +150,10 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   }
 
   function onTimeFromChanged(timeFromNew: Date) {
-    if (props.somethingChanged) {
+    if (props.somethingChanged && selectedCountry != null) {
       props.somethingChanged({
-        country: selectedCountry?.value,
-        league: undefined,
+        country: selectedCountry.value,
+        league: null,
         timeFrom: timeFromNew,
         timeUntil,
       });
@@ -153,10 +163,10 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   }
 
   function onTimeUntilChanged(timeUntilNew: Date) {
-    if (props.somethingChanged) {
+    if (props.somethingChanged && selectedCountry != null) {
       props.somethingChanged({
-        country: selectedCountry?.value,
-        league: undefined,
+        country: selectedCountry.value,
+        league: null,
         timeFrom,
         timeUntil: timeUntilNew,
       });
