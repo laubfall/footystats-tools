@@ -35,6 +35,7 @@ export class MatchStatsService implements IMatchStatsService {
       path.join(configuration.databaseDirectory, cfg.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
+    this.dbService.DB.ensureIndex({ fieldName: 'date_unix' });
   }
 
   public async matchesByFilter(
@@ -89,7 +90,9 @@ export class MatchStatsService implements IMatchStatsService {
       query = { $and: constraints };
     }
 
-    return this.dbService.asyncFind(query);
+    return this.dbService.DB.asyncFind(query, [
+      ['sort', { date_unix: -1 }],
+    ] as unknown as UniqueMatch);
   }
 
   public readMatches(pathToMatchesCsv: string) {
