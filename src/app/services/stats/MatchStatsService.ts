@@ -58,13 +58,29 @@ export class MatchStatsService implements IMatchStatsService {
 
     if (from != null) {
       constraints.push({
-        date_unix: { $gte: from.getUTCSeconds() },
+        date_unix: {
+          $gte:
+            Date.UTC(
+              from.getUTCFullYear(),
+              from.getUTCMonth(),
+              from.getUTCDate(),
+              from.getUTCHours()
+            ) / 1000,
+        },
       });
     }
 
     if (until != null) {
       constraints.push({
-        date_unix: { $lt: until.getUTCSeconds() },
+        date_unix: {
+          $lt:
+            Date.UTC(
+              until.getUTCFullYear(),
+              until.getUTCMonth(),
+              until.getUTCDate(),
+              until.getUTCHours()
+            ) / 1000,
+        },
       });
     }
 

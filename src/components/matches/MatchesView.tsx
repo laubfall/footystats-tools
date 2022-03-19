@@ -21,6 +21,7 @@ export const MatchesView = () => {
       });
 
       const mle: MatchListEntry = {
+        gameStartsAt: ms.date_GMT,
         awayTeam: ms['Away Team'],
         homeTeam: ms['Home Team'],
         country: ms.Country,

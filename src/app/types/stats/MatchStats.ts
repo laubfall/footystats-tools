@@ -1,6 +1,6 @@
 export type MatchStats = {
   date_unix: number;
-  date_GMT: number;
+  date_GMT: string;
   Country: string;
   League: string;
   'Home Team': string;

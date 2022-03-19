@@ -8,6 +8,7 @@ export type BetPrediction = {
 };
 
 export type MatchListEntry = {
+  gameStartsAt: string;
   awayTeam: string;
   homeTeam: string;
   country: string;
@@ -25,6 +26,7 @@ export const MatchList = ({ entries }: MatchListProps) => {
       {entries.map((e) => (
         <>
           <Row key={uniqueId()}>
+            <Col>{e.gameStartsAt}</Col>
             <Col>{e.awayTeam}</Col>
             <Col>{e.homeTeam}</Col>
             <Col>{e.country}</Col>
