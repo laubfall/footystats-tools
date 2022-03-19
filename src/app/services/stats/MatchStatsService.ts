@@ -56,6 +56,18 @@ export class MatchStatsService implements IMatchStatsService {
       });
     }
 
+    if (from != null) {
+      constraints.push({
+        date_unix: { $gte: from.getUTCSeconds() },
+      });
+    }
+
+    if (until != null) {
+      constraints.push({
+        date_unix: { $lt: until.getUTCSeconds() },
+      });
+    }
+
     let query = {};
     if (constraints.length > 0) {
       query = { $and: constraints };

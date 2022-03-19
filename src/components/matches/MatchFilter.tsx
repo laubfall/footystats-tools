@@ -5,7 +5,7 @@ import { Col, Row } from 'react-bootstrap';
 import DateTimePicker from 'react-datetime-picker';
 import Select, { PropsValue, SingleValue } from 'react-select';
 import IpcAppControllService from '../../app/services/application/IpcAppControllService';
-import { NString } from '../../app/types/General';
+import { NDate, NString } from '../../app/types/General';
 
 export type SelectOption = {
   label: string;
@@ -13,8 +13,8 @@ export type SelectOption = {
 };
 
 export type FilterSettings = {
-  timeFrom?: Date;
-  timeUntil?: Date;
+  timeFrom: NDate;
+  timeUntil: NDate;
   country: NString;
   league: NString;
 };
@@ -31,8 +31,8 @@ export type MatchFilterProps = {
   selectedCountry?: PropsValue<SelectOption>;
   countries: SelectOption[];
   leagues: SelectOption[];
-  timeFrom?: Date;
-  timeUntil?: Date;
+  timeFrom?: NDate;
+  timeUntil?: NDate;
 } & MatchFilterHocProps;
 
 export const MatchFilter = ({
@@ -58,10 +58,10 @@ export const MatchFilter = ({
       <Select options={leagues} onChange={leagueChanged} />
     </Col>
     <Col>
-      <DateTimePicker value={timeFrom} onChange={timeFromChanged} />
+      <DateTimePicker value={timeFrom as Date} onChange={timeFromChanged} />
     </Col>
     <Col>
-      <DateTimePicker value={timeUntil} onChange={timeUntilChanged} />
+      <DateTimePicker value={timeUntil as Date} onChange={timeUntilChanged} />
     </Col>
   </Row>
 );
@@ -81,8 +81,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
     value: null,
   };
 
-  const [timeFrom, setTimeFrom] = useState<Date>();
-  const [timeUntil, setTimeUntil] = useState<Date>();
+  const [timeFrom, setTimeFrom] = useState<NDate>(null);
+  const [timeUntil, setTimeUntil] = useState<NDate>(null);
 
   useEffect(() => {
     const appControllService = new IpcAppControllService();

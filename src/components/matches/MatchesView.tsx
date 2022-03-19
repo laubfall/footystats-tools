@@ -59,7 +59,12 @@ export const MatchesView = () => {
         <Col md={9}>
           <MatchFilterHoc
             somethingChanged={(filter) => {
-              loadMatches(filter.country, filter.league, null, null);
+              loadMatches(
+                filter.country,
+                filter.league,
+                filter.timeFrom,
+                filter.timeUntil
+              );
             }}
           />
         </Col>
