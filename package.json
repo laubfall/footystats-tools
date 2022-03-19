@@ -286,6 +286,7 @@
     "papaparse": "^5.3.1",
     "react": "^17.0.1",
     "react-bootstrap": "^2.0.1",
+    "react-data-table-component": "^7.4.7",
     "react-datetime-picker": "^3.4.3",
     "react-dom": "^17.0.1",
     "react-router-dom": "6",
@@ -294,6 +295,7 @@
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
+    "styled-components": "^5.3.3",
     "tmp": "^0.2.1"
   },
   "devEngines": {

@@ -17,7 +17,7 @@
       "request": "launch",
       "protocol": "inspector",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:main --inspect-brk --remote-debugging-port=9223"],
+      "runtimeArgs": ["start:main --remote-debugging-port=9223"],
       "preLaunchTask": "Start Webpack Dev"
     },
     {
@@ -38,14 +38,5 @@
       "remoteRoot": "${workspaceFolder}"
     }
   ],
-  "compounds": [
-    {
-      "name": "Electron: All",
-      "configurations": [
-        "Electron: Main",
-        "Electron: Attach to Renderer",
-        "Electron: Attach to Main"
-      ]
-    }
-  ]
+  "compounds": []
 }

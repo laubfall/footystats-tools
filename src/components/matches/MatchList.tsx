@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 import React from 'react';
 import { Col, Row } from 'react-bootstrap';
+import DataTable, { TableColumn } from 'react-data-table-component';
 
 export type BetPrediction = {
   betName: string;
@@ -21,21 +22,28 @@ export type MatchListProps = {
 
 // eslint-disable-next-line import/prefer-default-export
 export const MatchList = ({ entries }: MatchListProps) => {
+  const columns: TableColumn<MatchListEntry>[] = [
+    {
+      name: 'Spielbeginn',
+      selector: (row) => row.gameStartsAt,
+    },
+    {
+      name: 'Heimteam',
+      selector: (row) => row.homeTeam,
+    },
+    {
+      name: 'Auswärtsteam',
+      selector: (row) => row.awayTeam,
+    },
+    {
+      name: 'Land',
+      selector: (row) => row.country,
+    },
+  ];
+
   return (
     <>
-      {entries.map((e) => (
-        <>
-          <Row key={uniqueId()}>
-            <Col>{e.gameStartsAt}</Col>
-            <Col>{e.awayTeam}</Col>
-            <Col>{e.homeTeam}</Col>
-            <Col>{e.country}</Col>
-            {e.betPredictions?.map((bp) => {
-              return <Col key={uniqueId()}>{bp.prediction}</Col>;
-            })}
-          </Row>
-        </>
-      ))}
+      <DataTable columns={columns} data={entries} pagination />
     </>
   );
 };
