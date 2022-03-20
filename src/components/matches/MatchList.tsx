@@ -1,7 +1,5 @@
-import { uniqueId } from 'lodash';
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
-import DataTable, { TableColumn } from 'react-data-table-component';
+import DataTable, { SortOrder, TableColumn } from 'react-data-table-component';
 
 export type BetPrediction = {
   betName: string;
@@ -18,14 +16,17 @@ export type MatchListEntry = {
 
 export type MatchListProps = {
   entries: MatchListEntry[];
+  sortHandler: SortHandler;
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const MatchList = ({ entries }: MatchListProps) => {
+export const MatchList = ({ entries, sortHandler }: MatchListProps) => {
   const columns: TableColumn<MatchListEntry>[] = [
     {
       name: 'Spielbeginn',
       selector: (row) => row.gameStartsAt,
+      sortable: true,
+      sortField: 'date_unix',
     },
     {
       name: 'Heimteam',
@@ -43,7 +44,17 @@ export const MatchList = ({ entries }: MatchListProps) => {
 
   return (
     <>
-      <DataTable columns={columns} data={entries} pagination />
+      <DataTable
+        columns={columns}
+        data={entries}
+        onSort={sortHandler}
+        pagination
+        sortServer
+      />
     </>
   );
+};
+
+export type SortHandler = {
+  (column: TableColumn<MatchListEntry>, sortDirection: SortOrder): void;
 };

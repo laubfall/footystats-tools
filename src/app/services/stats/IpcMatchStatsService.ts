@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { NString, NDate } from '../../types/General';
 import { MatchStats } from '../../types/stats/MatchStats';
+import { CursorModification } from '../application/DbStoreService';
 import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import { MatchStatsService, IMatchStatsService } from './MatchStatsService';
 
@@ -9,14 +10,16 @@ class IpcMatchStatsService implements IMatchStatsService {
     country: NString,
     league: NString,
     from: NDate,
-    until: NDate
+    until: NDate,
+    cursorModification?: CursorModification[]
   ): Promise<MatchStats[]> {
     return ipcRendererInvoke(
       this.matchesByFilter.name,
       country,
       league,
       from,
-      until
+      until,
+      cursorModification
     );
   }
 
@@ -35,7 +38,8 @@ class IpcMatchStatsService implements IMatchStatsService {
         args[1][0],
         args[1][1],
         args[1][2],
-        args[1][3]
+        args[1][3],
+        args[1][4]
       );
     });
   }

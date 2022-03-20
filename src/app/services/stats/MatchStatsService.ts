@@ -7,7 +7,10 @@ import Configuration from '../../types/application/Configuration';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import MatchStats from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
-import { DbStoreService } from '../application/DbStoreService';
+import {
+  CursorModification,
+  DbStoreService,
+} from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../types/General';
 
@@ -22,7 +25,8 @@ export interface IMatchStatsService {
     country: NString,
     league: NString,
     from: NDate,
-    until: NDate
+    until: NDate,
+    cursorModification?: CursorModification[]
   ): Promise<MatchStats[]>;
 }
 
@@ -42,7 +46,8 @@ export class MatchStatsService implements IMatchStatsService {
     country: NString,
     league: NString,
     from: NDate,
-    until: NDate
+    until: NDate,
+    cursorModification?: CursorModification[]
   ): Promise<MatchStats[]> {
     const constraints = [];
     if (country != null) {
@@ -90,9 +95,7 @@ export class MatchStatsService implements IMatchStatsService {
       query = { $and: constraints };
     }
 
-    return this.dbService.asyncFind(query, [
-      { modification: 'sort', parameter: { date_unix: -1 } },
-    ]);
+    return this.dbService.asyncFind(query, cursorModification);
   }
 
   public readMatches(pathToMatchesCsv: string) {

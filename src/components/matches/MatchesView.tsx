@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
+import {
+  CursorModification,
+  SortOrder,
+} from '../../app/services/application/DbStoreService';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
 import { NDate, NString } from '../../app/types/General';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { MatchStats } from '../../app/types/stats/MatchStats';
-import { MatchFilterHoc } from './MatchFilter';
-import { MatchList, MatchListEntry } from './MatchList';
+import { FilterSettings, MatchFilterHoc } from './MatchFilter';
+import { MatchList, MatchListEntry, SortHandler } from './MatchList';
 
 export const MatchesView = () => {
   const [matches, setMatches] = useState<MatchListEntry[]>([]);
+  const [filter, setFilter] = useState<FilterSettings>({
+    country: null,
+    league: null,
+    timeFrom: null,
+    timeUntil: null,
+  });
 
   function calcPredictions(n: MatchStats[]) {
     const r = n.map((ms) => {
@@ -37,18 +47,40 @@ export const MatchesView = () => {
     country: NString,
     league: NString,
     from: NDate,
-    until: NDate
+    until: NDate,
+    cursorModification?: CursorModification[]
   ) {
     const mss = new IpcMatchStatsService();
     // eslint-disable-next-line promise/always-return
     mss
-      .matchesByFilter(country, league, from, until)
+      .matchesByFilter(country, league, from, until, cursorModification)
       // eslint-disable-next-line promise/always-return
       .then((n) => {
         calcPredictions(n);
       })
       .catch((reason) => console.log(reason));
   }
+
+  const sortHandler: SortHandler = (column, sortOrder) => {
+    let sort: SortOrder = -1;
+    if (sortOrder === 'asc') {
+      sort = 1;
+    } else {
+      sort = -1;
+    }
+    loadMatches(
+      filter.country,
+      filter.league,
+      filter.timeFrom,
+      filter.timeUntil,
+      [
+        {
+          modification: 'sort',
+          parameter: { [column.sortField as string]: sort },
+        },
+      ]
+    );
+  };
 
   useEffect(() => {
     loadMatches(null, null, null, null);
@@ -59,13 +91,14 @@ export const MatchesView = () => {
       <Row>
         <Col md={9}>
           <MatchFilterHoc
-            somethingChanged={(filter) => {
+            somethingChanged={(changedFilter) => {
               loadMatches(
-                filter.country,
-                filter.league,
-                filter.timeFrom,
-                filter.timeUntil
+                changedFilter.country,
+                changedFilter.league,
+                changedFilter.timeFrom,
+                changedFilter.timeUntil
               );
+              setFilter(changedFilter);
             }}
           />
         </Col>
@@ -73,7 +106,7 @@ export const MatchesView = () => {
           <Button name="doFilter">Filtern</Button>
         </Col>
       </Row>
-      <MatchList entries={matches} />
+      <MatchList entries={matches} sortHandler={sortHandler} />
     </>
   );
 };

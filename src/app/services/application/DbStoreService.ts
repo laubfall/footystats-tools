@@ -75,8 +75,10 @@ export class DbStoreService<D> {
 
 export type CursorModificationType = 'sort' | 'skip' | 'limit';
 
+export type SortOrder = 1 | -1;
+
 export type SortParameter = {
-  [key: string]: 1 | -1;
+  [key: string]: SortOrder;
 };
 
 export type CursorModification = {
