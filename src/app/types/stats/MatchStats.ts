@@ -25,7 +25,7 @@ export type MatchStats = {
   'Average Over 8dot5 Corners': number;
   'Average Over 9dot5 Corners': number;
   'Average Over 10dot5 Corners': number;
-  'Match Status': number;
+  'Match Status': MatchStatus;
   'Result - Home Team Goals': number;
   'Result - Away Team Goals': number;
   'Home Team Corners': number;
@@ -107,3 +107,5 @@ export type MatchStats = {
   'Game Week': number;
   'Match FootyStats URL': string;
 };
+
+export type MatchStatus = 'complete' | 'incomplete';

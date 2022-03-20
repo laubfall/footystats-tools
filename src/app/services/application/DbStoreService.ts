@@ -45,7 +45,22 @@ export class DbStoreService<D> {
     return this.DB.asyncFind<D>({});
   }
 
-  public async asyncFind(filter: any): Promise<D[]> {
+  public async asyncFind(
+    filter: any,
+    cursorModification?: CursorModification[]
+  ): Promise<D[]> {
+    let cursorMods: CursorModifications[][];
+
+    if (cursorModification) {
+      cursorMods = [];
+      cursorModification?.forEach((cm) => {
+        const mod: CursorModifications[] = [];
+        mod.push(cm.modification);
+        mod.push(cm.parameter);
+        cursorMods.push(mod);
+      });
+      return this.DB.asyncFind<D>(filter, cursorMods as unknown as D);
+    }
     return this.DB.asyncFind<D>(filter);
   }
 
@@ -57,5 +72,18 @@ export class DbStoreService<D> {
     return this.DB.asyncUpdate(query, updateQuery, { upsert: true });
   }
 }
+
+export type CursorModificationType = 'sort' | 'skip' | 'limit';
+
+export type SortParameter = {
+  [key: string]: 1 | -1;
+};
+
+export type CursorModification = {
+  modification: CursorModificationType;
+  parameter: number | SortParameter;
+};
+
+type CursorModifications = string | number | SortParameter;
 
 export default DbStoreService;

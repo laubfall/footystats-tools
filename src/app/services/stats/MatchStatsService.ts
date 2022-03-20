@@ -90,9 +90,9 @@ export class MatchStatsService implements IMatchStatsService {
       query = { $and: constraints };
     }
 
-    return this.dbService.DB.asyncFind(query, [
-      ['sort', { date_unix: -1 }],
-    ] as unknown as UniqueMatch);
+    return this.dbService.asyncFind(query, [
+      { modification: 'sort', parameter: { date_unix: -1 } },
+    ]);
   }
 
   public readMatches(pathToMatchesCsv: string) {
