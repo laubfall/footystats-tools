@@ -1,5 +1,9 @@
 import React from 'react';
 import DataTable, { SortOrder, TableColumn } from 'react-data-table-component';
+import {
+  PaginationChangePage,
+  PaginationChangeRowsPerPage,
+} from 'react-data-table-component/dist/src/DataTable/types';
 
 export type BetPrediction = {
   betName: string;
@@ -16,11 +20,20 @@ export type MatchListEntry = {
 
 export type MatchListProps = {
   entries: MatchListEntry[];
+  totalRows: number;
   sortHandler: SortHandler;
+  pageChange?: PaginationChangePage;
+  pageSizeChange?: PaginationChangeRowsPerPage;
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const MatchList = ({ entries, sortHandler }: MatchListProps) => {
+export const MatchList = ({
+  entries,
+  totalRows,
+  sortHandler,
+  pageChange,
+  pageSizeChange,
+}: MatchListProps) => {
   const columns: TableColumn<MatchListEntry>[] = [
     {
       name: 'Spielbeginn',
@@ -48,8 +61,12 @@ export const MatchList = ({ entries, sortHandler }: MatchListProps) => {
         columns={columns}
         data={entries}
         onSort={sortHandler}
+        onChangePage={pageChange}
+        onChangeRowsPerPage={pageSizeChange}
+        paginationTotalRows={totalRows}
         pagination
         sortServer
+        paginationServer
       />
     </>
   );

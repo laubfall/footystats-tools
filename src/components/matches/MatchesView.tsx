@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import {
+  PaginationChangePage,
+  PaginationChangeRowsPerPage,
+} from 'react-data-table-component/dist/src/DataTable/types';
+import {
   CursorModification,
-  PagedResult,
   SortOrder,
 } from '../../app/services/application/DbStoreService';
 import prediction from '../../app/services/prediction/PredictionService';
@@ -15,6 +18,8 @@ import { MatchList, MatchListEntry, SortHandler } from './MatchList';
 
 export const MatchesView = () => {
   const [matches, setMatches] = useState<MatchListEntry[]>([]);
+  const [totalRows, setTotalRows] = useState<number>(0);
+  const [perPage, setPerPage] = useState(10);
   const [filter, setFilter] = useState<FilterSettings>({
     country: null,
     league: null,
@@ -57,6 +62,7 @@ export const MatchesView = () => {
       .matchesByFilter(country, league, from, until, cursorModification)
       // eslint-disable-next-line promise/always-return
       .then((n) => {
+        setTotalRows(n[0]);
         calcPredictions(n[1]);
       })
       .catch((reason) => console.log(reason));
@@ -83,9 +89,27 @@ export const MatchesView = () => {
     );
   };
 
+  const changePageHandler: PaginationChangePage = (page) => {
+    loadMatches(null, null, null, null, [
+      { modification: 'limit', parameter: perPage },
+      { modification: 'skip', parameter: page },
+    ]);
+  };
+
+  const changePageSizeHandler: PaginationChangeRowsPerPage = (
+    newPerPage,
+    page
+  ) => {
+    loadMatches(null, null, null, null, [
+      { modification: 'limit', parameter: newPerPage },
+      { modification: 'skip', parameter: page },
+    ]);
+    setPerPage(perPage);
+  };
+
   useEffect(() => {
     loadMatches(null, null, null, null, [
-      { modification: 'limit', parameter: 5 },
+      { modification: 'limit', parameter: perPage },
     ]);
   }, []);
 
@@ -109,7 +133,13 @@ export const MatchesView = () => {
           <Button name="doFilter">Filtern</Button>
         </Col>
       </Row>
-      <MatchList entries={matches} sortHandler={sortHandler} />
+      <MatchList
+        entries={matches}
+        totalRows={totalRows}
+        sortHandler={sortHandler}
+        pageChange={changePageHandler}
+        pageSizeChange={changePageSizeHandler}
+      />
     </>
   );
 };
