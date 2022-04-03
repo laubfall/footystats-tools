@@ -16,10 +16,29 @@ import { MatchStats } from '../../app/types/stats/MatchStats';
 import { FilterSettings, MatchFilterHoc } from './MatchFilter';
 import { MatchList, MatchListEntry, SortHandler } from './MatchList';
 
+function createMatchListConstraints(
+  page: number,
+  sizePerPage: number,
+  sortOrder: SortOrder,
+  sortColumn?: string
+): CursorModification[] {
+  return [
+    { modification: 'limit', parameter: sizePerPage },
+    { modification: 'skip', parameter: page },
+    {
+      modification: 'sort',
+      parameter: { [sortColumn as string]: sortOrder },
+    },
+  ];
+}
+
 export const MatchesView = () => {
   const [matches, setMatches] = useState<MatchListEntry[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [perPage, setPerPage] = useState(10);
+  const [page, setPage] = useState(0);
+  const [sortColumn, setSortColumn] = useState<string | undefined>('date_unix');
+  const [sortOrder, setSortOrder] = useState<SortOrder>(-1);
   const [filter, setFilter] = useState<FilterSettings>({
     country: null,
     league: null,
@@ -68,49 +87,51 @@ export const MatchesView = () => {
       .catch((reason) => console.log(reason));
   }
 
-  const sortHandler: SortHandler = (column, sortOrder) => {
-    let sort: SortOrder = -1;
-    if (sortOrder === 'asc') {
-      sort = 1;
-    } else {
-      sort = -1;
-    }
+  const sortHandler: SortHandler = (column, newSortOrder) => {
+    setSortOrder(newSortOrder === 'asc' ? 1 : -1);
+    setSortColumn(column.sortField);
     loadMatches(
       filter.country,
       filter.league,
       filter.timeFrom,
       filter.timeUntil,
-      [
-        {
-          modification: 'sort',
-          parameter: { [column.sortField as string]: sort },
-        },
-      ]
+      createMatchListConstraints(page, perPage, sortOrder, column.sortField)
     );
   };
 
-  const changePageHandler: PaginationChangePage = (page) => {
-    loadMatches(null, null, null, null, [
-      { modification: 'limit', parameter: perPage },
-      { modification: 'skip', parameter: page },
-    ]);
+  const changePageHandler: PaginationChangePage = (newPage) => {
+    setPage(newPage);
+    loadMatches(
+      filter.country,
+      filter.league,
+      filter.timeFrom,
+      filter.timeUntil,
+      createMatchListConstraints(newPage, perPage, sortOrder, sortColumn)
+    );
   };
 
   const changePageSizeHandler: PaginationChangeRowsPerPage = (
     newPerPage,
-    page
+    currentPage
   ) => {
-    loadMatches(null, null, null, null, [
-      { modification: 'limit', parameter: newPerPage },
-      { modification: 'skip', parameter: page },
-    ]);
+    loadMatches(
+      filter.country,
+      filter.league,
+      filter.timeFrom,
+      filter.timeUntil,
+      createMatchListConstraints(currentPage, newPerPage, sortOrder, sortColumn)
+    );
     setPerPage(perPage);
   };
 
   useEffect(() => {
-    loadMatches(null, null, null, null, [
-      { modification: 'limit', parameter: perPage },
-    ]);
+    loadMatches(
+      null,
+      null,
+      null,
+      null,
+      createMatchListConstraints(page, perPage, sortOrder, sortColumn)
+    );
   }, []);
 
   return (
@@ -123,7 +144,8 @@ export const MatchesView = () => {
                 changedFilter.country,
                 changedFilter.league,
                 changedFilter.timeFrom,
-                changedFilter.timeUntil
+                changedFilter.timeUntil,
+                createMatchListConstraints(page, perPage, sortOrder, sortColumn)
               );
               setFilter(changedFilter);
             }}
