@@ -14,6 +14,7 @@ import {
 } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../types/General';
+import { loadConfig } from '../application/ConfigurationService';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
@@ -99,7 +100,7 @@ export class MatchStatsService implements IMatchStatsService {
     return this.dbService.asyncFind(query, cursorModification);
   }
 
-  public readMatches(pathToMatchesCsv: string) {
+  public async readMatches(pathToMatchesCsv: string) {
     if (alreadyImported(pathToMatchesCsv)) {
       return;
     }
@@ -107,7 +108,8 @@ export class MatchStatsService implements IMatchStatsService {
     const matches = importFile<MatchStats>(
       pathToMatchesCsv,
       cfg.markCsvFilesAsImported
-    );
+    ).filter((ms) => ms.Country !== 'Esports');
+
     const uniqueMatches: UniqueMatch[] = matches.map((m) => {
       return {
         ...m,

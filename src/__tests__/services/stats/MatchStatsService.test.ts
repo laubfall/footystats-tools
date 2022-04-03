@@ -18,7 +18,7 @@ describe('Test the match service', () => {
     expect(result.length).toEqual(1);
   });
 
-  it('Load matches and do it again after a match is finished', async () => {
+  it('Load matches and do it again after a match is finished, ignore Esports matches', async () => {
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1641239361-completed-match-test.csv`);
 
     let result = await mss.matchesByDay(new Date(2022,0,3));
@@ -30,7 +30,7 @@ describe('Test the match service', () => {
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1641328373-completed-match-test.csv`);
     result = await mss.matchesByDay(new Date(2022,0,3));
     expect(result).not.toBeNull();
-    expect(result.length).toEqual(1);
+    expect(result.length).toEqual(1); // file contains one esports match, we ignore this one
 
     // eslint-disable-next-line prefer-destructuring
     match = result[0];
