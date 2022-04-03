@@ -48,17 +48,31 @@ export class DbStoreService<D> {
   public async asyncFind(
     filter: any,
     cursorModification?: CursorModification[]
-  ): Promise<D[]> {
+  ): Promise<Result<D>> {
     let cursorMods: CursorModifications[][];
 
     if (cursorModification) {
       cursorMods = [];
+      let pagination = false;
       cursorModification?.forEach((cm) => {
         const mod: CursorModifications[] = [];
         mod.push(cm.modification);
         mod.push(cm.parameter);
         cursorMods.push(mod);
+        if (cm.modification === 'limit') {
+          pagination = true;
+        }
       });
+
+      if (pagination) {
+        const c = Promise.all([
+          this.DB.asyncCount(filter) as Promise<number>,
+          this.DB.asyncFind<D>(filter, cursorMods as unknown as D),
+        ]);
+
+        return c;
+      } // paginate
+
       return this.DB.asyncFind<D>(filter, cursorMods as unknown as D);
     }
     return this.DB.asyncFind<D>(filter);
@@ -85,6 +99,10 @@ export type CursorModification = {
   modification: CursorModificationType;
   parameter: number | SortParameter;
 };
+
+export type PagedResult<JSON> = [number, Array<JSON>];
+
+export type Result<JSON> = Array<JSON> | PagedResult<JSON>;
 
 type CursorModifications = string | number | SortParameter;
 

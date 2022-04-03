@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import {
   CursorModification,
+  PagedResult,
   SortOrder,
 } from '../../app/services/application/DbStoreService';
 import prediction from '../../app/services/prediction/PredictionService';
@@ -56,7 +57,7 @@ export const MatchesView = () => {
       .matchesByFilter(country, league, from, until, cursorModification)
       // eslint-disable-next-line promise/always-return
       .then((n) => {
-        calcPredictions(n);
+        calcPredictions(n[1]);
       })
       .catch((reason) => console.log(reason));
   }
@@ -83,7 +84,9 @@ export const MatchesView = () => {
   };
 
   useEffect(() => {
-    loadMatches(null, null, null, null);
+    loadMatches(null, null, null, null, [
+      { modification: 'limit', parameter: 5 },
+    ]);
   }, []);
 
   return (

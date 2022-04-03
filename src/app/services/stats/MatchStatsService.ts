@@ -10,6 +10,7 @@ import { alreadyImported, importFile } from '../application/CsvFileService';
 import {
   CursorModification,
   DbStoreService,
+  Result,
 } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../types/General';
@@ -27,7 +28,7 @@ export interface IMatchStatsService {
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
-  ): Promise<MatchStats[]>;
+  ): Promise<Result<MatchStats>>;
 }
 
 @injectable()
@@ -48,7 +49,7 @@ export class MatchStatsService implements IMatchStatsService {
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
-  ): Promise<MatchStats[]> {
+  ): Promise<Result<MatchStats>> {
     const constraints = [];
     if (country != null) {
       constraints.push({

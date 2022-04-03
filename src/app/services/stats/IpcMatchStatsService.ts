@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { NString, NDate } from '../../types/General';
 import { MatchStats } from '../../types/stats/MatchStats';
-import { CursorModification } from '../application/DbStoreService';
+import { CursorModification, PagedResult } from '../application/DbStoreService';
 import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import { MatchStatsService, IMatchStatsService } from './MatchStatsService';
 
@@ -12,7 +12,7 @@ class IpcMatchStatsService implements IMatchStatsService {
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
-  ): Promise<MatchStats[]> {
+  ): Promise<PagedResult<MatchStats>> {
     return ipcRendererInvoke(
       this.matchesByFilter.name,
       country,
