@@ -1,4 +1,4 @@
-import BetPredictionContext from './BetPredictionContext';
+import { BetPredictionContext } from './BetPredictionContext';
 
 export enum NotExecutedCause {
   // The current BetResult Influencer misses some information inside the BetPredictionContext
@@ -11,7 +11,7 @@ export enum NotExecutedCause {
 }
 
 export type BetInfluencerCalculation = {
-  // Influence for the chosen bet. Higher value means more influence
+  // Influence for the chosen bet. Higher value means more influence. Expected values 0-100.
   amount: number;
   // when set the influencer did not calculated the influece for the chosen bet.
   notExecutedCause?: NotExecutedCause;

@@ -4,9 +4,10 @@ import {
   PaginationChangePage,
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
+import { Bet } from '../../app/types/prediction/BetPredictionContext';
 
 export type BetPrediction = {
-  betName: string;
+  bet: Bet;
   prediction: number;
 };
 
@@ -24,6 +25,7 @@ export type MatchListProps = {
   sortHandler: SortHandler;
   pageChange?: PaginationChangePage;
   pageSizeChange?: PaginationChangeRowsPerPage;
+  predictionForBets?: Bet[];
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -33,7 +35,18 @@ export const MatchList = ({
   sortHandler,
   pageChange,
   pageSizeChange,
+  predictionForBets,
 }: MatchListProps) => {
+  const predictionColumns =
+    predictionForBets?.map((bet) => {
+      const tr: TableColumn<MatchListEntry> = {
+        name: bet,
+        selector: (row) =>
+          row.betPredictions.find((v) => v.bet === bet)?.prediction || '',
+      };
+      return tr;
+    }) || [];
+
   const columns: TableColumn<MatchListEntry>[] = [
     {
       name: 'Spielbeginn',
@@ -53,6 +66,7 @@ export const MatchList = ({
       name: 'Land',
       selector: (row) => row.country,
     },
+    ...predictionColumns,
   ];
 
   return (

@@ -60,7 +60,9 @@ export const MatchesView = () => {
         awayTeam: ms['Away Team'],
         homeTeam: ms['Home Team'],
         country: ms.Country,
-        betPredictions: [{ betName: 'Over', prediction: predictionNumber }],
+        betPredictions: [
+          { bet: Bet.OVER_ZERO_FIVE, prediction: predictionNumber },
+        ],
       };
 
       return mle;
@@ -161,6 +163,7 @@ export const MatchesView = () => {
         sortHandler={sortHandler}
         pageChange={changePageHandler}
         pageSizeChange={changePageSizeHandler}
+        predictionForBets={[Bet.OVER_ZERO_FIVE]}
       />
     </>
   );
