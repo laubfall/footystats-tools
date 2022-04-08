@@ -60,6 +60,11 @@ export const MatchesView = () => {
         awayTeam: ms['Away Team'],
         homeTeam: ms['Home Team'],
         country: ms.Country,
+        result:
+          ms['Match Status'] === 'complete'
+            ? `
+        ${ms['Result - Home Team Goals']} : ${ms['Result - Away Team Goals']}`
+            : '-',
         betPredictions: [
           { bet: Bet.OVER_ZERO_FIVE, prediction: predictionNumber },
         ],

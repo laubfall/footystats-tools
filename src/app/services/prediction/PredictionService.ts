@@ -29,5 +29,5 @@ export default function prediction(ctx: BetPredictionContext): number {
     }
   });
 
-  return result;
+  return Math.round(result);
 }

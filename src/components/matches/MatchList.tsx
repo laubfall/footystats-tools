@@ -16,6 +16,7 @@ export type MatchListEntry = {
   awayTeam: string;
   homeTeam: string;
   country: string;
+  result: string;
   betPredictions: BetPrediction[];
 };
 
@@ -65,6 +66,10 @@ export const MatchList = ({
     {
       name: 'Land',
       selector: (row) => row.country,
+    },
+    {
+      name: 'Ergebnis',
+      selector: (row) => row.result,
     },
     ...predictionColumns,
   ];
