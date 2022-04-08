@@ -24,7 +24,7 @@ function createMatchListConstraints(
 ): CursorModification[] {
   return [
     { modification: 'limit', parameter: sizePerPage },
-    { modification: 'skip', parameter: page },
+    { modification: 'skip', parameter: page * sizePerPage },
     {
       modification: 'sort',
       parameter: { [sortColumn as string]: sortOrder },
