@@ -5,6 +5,7 @@ config.teamStatsDbFileName = 'teamStats.nedb';
 config.leagueStatsDbFileName = 'leagueStats.nedb';
 config.window = { width: 1600, height: 1200 };
 config.markCsvFilesAsImported = false;
+config.importEsportMatches = false;
 config.nedb = {
   inMemoryOnly: false,
 };

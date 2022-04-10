@@ -15,6 +15,7 @@ export interface Config {
     height: number;
   };
   markCsvFilesAsImported: boolean;
+  importEsportMatches: boolean;
   nedb: {
     inMemoryOnly: boolean;
   };

@@ -105,10 +105,14 @@ export class MatchStatsService implements IMatchStatsService {
       return;
     }
 
-    const matches = importFile<MatchStats>(
+    let matches = importFile<MatchStats>(
       pathToMatchesCsv,
       cfg.markCsvFilesAsImported
-    ).filter((ms) => ms.Country !== 'Esports');
+    );
+
+    if (cfg.importEsportMatches === false) {
+      matches = matches.filter((ms) => ms.Country !== 'Esports');
+    }
 
     const uniqueMatches: UniqueMatch[] = matches.map((m) => {
       return {
