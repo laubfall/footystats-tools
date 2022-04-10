@@ -95,14 +95,15 @@ export const MatchesView = () => {
   }
 
   const sortHandler: SortHandler = (column, newSortOrder) => {
-    setSortOrder(newSortOrder === 'asc' ? 1 : -1);
+    const sortThatWay = newSortOrder === 'asc' ? 1 : -1;
+    setSortOrder(sortThatWay);
     setSortColumn(column.sortField);
     loadMatches(
       filter.country,
       filter.league,
       filter.timeFrom,
       filter.timeUntil,
-      createMatchListConstraints(page, perPage, sortOrder, column.sortField)
+      createMatchListConstraints(page, perPage, sortThatWay, column.sortField)
     );
   };
 

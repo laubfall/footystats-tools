@@ -44,6 +44,32 @@ export const MatchList = ({
         name: bet,
         selector: (row) =>
           row.betPredictions.find((v) => v.bet === bet)?.prediction || '',
+        conditionalCellStyles: [
+          {
+            when: (row) => {
+              const prediction = row.betPredictions.find(
+                (v) => v.bet === bet
+              )?.prediction;
+              return !prediction ? false : prediction >= 50;
+            },
+            style: {
+              color: 'white',
+              backgroundColor: 'green',
+            },
+          },
+          {
+            when: (row) => {
+              const prediction = row.betPredictions.find(
+                (v) => v.bet === bet
+              )?.prediction;
+              return !prediction ? false : prediction < 50;
+            },
+            style: {
+              color: 'white',
+              backgroundColor: 'red',
+            },
+          },
+        ],
       };
       return tr;
     }) || [];
@@ -83,6 +109,8 @@ export const MatchList = ({
         onChangePage={pageChange}
         onChangeRowsPerPage={pageSizeChange}
         paginationTotalRows={totalRows}
+        defaultSortFieldId={1}
+        defaultSortAsc={false}
         pagination
         sortServer
         paginationServer
