@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router';
 import { HashRouter } from 'react-router-dom';
@@ -15,11 +15,12 @@ const FootyStatsTools = () => {
 
   const history = useNavigate();
 
-  subscribeMsgInvalidConfiguration(() => {
-    history('configuration');
-  });
-
-  subscribeMsgSimpleMessage((msg) => setMsg(msg.channel));
+  useEffect(() => {
+    subscribeMsgInvalidConfiguration(() => {
+      history('configuration');
+    });
+    subscribeMsgSimpleMessage((msg) => setMsg(msg.message));
+  }, []);
 
   return (
     <>

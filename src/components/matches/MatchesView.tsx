@@ -8,8 +8,10 @@ import {
   CursorModification,
   SortOrder,
 } from '../../app/services/application/DbStoreService';
+import { subscribeMsgSimpleMessage } from '../../app/services/application/gui/IpcMain2Renderer';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
+import MessageCodes from '../../app/types/application/MessageCodes';
 import { NDate, NString } from '../../app/types/General';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { MatchStats } from '../../app/types/stats/MatchStats';
@@ -140,6 +142,16 @@ export const MatchesView = () => {
       null,
       createMatchListConstraints(page, perPage, sortOrder, sortColumn)
     );
+
+    subscribeMsgSimpleMessage((msg) => {
+      loadMatches(
+        filter.country,
+        filter.league,
+        filter.timeFrom,
+        filter.timeUntil,
+        createMatchListConstraints(page, perPage, sortOrder, sortColumn)
+      );
+    });
   }, []);
 
   return (

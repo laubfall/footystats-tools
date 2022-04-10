@@ -1,10 +1,11 @@
 import { BrowserWindow, ipcRenderer } from 'electron';
+import translate from '../../../../i18n/translate';
 import { InvalidConfigurations } from '../../../types/application/Configuration';
 import { MainProcessMessageCodes } from '../../../types/application/MessageCodes';
 
-export const MSG_INVALID_CONFIGURATIONS = 'on-invalid-configs';
+export const CHANNEL_INVALID_CONFIGURATIONS = 'on-invalid-configs';
 
-export const MSG_SIMPLE_MESSAGE = 'on-simple-message';
+export const CHANNEL_SIMPLE_MESSAGE = 'on-simple-message';
 
 export type RendererMessage<P> = {
   message?: string;
@@ -24,8 +25,9 @@ function sendToBrowser<P>(msg: RendererMessage<P>) {
 
 export function msgSimpleMessage(msgCode: MainProcessMessageCodes) {
   const msg: SimpleMessage = {
-    channel: MSG_SIMPLE_MESSAGE,
+    channel: CHANNEL_SIMPLE_MESSAGE,
     payload: msgCode,
+    message: `${translate(`main.msg.${MainProcessMessageCodes[msgCode]}`)}`,
   };
 
   sendToBrowser(msg);
@@ -34,7 +36,7 @@ export function msgSimpleMessage(msgCode: MainProcessMessageCodes) {
 export function msgInvalidConfigurations(ves: InvalidConfigurations[]) {
   const msg: InvalidConfigurationMessage = {
     message: 'Configuration is invalid',
-    channel: MSG_INVALID_CONFIGURATIONS,
+    channel: CHANNEL_INVALID_CONFIGURATIONS,
     payload: ves,
   };
 
@@ -42,7 +44,7 @@ export function msgInvalidConfigurations(ves: InvalidConfigurations[]) {
 }
 
 export function subscribeMsgSimpleMessage(onMsg: (msg: SimpleMessage) => void) {
-  ipcRenderer.on(MSG_SIMPLE_MESSAGE, (event, args) => {
+  ipcRenderer.on(CHANNEL_SIMPLE_MESSAGE, (event, args) => {
     onMsg(args);
   });
 }
@@ -50,7 +52,7 @@ export function subscribeMsgSimpleMessage(onMsg: (msg: SimpleMessage) => void) {
 export function subscribeMsgInvalidConfiguration(
   onMsg: (msg: InvalidConfigurationMessage) => void
 ) {
-  ipcRenderer.on(MSG_INVALID_CONFIGURATIONS, (event, args) => {
+  ipcRenderer.on(CHANNEL_INVALID_CONFIGURATIONS, (event, args) => {
     onMsg(args);
   });
 }
