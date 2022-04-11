@@ -52,7 +52,7 @@ class OddsGoalsOverInfluencer {
       return 100;
     }
 
-    return 100 - 100 * diffOddToOdd2; // 100 - 70
+    return 100 * diffOddToOdd2;
   }
 }
 
