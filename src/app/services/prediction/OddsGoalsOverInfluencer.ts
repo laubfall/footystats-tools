@@ -54,7 +54,7 @@ class OddsGoalsOverInfluencer implements BetResultInfluencer {
       return 100;
     }
 
-    return 100 - 100 * diffOddToOdd2;
+    return 100 * diffOddToOdd2;
   }
 }
 
