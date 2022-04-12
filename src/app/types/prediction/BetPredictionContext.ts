@@ -15,5 +15,3 @@ export enum Bet {
   BTTS_YES,
   BTTS_NO,
 }
-
-export default BetPredictionContext;

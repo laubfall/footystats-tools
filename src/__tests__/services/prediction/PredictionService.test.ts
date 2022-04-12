@@ -22,6 +22,6 @@ describe('PredictionService Tests', () => {
     };
     const predictionResult = prediction(ctx);
     expect(predictionResult).not.toBeNull();
-    expect(predictionResult).toBe(3);
+    expect(predictionResult).toBe(28);
   });
 });

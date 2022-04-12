@@ -5,6 +5,7 @@ import {
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
+import translate from '../../i18n/translate';
 
 export type BetPrediction = {
   bet: Bet;
@@ -41,7 +42,7 @@ export const MatchList = ({
   const predictionColumns =
     predictionForBets?.map((bet) => {
       const tr: TableColumn<MatchListEntry> = {
-        name: bet,
+        name: translate(`renderer.matchesview.bet.${Bet[bet]}`),
         selector: (row) =>
           row.betPredictions.find((v) => v.bet === bet)?.prediction || '',
         conditionalCellStyles: [
@@ -74,7 +75,7 @@ export const MatchList = ({
       return tr;
     }) || [];
 
-  const columns: TableColumn<MatchListEntry>[] = [
+  let columns: TableColumn<MatchListEntry>[] = [
     {
       name: 'Spielbeginn',
       selector: (row) => row.gameStartsAt,
@@ -97,8 +98,9 @@ export const MatchList = ({
       name: 'Ergebnis',
       selector: (row) => row.result,
     },
-    ...predictionColumns,
   ];
+
+  columns = columns.concat(predictionColumns);
 
   return (
     <>

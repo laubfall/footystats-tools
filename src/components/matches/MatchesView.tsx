@@ -11,7 +11,6 @@ import {
 import { subscribeMsgSimpleMessage } from '../../app/services/application/gui/IpcMain2Renderer';
 import prediction from '../../app/services/prediction/PredictionService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
-import MessageCodes from '../../app/types/application/MessageCodes';
 import { NDate, NString } from '../../app/types/General';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { MatchStats } from '../../app/types/stats/MatchStats';
@@ -56,6 +55,12 @@ export const MatchesView = () => {
         leagueStats: undefined,
         teamStats: undefined,
       });
+      const bttsYesPredictionNumber = prediction({
+        bet: Bet.BTTS_YES,
+        match: ms,
+        leagueStats: undefined,
+        teamStats: undefined,
+      });
 
       const mle: MatchListEntry = {
         gameStartsAt: ms.date_GMT,
@@ -69,6 +74,7 @@ export const MatchesView = () => {
             : '-',
         betPredictions: [
           { bet: Bet.OVER_ZERO_FIVE, prediction: predictionNumber },
+          { bet: Bet.BTTS_YES, prediction: bttsYesPredictionNumber },
         ],
       };
 
@@ -131,7 +137,7 @@ export const MatchesView = () => {
       filter.timeUntil,
       createMatchListConstraints(currentPage, newPerPage, sortOrder, sortColumn)
     );
-    setPerPage(perPage);
+    setPerPage(newPerPage);
   };
 
   useEffect(() => {
@@ -181,7 +187,7 @@ export const MatchesView = () => {
         sortHandler={sortHandler}
         pageChange={changePageHandler}
         pageSizeChange={changePageSizeHandler}
-        predictionForBets={[Bet.OVER_ZERO_FIVE]}
+        predictionForBets={[Bet.OVER_ZERO_FIVE, Bet.BTTS_YES]}
       />
     </>
   );

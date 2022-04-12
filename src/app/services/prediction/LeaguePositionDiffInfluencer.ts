@@ -7,7 +7,7 @@ import {
 import {
   BetResultInfluencer,
   BetInfluencerCalculation,
-  NotExecutedCause,
+  PrecheckResult,
   PreCheckReturn,
 } from '../../types/prediction/BetResultInfluencer';
 
@@ -15,7 +15,7 @@ class LeaguePositionDiffInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this
   public preCheck(ctx: BetPredictionContext): PreCheckReturn {
     if (!ctx.teamStats || !ctx.leagueStats) {
-      return NotExecutedCause.NOT_ENOUGH_INFORMATION;
+      return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 
     return undefined;
@@ -30,7 +30,7 @@ class LeaguePositionDiffInfluencer implements BetResultInfluencer {
     }
     return {
       amount: 0,
-      notExecutedCause: NotExecutedCause.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET,
+      notExecutedCause: PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET,
     };
   }
 

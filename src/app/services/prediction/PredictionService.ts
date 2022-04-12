@@ -1,10 +1,11 @@
 import { BetPredictionContext } from '../../types/prediction/BetPredictionContext';
 import {
   BetResultInfluencer,
-  NotExecutedCause,
+  PrecheckResult,
 } from '../../types/prediction/BetResultInfluencer';
 import LeaguePositionDiffInfluencer from './LeaguePositionDiffInfluencer';
 import LeaguePositionInfluencer from './LeaguePositionInfluencer';
+import OddsBttsYesInfluencer from './OddsBttsYesInfluencer';
 import OddsGoalsOverInfluencer from './OddsGoalsOverInfluencer';
 
 /**
@@ -14,6 +15,7 @@ const betResultInfluencer: BetResultInfluencer[] = [
   new LeaguePositionInfluencer(),
   new LeaguePositionDiffInfluencer(),
   new OddsGoalsOverInfluencer(),
+  new OddsBttsYesInfluencer(),
 ];
 
 export default function prediction(ctx: BetPredictionContext): number {
@@ -21,7 +23,7 @@ export default function prediction(ctx: BetPredictionContext): number {
 
   betResultInfluencer.forEach((influencer) => {
     const preCheckResult = influencer.preCheck(ctx);
-    if (preCheckResult !== NotExecutedCause.NOT_ENOUGH_INFORMATION) {
+    if (preCheckResult === PrecheckResult.OK) {
       const predictionInfluence = influencer.calculateInfluence(ctx);
       if (!predictionInfluence.notExecutedCause) {
         result += predictionInfluence.amount;

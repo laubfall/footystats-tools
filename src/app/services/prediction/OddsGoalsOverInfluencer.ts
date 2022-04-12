@@ -3,12 +3,13 @@ import {
   BetPredictionContext,
 } from '../../types/prediction/BetPredictionContext';
 import {
+  BetResultInfluencer,
   BetInfluencerCalculation,
-  NotExecutedCause,
+  PrecheckResult,
   PreCheckReturn,
 } from '../../types/prediction/BetResultInfluencer';
 
-class OddsGoalsOverInfluencer {
+class OddsGoalsOverInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this
   public preCheck(ctx: BetPredictionContext): PreCheckReturn {
     switch (ctx.bet) {
@@ -16,12 +17,13 @@ class OddsGoalsOverInfluencer {
       case Bet.OVER_ONE_FIVE:
         break;
       default:
-        return NotExecutedCause.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
+        return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
     }
     if (!ctx.match) {
-      return NotExecutedCause.NOT_ENOUGH_INFORMATION;
+      return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
-    return undefined;
+
+    return PrecheckResult.OK;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -52,7 +54,7 @@ class OddsGoalsOverInfluencer {
       return 100;
     }
 
-    return 100 * diffOddToOdd2;
+    return 100 - 100 * diffOddToOdd2;
   }
 }
 
