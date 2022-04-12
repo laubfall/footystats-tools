@@ -26,7 +26,7 @@ class OddsBttsYesInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this
   calculateInfluence(ctx: BetPredictionContext): BetInfluencerCalculation {
     // odds between 1 and 3 are relevant, other odds are extremas.
-    return { amount: 100 * (100 - (100 * 2 - ctx.match.Odds_BTTS_Yes) / 2) };
+    return { amount: 100 * (ctx.match.Odds_BTTS_Yes / 3) };
   }
 }
 
