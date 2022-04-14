@@ -5,6 +5,7 @@ import {
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
+import { MatchStats } from '../../app/types/stats/MatchStats';
 import translate from '../../i18n/translate';
 
 export type BetPrediction = {
@@ -19,6 +20,7 @@ export type MatchListEntry = {
   country: string;
   result: string;
   betPredictions: BetPrediction[];
+  matchStats: MatchStats;
 };
 
 export type MatchListProps = {
@@ -110,6 +112,12 @@ export const MatchList = ({
         onSort={sortHandler}
         onChangePage={pageChange}
         onChangeRowsPerPage={pageSizeChange}
+        onRowDoubleClicked={(row) => {
+          window.open(
+            `https://footystats.org${row.matchStats['Match FootyStats URL']}`,
+            '_blank'
+          );
+        }}
         paginationTotalRows={totalRows}
         defaultSortFieldId={1}
         defaultSortAsc={false}

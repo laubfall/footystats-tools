@@ -76,6 +76,7 @@ export const MatchesView = () => {
           { bet: Bet.OVER_ZERO_FIVE, prediction: predictionNumber },
           { bet: Bet.BTTS_YES, prediction: bttsYesPredictionNumber },
         ],
+        matchStats: ms,
       };
 
       return mle;
