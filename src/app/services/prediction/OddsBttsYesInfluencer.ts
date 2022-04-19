@@ -16,7 +16,10 @@ class OddsBttsYesInfluencer implements BetResultInfluencer {
       return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
     }
 
-    if (!ctx.match.Odds_BTTS_Yes) {
+    if (
+      !ctx.match.Odds_BTTS_Yes ||
+      Number.isFinite(ctx.match.Odds_BTTS_Yes) === false
+    ) {
       return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 

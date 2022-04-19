@@ -1,4 +1,7 @@
-import { BetPredictionContext } from '../../types/prediction/BetPredictionContext';
+import {
+  Bet,
+  BetPredictionContext,
+} from '../../types/prediction/BetPredictionContext';
 import {
   BetResultInfluencer,
   PrecheckResult,
@@ -22,7 +25,37 @@ const betResultInfluencer: BetResultInfluencer[] = [
   new FootyStatsBttsYesPredictionInfluencer(),
 ];
 
-export default function prediction(ctx: BetPredictionContext): number {
+function analyze(
+  ctx: BetPredictionContext,
+  didPredictionCalculation: boolean
+): PredictionAnalyze {
+  if (didPredictionCalculation === false) {
+    return 'NOT_PREDICTED';
+  }
+
+  if (ctx.match['Match Status'] === 'incomplete') {
+    return 'NOT_COMPLETED';
+  }
+
+  switch (ctx.bet) {
+    case Bet.OVER_ZERO_FIVE: {
+      const goals =
+        ctx.match['Result - Away Team Goals'] +
+        ctx.match['Result - Home Team Goals'];
+      if (goals > 0) {
+        return 'SUCCESS';
+      }
+
+      return 'FAILED';
+    }
+    default:
+      return 'NOT_ANALYZED';
+  }
+}
+
+export default function prediction(
+  ctx: BetPredictionContext
+): PredictionResult {
   let result = 0;
 
   let doneInfluencerCalculations = 0;
@@ -37,16 +70,26 @@ export default function prediction(ctx: BetPredictionContext): number {
     }
   });
 
-  return Math.round(result / doneInfluencerCalculations);
+  if (doneInfluencerCalculations > 0) {
+    result = Math.round(result / doneInfluencerCalculations);
+  }
+  return {
+    betSuccessInPercent: result,
+    betOnThis: result > 50,
+    analyzeResult: analyze(ctx, doneInfluencerCalculations > 0),
+  };
 }
 
 export type PredictionResult = {
   betSuccessInPercent: number;
   betOnThis: boolean;
+  analyzeResult: PredictionAnalyze;
 };
 
-export enum PredictionSuccess {
-  SUCCESS,
-  CLOSE,
-  FAILED,
-}
+export type PredictionAnalyze =
+  | 'SUCCESS'
+  | 'CLOSE'
+  | 'FAILED'
+  | 'NOT_COMPLETED'
+  | 'NOT_ANALYZED'
+  | 'NOT_PREDICTED';

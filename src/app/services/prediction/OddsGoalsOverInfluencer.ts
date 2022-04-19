@@ -19,7 +19,7 @@ class OddsGoalsOverInfluencer implements BetResultInfluencer {
       default:
         return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
     }
-    if (!ctx.match) {
+    if (!ctx.match || Number.isFinite(ctx.match.Odds_Over15) === false) {
       return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 
