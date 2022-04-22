@@ -1,6 +1,10 @@
 import React from 'react';
 import DataTable, { SortOrder, TableColumn } from 'react-data-table-component';
 import {
+  BsFillArrowDownCircleFill,
+  BsFillArrowUpCircleFill,
+} from 'react-icons/bs';
+import {
   PaginationChangePage,
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
@@ -42,6 +46,27 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
           const b = row.betPredictions.find((v) => v.bet === bet);
           return `${b?.prediction.betSuccessInPercent}`;
         },
+        // eslint-disable-next-line react/display-name
+        cell: (row) => {
+          const b = row.betPredictions.find((v) => v.bet === bet);
+          return (
+            <>
+              {b?.prediction.betSuccessInPercent}
+              {b?.prediction.betOnThis === true && (
+                <>
+                  &nbsp;
+                  <BsFillArrowUpCircleFill />
+                </>
+              )}
+              {b?.prediction.betOnThis === false && (
+                <>
+                  &nbsp;
+                  <BsFillArrowDownCircleFill />
+                </>
+              )}
+            </>
+          );
+        },
         conditionalCellStyles: [
           {
             when: (row) => {
@@ -51,7 +76,6 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
               )?.prediction;
               return (
                 prediction !== undefined &&
-                prediction.betOnThis === true &&
                 prediction.analyzeResult === 'SUCCESS'
               );
             },
@@ -68,47 +92,12 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
               )?.prediction;
               return (
                 prediction !== undefined &&
-                prediction.betOnThis === true &&
                 prediction.analyzeResult === 'FAILED'
               );
             },
             style: {
               color: 'white',
               backgroundColor: 'red',
-            },
-          },
-          {
-            when: (row) => {
-              // incomplete and betOnThis
-              const prediction = row.betPredictions.find(
-                (v) => v.bet === bet
-              )?.prediction;
-              return (
-                prediction !== undefined &&
-                prediction.betOnThis === true &&
-                prediction.analyzeResult === 'NOT_COMPLETED'
-              );
-            },
-            style: {
-              background:
-                'repeating-linear-gradient(45deg,#ccff99,#ccff99 10px,green 10px,green 20px)',
-            },
-          },
-          {
-            when: (row) => {
-              // incomplete and not betOnThis
-              const prediction = row.betPredictions.find(
-                (v) => v.bet === bet
-              )?.prediction;
-              return (
-                prediction !== undefined &&
-                prediction.betOnThis === false &&
-                prediction.analyzeResult === 'NOT_COMPLETED'
-              );
-            },
-            style: {
-              background:
-                'repeating-linear-gradient(45deg,#ff9999,#ff9999 10px,red 10px,red 20px)',
             },
           },
         ],

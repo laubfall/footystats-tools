@@ -27,13 +27,14 @@ const betResultInfluencer: BetResultInfluencer[] = [
 
 function analyze(
   ctx: BetPredictionContext,
-  didPredictionCalculation: boolean
+  didPredictionCalculation: boolean,
+  betOnThis: boolean
 ): PredictionAnalyze {
   if (didPredictionCalculation === false) {
     return 'NOT_PREDICTED';
   }
 
-  if (ctx.match['Match Status'] === 'incomplete') {
+  if (ctx.match['Match Status'] !== 'complete') {
     return 'NOT_COMPLETED';
   }
 
@@ -42,7 +43,21 @@ function analyze(
       const goals =
         ctx.match['Result - Away Team Goals'] +
         ctx.match['Result - Home Team Goals'];
-      if (goals > 0) {
+      if (goals > 0 && betOnThis) {
+        return 'SUCCESS';
+      }
+
+      return 'FAILED';
+    }
+    case Bet.BTTS_YES: {
+      if (
+        (ctx.match['Result - Away Team Goals'] > 0 &&
+          ctx.match['Result - Home Team Goals'] > 0 &&
+          betOnThis) ||
+        ((ctx.match['Result - Away Team Goals'] === 0 ||
+          ctx.match['Result - Home Team Goals'] === 0) &&
+          betOnThis === false)
+      ) {
         return 'SUCCESS';
       }
 
@@ -73,10 +88,11 @@ export default function prediction(
   if (doneInfluencerCalculations > 0) {
     result = Math.round(result / doneInfluencerCalculations);
   }
+  const betOnThis = result > 50;
   return {
     betSuccessInPercent: result,
-    betOnThis: result > 50,
-    analyzeResult: analyze(ctx, doneInfluencerCalculations > 0),
+    betOnThis,
+    analyzeResult: analyze(ctx, doneInfluencerCalculations > 0, betOnThis),
   };
 }
 
