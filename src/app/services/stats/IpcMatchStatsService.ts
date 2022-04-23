@@ -1,7 +1,11 @@
 import { ipcMain } from 'electron';
 import { NString, NDate } from '../../types/General';
 import { MatchStats } from '../../types/stats/MatchStats';
-import { CursorModification, PagedResult } from '../application/DbStoreService';
+import {
+  CursorModification,
+  PagedResult,
+  Result,
+} from '../application/DbStoreService';
 import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import { MatchStatsService, IMatchStatsService } from './MatchStatsService';
 
@@ -24,7 +28,7 @@ class IpcMatchStatsService implements IMatchStatsService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public matchesByDay(day: Date): Promise<MatchStats[]> {
+  public matchesByDay(day: Date): Promise<Result<MatchStats>> {
     return ipcRendererInvoke(this.matchesByDay.name, day);
   }
 

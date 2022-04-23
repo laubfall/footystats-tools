@@ -5,7 +5,7 @@ import path from 'path';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
-import MatchStats from '../../types/stats/MatchStats';
+import { MatchStats } from '../../types/stats/MatchStats';
 import { alreadyImported, importFile } from '../application/CsvFileService';
 import {
   CursorModification,
@@ -14,14 +14,13 @@ import {
 } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../types/General';
-import { loadConfig } from '../application/ConfigurationService';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
 }
 
 export interface IMatchStatsService {
-  matchesByDay(day: Date): Promise<MatchStats[]>;
+  matchesByDay(day: Date): Promise<Result<MatchStats>>;
 
   matchesByFilter(
     country: NString,
@@ -128,7 +127,7 @@ export class MatchStatsService implements IMatchStatsService {
     msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);
   }
 
-  public async matchesByDay(day: Date): Promise<MatchStats[]> {
+  public async matchesByDay(day: Date): Promise<Result<MatchStats>> {
     const end = add(day, { days: 1 });
     const startSec = Math.floor(day.getTime() / 1000);
     const endSec = Math.floor(end.getTime() / 1000);
