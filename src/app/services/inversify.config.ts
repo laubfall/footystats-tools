@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 // eslint-disable-next-line import/no-cycle
+import MatchService from './match/MatchService';
 import { MatchStatsService } from './stats/MatchStatsService';
 import LeagueStatsService from './stats/LeagueStatsService';
 import TeamStatsService from './stats/TeamStatsService';
@@ -17,6 +18,7 @@ inversifyContainer
   .bind<MatchStatsService>(MatchStatsService)
   .toSelf()
   .inSingletonScope();
+inversifyContainer.bind<MatchService>(MatchService).toSelf().inSingletonScope();
 inversifyContainer
   .bind<LeagueStatsService>(LeagueStatsService)
   .toSelf()

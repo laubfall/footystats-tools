@@ -14,6 +14,7 @@ import {
 } from '../application/DbStoreService';
 import { msgSimpleMessage } from '../application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../types/General';
+import MatchService from '../match/MatchService';
 
 interface UniqueMatch extends MatchStats {
   unique: string;
@@ -29,18 +30,42 @@ export interface IMatchStatsService {
     until: NDate,
     cursorModification?: CursorModification[]
   ): Promise<Result<MatchStats>>;
+
+  matchByUniqueFields(
+    date_unix: number,
+    League: string,
+    homeTeam: string,
+    awayTeam: string
+  ): Promise<MatchStats>;
 }
 
 @injectable()
 export class MatchStatsService implements IMatchStatsService {
   readonly dbService: DbStoreService<UniqueMatch>;
 
-  constructor(configuration: Configuration) {
+  constructor(
+    configuration: Configuration,
+    private matchService: MatchService
+  ) {
     this.dbService = new DbStoreService<UniqueMatch>(
       path.join(configuration.databaseDirectory, cfg.matchStatsDbFileName)
     );
     this.dbService.createUniqueIndex('unique');
     this.dbService.DB.ensureIndex({ fieldName: 'date_unix' });
+  }
+
+  public matchByUniqueFields(
+    date_unix: number,
+    League: string,
+    homeTeam: string,
+    awayTeam: string
+  ): Promise<MatchStats> {
+    return this.dbService.asyncFindOne({
+      date_unix,
+      League,
+      'Home Team': homeTeam,
+      'Away Team': awayTeam,
+    });
   }
 
   public async matchesByFilter(
@@ -122,6 +147,7 @@ export class MatchStatsService implements IMatchStatsService {
 
     uniqueMatches.forEach((um) => {
       this.dbService.asyncUpsert({ unique: this.uniqueValue(um) }, { ...um });
+      this.matchService.writeMatch(um);
     });
 
     msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);

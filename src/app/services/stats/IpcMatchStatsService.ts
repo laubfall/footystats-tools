@@ -10,6 +10,21 @@ import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import { MatchStatsService, IMatchStatsService } from './MatchStatsService';
 
 class IpcMatchStatsService implements IMatchStatsService {
+  matchByUniqueFields(
+    date_unix: number,
+    League: string,
+    homeTeam: string,
+    awayTeam: string
+  ): Promise<MatchStats> {
+    return ipcRendererInvoke(
+      this.matchByUniqueFields.name,
+      date_unix,
+      League,
+      homeTeam,
+      awayTeam
+    );
+  }
+
   matchesByFilter(
     country: NString,
     league: NString,

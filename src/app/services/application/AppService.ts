@@ -25,6 +25,8 @@ import IpcLeagueStatsService from '../stats/IpcLeagueStatsService';
 import LeagueStatsService from '../stats/LeagueStatsService';
 import IpcAppControllService from './IpcAppControllService';
 import { AppControllService } from './AppControllService';
+import IpcMatchService from '../match/IpcMatchService';
+import MatchService from '../match/MatchService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService =
@@ -45,6 +47,9 @@ function registerConfigDependentIpcHandler() {
   );
   IpcAppControllService.registerInvokeHandler(
     inversifyContainer.get<AppControllService>(AppControllService)
+  );
+  IpcMatchService.registerInvokeHandler(
+    inversifyContainer.get<MatchService>(MatchService)
   );
 }
 

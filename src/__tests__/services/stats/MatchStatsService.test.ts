@@ -2,6 +2,7 @@
 import "reflect-metadata";
 import { fromUnixTime } from 'date-fns';
 import TestUtils from '../../TestUtils';
+import { MatchStats } from "../../../app/types/stats/MatchStats";
 
 
 describe('Test the match service', () => {
@@ -35,5 +36,8 @@ describe('Test the match service', () => {
     // eslint-disable-next-line prefer-destructuring
     match = result[0];
     expect(match['Match Status']).toBe('complete');
+
+    const uniqueMatch = await mss.matchByUniqueFields(1641240900, 'La Liga', 'Cádiz','Sevilla FC');
+    expect(uniqueMatch).toBeDefined();
   });
 });

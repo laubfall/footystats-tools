@@ -8,6 +8,7 @@ import {
 } from '../../types/prediction/BetResultInfluencer';
 import FootyStatsBttsYesPredictionInfluencer from './FootyStatsBttsYesPredictionInfluencer';
 import FootyStatsOverFTPredictionInfluencer from './FootyStatsOverFTPredictionInfluencer';
+import { PredictionAnalyze, PredictionResult } from './IPredictionService';
 import LeaguePositionDiffInfluencer from './LeaguePositionDiffInfluencer';
 import LeaguePositionInfluencer from './LeaguePositionInfluencer';
 import OddsBttsYesInfluencer from './OddsBttsYesInfluencer';
@@ -95,17 +96,3 @@ export default function prediction(
     analyzeResult: analyze(ctx, doneInfluencerCalculations > 0, betOnThis),
   };
 }
-
-export type PredictionResult = {
-  betSuccessInPercent: number;
-  betOnThis: boolean;
-  analyzeResult: PredictionAnalyze;
-};
-
-export type PredictionAnalyze =
-  | 'SUCCESS'
-  | 'CLOSE'
-  | 'FAILED'
-  | 'NOT_COMPLETED'
-  | 'NOT_ANALYZED'
-  | 'NOT_PREDICTED';

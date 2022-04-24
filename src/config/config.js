@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-multi-assign
 const config = (module.exports = {});
+config.matchDbFileName = 'matches.nedb';
 config.matchStatsDbFileName = 'matchStats.nedb';
 config.teamStatsDbFileName = 'teamStats.nedb';
 config.leagueStatsDbFileName = 'leagueStats.nedb';

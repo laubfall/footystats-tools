@@ -7,6 +7,7 @@ const cfg = require(`./config.${env}.js`);
  * Application configuration that is not modifiable by the user.
  */
 export interface Config {
+  matchDbFileName: string;
   matchStatsDbFileName: string;
   teamStatsDbFileName: string;
   leagueStatsDbFileName: string;
