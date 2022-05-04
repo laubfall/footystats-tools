@@ -10,6 +10,8 @@ import {
   Result,
 } from '../application/DbStoreService';
 import Match, { IMatchService } from './IMatchService';
+import prediction from '../prediction/PredictionService';
+import { Bet } from '../../types/prediction/BetPredictionContext';
 
 @injectable()
 class MatchService implements IMatchService {
@@ -31,18 +33,38 @@ class MatchService implements IMatchService {
     const match: Match = {
       uniqueIdentifier: this.uniqueValue(matchStats),
       date_unix: matchStats.date_unix,
+      date_GMT: matchStats.date_GMT,
       'Away Team': matchStats['Away Team'],
       'Home Team': matchStats['Home Team'],
       Country: matchStats.Country,
       League: matchStats.League,
       goalsAwayTeam: matchStats['Result - Away Team Goals'],
       goalsHomeTeam: matchStats['Result - Home Team Goals'],
+      state: matchStats['Match Status'],
     };
 
+    MatchService.calcPredictions(match, matchStats);
     this.dbService
       .asyncUpsert({ uniqueIdentifier: match.uniqueIdentifier }, match)
       .then(() => console.log('saved match'))
       .catch((reason) => console.log(`failed: ${reason}`));
+  }
+
+  static calcPredictions(n: Match, ms: MatchStats) {
+    const predictionNumber = prediction({
+      bet: Bet.OVER_ZERO_FIVE,
+      match: ms,
+      leagueStats: undefined,
+      teamStats: undefined,
+    });
+    const bttsYesPredictionNumber = prediction({
+      bet: Bet.BTTS_YES,
+      match: ms,
+      leagueStats: undefined,
+      teamStats: undefined,
+    });
+    n.o05 = predictionNumber;
+    n.bttsYes = bttsYesPredictionNumber;
   }
 
   matchesByFilter(
