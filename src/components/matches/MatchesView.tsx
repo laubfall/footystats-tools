@@ -1,3 +1,4 @@
+import log from 'electron-log';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import {
@@ -12,12 +13,15 @@ import {
 import { subscribeMsgSimpleMessage } from '../../app/services/application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../app/types/General';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
-import { MatchStats } from '../../app/types/stats/MatchStats';
 import { FilterSettings, MatchFilterHoc } from './MatchFilter';
-import { MatchList, MatchListEntry, SortHandler } from './MatchList';
+import {
+  BetPrediction,
+  MatchList,
+  MatchListEntry,
+  SortHandler,
+} from './MatchList';
 import IpcMatchService from '../../app/services/match/IpcMatchService';
 import Match from '../../app/services/match/IMatchService';
-import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
 
 function createMatchListConstraints(
   page: number,
@@ -49,9 +53,17 @@ export const MatchesView = () => {
     timeUntil: null,
   });
 
-  function calcPredictions(n: Match[]) {
-    const matchStatsService = new IpcMatchStatsService();
+  function createMatchListEntries(n: Match[]) {
     const r = n.map((ms) => {
+      const betPredictions: BetPrediction[] = [];
+      if (ms.o05) {
+        betPredictions.push({ bet: Bet.OVER_ZERO_FIVE, prediction: ms.o05 });
+      }
+
+      if (ms.bttsYes) {
+        betPredictions.push({ bet: Bet.BTTS_YES, prediction: ms.bttsYes });
+      }
+
       const mle: MatchListEntry = {
         gameStartsAt: ms.date_GMT,
         awayTeam: ms['Away Team'],
@@ -62,16 +74,8 @@ export const MatchesView = () => {
             ? `
         ${ms.goalsHomeTeam} : ${ms.goalsAwayTeam}`
             : '-',
-        betPredictions: [
-          { bet: Bet.OVER_ZERO_FIVE, prediction: ms.o05?.betSuccessInPercent },
-          { bet: Bet.BTTS_YES, prediction: ms.bttsYes?.betSuccessInPercent },
-        ],
-        matchStats: matchStatsService.matchByUniqueFields(
-          ms.date_unix,
-          ms.League,
-          ms['Home Team'],
-          ms['Away Team']
-        ),
+        footyStatsUrl: ms.footyStatsUrl,
+        betPredictions,
       };
 
       return mle;
@@ -94,9 +98,11 @@ export const MatchesView = () => {
       .then((n) => {
         const na = n as PagedResult<Match>;
         setTotalRows(na[0]);
-        calcPredictions(na[1]);
+        createMatchListEntries(na[1]);
       })
-      .catch((reason) => console.log(reason));
+      .catch((reason) =>
+        log.error('Failed to load matches for MatchesView', reason)
+      );
   }
 
   const sortHandler: SortHandler = (column, newSortOrder) => {
@@ -146,7 +152,7 @@ export const MatchesView = () => {
       createMatchListConstraints(page, perPage, sortOrder, sortColumn)
     );
 
-    subscribeMsgSimpleMessage((msg) => {
+    subscribeMsgSimpleMessage(() => {
       loadMatches(
         filter.country,
         filter.league,

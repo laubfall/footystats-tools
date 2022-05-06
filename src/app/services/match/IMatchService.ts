@@ -26,6 +26,7 @@ type Match = {
   goalsHomeTeam: number;
   goalsAwayTeam: number;
   state: MatchStatus;
+  footyStatsUrl: string;
   o05?: PredictionResult;
   bttsYes?: PredictionResult;
 };

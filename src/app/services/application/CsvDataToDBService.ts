@@ -29,7 +29,7 @@ class CsvDataToDBService {
 
     const fi = csvFileInformationByFileName(fp.base);
     this.updateAppControllData(fi);
-    log.info(`Try to store csv data from file: ${pathToFile}`);
+    log.debug(`Try to store csv data from file: ${pathToFile}`);
     switch (fi.type) {
       case CsvFileType.LEAGUE_STATS:
         this.leagueStatsService.readLeagueStats(pathToFile);

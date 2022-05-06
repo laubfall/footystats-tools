@@ -7,8 +7,14 @@ import Match, { IMatchService } from './IMatchService';
 import MatchService from './MatchService';
 
 class IpcMatchService implements IMatchService {
+  // Prefix for the invoke handler to avoid name clashes due to equal method names (e.g. MatchStatsService.matchesByFilter)
+  static invokeHandlerPrefix = 'MatchService_';
+
   writeMatch(matchStats: MatchStats): void {
-    ipcRendererInvoke(this.writeMatch.name, matchStats);
+    ipcRendererInvoke(
+      IpcMatchService.invokeHandlerPrefix + this.writeMatch.name,
+      matchStats
+    );
   }
 
   matchesByFilter(
@@ -19,7 +25,7 @@ class IpcMatchService implements IMatchService {
     cursorModification?: CursorModification[]
   ): Promise<Result<Match>> {
     return ipcRendererInvoke(
-      this.matchesByFilter.name,
+      IpcMatchService.invokeHandlerPrefix + this.matchesByFilter.name,
       country,
       league,
       from,
@@ -29,19 +35,25 @@ class IpcMatchService implements IMatchService {
   }
 
   public static registerInvokeHandler(matchService: MatchService) {
-    ipcMain.handle(matchService.writeMatch.name, (...args) => {
-      return matchService.writeMatch(args[1][0]);
-    });
+    ipcMain.handle(
+      this.invokeHandlerPrefix + matchService.writeMatch.name,
+      (...args) => {
+        return matchService.writeMatch(args[1][0]);
+      }
+    );
 
-    ipcMain.handle(matchService.matchesByFilter.name, (...args) => {
-      return matchService.matchesByFilter(
-        args[1][0],
-        args[1][1],
-        args[1][2],
-        args[1][3],
-        args[1][4]
-      );
-    });
+    ipcMain.handle(
+      this.invokeHandlerPrefix + matchService.matchesByFilter.name,
+      (...args) => {
+        return matchService.matchesByFilter(
+          args[1][0],
+          args[1][1],
+          args[1][2],
+          args[1][3],
+          args[1][4]
+        );
+      }
+    );
   }
 }
 

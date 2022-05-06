@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import log from 'electron-log';
 import path from 'path';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
@@ -21,12 +22,16 @@ class MatchService implements IMatchService {
     this.dbService = new DbStoreService<Match>(
       path.join(configuration.databaseDirectory, cfg.matchDbFileName)
     );
-    this.dbService.createUniqueIndex('unique');
+    this.dbService.createUniqueIndex('uniqueIdentifier');
     this.dbService.DB.ensureIndex({ fieldName: 'date_unix' });
     this.dbService.DB.ensureIndex({ fieldName: 'League' });
     this.dbService.DB.ensureIndex({ fieldName: 'Country' });
     this.dbService.DB.ensureIndex({ fieldName: 'Home Team' });
     this.dbService.DB.ensureIndex({ fieldName: 'Away Team' });
+    this.dbService.DB.ensureIndex({ fieldName: 'o05.betSuccessInPercent' });
+    this.dbService.DB.ensureIndex({ fieldName: 'o05.betOnThis' });
+    this.dbService.DB.ensureIndex({ fieldName: 'bttsYes.betSuccessInPercent' });
+    this.dbService.DB.ensureIndex({ fieldName: 'bttsYes.betOnThis' });
   }
 
   writeMatch(matchStats: MatchStats): void {
@@ -41,13 +46,14 @@ class MatchService implements IMatchService {
       goalsAwayTeam: matchStats['Result - Away Team Goals'],
       goalsHomeTeam: matchStats['Result - Home Team Goals'],
       state: matchStats['Match Status'],
+      footyStatsUrl: matchStats['Match FootyStats URL'],
     };
 
     MatchService.calcPredictions(match, matchStats);
     this.dbService
       .asyncUpsert({ uniqueIdentifier: match.uniqueIdentifier }, match)
-      .then(() => console.log('saved match'))
-      .catch((reason) => console.log(`failed: ${reason}`));
+      .then(() => log.debug('saved match'))
+      .catch((reason) => log.debug(`failed: ${reason}`));
   }
 
   static calcPredictions(n: Match, ms: MatchStats) {
@@ -124,13 +130,10 @@ class MatchService implements IMatchService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private uniqueValue(match: MatchStats) {
-    return (
-      match.date_unix.toString() +
-      match.League +
-      match['Home Team'] +
-      match['Away Team']
-    );
+  private uniqueValue(matchStats: MatchStats) {
+    return `${matchStats.date_unix.toString()}${matchStats.League}${
+      matchStats['Home Team']
+    }${matchStats['Away Team']}`;
   }
 }
 

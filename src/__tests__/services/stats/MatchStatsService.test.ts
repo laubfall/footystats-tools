@@ -2,10 +2,9 @@
 import "reflect-metadata";
 import { fromUnixTime } from 'date-fns';
 import TestUtils from '../../TestUtils';
-import { MatchStats } from "../../../app/types/stats/MatchStats";
+import {MatchStats} from "../../../app/types/stats/MatchStats";
 
-
-describe('Test the match service', () => {
+describe('Test the match stats service', () => {
   const mss = TestUtils.matchStatsService;
 
   it('Load matches', async () => {
@@ -22,14 +21,14 @@ describe('Test the match service', () => {
   it('Load matches and do it again after a match is finished, ignore Esports matches', async () => {
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1641239361-completed-match-test.csv`);
 
-    let result = await mss.matchesByDay(new Date(2022,0,3));
+    let result = await mss.matchesByDay(new Date(2022,0,3)) as Array<MatchStats>;
     expect(result).not.toBeNull();
     expect(result.length).toEqual(1);
-    let match = result[0];
+    let match: MatchStats = result[0];
     expect(match['Match Status']).toBe('incomplete');
 
     mss.readMatches(`${__dirname}/../../../../testdata/matches_expanded-1641328373-completed-match-test.csv`);
-    result = await mss.matchesByDay(new Date(2022,0,3));
+    result = await mss.matchesByDay(new Date(2022,0,3)) as Array<MatchStats>;
     expect(result).not.toBeNull();
     expect(result.length).toEqual(1); // file contains one esports match, we ignore this one
 

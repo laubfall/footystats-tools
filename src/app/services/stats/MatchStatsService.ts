@@ -164,12 +164,9 @@ export class MatchStatsService implements IMatchStatsService {
 
   // eslint-disable-next-line class-methods-use-this
   private uniqueValue(matchStats: MatchStats) {
-    return (
-      matchStats.date_unix.toString() +
-      matchStats.League +
-      matchStats['Home Team'] +
-      matchStats['Away Team']
-    );
+    return `${matchStats.date_unix.toString()}${matchStats.League}${
+      matchStats['Home Team']
+    }${matchStats['Away Team']}`;
   }
 }
 

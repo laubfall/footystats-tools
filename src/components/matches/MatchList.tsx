@@ -8,9 +8,8 @@ import {
   PaginationChangePage,
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
-import { PredictionResult } from '../../app/services/prediction/PredictionService';
+import { PredictionResult } from '../../app/services/prediction/IPredictionService';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
-import { MatchStats } from '../../app/types/stats/MatchStats';
 import translate from '../../i18n/translate';
 
 export type BetPrediction = {
@@ -24,8 +23,8 @@ export type MatchListEntry = {
   homeTeam: string;
   country: string;
   result: string;
+  footyStatsUrl: string;
   betPredictions: BetPrediction[];
-  matchStats: MatchStats;
 };
 
 export type MatchListProps = {
@@ -43,8 +42,8 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
       const tr: TableColumn<MatchListEntry> = {
         name: translate(`renderer.matchesview.bet.${Bet[bet]}`),
         selector: (row) => {
-          const b = row.betPredictions.find((v) => v.bet === bet);
-          return `${b?.prediction.betSuccessInPercent}`;
+          const betPrediction = row.betPredictions.find((v) => v.bet === bet);
+          return `${betPrediction?.prediction.betSuccessInPercent}`;
         },
         // eslint-disable-next-line react/display-name
         cell: (row) => {
@@ -71,12 +70,12 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
           {
             when: (row) => {
               // completed and betOnThis and correct
-              const prediction = row.betPredictions.find(
+              const betPrediction = row.betPredictions.find(
                 (v) => v.bet === bet
               )?.prediction;
               return (
-                prediction !== undefined &&
-                prediction.analyzeResult === 'SUCCESS'
+                betPrediction !== undefined &&
+                betPrediction.analyzeResult === 'SUCCESS'
               );
             },
             style: {
@@ -87,12 +86,12 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
           {
             when: (row) => {
               // completed and betOnThis and not correct
-              const prediction = row.betPredictions.find(
+              const betPrediction = row.betPredictions.find(
                 (v) => v.bet === bet
               )?.prediction;
               return (
-                prediction !== undefined &&
-                prediction.analyzeResult === 'FAILED'
+                betPrediction !== undefined &&
+                betPrediction.analyzeResult === 'FAILED'
               );
             },
             style: {
@@ -154,10 +153,7 @@ export const MatchList = ({
         onChangePage={pageChange}
         onChangeRowsPerPage={pageSizeChange}
         onRowDoubleClicked={(row) => {
-          window.open(
-            `https://footystats.org${row.matchStats['Match FootyStats URL']}`,
-            '_blank'
-          );
+          window.open(`https://footystats.org${row.footyStatsUrl}`, '_blank');
         }}
         paginationTotalRows={totalRows}
         defaultSortFieldId={1}
