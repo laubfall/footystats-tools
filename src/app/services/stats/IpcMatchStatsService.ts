@@ -61,6 +61,15 @@ class IpcMatchStatsService implements IMatchStatsService {
         args[1][4]
       );
     });
+
+    ipcMain.handle(matchStatsService.matchByUniqueFields.name, (...args) => {
+      return matchStatsService.matchByUniqueFields(
+        args[1][0],
+        args[1][1],
+        args[1][2],
+        args[1][3]
+      );
+    });
   }
 }
 

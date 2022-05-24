@@ -22,6 +22,9 @@ import {
 } from './MatchList';
 import IpcMatchService from '../../app/services/match/IpcMatchService';
 import Match from '../../app/services/match/IMatchService';
+import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
+import MatchService from '../../app/services/match/MatchService';
+import { IpcConfigurationService } from '../../config/IpcConfigurationService';
 
 function createMatchListConstraints(
   page: number,
@@ -39,6 +42,62 @@ function createMatchListConstraints(
   ];
 }
 
+function matchToBetPrediction(ms: Match): BetPrediction[] {
+  const betPredictions: BetPrediction[] = [];
+  if (ms.o05) {
+    betPredictions.push({ bet: Bet.OVER_ZERO_FIVE, prediction: ms.o05 });
+  }
+
+  if (ms.bttsYes) {
+    betPredictions.push({ bet: Bet.BTTS_YES, prediction: ms.bttsYes });
+  }
+
+  return betPredictions;
+}
+
+async function determineBetPredictions(ms: Match): Promise<BetPrediction[]> {
+  const configService = new IpcConfigurationService();
+  const cfg = await configService.loadConfig();
+  if (cfg.matchView.alwaysCalculatePredictions === false) {
+    return matchToBetPrediction(ms);
+  }
+
+  const matchStatsService = new IpcMatchStatsService();
+  const matchStats = await matchStatsService.matchByUniqueFields(
+    ms.date_unix,
+    ms.League,
+    ms['Home Team'],
+    ms['Away Team']
+  );
+
+  MatchService.calcPredictions(ms, matchStats);
+  return matchToBetPrediction(ms);
+}
+
+function matchListEntries(n: Match[]) {
+  const r = n.map(async (ms) => {
+    const betPredictions: BetPrediction[] = await determineBetPredictions(ms);
+
+    const mle: MatchListEntry = {
+      gameStartsAt: ms.date_GMT,
+      awayTeam: ms['Away Team'],
+      homeTeam: ms['Home Team'],
+      country: ms.Country,
+      result:
+        ms.state === 'complete'
+          ? `
+        ${ms.goalsHomeTeam} : ${ms.goalsAwayTeam}`
+          : '-',
+      footyStatsUrl: ms.footyStatsUrl,
+      betPredictions,
+    };
+
+    return mle;
+  });
+
+  return Promise.all(r);
+}
+
 export const MatchesView = () => {
   const [matches, setMatches] = useState<MatchListEntry[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -54,33 +113,7 @@ export const MatchesView = () => {
   });
 
   function createMatchListEntries(n: Match[]) {
-    const r = n.map((ms) => {
-      const betPredictions: BetPrediction[] = [];
-      if (ms.o05) {
-        betPredictions.push({ bet: Bet.OVER_ZERO_FIVE, prediction: ms.o05 });
-      }
-
-      if (ms.bttsYes) {
-        betPredictions.push({ bet: Bet.BTTS_YES, prediction: ms.bttsYes });
-      }
-
-      const mle: MatchListEntry = {
-        gameStartsAt: ms.date_GMT,
-        awayTeam: ms['Away Team'],
-        homeTeam: ms['Home Team'],
-        country: ms.Country,
-        result:
-          ms.state === 'complete'
-            ? `
-        ${ms.goalsHomeTeam} : ${ms.goalsAwayTeam}`
-            : '-',
-        footyStatsUrl: ms.footyStatsUrl,
-        betPredictions,
-      };
-
-      return mle;
-    });
-    setMatches(r);
+    return matchListEntries(n);
   }
 
   function loadMatches(
@@ -95,10 +128,11 @@ export const MatchesView = () => {
     mss
       .matchesByFilter(country, league, from, until, cursorModification)
       // eslint-disable-next-line promise/always-return
-      .then((n) => {
+      .then(async (n) => {
         const na = n as PagedResult<Match>;
         setTotalRows(na[0]);
-        createMatchListEntries(na[1]);
+        const r = await createMatchListEntries(na[1]);
+        setMatches(r);
       })
       .catch((reason) =>
         log.error('Failed to load matches for MatchesView', reason)

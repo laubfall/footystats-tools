@@ -20,6 +20,9 @@ export interface Config {
   nedb: {
     inMemoryOnly: boolean;
   };
+  matchView: {
+    alwaysCalculatePredictions: boolean;
+  };
 }
 
 export default cfg as Config;

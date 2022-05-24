@@ -8,6 +8,7 @@ import TeamStatsService from './stats/TeamStatsService';
 // eslint-disable-next-line import/no-cycle
 import CsvDataToDBService from './application/CsvDataToDBService';
 import { AppControllService } from './application/AppControllService';
+import { ConfigurationService } from '../../config/ConfigurationService';
 
 const inversifyContainer = new Container();
 inversifyContainer
@@ -31,5 +32,8 @@ inversifyContainer
   .bind<AppControllService>(AppControllService)
   .toSelf()
   .inSingletonScope();
-
+inversifyContainer
+  .bind<ConfigurationService>(ConfigurationService)
+  .toSelf()
+  .inSingletonScope();
 export default inversifyContainer;

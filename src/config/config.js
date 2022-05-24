@@ -10,3 +10,6 @@ config.importEsportMatches = false;
 config.nedb = {
   inMemoryOnly: false,
 };
+config.matchView = {
+  alwaysCalculatePredictions: false,
+};

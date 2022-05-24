@@ -27,6 +27,8 @@ import IpcAppControllService from './IpcAppControllService';
 import { AppControllService } from './AppControllService';
 import IpcMatchService from '../match/IpcMatchService';
 import MatchService from '../match/MatchService';
+import { IpcConfigurationService } from '../../../config/IpcConfigurationService';
+import { ConfigurationService } from '../../../config/ConfigurationService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService =
@@ -53,8 +55,11 @@ function registerConfigDependentIpcHandler() {
   );
 }
 
-function registerConfigIndependetIpcHandler() {
+function registerConfigIndependentIpcHandler() {
   IpcNativeGuiService.registerInvokeHandler();
+  IpcConfigurationService.registerInvokeHandler(
+    inversifyContainer.get<ConfigurationService>(ConfigurationService)
+  );
 }
 
 async function loadConfigAndDispatchErrors(): Promise<Configuration> {
@@ -83,5 +88,5 @@ export default async function startApplication() {
   const config = loadConfigAndDispatchErrors();
   config.then(onConfigValid).catch(onConfigInvalid);
 
-  registerConfigIndependetIpcHandler();
+  registerConfigIndependentIpcHandler();
 }
