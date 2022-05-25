@@ -10,7 +10,6 @@ import {
   SortOrder,
   PagedResult,
 } from '../../app/services/application/DbStoreService';
-import { subscribeMsgSimpleMessage } from '../../app/services/application/gui/IpcMain2Renderer';
 import { NDate, NString } from '../../app/types/General';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { FilterSettings, MatchFilterHoc } from './MatchFilter';
@@ -153,13 +152,14 @@ export const MatchesView = () => {
   };
 
   const changePageHandler: PaginationChangePage = (newPage) => {
-    setPage(newPage);
+    const newPageValue = newPage - 1;
+    setPage(newPageValue);
     loadMatches(
       filter.country,
       filter.league,
       filter.timeFrom,
       filter.timeUntil,
-      createMatchListConstraints(newPage, perPage, sortOrder, sortColumn)
+      createMatchListConstraints(newPageValue, perPage, sortOrder, sortColumn)
     );
   };
 
@@ -185,16 +185,6 @@ export const MatchesView = () => {
       null,
       createMatchListConstraints(page, perPage, sortOrder, sortColumn)
     );
-
-    subscribeMsgSimpleMessage(() => {
-      loadMatches(
-        filter.country,
-        filter.league,
-        filter.timeFrom,
-        filter.timeUntil,
-        createMatchListConstraints(page, perPage, sortOrder, sortColumn)
-      );
-    });
   }, []);
 
   return (
