@@ -11,6 +11,7 @@ export interface Config {
   matchStatsDbFileName: string;
   teamStatsDbFileName: string;
   leagueStatsDbFileName: string;
+  predictionQualityDbFileName: string;
   window: {
     width: number;
     height: number;

@@ -9,6 +9,7 @@ import TeamStatsService from './stats/TeamStatsService';
 import CsvDataToDBService from './application/CsvDataToDBService';
 import { AppControllService } from './application/AppControllService';
 import { ConfigurationService } from '../../config/ConfigurationService';
+import { PredictionQualityService } from './application/PredictionQualityService';
 
 const inversifyContainer = new Container();
 inversifyContainer
@@ -34,6 +35,10 @@ inversifyContainer
   .inSingletonScope();
 inversifyContainer
   .bind<ConfigurationService>(ConfigurationService)
+  .toSelf()
+  .inSingletonScope();
+inversifyContainer
+  .bind<PredictionQualityService>(PredictionQualityService)
   .toSelf()
   .inSingletonScope();
 export default inversifyContainer;

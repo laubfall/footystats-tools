@@ -28,7 +28,7 @@ export class DbStoreService<D> {
   public insert(doc: D) {
     this.DB.insert(doc, (err, d) => {
       if (err != null) {
-        console.log(err);
+        log.error(err);
       }
     });
   }
@@ -78,8 +78,22 @@ export class DbStoreService<D> {
     return this.DB.asyncFind<D>(filter);
   }
 
-  public async asyncFindOne(filter: any): Promise<D> {
-    return this.DB.asyncFindOne(filter);
+  public async asyncFindOne(
+    filter: any,
+    cursorModification?: CursorModification[]
+  ): Promise<D> {
+    let cursorMods: CursorModifications[][];
+    if (cursorModification) {
+      cursorMods = [];
+      cursorModification?.forEach((cm) => {
+        const mod: CursorModifications[] = [];
+        mod.push(cm.modification);
+        mod.push(cm.parameter);
+        cursorMods.push(mod);
+      });
+      return this.DB.asyncFindOne<D>(filter, cursorMods as unknown as D);
+    }
+    return this.DB.asyncFindOne<D>(filter);
   }
 
   public asyncUpsert(query: any, updateQuery: any) {
