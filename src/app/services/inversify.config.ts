@@ -9,7 +9,7 @@ import TeamStatsService from './stats/TeamStatsService';
 import CsvDataToDBService from './application/CsvDataToDBService';
 import { AppControllService } from './application/AppControllService';
 import { ConfigurationService } from '../../config/ConfigurationService';
-import { PredictionQualityService } from './application/PredictionQualityService';
+import { PredictionQualityService } from './prediction/PredictionQualityService';
 
 const inversifyContainer = new Container();
 inversifyContainer

@@ -14,7 +14,7 @@ export default class IpcAppControllService implements IIpcAppControllService {
   }
 
   public static registerInvokeHandler(appControllService: AppControllService) {
-    ipcMain.handle(appControllService.findCountries.name, (...args) => {
+    ipcMain.handle(appControllService.findCountries.name, () => {
       return appControllService.findCountries();
     });
   }

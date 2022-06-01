@@ -3,7 +3,7 @@ import path from 'path';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
 import TeamStats from '../../types/stats/TeamStats';
-import { alreadyImported, importFile } from '../application/CsvFileService';
+import { importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
 
 interface UniqueTeamStats extends TeamStats {
@@ -22,9 +22,6 @@ export default class TeamStatsService {
   }
 
   public readTeamStats(importFilePath: string): TeamStats[] {
-    if (alreadyImported(importFilePath)) {
-      return [];
-    }
     const teamStats = importFile<TeamStats>(
       importFilePath,
       cfg.markCsvFilesAsImported

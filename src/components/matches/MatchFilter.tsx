@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { capitalize } from 'lodash';
+import log from 'electron-log';
 import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import DateTimePicker from 'react-datetime-picker';
@@ -121,7 +122,12 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
           });
           return undefined;
         })
-        .catch((reason) => undefined);
+        .catch((reason) =>
+          log.error(
+            'MatchFilter: Failed to retrieve available countries',
+            reason
+          )
+        );
     }
 
     return undefined;

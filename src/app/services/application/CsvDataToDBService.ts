@@ -6,6 +6,7 @@ import path from 'path';
 import { injectable } from 'inversify';
 import log from 'electron-log';
 import {
+  alreadyImported,
   CsvFileInformation,
   csvFileInformationByFileName,
 } from './CsvFileService';
@@ -26,6 +27,15 @@ class CsvDataToDBService {
 
   public storeCsvData(pathToFile: string): void {
     const fp = path.parse(pathToFile);
+
+    if (alreadyImported(pathToFile)) {
+      return;
+    }
+
+    if (fp.name.endsWith('.csv') === false) {
+      log.info(`File does not have csv extension: ${fp.name}`);
+      return;
+    }
 
     const fi = csvFileInformationByFileName(fp.base);
     this.updateAppControllData(fi);

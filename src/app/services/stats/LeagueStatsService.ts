@@ -4,7 +4,7 @@ import path from 'path';
 import log from 'electron-log';
 import config from '../../../config';
 import { LeagueStats } from '../../types/stats/LeagueStats';
-import { alreadyImported, importFile } from '../application/CsvFileService';
+import { importFile } from '../application/CsvFileService';
 import { DbStoreService } from '../application/DbStoreService';
 import Configuration from '../../types/application/Configuration';
 
@@ -35,9 +35,6 @@ class LeagueStatsService implements ILeagueStatsService {
   }
 
   public readLeagueStats(pathToLeagueStatsCsv: string): LeagueStats[] {
-    if (alreadyImported(pathToLeagueStatsCsv)) {
-      return [];
-    }
     const leagueStats = importFile<LeagueStats>(
       pathToLeagueStatsCsv,
       config.markCsvFilesAsImported

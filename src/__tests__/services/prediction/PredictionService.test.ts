@@ -5,6 +5,7 @@ import {
   BetPredictionContext,
 } from '../../../app/types/prediction/BetPredictionContext';
 import TestUtils from '../../TestUtils';
+import { MatchStats } from '../../../app/types/stats/MatchStats';
 
 const mss = TestUtils.matchStatsService;
 
@@ -18,7 +19,7 @@ describe('PredictionService Tests', () => {
 
     const ctx: BetPredictionContext = {
       bet: Bet.OVER_ZERO_FIVE,
-      match: matches[0],
+      match: matches[0] as MatchStats,
     };
     const predictionResult = prediction(ctx);
     expect(predictionResult).not.toBeNull();
@@ -36,7 +37,7 @@ describe('PredictionService Tests', () => {
 
     const ctx: BetPredictionContext = {
       bet: Bet.OVER_ZERO_FIVE,
-      match: matches[0],
+      match: matches[0] as MatchStats,
     };
     const predictionResult = prediction(ctx);
     expect(predictionResult).not.toBeNull();

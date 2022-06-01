@@ -1,7 +1,13 @@
 import { NDate, NString } from '../../types/General';
 import { MatchStats, MatchStatus } from '../../types/stats/MatchStats';
 import { CursorModification, Result } from '../application/DbStoreService';
-import { PredictionResult } from '../prediction/IPredictionService';
+import {
+  PredictionAnalyze,
+  PredictionResult,
+} from '../prediction/IPredictionService';
+import { Bet } from '../../types/prediction/BetPredictionContext';
+import { PredictionQualityRevision } from '../prediction/PredictionQualityService.types';
+// eslint-disable-next-line import/no-cycle
 
 export interface IMatchService {
   writeMatch(matchStats: MatchStats): void;
@@ -11,6 +17,21 @@ export interface IMatchService {
     league: NString,
     from: NDate,
     until: NDate,
+    cursorModification?: CursorModification[]
+  ): Promise<Result<Match>>;
+
+  matchesByFilterExt(
+    country: NString,
+    league: NString,
+    from: NDate,
+    until: NDate,
+    bet: Bet,
+    predictionAnalyze: PredictionAnalyze,
+    cursorModification?: CursorModification[]
+  ): Promise<Result<Match>>;
+
+  matchesByRevision(
+    revision?: PredictionQualityRevision,
     cursorModification?: CursorModification[]
   ): Promise<Result<Match>>;
 }
@@ -29,6 +50,7 @@ type Match = {
   footyStatsUrl: string;
   o05?: PredictionResult;
   bttsYes?: PredictionResult;
+  revision?: PredictionQualityRevision;
 };
 
 export default Match;

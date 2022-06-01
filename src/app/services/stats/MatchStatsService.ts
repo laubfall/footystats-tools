@@ -6,7 +6,7 @@ import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
 import { MainProcessMessageCodes } from '../../types/application/MessageCodes';
 import { MatchStats } from '../../types/stats/MatchStats';
-import { alreadyImported, importFile } from '../application/CsvFileService';
+import { importFile } from '../application/CsvFileService';
 import {
   CursorModification,
   DbStoreService,
@@ -125,10 +125,6 @@ export class MatchStatsService implements IMatchStatsService {
   }
 
   public async readMatches(pathToMatchesCsv: string) {
-    if (alreadyImported(pathToMatchesCsv)) {
-      return;
-    }
-
     let matches = importFile<MatchStats>(
       pathToMatchesCsv,
       cfg.markCsvFilesAsImported
