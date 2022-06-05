@@ -1,6 +1,16 @@
 {
   "main.msg.STARTED_IMPORT_DIRECTORY_WATCH": "Überwachung von Import-Verzeichnis begonnen",
   "main.msg.MATCH_FILE_IMPORTED": "Match CSV Datei importiert",
+
   "renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
-  "renderer.matchesview.bet.BTTS_YES": "BTTS ja"
+  "renderer.matchesview.bet.BTTS_YES": "BTTS ja",
+  "renderer.menu.brand": "Footystats Tools",
+  "renderer.menu.item.configuration": "Konfiguration",
+  "renderer.menu.item.matchview": "Matches",
+  "renderer.menu.item.predictionqualityview": "Qualität Vorhersage",
+  "renderer.predictionqualityview.button.calculate": "Aktualisieren",
+  "renderer.predictionqualitiyview.table.col.one": "Wette",
+  "renderer.predictionqualitiyview.table.col.two": "Bewertet (gesamt)",
+  "renderer.predictionqualitiyview.table.col.three": "erfolgreich bewertet",
+  "renderer.predictionqualitiyview.table.col.four": "falsch bewertet"
 }

@@ -1,3 +1,4 @@
+import log from 'electron-log';
 import AsyncNedb from 'nedb-async';
 import fs from 'fs';
 import cfg from '../../../config';
@@ -26,7 +27,7 @@ export class DbStoreService<D> {
   }
 
   public insert(doc: D) {
-    this.DB.insert(doc, (err, d) => {
+    this.DB.insert(doc, (err) => {
       if (err != null) {
         log.error(err);
       }

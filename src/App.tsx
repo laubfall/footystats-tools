@@ -9,6 +9,7 @@ import {
 import { ConfigurationView } from './components/configuration/ConfigurationView';
 import { MatchesView } from './components/matches/MatchesView';
 import { Menu } from './components/Menu';
+import { PredictionQualityView } from './components/predictionQuality/PredictionQualityView';
 
 const FootyStatsTools = () => {
   const [alertMsg, setMsg] = useState<string>();
@@ -29,7 +30,8 @@ const FootyStatsTools = () => {
       <Routes>
         <Route path="/">
           <Route path="configuration" element={<ConfigurationView />} />
-          <Route index path="matchList" element={<MatchesView />} />
+          <Route path="matchList" element={<MatchesView />} />
+          <Route path="predictionQuality" element={<PredictionQualityView />} />
         </Route>
       </Routes>
     </>

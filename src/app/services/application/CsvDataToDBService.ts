@@ -32,7 +32,7 @@ class CsvDataToDBService {
       return;
     }
 
-    if (fp.name.endsWith('.csv') === false) {
+    if (pathToFile.endsWith('.csv') === false) {
       log.info(`File does not have csv extension: ${fp.name}`);
       return;
     }

@@ -1,6 +1,6 @@
 import log from 'electron-log';
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import {
   PaginationChangePage,
   PaginationChangeRowsPerPage,
@@ -203,9 +203,6 @@ export const MatchesView = () => {
               setFilter(changedFilter);
             }}
           />
-        </Col>
-        <Col>
-          <Button name="doFilter">Filtern</Button>
         </Col>
       </Row>
       <MatchList

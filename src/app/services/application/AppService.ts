@@ -29,6 +29,8 @@ import IpcMatchService from '../match/IpcMatchService';
 import MatchService from '../match/MatchService';
 import { IpcConfigurationService } from '../../../config/IpcConfigurationService';
 import { ConfigurationService } from '../../../config/ConfigurationService';
+import IpcPredictionQualityService from '../prediction/IpcPredictionQualityService';
+import { PredictionQualityService } from '../prediction/PredictionQualityService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService =
@@ -52,6 +54,9 @@ function registerConfigDependentIpcHandler() {
   );
   IpcMatchService.registerInvokeHandler(
     inversifyContainer.get<MatchService>(MatchService)
+  );
+  IpcPredictionQualityService.registerInvokeHandler(
+    inversifyContainer.get<PredictionQualityService>(PredictionQualityService)
   );
 }
 

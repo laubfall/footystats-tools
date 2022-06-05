@@ -46,5 +46,10 @@ describe('PredictionQualityService Tests', () => {
     measureO05 = report.measurements.find((m) => m.bet === Bet.OVER_ZERO_FIVE);
     expect(measureO05).toBeDefined();
     expect(measureO05?.countAssessed).toBe(2);
+
+    const r = await TestUtils.predictionQualityService.dbService.asyncFind({
+      revision: 0,
+    });
+    expect(r.length).toBe(1);
   });
 });
