@@ -9,8 +9,11 @@
   "renderer.menu.item.matchview": "Matches",
   "renderer.menu.item.predictionqualityview": "Qualität Vorhersage",
   "renderer.predictionqualityview.button.calculate": "Aktualisieren",
+  "renderer.predictionqualityview.button.recalculate": "Komplett neu berechnen",
   "renderer.predictionqualitiyview.table.col.one": "Wette",
   "renderer.predictionqualitiyview.table.col.two": "Bewertet (gesamt)",
-  "renderer.predictionqualitiyview.table.col.three": "erfolgreich bewertet",
-  "renderer.predictionqualitiyview.table.col.four": "falsch bewertet"
+  "renderer.predictionqualitiyview.table.col.three": "erfolgreich bewertet (wetten)",
+  "renderer.predictionqualitiyview.table.col.four": "falsch bewertet (wetten)",
+  "renderer.predictionqualitiyview.table.col.five": "erfolgreich bewertet (nicht wetten)",
+  "renderer.predictionqualitiyview.table.col.six": "falsch bewertet (nicht wettern)"
 }

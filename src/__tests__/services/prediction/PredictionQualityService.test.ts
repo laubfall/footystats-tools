@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import TestUtils from '../../TestUtils';
 import Match from '../../../app/services/match/IMatchService';
 import { Bet } from '../../../app/types/prediction/BetPredictionContext';
+import { NO_REVISION_SO_FAR } from '../../../app/services/prediction/PredictionQualityService.types';
 
 const mss = TestUtils.matchStatsService;
 const ms = TestUtils.matchService;
@@ -17,11 +18,17 @@ describe('PredictionQualityService Tests', () => {
     expect(precast.revision).toBe(0);
     expect(precast.predictionsToAssess).toBe(1);
 
+    let latestRevision =
+      await TestUtils.predictionQualityService.latestRevision();
+    expect(latestRevision).toBe(NO_REVISION_SO_FAR);
+
     let report = await TestUtils.predictionQualityService.computeQuality();
     expect(report).toBeDefined();
     expect(report.revision).toBe(0);
     expect(report.measurements).toBeDefined();
     expect(report.measurements.length).toBeGreaterThan(0);
+    latestRevision = await TestUtils.predictionQualityService.latestRevision();
+    expect(latestRevision).toBe(0);
 
     let measureO05 = report.measurements.find(
       (m) => m.bet === Bet.OVER_ZERO_FIVE

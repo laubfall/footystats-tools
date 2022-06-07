@@ -24,6 +24,14 @@ export const ReportList = ({ report }: ReportListProps) => {
       name: translate('renderer.predictionqualitiyview.table.col.four'),
       selector: (bpq) => bpq.countFailed,
     },
+    {
+      name: translate('renderer.predictionqualitiyview.table.col.five'),
+      selector: (bpq) => bpq.countSuccessDontBet,
+    },
+    {
+      name: translate('renderer.predictionqualitiyview.table.col.six'),
+      selector: (bpq) => bpq.countFailedDontBet,
+    },
   ];
 
   return (

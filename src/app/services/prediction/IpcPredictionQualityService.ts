@@ -36,6 +36,13 @@ class IpcPredictionQualityService implements IPredictionQualityService {
     );
   }
 
+  recomputeQuality(revision: number): Promise<PredictionQualityReport> {
+    return ipcRendererInvoke(
+      `predictionQualityService.${this.recomputeQuality.name}`,
+      revision
+    );
+  }
+
   static registerInvokeHandler(configrationService: PredictionQualityService) {
     ipcMain.handle(
       `predictionQualityService.${configrationService.computeQuality.name}`,
@@ -57,6 +64,14 @@ class IpcPredictionQualityService implements IPredictionQualityService {
       (...args) => {
         const params = args[1];
         return configrationService.precast(params[0]);
+      }
+    );
+
+    ipcMain.handle(
+      `predictionQualityService.${configrationService.recomputeQuality.name}`,
+      (...args) => {
+        const params = args[1];
+        return configrationService.recomputeQuality(params[0]);
       }
     );
   }

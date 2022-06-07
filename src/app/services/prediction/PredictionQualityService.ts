@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'inversify';
 import path from 'path';
+import log from 'electron-log';
 import { DbStoreService } from '../application/DbStoreService';
 import Configuration from '../../types/application/Configuration';
 import cfg from '../../../config';
@@ -33,8 +34,11 @@ export class PredictionQualityService implements IPredictionQualityService {
     this.dbService.createUniqueIndex('revision');
   }
 
-  async latestReport(): Promise<PredictionQualityReport> {
+  async latestReport(): Promise<PredictionQualityReport | undefined> {
     const lr = await this.latestRevision();
+    if (lr === NO_REVISION_SO_FAR) {
+      return Promise.resolve(undefined);
+    }
     return this.dbService.asyncFindOne({ revision: lr });
   }
 
@@ -48,8 +52,8 @@ export class PredictionQualityService implements IPredictionQualityService {
       },
     ]);
 
-    if (!report) {
-      return Promise.resolve(0);
+    if (report === null) {
+      return Promise.resolve(NO_REVISION_SO_FAR);
     }
 
     return Promise.resolve(report.revision);
@@ -70,15 +74,23 @@ export class PredictionQualityService implements IPredictionQualityService {
     const result: Match[] = (await this.matchService.matchesByRevision(
       NO_REVISION_SO_FAR
     )) as Match[];
-    const latestRevision = await this.latestRevision();
 
-    let report = await this.dbService.asyncFindOne({
-      revision: latestRevision,
-    });
-
-    if (!report) {
+    let latestRevision = await this.latestRevision();
+    let report: PredictionQualityReport;
+    if (latestRevision === NO_REVISION_SO_FAR) {
+      latestRevision = 0;
       report = { revision: latestRevision, measurements: [] };
       this.dbService.insert(report);
+    } else {
+      report = await this.dbService.asyncFindOne({
+        revision: latestRevision,
+      });
+
+      if (report === undefined) {
+        log.info(`Inserted new report with revision: ${latestRevision}`);
+        report = { revision: latestRevision, measurements: [] };
+        this.dbService.insert(report);
+      }
     }
 
     result.forEach((match) => {
@@ -89,10 +101,7 @@ export class PredictionQualityService implements IPredictionQualityService {
       match.revision = latestRevision;
       this.matchService.update(match);
     });
-    await this.dbService.asyncUpsert(
-      { revision: latestRevision },
-      { ...report }
-    );
+    await this.dbService.DB.update({ revision: latestRevision }, { ...report });
 
     return Promise.resolve(report);
   }
@@ -105,6 +114,9 @@ export class PredictionQualityService implements IPredictionQualityService {
       nextRevision = revision + 1;
     } else {
       nextRevision = await this.latestRevision();
+      if (nextRevision === NO_REVISION_SO_FAR) {
+        nextRevision = 0;
+      }
     }
 
     return nextRevision;
@@ -123,8 +135,19 @@ export class PredictionQualityService implements IPredictionQualityService {
       measurements.push({
         bet: Bet.OVER_ZERO_FIVE,
         countAssessed: 1,
-        countFailed: match.o05?.analyzeResult === 'FAILED' ? 1 : 0,
-        countSuccess: match.o05?.analyzeResult === 'SUCCESS' ? 1 : 0,
+        countFailed:
+          match.o05?.analyzeResult === 'FAILED' && match.o05.betOnThis ? 1 : 0,
+        countSuccess:
+          match.o05?.analyzeResult === 'SUCCESS' && match.o05.betOnThis ? 1 : 0,
+        countFailedDontBet:
+          match.o05?.analyzeResult === 'FAILED' && match.o05.betOnThis === false
+            ? 1
+            : 0,
+        countSuccessDontBet:
+          match.o05?.analyzeResult === 'SUCCESS' &&
+          match.o05.betOnThis === false
+            ? 1
+            : 0,
       });
     }
 
@@ -132,8 +155,24 @@ export class PredictionQualityService implements IPredictionQualityService {
       measurements.push({
         bet: Bet.BTTS_YES,
         countAssessed: 1,
-        countFailed: match.o05?.analyzeResult === 'FAILED' ? 1 : 0,
-        countSuccess: match.o05?.analyzeResult === 'SUCCESS' ? 1 : 0,
+        countFailed:
+          match.bttsYes?.analyzeResult === 'FAILED' && match.bttsYes.betOnThis
+            ? 1
+            : 0,
+        countSuccess:
+          match.bttsYes?.analyzeResult === 'SUCCESS' && match.bttsYes.betOnThis
+            ? 1
+            : 0,
+        countFailedDontBet:
+          match.bttsYes?.analyzeResult === 'FAILED' &&
+          match.bttsYes.betOnThis === false
+            ? 1
+            : 0,
+        countSuccessDontBet:
+          match.bttsYes?.analyzeResult === 'SUCCESS' &&
+          match.bttsYes.betOnThis === false
+            ? 1
+            : 0,
       });
     }
 
@@ -155,8 +194,33 @@ export class PredictionQualityService implements IPredictionQualityService {
         reportMsm.countAssessed += msm.countAssessed;
         reportMsm.countSuccess += msm.countSuccess;
         reportMsm.countFailed += msm.countFailed;
+        reportMsm.countSuccessDontBet += msm.countSuccessDontBet;
+        reportMsm.countFailedDontBet += msm.countFailedDontBet;
       }
     });
+  }
+
+  async recomputeQuality(revision: number): Promise<PredictionQualityReport> {
+    const report = await this.dbService.asyncFindOne({ revision });
+    if (!report) {
+      return Promise.reject(
+        new Error('There is no report for the given revision number.')
+      );
+    }
+
+    const result: Match[] = (await this.matchService.matchesByRevision(
+      revision
+    )) as Match[];
+
+    report.measurements = [];
+
+    result.forEach((match) => {
+      const msm = this.measure(match);
+      this.merge(report, msm);
+    });
+    await this.dbService.DB.update({ revision }, { ...report });
+
+    return Promise.resolve(report);
   }
 }
 
@@ -167,5 +231,7 @@ export interface IPredictionQualityService {
 
   computeQuality(): Promise<PredictionQualityReport>;
 
-  latestReport(): Promise<PredictionQualityReport>;
+  recomputeQuality(revision: number): Promise<PredictionQualityReport>;
+
+  latestReport(): Promise<PredictionQualityReport | undefined>;
 }
