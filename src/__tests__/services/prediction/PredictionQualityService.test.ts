@@ -53,6 +53,17 @@ describe('PredictionQualityService Tests', () => {
     measureO05 = report.measurements.find((m) => m.bet === Bet.OVER_ZERO_FIVE);
     expect(measureO05).toBeDefined();
     expect(measureO05?.countAssessed).toBe(2);
+    expect(measureO05?.countSuccess).toBe(2);
+    expect(measureO05?.distributionBetOnThis?.length).toBe(1);
+    expect(measureO05?.distributionBetSuccessful?.length).toBe(1);
+
+    const distBetOnThis = measureO05?.distributionBetOnThis?.[0];
+    expect(distBetOnThis?.count).toBe(2);
+
+    const distBetSuccessful = measureO05?.distributionBetSuccessful?.[0];
+    expect(distBetSuccessful?.count).toBe(2);
+
+    expect(measureO05?.distributionDontBetOnThis).not.toBeDefined();
 
     const r = await TestUtils.predictionQualityService.dbService.asyncFind({
       revision: 0,

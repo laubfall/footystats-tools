@@ -9,6 +9,7 @@ import {
   BetPredictionQuality,
   NO_REVISION_SO_FAR,
   Precast,
+  PredictionPercentDistribution,
   PredictionQualityReport,
   PredictionQualityRevision,
 } from './PredictionQualityService.types';
@@ -131,8 +132,8 @@ export class PredictionQualityService implements IPredictionQualityService {
           prediction?.analyzeResult === 'FAILED')
       );
     };
-    if (relevantPredictionResult(match.o05)) {
-      measurements.push({
+    if (match.o05 && relevantPredictionResult(match.o05)) {
+      const m = {
         bet: Bet.OVER_ZERO_FIVE,
         countAssessed: 1,
         countFailed:
@@ -148,11 +149,13 @@ export class PredictionQualityService implements IPredictionQualityService {
           match.o05.betOnThis === false
             ? 1
             : 0,
-      });
+      };
+      this.addDistribution(m, match.o05);
+      measurements.push(m);
     }
 
-    if (relevantPredictionResult(match.bttsYes)) {
-      measurements.push({
+    if (match.bttsYes && relevantPredictionResult(match.bttsYes)) {
+      const m = {
         bet: Bet.BTTS_YES,
         countAssessed: 1,
         countFailed:
@@ -173,10 +176,38 @@ export class PredictionQualityService implements IPredictionQualityService {
           match.bttsYes.betOnThis === false
             ? 1
             : 0,
-      });
+      };
+      this.addDistribution(m, match.bttsYes);
+      measurements.push(m);
     }
 
     return measurements;
+  }
+
+  private addDistribution(
+    quality: BetPredictionQuality,
+    prediction: PredictionResult
+  ) {
+    const dist = {
+      predictionPercent: prediction.betSuccessInPercent,
+      count: 1,
+    };
+
+    if (prediction.betOnThis && prediction.analyzeResult === 'SUCCESS') {
+      quality.distributionBetOnThis = [dist];
+    } else if (
+      prediction.betOnThis === false &&
+      prediction.analyzeResult === 'SUCCESS'
+    ) {
+      quality.distributionDontBetOnThis = [dist];
+    }
+
+    if (
+      (prediction.betOnThis && prediction.analyzeResult === 'SUCCESS') ||
+      (prediction.betOnThis === false && prediction.analyzeResult === 'FAILED')
+    ) {
+      quality.distributionBetSuccessful = [dist];
+    }
   }
 
   private merge(
@@ -196,6 +227,52 @@ export class PredictionQualityService implements IPredictionQualityService {
         reportMsm.countFailed += msm.countFailed;
         reportMsm.countSuccessDontBet += msm.countSuccessDontBet;
         reportMsm.countFailedDontBet += msm.countFailedDontBet;
+        this.mergeDistributions(reportMsm, msm);
+      }
+    });
+  }
+
+  private mergeDistributions(
+    fullReport: BetPredictionQuality,
+    matchReport: BetPredictionQuality
+  ) {
+    if (matchReport.distributionBetOnThis) {
+      this.mergeDistribution(
+        fullReport.distributionBetOnThis ||
+          (fullReport.distributionBetOnThis = []),
+        matchReport.distributionBetOnThis
+      );
+    }
+
+    if (matchReport.distributionDontBetOnThis) {
+      this.mergeDistribution(
+        fullReport.distributionDontBetOnThis ||
+          (fullReport.distributionDontBetOnThis = []),
+        matchReport.distributionDontBetOnThis
+      );
+    }
+
+    if (matchReport.distributionBetSuccessful) {
+      this.mergeDistribution(
+        fullReport.distributionBetSuccessful ||
+          (fullReport.distributionBetSuccessful = []),
+        matchReport.distributionBetSuccessful
+      );
+    }
+  }
+
+  private mergeDistribution(
+    target: PredictionPercentDistribution[],
+    source: PredictionPercentDistribution[]
+  ) {
+    source.forEach((sp) => {
+      const idx = target.findIndex(
+        (tp) => tp.predictionPercent === sp.predictionPercent
+      );
+      if (idx >= 0) {
+        target[idx].count += sp.count;
+      } else {
+        target.push(sp);
       }
     });
   }

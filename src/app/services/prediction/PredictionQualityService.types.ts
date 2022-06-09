@@ -18,6 +18,14 @@ export type BetPredictionQuality = {
   countFailed: number; // PredictionAnalyse Failed for bets you better bet on
   countSuccessDontBet: number;
   countFailedDontBet: number;
+  distributionBetOnThis?: PredictionPercentDistribution[]; // Counted percentage values for bets fst told to bet on.
+  distributionDontBetOnThis?: PredictionPercentDistribution[]; // Counted percentage values for bets fst told to not bet on.
+  distributionBetSuccessful?: PredictionPercentDistribution[]; // Regardless what fts said the bet would be won. So here are the counted percentages of betOnThis && success and dontBetOnThis && failed.
+};
+
+export type PredictionPercentDistribution = {
+  predictionPercent: number;
+  count: number;
 };
 
 export type PredictionQualityRevision = number;
