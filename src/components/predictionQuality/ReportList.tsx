@@ -10,7 +10,8 @@ export const ReportList = ({ report }: ReportListProps) => {
   const columns: TableColumn<BetPredictionQuality>[] = [
     {
       name: translate('renderer.predictionqualitiyview.table.col.one'),
-      selector: (bpq) => bpq.bet,
+      selector: (bpq) =>
+        translate(`renderer.predictionqualitiyview.table.col.one.${bpq.bet}`),
     },
     {
       name: translate('renderer.predictionqualitiyview.table.col.two'),
