@@ -55,11 +55,16 @@ export const PredictionQualityView = () => {
       </Row>
       <ReportList report={report} />
       <PercentageDistributionGraph
-        data={report?.measurements[1].distributionDontBetOnThis}
-      />
-
-      <PercentageDistributionGraph
-        data={report?.measurements[1].distributionDontBetOnThisFailed}
+        graphs={[
+          {
+            name: 'BTTS ja (wetten)',
+            data: report?.measurements[1].distributionBetOnThis,
+          },
+          {
+            name: 'BTTS ja (wetten falsch)',
+            data: report?.measurements[1].distributionBetOnThisFailed,
+          },
+        ]}
       />
     </>
   );
