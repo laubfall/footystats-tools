@@ -193,7 +193,10 @@ export class PredictionQualityService implements IPredictionQualityService {
       count: 1,
     };
 
-    if (prediction.betOnThis && prediction.analyzeResult === 'SUCCESS') {
+    if (
+      prediction.betOnThis === true &&
+      prediction.analyzeResult === 'SUCCESS'
+    ) {
       quality.distributionBetOnThis = [dist];
     } else if (
       prediction.betOnThis === false &&
@@ -202,8 +205,20 @@ export class PredictionQualityService implements IPredictionQualityService {
       quality.distributionDontBetOnThis = [dist];
     }
 
+    if (prediction.betOnThis && prediction.analyzeResult === 'FAILED') {
+      quality.distributionBetOnThisFailed = [dist];
+    }
+
     if (
-      (prediction.betOnThis && prediction.analyzeResult === 'SUCCESS') ||
+      prediction.betOnThis === false &&
+      prediction.analyzeResult === 'FAILED'
+    ) {
+      quality.distributionDontBetOnThisFailed = [dist];
+    }
+
+    if (
+      (prediction.betOnThis === true &&
+        prediction.analyzeResult === 'SUCCESS') ||
       (prediction.betOnThis === false && prediction.analyzeResult === 'FAILED')
     ) {
       quality.distributionBetSuccessful = [dist];
@@ -257,6 +272,22 @@ export class PredictionQualityService implements IPredictionQualityService {
         fullReport.distributionBetSuccessful ||
           (fullReport.distributionBetSuccessful = []),
         matchReport.distributionBetSuccessful
+      );
+    }
+
+    if (matchReport.distributionBetOnThisFailed) {
+      this.mergeDistribution(
+        fullReport.distributionBetOnThisFailed ||
+          (fullReport.distributionBetOnThisFailed = []),
+        matchReport.distributionBetOnThisFailed
+      );
+    }
+
+    if (matchReport.distributionDontBetOnThisFailed) {
+      this.mergeDistribution(
+        fullReport.distributionDontBetOnThisFailed ||
+          (fullReport.distributionDontBetOnThisFailed = []),
+        matchReport.distributionDontBetOnThisFailed
       );
     }
   }

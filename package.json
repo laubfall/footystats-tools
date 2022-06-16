@@ -293,6 +293,7 @@
     "react-router-dom": "6",
     "react-select": "^5.2.1",
     "react-table": "^7.7.0",
+    "recharts": "^2.1.10",
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",

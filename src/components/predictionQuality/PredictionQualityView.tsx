@@ -8,6 +8,7 @@ import {
   NO_REVISION_SO_FAR,
   PredictionQualityReport,
 } from '../../app/services/prediction/PredictionQualityService.types';
+import { PercentageDistributionGraph } from './PercentageDistributionGraph';
 
 export const PredictionQualityView = () => {
   const [report, setReport] = useState<PredictionQualityReport>();
@@ -53,6 +54,13 @@ export const PredictionQualityView = () => {
         </Col>
       </Row>
       <ReportList report={report} />
+      <PercentageDistributionGraph
+        data={report?.measurements[1].distributionDontBetOnThis}
+      />
+
+      <PercentageDistributionGraph
+        data={report?.measurements[1].distributionDontBetOnThisFailed}
+      />
     </>
   );
 };
