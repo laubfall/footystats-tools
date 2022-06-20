@@ -66,6 +66,19 @@ export const PredictionQualityView = () => {
           },
         ]}
       />
+
+      <PercentageDistributionGraph
+        graphs={[
+          {
+            name: 'BTTS ja (nicht wetten)',
+            data: report?.measurements[1].distributionDontBetOnThis,
+          },
+          {
+            name: 'BTTS ja (nicht wetten falsch)',
+            data: report?.measurements[1].distributionDontBetOnThisFailed,
+          },
+        ]}
+      />
     </>
   );
 };
