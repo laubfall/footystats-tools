@@ -12,7 +12,7 @@ export type Country = {
 
 export type League = {
   name: string;
-  seasons: Season[];
+  seasons?: Season[];
 };
 
 export type Season = {
