@@ -18,8 +18,8 @@ class IpcMatchService implements IMatchService {
   }
 
   matchesByFilter(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]

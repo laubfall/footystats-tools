@@ -105,8 +105,8 @@ export const MatchesView = () => {
   const [sortColumn, setSortColumn] = useState<string | undefined>('date_unix');
   const [sortOrder, setSortOrder] = useState<SortOrder>(-1);
   const [filter, setFilter] = useState<FilterSettings>({
-    country: null,
-    league: null,
+    country: [],
+    league: [],
     timeFrom: null,
     timeUntil: null,
   });
@@ -116,8 +116,8 @@ export const MatchesView = () => {
   }
 
   function loadMatches(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
@@ -179,8 +179,8 @@ export const MatchesView = () => {
 
   useEffect(() => {
     loadMatches(
-      null,
-      null,
+      [],
+      [],
       null,
       null,
       createMatchListConstraints(page, perPage, sortOrder, sortColumn)

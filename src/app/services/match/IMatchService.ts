@@ -13,16 +13,16 @@ export interface IMatchService {
   writeMatch(matchStats: MatchStats): void;
 
   matchesByFilter(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
   ): Promise<Result<Match>>;
 
   matchesByFilterExt(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     bet: Bet,

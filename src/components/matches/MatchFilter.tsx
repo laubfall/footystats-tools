@@ -4,7 +4,7 @@ import log from 'electron-log';
 import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import DateTimePicker from 'react-datetime-picker';
-import Select, { PropsValue, SingleValue } from 'react-select';
+import Select, { MultiValue, PropsValue } from 'react-select';
 import IpcAppControllService from '../../app/services/application/IpcAppControllService';
 import { NDate, NString } from '../../app/types/General';
 
@@ -16,15 +16,15 @@ export type SelectOption = {
 export type FilterSettings = {
   timeFrom: NDate;
   timeUntil: NDate;
-  country: NString;
-  league: NString;
+  country: NString[];
+  league: NString[];
 };
 
 export type MatchFilterHocProps = {
   timeFromChanged?: (date: Date) => void;
   timeUntilChanged?: (date: Date) => void;
-  countryChanged?: (newSelectedCountry: SingleValue<SelectOption>) => void;
-  leagueChanged?: (newSelectedLeague: SingleValue<SelectOption>) => void;
+  countryChanged?: (newSelectedCountry: MultiValue<SelectOption>) => void;
+  leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
   somethingChanged?: (actualFilter: FilterSettings) => void;
 };
 
@@ -53,10 +53,11 @@ export const MatchFilter = ({
         options={countries}
         value={selectedCountry}
         onChange={countryChanged}
+        isMulti
       />
     </Col>
     <Col>
-      <Select options={leagues} onChange={leagueChanged} />
+      <Select options={leagues} onChange={leagueChanged} isMulti />
     </Col>
     <Col>
       <DateTimePicker value={timeFrom as Date} onChange={timeFromChanged} />
@@ -69,18 +70,14 @@ export const MatchFilter = ({
 
 export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   const [countries, setCountries] = useState<SelectOption[]>([]);
-  const countryOptionAll: SelectOption = {
-    label: 'All',
-    value: null,
-  };
+
   const [selectedCountry, setSelectedCountry] =
-    useState<SingleValue<SelectOption>>(countryOptionAll);
+    useState<MultiValue<SelectOption>>();
 
   const [leagues, setLeagues] = useState<SelectOption[]>([]);
-  const leagueOptionAll: SelectOption = {
-    label: 'All',
-    value: null,
-  };
+
+  const [selectedLeagues, setSelectedLeagues] =
+    useState<MultiValue<SelectOption>>();
 
   const [timeFrom, setTimeFrom] = useState<NDate>(null);
   const [timeUntil, setTimeUntil] = useState<NDate>(null);
@@ -89,7 +86,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
     const appControllService = new IpcAppControllService();
     // eslint-disable-next-line promise/catch-or-return
     appControllService.findCountries().then((availableCountries) => {
-      const cSelOptions: SelectOption[] = [countryOptionAll];
+      const cSelOptions: SelectOption[] = [];
       availableCountries.forEach((c) => {
         cSelOptions.push({
           label: capitalize(c.name),
@@ -103,8 +100,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 
   useEffect(() => {
     const appControllService = new IpcAppControllService();
-    const lSelOptions: SelectOption[] = [leagueOptionAll];
-    if (selectedCountry === countryOptionAll) {
+    const lSelOptions: SelectOption[] = [];
+    if (selectedCountry?.length === 0) {
       appControllService
         .findCountries()
         .then((availableCountries) => {
@@ -128,20 +125,47 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
             reason
           )
         );
+    } else {
+      const availableLeagues: SelectOption[] = [];
+      appControllService
+        .findCountries()
+        .then((availableCountries) => {
+          selectedCountry?.forEach((sc) => {
+            const fc = availableCountries.find((c) => c.name === sc.value);
+            const l =
+              fc?.leagues?.map(
+                (league) =>
+                  ({
+                    label: league.name,
+                    value: league.name,
+                  } as SelectOption)
+              ) || [];
+            availableLeagues.push(...l);
+          });
+          return null;
+        })
+        .catch((reason) =>
+          log.error(
+            'MatchFilter: Failed to retrieve available countries',
+            reason
+          )
+        );
+      setLeagues(availableLeagues);
     }
 
     return undefined;
   }, [selectedCountry]);
 
-  function onChangeCountry(country: SingleValue<SelectOption>) {
+  function onChangeCountry(country: MultiValue<SelectOption>) {
     if (props.countryChanged) {
       props.countryChanged(country);
     }
 
     if (props.somethingChanged && country != null) {
+      const countryNames = country.map((mvc) => mvc.value);
       props.somethingChanged({
-        country: country.value,
-        league: null,
+        country: countryNames,
+        league: selectedLeagues?.map((sl) => sl.value) || [],
         timeFrom,
         timeUntil,
       });
@@ -150,17 +174,29 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
     setSelectedCountry(country);
   }
 
-  function onChangeLeague(league: SingleValue<SelectOption>) {
+  function onChangeLeague(league: MultiValue<SelectOption>) {
     if (props.leagueChanged) {
       props.leagueChanged(league);
     }
+
+    if (props.somethingChanged && league != null) {
+      const leagueNames = league.map((mvc) => mvc.value);
+      props.somethingChanged({
+        country: selectedCountry?.map((sc) => sc.value) || [],
+        league: leagueNames,
+        timeFrom,
+        timeUntil,
+      });
+    }
+
+    setSelectedLeagues(league);
   }
 
   function onTimeFromChanged(timeFromNew: Date) {
     if (props.somethingChanged && selectedCountry != null) {
       props.somethingChanged({
-        country: selectedCountry.value,
-        league: null,
+        country: selectedCountry.map((mvc) => mvc.value),
+        league: [],
         timeFrom: timeFromNew,
         timeUntil,
       });
@@ -172,8 +208,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   function onTimeUntilChanged(timeUntilNew: Date) {
     if (props.somethingChanged && selectedCountry != null) {
       props.somethingChanged({
-        country: selectedCountry.value,
-        league: null,
+        country: selectedCountry.map((mvc) => mvc.value),
+        league: [],
         timeFrom,
         timeUntil: timeUntilNew,
       });

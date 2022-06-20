@@ -83,8 +83,8 @@ class MatchService implements IMatchService {
   }
 
   matchesByFilterExt(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     bet: Bet,
@@ -117,8 +117,8 @@ class MatchService implements IMatchService {
   }
 
   matchesByFilter(
-    country: NString,
-    league: NString,
+    country: NString[],
+    league: NString[],
     from: NDate,
     until: NDate,
     cursorModification?: CursorModification[]
@@ -146,21 +146,21 @@ class MatchService implements IMatchService {
   }
 
   private static matchFilterConstraints(
-    country: string | null,
-    league: string | null,
+    country: NString[] | null,
+    league: NString[] | null,
     from: Date | null,
     until: Date | null
   ): any[] {
     const constraints = [];
-    if (country != null) {
+    if (country != null && country.length > 0) {
       constraints.push({
-        Country: country,
+        Country: { $in: country },
       });
     }
 
-    if (league != null) {
+    if (league != null && league.length > 0) {
       constraints.push({
-        League: league,
+        League: { $in: league },
       });
     }
 
