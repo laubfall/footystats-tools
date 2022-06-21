@@ -101,11 +101,20 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
   useEffect(() => {
     const appControllService = new IpcAppControllService();
     const lSelOptions: SelectOption[] = [];
-    if (selectedCountry?.length === 0) {
-      appControllService
-        .findCountries()
-        .then((availableCountries) => {
-          availableCountries.forEach((c) => {
+    appControllService
+      .findCountries()
+      .then((availableCountries) => {
+        availableCountries
+          .filter((c) => {
+            if (selectedCountry?.length === 0) {
+              return true;
+            }
+
+            return (
+              selectedCountry?.find((sl) => sl.value === c.name) !== undefined
+            );
+          })
+          .forEach((c) => {
             const availableLeagues =
               c.leagues?.map(
                 (league) =>
@@ -117,41 +126,11 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
             lSelOptions.push(...availableLeagues);
             setLeagues(lSelOptions);
           });
-          return undefined;
-        })
-        .catch((reason) =>
-          log.error(
-            'MatchFilter: Failed to retrieve available countries',
-            reason
-          )
-        );
-    } else {
-      const availableLeagues: SelectOption[] = [];
-      appControllService
-        .findCountries()
-        .then((availableCountries) => {
-          selectedCountry?.forEach((sc) => {
-            const fc = availableCountries.find((c) => c.name === sc.value);
-            const l =
-              fc?.leagues?.map(
-                (league) =>
-                  ({
-                    label: league.name,
-                    value: league.name,
-                  } as SelectOption)
-              ) || [];
-            availableLeagues.push(...l);
-          });
-          return null;
-        })
-        .catch((reason) =>
-          log.error(
-            'MatchFilter: Failed to retrieve available countries',
-            reason
-          )
-        );
-      setLeagues(availableLeagues);
-    }
+        return undefined;
+      })
+      .catch((reason) =>
+        log.error('MatchFilter: Failed to retrieve available countries', reason)
+      );
 
     return undefined;
   }, [selectedCountry]);
