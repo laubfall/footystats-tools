@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { capitalize } from 'lodash';
 import log from 'electron-log';
 import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
@@ -89,8 +88,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
       const cSelOptions: SelectOption[] = [];
       availableCountries.forEach((c) => {
         cSelOptions.push({
-          label: capitalize(c.name),
-          value: capitalize(c.name),
+          label: c.name,
+          value: c.name,
         });
       });
       setCountries(cSelOptions);

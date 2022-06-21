@@ -81,7 +81,19 @@ export const PercentageDistributionGraph = ({
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="predictionPercent" />
       <YAxis />
-      <Tooltip />
+      <Tooltip
+        labelFormatter={(label, payload) => {
+          if (!payload[0] || !payload[1]) {
+            return label;
+          }
+
+          const v1 = (payload[0].value as number) || 0;
+          const v2 = (payload[1].value as number) || 0;
+
+          const percent = (v1 / (v1 + v2)) * 100;
+          return `${label}: ${percent.toFixed(2)}`;
+        }}
+      />
       <Legend />
       {graphs.map((val, idx) => {
         return (

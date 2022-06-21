@@ -119,25 +119,25 @@ export const MatchList = ({
 
   let columns: TableColumn<MatchListEntry>[] = [
     {
-      name: 'Spielbeginn',
+      name: translate('renderer.matchlist.table.col.one'),
       selector: (row) => row.gameStartsAt,
       sortable: true,
       sortField: 'date_unix',
     },
     {
-      name: 'Heimteam',
+      name: translate('renderer.matchlist.table.col.two'),
       selector: (row) => row.homeTeam,
     },
     {
-      name: 'Auswärtsteam',
+      name: translate('renderer.matchlist.table.col.three'),
       selector: (row) => row.awayTeam,
     },
     {
-      name: 'Land',
+      name: translate('renderer.matchlist.table.col.four'),
       selector: (row) => row.country,
     },
     {
-      name: 'Ergebnis',
+      name: translate('renderer.matchlist.table.col.five'),
       selector: (row) => row.result,
     },
   ];

@@ -6,7 +6,7 @@ import {
 } from '../../app/services/prediction/PredictionQualityService.types';
 import translate from '../../i18n/translate';
 
-export const ReportList = ({ report }: ReportListProps) => {
+export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
   const columns: TableColumn<BetPredictionQuality>[] = [
     {
       name: translate('renderer.predictionqualitiyview.table.col.one'),
@@ -37,13 +37,18 @@ export const ReportList = ({ report }: ReportListProps) => {
 
   return (
     <>
-      <DataTable columns={columns} data={report?.measurements || []} />
+      <DataTable
+        columns={columns}
+        data={report?.measurements || []}
+        onRowClicked={onRowClicked}
+      />
     </>
   );
 };
 
 export type ReportListProps = {
   report?: PredictionQualityReport;
+  onRowClicked?: (row: BetPredictionQuality) => void;
 };
 
 export default { ReportList };

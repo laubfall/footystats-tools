@@ -5,13 +5,18 @@ import translate from '../../i18n/translate';
 import IpcPredictionQualityService from '../../app/services/prediction/IpcPredictionQualityService';
 import { ReportList } from './ReportList';
 import {
+  BetPredictionQuality,
   NO_REVISION_SO_FAR,
   PredictionQualityReport,
 } from '../../app/services/prediction/PredictionQualityService.types';
-import { PercentageDistributionGraph } from './PercentageDistributionGraph';
+import { PredictionGraphView } from './PredictionGraphView';
+import { Bet } from '../../app/types/prediction/BetPredictionContext';
 
 export const PredictionQualityView = () => {
   const [report, setReport] = useState<PredictionQualityReport>();
+
+  const [currentMeasurement, setCurrentMeasurement] =
+    useState<BetPredictionQuality>();
 
   const [recalculateAvailable, setRecalculateAvailable] = useState(false);
 
@@ -30,6 +35,13 @@ export const PredictionQualityView = () => {
         log.error('Failed to compute state for recalculate button', reason)
       );
   }, []);
+
+  useEffect(() => {
+    const measurement = report?.measurements.find(
+      (bpc) => bpc.bet === Bet.BTTS_YES
+    );
+    setCurrentMeasurement(measurement);
+  }, [report]);
 
   return (
     <>
@@ -53,32 +65,16 @@ export const PredictionQualityView = () => {
           </Button>
         </Col>
       </Row>
-      <ReportList report={report} />
-      <PercentageDistributionGraph
-        graphs={[
-          {
-            name: 'BTTS ja (wetten)',
-            data: report?.measurements[1].distributionBetOnThis,
-          },
-          {
-            name: 'BTTS ja (wetten falsch)',
-            data: report?.measurements[1].distributionBetOnThisFailed,
-          },
-        ]}
+      <ReportList
+        report={report}
+        onRowClicked={(row) => {
+          const measurement = report?.measurements.find(
+            (bpq) => bpq.bet === row.bet
+          );
+          setCurrentMeasurement(measurement);
+        }}
       />
-
-      <PercentageDistributionGraph
-        graphs={[
-          {
-            name: 'BTTS ja (nicht wetten)',
-            data: report?.measurements[1].distributionDontBetOnThis,
-          },
-          {
-            name: 'BTTS ja (nicht wetten falsch)',
-            data: report?.measurements[1].distributionDontBetOnThisFailed,
-          },
-        ]}
-      />
+      <PredictionGraphView measurement={currentMeasurement} />
     </>
   );
 };
