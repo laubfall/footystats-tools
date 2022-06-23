@@ -31,6 +31,8 @@ import { IpcConfigurationService } from '../../../config/IpcConfigurationService
 import { ConfigurationService } from '../../../config/ConfigurationService';
 import IpcPredictionQualityService from '../prediction/IpcPredictionQualityService';
 import { PredictionQualityService } from '../prediction/PredictionQualityService';
+import IpcTeamStatsService from '../stats/IpcTeamStatsService';
+import TeamStatsService from '../stats/TeamStatsService';
 
 function startImportDirectoryWatch(config: Configuration) {
   const csvDataToDBService =
@@ -64,6 +66,9 @@ function registerConfigIndependentIpcHandler() {
   IpcNativeGuiService.registerInvokeHandler();
   IpcConfigurationService.registerInvokeHandler(
     inversifyContainer.get<ConfigurationService>(ConfigurationService)
+  );
+  IpcTeamStatsService.registerInvokeHandler(
+    inversifyContainer.get<TeamStatsService>(TeamStatsService)
   );
 }
 

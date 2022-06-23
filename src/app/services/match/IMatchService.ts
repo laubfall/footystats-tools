@@ -34,6 +34,8 @@ export interface IMatchService {
     revision?: PredictionQualityRevision,
     cursorModification?: CursorModification[]
   ): Promise<Result<Match>>;
+
+  calculatePrediction(bet: Bet, ms: MatchStats): Promise<PredictionResult>;
 }
 
 type Match = {

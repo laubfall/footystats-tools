@@ -1,29 +1,37 @@
 import { injectable } from 'inversify';
 import log from 'electron-log';
 import path from 'path';
+import { getYear } from 'date-fns';
 import cfg from '../../../config';
 import Configuration from '../../types/application/Configuration';
-import { NString, NDate } from '../../types/General';
+import { NDate, NString } from '../../types/General';
 import { MatchStats } from '../../types/stats/MatchStats';
 import {
-  DbStoreService,
   CursorModification,
+  DbStoreService,
   Result,
 } from '../application/DbStoreService';
 import prediction from '../prediction/PredictionService';
 import Match, { IMatchService } from './IMatchService';
 import { Bet } from '../../types/prediction/BetPredictionContext';
-import { PredictionAnalyze } from '../prediction/IPredictionService';
+import {
+  PredictionAnalyze,
+  PredictionResult,
+} from '../prediction/IPredictionService';
 import {
   NO_REVISION_SO_FAR,
   PredictionQualityRevision,
 } from '../prediction/PredictionQualityService.types';
+import TeamStatsService from '../stats/TeamStatsService';
 
 @injectable()
 class MatchService implements IMatchService {
   readonly dbService: DbStoreService<Match>;
 
-  constructor(configuration: Configuration) {
+  constructor(
+    configuration: Configuration,
+    private teamStatsService: TeamStatsService
+  ) {
     this.dbService = new DbStoreService<Match>(
       path.join(configuration.databaseDirectory, cfg.matchDbFileName)
     );
@@ -42,7 +50,7 @@ class MatchService implements IMatchService {
     this.dbService.DB.ensureIndex({ fieldName: 'bttsYes.analyzeResult' });
   }
 
-  writeMatch(matchStats: MatchStats): void {
+  async writeMatch(matchStats: MatchStats) {
     const match: Match = {
       uniqueIdentifier: this.uniqueValue(matchStats),
       date_unix: matchStats.date_unix,
@@ -56,30 +64,14 @@ class MatchService implements IMatchService {
       state: matchStats['Match Status'],
       footyStatsUrl: matchStats['Match FootyStats URL'],
       revision: NO_REVISION_SO_FAR, // you can't search for undefined so set a value.
+      o05: await this.calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats),
+      bttsYes: await this.calculatePrediction(Bet.BTTS_YES, matchStats),
     };
 
-    MatchService.calcPredictions(match, matchStats);
     this.dbService
       .asyncUpsert({ uniqueIdentifier: match.uniqueIdentifier }, match)
       .then(() => log.debug('saved match'))
       .catch((reason) => log.error(`failed: ${reason}`));
-  }
-
-  static calcPredictions(n: Match, ms: MatchStats) {
-    const predictionNumber = prediction({
-      bet: Bet.OVER_ZERO_FIVE,
-      match: ms,
-      leagueStats: undefined,
-      teamStats: undefined,
-    });
-    const bttsYesPredictionNumber = prediction({
-      bet: Bet.BTTS_YES,
-      match: ms,
-      leagueStats: undefined,
-      teamStats: undefined,
-    });
-    n.o05 = predictionNumber;
-    n.bttsYes = bttsYesPredictionNumber;
   }
 
   matchesByFilterExt(
@@ -199,6 +191,33 @@ class MatchService implements IMatchService {
     return `${matchStats.date_unix.toString()}${matchStats.League}${
       matchStats['Home Team']
     }${matchStats['Away Team']}`;
+  }
+
+  async calculatePrediction(
+    bet: Bet,
+    ms: MatchStats
+  ): Promise<PredictionResult> {
+    const teamStats = await this.teamStatsService.latestThree(
+      ms['Home Team'],
+      ms.Country,
+      getYear(new Date())
+    );
+
+    teamStats.push(
+      ...(await this.teamStatsService.latestThree(
+        ms['Away Team'],
+        ms.Country,
+        getYear(new Date())
+      ))
+    );
+
+    const predictionNumber = prediction({
+      bet,
+      match: ms,
+      leagueStats: undefined,
+      teamStats,
+    });
+    return Promise.resolve(predictionNumber);
   }
 }
 

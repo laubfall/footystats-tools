@@ -4,7 +4,7 @@ import TeamStats from '../stats/TeamStats';
 
 export type BetPredictionContext = {
   match: MatchStats;
-  teamStats?: TeamStats;
+  teamStats?: TeamStats[];
   leagueStats?: LeagueStats;
   bet: Bet;
 };

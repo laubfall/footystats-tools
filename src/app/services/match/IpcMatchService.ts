@@ -5,6 +5,8 @@ import { CursorModification, Result } from '../application/DbStoreService';
 import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import Match, { IMatchService } from './IMatchService';
 import MatchService from './MatchService';
+import { Bet } from '../../types/prediction/BetPredictionContext';
+import { PredictionResult } from '../prediction/IPredictionService';
 
 class IpcMatchService implements IMatchService {
   // Prefix for the invoke handler to avoid name clashes due to equal method names (e.g. MatchStatsService.matchesByFilter)
@@ -34,6 +36,14 @@ class IpcMatchService implements IMatchService {
     );
   }
 
+  calculatePrediction(bet: Bet, ms: MatchStats): Promise<PredictionResult> {
+    return ipcRendererInvoke(
+      IpcMatchService.invokeHandlerPrefix + this.calculatePrediction.name,
+      bet,
+      ms
+    );
+  }
+
   public static registerInvokeHandler(matchService: MatchService) {
     ipcMain.handle(
       this.invokeHandlerPrefix + matchService.writeMatch.name,
@@ -52,6 +62,13 @@ class IpcMatchService implements IMatchService {
           args[1][3],
           args[1][4]
         );
+      }
+    );
+
+    ipcMain.handle(
+      this.invokeHandlerPrefix + matchService.calculatePrediction.name,
+      (...args) => {
+        return matchService.calculatePrediction(args[1][0], args[1][1]);
       }
     );
   }

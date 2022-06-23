@@ -12,7 +12,7 @@ describe('Test the match service', () => {
     const matchStats = importFile<MatchStats>(`${__dirname}/../../../../testdata/matches_expanded-1630235153-matchService.csv`, false);
     matchStats.forEach(ms => matchService.writeMatch(ms));
 
-    const matches = await matchService.matchesByFilter('Germany', 'Bundesliga', null, null);
+    const matches = await matchService.matchesByFilter(['Germany'], ['Bundesliga'], null, null);
     expect(matches).toBeDefined();
     expect(matches.length).toBe(5)
   });

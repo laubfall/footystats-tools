@@ -22,7 +22,6 @@ import {
 import IpcMatchService from '../../app/services/match/IpcMatchService';
 import Match from '../../app/services/match/IMatchService';
 import IpcMatchStatsService from '../../app/services/stats/IpcMatchStatsService';
-import MatchService from '../../app/services/match/MatchService';
 import { IpcConfigurationService } from '../../config/IpcConfigurationService';
 
 function createMatchListConstraints(
@@ -41,36 +40,44 @@ function createMatchListConstraints(
   ];
 }
 
-function matchToBetPrediction(ms: Match): BetPrediction[] {
+function matchToBetPrediction(match: Match): BetPrediction[] {
   const betPredictions: BetPrediction[] = [];
-  if (ms.o05) {
-    betPredictions.push({ bet: Bet.OVER_ZERO_FIVE, prediction: ms.o05 });
+  if (match.o05) {
+    betPredictions.push({ bet: Bet.OVER_ZERO_FIVE, prediction: match.o05 });
   }
 
-  if (ms.bttsYes) {
-    betPredictions.push({ bet: Bet.BTTS_YES, prediction: ms.bttsYes });
+  if (match.bttsYes) {
+    betPredictions.push({ bet: Bet.BTTS_YES, prediction: match.bttsYes });
   }
 
   return betPredictions;
 }
 
-async function determineBetPredictions(ms: Match): Promise<BetPrediction[]> {
+async function determineBetPredictions(match: Match): Promise<BetPrediction[]> {
   const configService = new IpcConfigurationService();
   const cfg = await configService.loadConfig();
   if (cfg.matchView.alwaysCalculatePredictions === false) {
-    return matchToBetPrediction(ms);
+    return matchToBetPrediction(match);
   }
 
   const matchStatsService = new IpcMatchStatsService();
   const matchStats = await matchStatsService.matchByUniqueFields(
-    ms.date_unix,
-    ms.League,
-    ms['Home Team'],
-    ms['Away Team']
+    match.date_unix,
+    match.League,
+    match['Home Team'],
+    match['Away Team']
   );
 
-  MatchService.calcPredictions(ms, matchStats);
-  return matchToBetPrediction(ms);
+  const matchService = new IpcMatchService();
+  match.o05 = await matchService.calculatePrediction(
+    Bet.OVER_ZERO_FIVE,
+    matchStats
+  );
+  match.bttsYes = await matchService.calculatePrediction(
+    Bet.BTTS_YES,
+    matchStats
+  );
+  return matchToBetPrediction(match);
 }
 
 function matchListEntries(n: Match[]) {
