@@ -14,3 +14,6 @@ config.nedb = {
 config.matchView = {
   alwaysCalculatePredictions: false,
 };
+config.stats = {
+  ignoreTeamStatsWithGamesPlayedLowerThen: 4,
+};

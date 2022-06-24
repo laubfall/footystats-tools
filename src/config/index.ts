@@ -24,6 +24,9 @@ export interface Config {
   matchView: {
     alwaysCalculatePredictions: boolean;
   };
+  stats: {
+    ignoreTeamStatsWithGamesPlayedLowerThen: number; // TeamStats will be ignored for prediction calculation if they represent fewer number of played games then configured.
+  };
 }
 
 export default cfg as Config;
