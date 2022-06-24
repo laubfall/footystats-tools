@@ -1,13 +1,13 @@
 import {
   Bet,
   BetPredictionContext,
-} from '../../types/prediction/BetPredictionContext';
+} from '../../../types/prediction/BetPredictionContext';
 import {
   BetResultInfluencer,
   BetInfluencerCalculation,
   PreCheckReturn,
   PrecheckResult,
-} from '../../types/prediction/BetResultInfluencer';
+} from '../../../types/prediction/BetResultInfluencer';
 
 class OddsBttsYesInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this

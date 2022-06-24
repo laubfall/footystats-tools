@@ -1,15 +1,15 @@
 import { includes } from 'lodash';
-import { INFLUENCER_POINTS } from '../../constants';
+import { INFLUENCER_POINTS } from '../../../constants';
 import {
   BetPredictionContext,
   Bet,
-} from '../../types/prediction/BetPredictionContext';
+} from '../../../types/prediction/BetPredictionContext';
 import {
   BetResultInfluencer,
   BetInfluencerCalculation,
   PrecheckResult,
   PreCheckReturn,
-} from '../../types/prediction/BetResultInfluencer';
+} from '../../../types/prediction/BetResultInfluencer';
 
 class LeaguePositionDiffInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this

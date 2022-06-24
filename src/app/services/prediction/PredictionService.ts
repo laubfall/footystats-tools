@@ -6,13 +6,13 @@ import {
   BetResultInfluencer,
   PrecheckResult,
 } from '../../types/prediction/BetResultInfluencer';
-import FootyStatsBttsYesPredictionInfluencer from './FootyStatsBttsYesPredictionInfluencer';
-import FootyStatsOverFTPredictionInfluencer from './FootyStatsOverFTPredictionInfluencer';
+import FootyStatsBttsYesPredictionInfluencer from './influencer/FootyStatsBttsYesPredictionInfluencer';
+import FootyStatsOverFTPredictionInfluencer from './influencer/FootyStatsOverFTPredictionInfluencer';
 import { PredictionAnalyze, PredictionResult } from './IPredictionService';
-import LeaguePositionDiffInfluencer from './LeaguePositionDiffInfluencer';
-import LeaguePositionInfluencer from './LeaguePositionInfluencer';
-import OddsBttsYesInfluencer from './OddsBttsYesInfluencer';
-import OddsGoalsOverInfluencer from './OddsGoalsOverInfluencer';
+import LeaguePositionDiffInfluencer from './influencer/LeaguePositionDiffInfluencer';
+import LeaguePositionInfluencer from './influencer/LeaguePositionInfluencer';
+import OddsBttsYesInfluencer from './influencer/OddsBttsYesInfluencer';
+import OddsGoalsOverInfluencer from './influencer/OddsGoalsOverInfluencer';
 
 /**
  * All known prediction influencer
