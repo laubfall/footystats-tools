@@ -38,8 +38,21 @@ describe('Test the stats service', () => {
       `${__dirname}/../../../../testdata/south-korea-k-league-1-teams-2021-to-2021-stats.csv`
     );
 
-    const result = await tss.latestThree('Gangwon FC', 'South Korea', 2020);
+    let result = await tss.latestThree('Gangwon FC', 'South Korea', 2020);
     expect(result).toBeDefined();
     expect(result.length).toBe(1);
+
+    tss.readTeamStats(
+      `${__dirname}/../../../../testdata/south-korea-k-league-1-teams-2022-to-2022-stats.csv`
+    );
+
+    result = await tss.latestThree('Gangwon FC', 'South Korea', 2021);
+    expect(result).toBeDefined();
+    expect(result.length).toBe(2);
+
+    const resultAggregate = TeamStatsService.aggregate(result);
+    expect(resultAggregate).toBeDefined();
+    expect(resultAggregate?.btts_count).toBe(18);
+    expect(resultAggregate?.corners_per_match).toBe(4.12);
   });
 });

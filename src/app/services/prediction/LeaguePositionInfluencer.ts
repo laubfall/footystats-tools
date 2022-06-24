@@ -1,12 +1,12 @@
 import { includes } from 'lodash';
 import { INFLUENCER_POINTS } from '../../constants';
 import {
-  BetPredictionContext,
   Bet,
+  BetPredictionContext,
 } from '../../types/prediction/BetPredictionContext';
 import {
-  BetResultInfluencer,
   BetInfluencerCalculation,
+  BetResultInfluencer,
   PrecheckResult,
   PreCheckReturn,
 } from '../../types/prediction/BetResultInfluencer';
@@ -18,7 +18,7 @@ class LeaguePositionInfluencer implements BetResultInfluencer {
       return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 
-    return undefined;
+    return PrecheckResult.OK;
   }
 
   /**

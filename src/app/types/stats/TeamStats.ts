@@ -1,4 +1,4 @@
-export default interface TeamStats {
+export type TeamStats = {
   team_name: string;
   common_name: string;
   season: string;
@@ -292,4 +292,4 @@ export default interface TeamStats {
   loss_percentage_home: number;
   loss_percentage_away: number;
   over145_corners_percentage: number;
-}
+};
