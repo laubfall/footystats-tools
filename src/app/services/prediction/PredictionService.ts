@@ -79,10 +79,8 @@ export default function prediction(
     const preCheckResult = influencer.preCheck(ctx);
     if (preCheckResult === PrecheckResult.OK) {
       const predictionInfluence = influencer.calculateInfluence(ctx);
-      if (!predictionInfluence.notExecutedCause) {
-        result += predictionInfluence.amount;
-        doneInfluencerCalculations += 1;
-      }
+      result += predictionInfluence.amount;
+      doneInfluencerCalculations += 1;
     }
   });
 

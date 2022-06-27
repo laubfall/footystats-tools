@@ -1,12 +1,12 @@
 import { includes } from 'lodash';
 import { INFLUENCER_POINTS } from '../../../constants';
 import {
-  BetPredictionContext,
   Bet,
+  BetPredictionContext,
 } from '../../../types/prediction/BetPredictionContext';
 import {
-  BetResultInfluencer,
   BetInfluencerCalculation,
+  BetResultInfluencer,
   PrecheckResult,
   PreCheckReturn,
 } from '../../../types/prediction/BetResultInfluencer';
@@ -18,20 +18,18 @@ class LeaguePositionDiffInfluencer implements BetResultInfluencer {
       return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 
-    return undefined;
+    if (includes([Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE], ctx.bet) === false) {
+      return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
+    }
+
+    return PrecheckResult.OK;
   }
 
   // eslint-disable-next-line class-methods-use-this
   public calculateInfluence(
     ctx: BetPredictionContext
   ): BetInfluencerCalculation {
-    if (includes([Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE], ctx.bet)) {
-      return this.overBet(ctx);
-    }
-    return {
-      amount: 0,
-      notExecutedCause: PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET,
-    };
+    return this.overBet(ctx);
   }
 
   // eslint-disable-next-line class-methods-use-this
