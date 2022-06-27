@@ -14,12 +14,12 @@ import {
 class LeaguePositionInfluencer implements BetResultInfluencer {
   // eslint-disable-next-line class-methods-use-this
   public preCheck(ctx: BetPredictionContext): PreCheckReturn {
-    if (!ctx.teamStats || !ctx.leagueStats) {
-      return PrecheckResult.NOT_ENOUGH_INFORMATION;
-    }
-
     if (includes([Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE], ctx.bet) === false) {
       return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
+    }
+
+    if (!ctx.teamStats || !ctx.leagueStats) {
+      return PrecheckResult.NOT_ENOUGH_INFORMATION;
     }
 
     return PrecheckResult.OK;
@@ -55,6 +55,11 @@ class LeaguePositionInfluencer implements BetResultInfluencer {
     return {
       amount: (INFLUENCER_POINTS * ((awayPosPerc + homePosPerc) / 2)) / 100,
     };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  influencerName(): string {
+    return 'LeaguePositionInfluencer';
   }
 }
 

@@ -15,14 +15,14 @@ import prediction from '../prediction/PredictionService';
 import Match, { IMatchService } from './IMatchService';
 import { Bet } from '../../types/prediction/BetPredictionContext';
 import {
-  PredictionAnalyze,
-  PredictionResult,
-} from '../prediction/IPredictionService';
-import {
   NO_REVISION_SO_FAR,
   PredictionQualityRevision,
 } from '../prediction/PredictionQualityService.types';
 import TeamStatsService from '../stats/TeamStatsService';
+import {
+  PredictionAnalyze,
+  PredictionResult,
+} from '../prediction/PredictionService.types';
 
 @injectable()
 class MatchService implements IMatchService {
@@ -70,8 +70,10 @@ class MatchService implements IMatchService {
 
     this.dbService
       .asyncUpsert({ uniqueIdentifier: match.uniqueIdentifier }, match)
-      .then(() => log.debug('saved match'))
-      .catch((reason) => log.error(`failed: ${reason}`));
+      .then(() => log.debug(`saved match ${match.uniqueIdentifier}`))
+      .catch((reason) =>
+        log.error(`failed saving match: ${reason} ${match.uniqueIdentifier}`)
+      );
   }
 
   matchesByFilterExt(

@@ -141,12 +141,18 @@ export class MatchStatsService implements IMatchStatsService {
       };
     });
 
+    const proms: PromiseLike<any>[] = [];
     uniqueMatches.forEach((um) => {
-      this.dbService.asyncUpsert({ unique: this.uniqueValue(um) }, { ...um });
-      this.matchService.writeMatch(um);
+      proms.push(
+        this.dbService.asyncUpsert({ unique: this.uniqueValue(um) }, { ...um })
+      );
+      proms.push(this.matchService.writeMatch(um));
     });
 
-    msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);
+    return Promise.all(proms).then(() => {
+      msgSimpleMessage(MainProcessMessageCodes.MATCH_FILE_IMPORTED);
+      return true;
+    });
   }
 
   public async matchesByDay(day: Date): Promise<Result<MatchStats>> {

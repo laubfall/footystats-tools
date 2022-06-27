@@ -8,11 +8,15 @@ import {
 } from '../../types/prediction/BetResultInfluencer';
 import FootyStatsBttsYesPredictionInfluencer from './influencer/FootyStatsBttsYesPredictionInfluencer';
 import FootyStatsOverFTPredictionInfluencer from './influencer/FootyStatsOverFTPredictionInfluencer';
-import { PredictionAnalyze, PredictionResult } from './IPredictionService';
 import LeaguePositionDiffInfluencer from './influencer/LeaguePositionDiffInfluencer';
 import LeaguePositionInfluencer from './influencer/LeaguePositionInfluencer';
 import OddsBttsYesInfluencer from './influencer/OddsBttsYesInfluencer';
 import OddsGoalsOverInfluencer from './influencer/OddsGoalsOverInfluencer';
+import {
+  InfluencerResult,
+  PredictionAnalyze,
+  PredictionResult,
+} from './PredictionService.types';
 
 /**
  * All known prediction influencer
@@ -57,7 +61,7 @@ function analyze(
           betOnThis) ||
         ((ctx.match['Result - Away Team Goals'] === 0 ||
           ctx.match['Result - Home Team Goals'] === 0) &&
-          betOnThis === false)
+          !betOnThis)
       ) {
         return 'SUCCESS';
       }
@@ -74,6 +78,8 @@ export default function prediction(
 ): PredictionResult {
   let result = 0;
 
+  const influencerDetailedResult: InfluencerResult[] = [];
+
   let doneInfluencerCalculations = 0;
   betResultInfluencer.forEach((influencer) => {
     const preCheckResult = influencer.preCheck(ctx);
@@ -81,6 +87,19 @@ export default function prediction(
       const predictionInfluence = influencer.calculateInfluence(ctx);
       result += predictionInfluence.amount;
       doneInfluencerCalculations += 1;
+      influencerDetailedResult.push({
+        precheckResult: preCheckResult,
+        influencerPredictionValue: predictionInfluence.amount,
+        influencerName: influencer.influencerName(),
+      });
+    } else if (
+      preCheckResult === PrecheckResult.NOT_ENOUGH_INFORMATION ||
+      preCheckResult === PrecheckResult.EXCEPTION
+    ) {
+      influencerDetailedResult.push({
+        influencerName: influencer.influencerName(),
+        precheckResult: preCheckResult,
+      });
     }
   });
 
@@ -92,5 +111,6 @@ export default function prediction(
     betSuccessInPercent: result,
     betOnThis,
     analyzeResult: analyze(ctx, doneInfluencerCalculations > 0, betOnThis),
+    influencerDetailedResult,
   };
 }

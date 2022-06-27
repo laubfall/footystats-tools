@@ -30,6 +30,11 @@ class FootyStatsOverFTPredictionInfluencer implements BetResultInfluencer {
   calculateInfluence(ctx: BetPredictionContext): BetInfluencerCalculation {
     return { amount: ctx.match['Over05 Average'] };
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  influencerName(): string {
+    return 'FootyStatsOverFTPredictionInfluencer';
+  }
 }
 
 export default FootyStatsOverFTPredictionInfluencer;

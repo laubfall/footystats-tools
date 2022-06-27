@@ -7,6 +7,7 @@ import Configuration from '../../types/application/Configuration';
 import cfg from '../../../config';
 import {
   BetPredictionQuality,
+  InfluencerPercentDistribution,
   NO_REVISION_SO_FAR,
   Precast,
   PredictionPercentDistribution,
@@ -15,8 +16,8 @@ import {
 } from './PredictionQualityService.types';
 import MatchService from '../match/MatchService';
 import Match from '../match/IMatchService';
-import { PredictionResult } from './IPredictionService';
 import { Bet } from '../../types/prediction/BetPredictionContext';
+import { PredictionResult } from './PredictionService.types';
 
 @injectable()
 export class PredictionQualityService implements IPredictionQualityService {
@@ -149,6 +150,7 @@ export class PredictionQualityService implements IPredictionQualityService {
           match.o05.betOnThis === false
             ? 1
             : 0,
+        influencerDistribution: [],
       };
       this.addDistribution(m, match.o05);
       measurements.push(m);
@@ -176,6 +178,7 @@ export class PredictionQualityService implements IPredictionQualityService {
           match.bttsYes.betOnThis === false
             ? 1
             : 0,
+        influencerDistribution: [],
       };
       this.addDistribution(m, match.bttsYes);
       measurements.push(m);
@@ -191,6 +194,7 @@ export class PredictionQualityService implements IPredictionQualityService {
     const dist = {
       predictionPercent: prediction.betSuccessInPercent,
       count: 1,
+      influencerDistribution: this.addInfluencerDistribution(prediction),
     };
 
     if (
@@ -223,6 +227,19 @@ export class PredictionQualityService implements IPredictionQualityService {
     ) {
       quality.distributionBetSuccessful = [dist];
     }
+  }
+
+  private addInfluencerDistribution(
+    prediction: PredictionResult
+  ): InfluencerPercentDistribution[] {
+    return prediction.influencerDetailedResult.map((id) => {
+      return {
+        count: 1,
+        influencerName: id.influencerName,
+        predictionPercent: id.influencerPredictionValue,
+        precheckResult: id.precheckResult,
+      } as InfluencerPercentDistribution;
+    });
   }
 
   private merge(
@@ -302,8 +319,33 @@ export class PredictionQualityService implements IPredictionQualityService {
       );
       if (idx >= 0) {
         target[idx].count += sp.count;
+        this.mergeInfluencerDistribution(target[idx], sp);
       } else {
+        sp.influencerDistribution = [];
         target.push(sp);
+      }
+    });
+  }
+
+  private mergeInfluencerDistribution(
+    target: PredictionPercentDistribution,
+    source: PredictionPercentDistribution
+  ) {
+    source.influencerDistribution.forEach((sId) => {
+      if (!target.influencerDistribution) {
+        target.influencerDistribution = [];
+      }
+      const idx = target.influencerDistribution.findIndex(
+        (tId) =>
+          tId.influencerName === sId.influencerName &&
+          tId.predictionPercent === sId.predictionPercent &&
+          tId.precheckResult === sId.precheckResult
+      );
+
+      if (idx >= 0) {
+        target.influencerDistribution[idx].count += sId.count;
+      } else {
+        target.influencerDistribution.push(sId);
       }
     });
   }

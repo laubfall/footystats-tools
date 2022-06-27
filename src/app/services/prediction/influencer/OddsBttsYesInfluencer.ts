@@ -35,6 +35,11 @@ class OddsBttsYesInfluencer implements BetResultInfluencer {
 
     return { amount: 100 * ((3 - ctx.match.Odds_BTTS_Yes) / 3) };
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  influencerName(): string {
+    return 'OddsBttsYesInfluencer';
+  }
 }
 
 export default OddsBttsYesInfluencer;

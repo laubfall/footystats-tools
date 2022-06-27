@@ -1,4 +1,5 @@
 import { BetPredictionContext } from '../../types/prediction/BetPredictionContext';
+import { PredictionAnalyze } from './PredictionService.types';
 
 export default interface IPredictionService {
   prediction(ctx: BetPredictionContext): Promise<number>;
@@ -9,17 +10,3 @@ export default interface IPredictionService {
     betOnThis: boolean
   ): PredictionAnalyze;
 }
-
-export type PredictionResult = {
-  betSuccessInPercent: number;
-  betOnThis: boolean;
-  analyzeResult: PredictionAnalyze;
-};
-
-export type PredictionAnalyze =
-  | 'SUCCESS'
-  | 'CLOSE'
-  | 'FAILED'
-  | 'NOT_COMPLETED'
-  | 'NOT_ANALYZED'
-  | 'NOT_PREDICTED';

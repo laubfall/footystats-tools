@@ -27,6 +27,11 @@ class FootyStatsBttsYesPredictionInfluencer implements BetResultInfluencer {
   calculateInfluence(ctx: BetPredictionContext): BetInfluencerCalculation {
     return { amount: ctx.match['BTTS Average'] };
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  influencerName(): string {
+    return 'FootyStatsBttsYesPredictionInfluencer';
+  }
 }
 
 export default FootyStatsBttsYesPredictionInfluencer;

@@ -1,4 +1,6 @@
 import { Bet } from '../../types/prediction/BetPredictionContext';
+import { InfluencerName } from './PredictionService.types';
+import { PrecheckResult } from '../../types/prediction/BetResultInfluencer';
 
 export type Precast = {
   revision: PredictionQualityRevision;
@@ -27,6 +29,14 @@ export type BetPredictionQuality = {
 
 export type PredictionPercentDistribution = {
   predictionPercent: number;
+  count: number;
+  influencerDistribution: InfluencerPercentDistribution[];
+};
+
+export type InfluencerPercentDistribution = {
+  influencerName: InfluencerName;
+  predictionPercent: number;
+  precheckResult: PrecheckResult;
   count: number;
 };
 

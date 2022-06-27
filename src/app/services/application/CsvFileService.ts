@@ -96,7 +96,9 @@ export function importFile<T>(
     dynamicTyping: true, // guess the type of the field (e.g. numbers will be stored without quotes)
     skipEmptyLines: true,
   });
-  log.debug(`Imported file ${pathToFile}`);
+  log.debug(
+    `Imported file ${pathToFile} resulting in ${parseResult.data.length} result sets`
+  );
 
   if (markAsImported) {
     const dirName = path.dirname(pathToFile);

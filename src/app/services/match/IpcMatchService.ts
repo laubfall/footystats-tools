@@ -6,7 +6,7 @@ import { ipcRendererInvoke } from '../application/gui/IpcRenderer2Main';
 import Match, { IMatchService } from './IMatchService';
 import MatchService from './MatchService';
 import { Bet } from '../../types/prediction/BetPredictionContext';
-import { PredictionResult } from '../prediction/IPredictionService';
+import { PredictionResult } from '../prediction/PredictionService.types';
 
 class IpcMatchService implements IMatchService {
   // Prefix for the invoke handler to avoid name clashes due to equal method names (e.g. MatchStatsService.matchesByFilter)

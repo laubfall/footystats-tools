@@ -1,12 +1,12 @@
 import { NDate, NString } from '../../types/General';
 import { MatchStats, MatchStatus } from '../../types/stats/MatchStats';
 import { CursorModification, Result } from '../application/DbStoreService';
+import { Bet } from '../../types/prediction/BetPredictionContext';
+import { PredictionQualityRevision } from '../prediction/PredictionQualityService.types';
 import {
   PredictionAnalyze,
   PredictionResult,
-} from '../prediction/IPredictionService';
-import { Bet } from '../../types/prediction/BetPredictionContext';
-import { PredictionQualityRevision } from '../prediction/PredictionQualityService.types';
+} from '../prediction/PredictionService.types';
 // eslint-disable-next-line import/no-cycle
 
 export interface IMatchService {

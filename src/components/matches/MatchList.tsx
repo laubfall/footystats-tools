@@ -8,9 +8,9 @@ import {
   PaginationChangePage,
   PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
-import { PredictionResult } from '../../app/services/prediction/IPredictionService';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import translate from '../../i18n/translate';
+import { PredictionResult } from '../../app/services/prediction/PredictionService.types';
 
 export type BetPrediction = {
   bet: Bet;

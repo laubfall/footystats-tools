@@ -56,6 +56,11 @@ class OddsGoalsOverInfluencer implements BetResultInfluencer {
 
     return 100 * diffOddToOdd2;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  influencerName(): string {
+    return 'OddsGoalsOverInfluencer';
+  }
 }
 
 export default OddsGoalsOverInfluencer;

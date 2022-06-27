@@ -15,14 +15,13 @@ export enum PrecheckResult {
 export type BetInfluencerCalculation = {
   // Influence for the chosen bet. Higher value means more influence. Expected values 0-100.
   amount: number;
-  // when set the influencer did not calculated the influece for the chosen bet.
-  notExecutedCause?: PrecheckResult;
 };
 
 export type PreCheckReturn = PrecheckResult;
 export interface BetResultInfluencer {
   preCheck(ctx: BetPredictionContext): PreCheckReturn;
   calculateInfluence(ctx: BetPredictionContext): BetInfluencerCalculation;
+  influencerName(): string;
 }
 
 export default BetResultInfluencer;
