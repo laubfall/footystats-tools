@@ -7,8 +7,8 @@ import { includes } from 'lodash';
  * Error codes that show invalid configuration parts.
  */
 export enum InvalidConfigurations {
-  DATABASE_DIRECTORY_DOESNOT_EXIST,
-  IMPORT_DIRECTORY_DOESNOT_EXIST,
+	DATABASE_DIRECTORY_DOESNOT_EXIST,
+	IMPORT_DIRECTORY_DOESNOT_EXIST,
 }
 
 /**
@@ -17,26 +17,28 @@ export enum InvalidConfigurations {
 
 @injectable()
 export default class Configuration {
-  databaseDirectory = '';
+	databaseDirectory = '';
 
-  importDirectory = '';
+	importDirectory = '';
 
-  public validate(): InvalidConfigurations[] {
-    const invalidConfigs = [];
-    if (fs.existsSync(this.databaseDirectory) === false) {
-      invalidConfigs.push(
-        InvalidConfigurations.DATABASE_DIRECTORY_DOESNOT_EXIST
-      );
-    }
+	public validate(): InvalidConfigurations[] {
+		const invalidConfigs = [];
+		if (fs.existsSync(this.databaseDirectory) === false) {
+			invalidConfigs.push(
+				InvalidConfigurations.DATABASE_DIRECTORY_DOESNOT_EXIST
+			);
+		}
 
-    if (fs.existsSync(this.importDirectory) === false) {
-      invalidConfigs.push(InvalidConfigurations.IMPORT_DIRECTORY_DOESNOT_EXIST);
-    }
+		if (fs.existsSync(this.importDirectory) === false) {
+			invalidConfigs.push(
+				InvalidConfigurations.IMPORT_DIRECTORY_DOESNOT_EXIST
+			);
+		}
 
-    return invalidConfigs;
-  }
+		return invalidConfigs;
+	}
 
-  public includes(invalid: InvalidConfigurations): boolean {
-    return includes(this.validate(), invalid);
-  }
+	public includes(invalid: InvalidConfigurations): boolean {
+		return includes(this.validate(), invalid);
+	}
 }

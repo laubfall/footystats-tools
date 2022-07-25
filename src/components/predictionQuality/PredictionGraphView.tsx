@@ -5,51 +5,56 @@ import translate from '../../i18n/translate';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 
 export type PredictionGraphViewProps = {
-  measurement?: BetPredictionQuality;
+	measurement?: BetPredictionQuality;
 };
 
 export const PredictionGraphView = ({
-  measurement,
+	measurement,
 }: PredictionGraphViewProps) => {
-  if (!measurement) {
-    return null;
-  }
+	if (!measurement) {
+		return null;
+	}
+	return (
+		<>
+			<PercentageDistributionGraph
+				graphs={[
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[measurement.bet]}`
+						)} ${translate('renderer.predictiongraphview.bet')}`,
+						data: measurement.distributionBetOnThis,
+					},
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[measurement.bet]}`
+						)} ${translate(
+							'renderer.predictiongraphview.bet.failed'
+						)}`,
+						data: measurement.distributionBetOnThisFailed,
+					},
+				]}
+			/>
 
-  return (
-    <>
-      <PercentageDistributionGraph
-        graphs={[
-          {
-            name: `${translate(
-              `renderer.matchesview.bet.${Bet[measurement.bet]}`
-            )} ${translate('renderer.predictiongraphview.bet')}`,
-            data: measurement.distributionBetOnThis,
-          },
-          {
-            name: `${translate(
-              `renderer.matchesview.bet.${Bet[measurement.bet]}`
-            )} ${translate('renderer.predictiongraphview.bet.failed')}`,
-            data: measurement.distributionBetOnThisFailed,
-          },
-        ]}
-      />
-
-      <PercentageDistributionGraph
-        graphs={[
-          {
-            name: `${translate(
-              `renderer.matchesview.bet.${Bet[measurement.bet]}`
-            )} ${translate('renderer.predictiongraphview.dontbet')}`,
-            data: measurement.distributionDontBetOnThis,
-          },
-          {
-            name: `${translate(
-              `renderer.matchesview.bet.${Bet[measurement.bet]}`
-            )} ${translate('renderer.predictiongraphview.dontbet.failed')}`,
-            data: measurement.distributionDontBetOnThisFailed,
-          },
-        ]}
-      />
-    </>
-  );
+			<PercentageDistributionGraph
+				graphs={[
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[measurement.bet]}`
+						)} ${translate(
+							'renderer.predictiongraphview.dontbet'
+						)}`,
+						data: measurement.distributionDontBetOnThis,
+					},
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[measurement.bet]}`
+						)} ${translate(
+							'renderer.predictiongraphview.dontbet.failed'
+						)}`,
+						data: measurement.distributionDontBetOnThisFailed,
+					},
+				]}
+			/>
+		</>
+	);
 };

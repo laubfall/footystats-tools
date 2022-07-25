@@ -1,0 +1,40 @@
+import React from 'react';
+import { Col, Row } from 'react-bootstrap';
+import { InfluencerDistributionGraphView } from './InfluencerDistributionGraph';
+import TestData from '../../../testdata/storybook/predictionQuality/InfluencerDistributionGraph.json';
+import { BetPredictionQuality } from '../../app/services/prediction/PredictionQualityService.types';
+
+export default {
+	title: 'Components/predictionQuality/InfluencerDistributionGrpah',
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const td: BetPredictionQuality = TestData.measurements[1];
+
+export const Story = () => (
+	<>
+		<Row>
+			<Col>
+				{/* eslint-disable-next-line react/no-unescaped-entities */}
+				<h2>Successful bet and don't bet predictions</h2>
+				<InfluencerDistributionGraphView
+					distributionBetSuccess={td.distributionBetOnThis || []}
+					distributionBetFailed={td.distributionDontBetOnThis || []}
+				/>
+			</Col>
+			<Col>
+				{/* eslint-disable-next-line react/no-unescaped-entities */}
+				<h2>Failed bet and don't bet predictions</h2>
+				<InfluencerDistributionGraphView
+					distributionBetSuccess={
+						td.distributionBetOnThisFailed || []
+					}
+					distributionBetFailed={
+						td.distributionDontBetOnThisFailed || []
+					}
+				/>
+			</Col>
+		</Row>
+	</>
+);
