@@ -13,6 +13,7 @@ import { union, uniq, uniqueId } from 'lodash';
 import { BetPredictionDistribution } from '../../app/services/prediction/PredictionQualityService.types';
 import { InfluencerName } from '../../app/services/prediction/PredictionService.types';
 import translate from '../../i18n/translate';
+import { PrecheckResult } from '../../app/types/prediction/BetResultInfluencer';
 
 type GraphData = {
 	predictionTotal: number;
@@ -39,7 +40,8 @@ function createGraphData(
 		predictionDisribution.influencerDistribution
 			.filter(
 				(influencerDistribution) =>
-					influencerDistribution.influencerName === influencer
+					influencerDistribution.influencerName === influencer &&
+					influencerDistribution.precheckResult === PrecheckResult.OK
 			)
 			.forEach((influencerDistribution) => {
 				result.push({
@@ -86,6 +88,10 @@ export const InfluencerDistributionGraph = ({
 
 	const g1Data = createGraphData(distributionBetSuccess, relevantInfluencer);
 	const g2Data = createGraphData(distributionBetFailed, relevantInfluencer);
+
+	if (g1Data.length === 0 || g2Data.length === 0) {
+		return null;
+	}
 
 	return (
 		<>
