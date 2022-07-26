@@ -102,16 +102,17 @@ export const InfluencerDistributionGraph = ({
 				margin={{ top: 20, right: 20, bottom: 10, left: 10 }}
 			>
 				<CartesianGrid strokeDasharray="3 3" />
+				<YAxis
+					type="number"
+					domain={[0, 100]}
+					dataKey="influencerResult"
+					name="Influencer result"
+				/>
 				<XAxis
 					type="number"
 					domain={[0, 100]}
 					dataKey="predictionTotal"
 					name="Prediction total"
-				/>
-				<YAxis
-					domain={[0, 100]}
-					dataKey="influencerResult"
-					name="Influencer result"
 				/>
 				<ZAxis dataKey="count" name="Count" />
 				<Tooltip cursor={{ strokeDasharray: '3 3' }} />
@@ -122,7 +123,6 @@ export const InfluencerDistributionGraph = ({
 					)}
 					data={g1Data}
 					fill="#00FF00"
-					shape="cross"
 				/>
 				<Scatter
 					name={translate(
@@ -130,7 +130,6 @@ export const InfluencerDistributionGraph = ({
 					)}
 					data={g2Data}
 					fill="#FF0000"
-					shape="cross"
 				/>
 			</ScatterChart>
 		</>

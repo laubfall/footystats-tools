@@ -97,7 +97,15 @@ export const PredictionQualityView = () => {
 					currentMeasurement?.distributionBetOnThis || []
 				}
 				distributionBetFailed={
+					currentMeasurement?.distributionDontBetOnThis || []
+				}
+			/>
+			<InfluencerDistributionGraphView
+				distributionBetSuccess={
 					currentMeasurement?.distributionBetOnThisFailed || []
+				}
+				distributionBetFailed={
+					currentMeasurement?.distributionDontBetOnThisFailed || []
 				}
 			/>
 		</>
