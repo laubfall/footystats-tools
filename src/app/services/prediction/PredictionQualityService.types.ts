@@ -22,10 +22,10 @@ export type BetPredictionQuality = {
 	countFailed: number; // PredictionAnalyse Failed for bets you better bet on
 	countSuccessDontBet: number;
 	countFailedDontBet: number;
-	distributionBetOnThis?: BetPredictionDistribution; // Counted percentage values for bets fst told to bet on.
-	distributionBetOnThisFailed?: BetPredictionDistribution; // Counted percentage values for bets fst told to bet on.
-	distributionDontBetOnThis?: BetPredictionDistribution; // Counted percentage values for bets fst told to not bet on.
-	distributionDontBetOnThisFailed?: BetPredictionDistribution; // Counted percentage values for bets fst told to not bet on.
+	distributionBetOnThis?: BetPredictionDistribution; // Counted percentage values for bets fst told to bet on and it was right.
+	distributionBetOnThisFailed?: BetPredictionDistribution; // Counted percentage values for bets fst told to bet on and it was not right.
+	distributionDontBetOnThis?: BetPredictionDistribution; // Counted percentage values for bets fst told to not bet on and it was right.
+	distributionDontBetOnThisFailed?: BetPredictionDistribution; // Counted percentage values for bets fst told to not bet on and it was not right.
 	distributionBetSuccessful?: BetPredictionDistribution; // Regardless what fts said the bet would be won. So here are the counted percentages of betOnThis && success and dontBetOnThis && failed.
 };
 

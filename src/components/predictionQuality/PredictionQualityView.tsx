@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import React, { useContext, useEffect, useState } from 'react';
+import { Accordion, AccordionContext, Button, Col, Row } from 'react-bootstrap';
 import log from 'electron-log';
+import AccordionBody from 'react-bootstrap/AccordionBody';
+import AccordionHeader from 'react-bootstrap/AccordionHeader';
 import translate from '../../i18n/translate';
 import IpcPredictionQualityService from '../../app/services/prediction/IpcPredictionQualityService';
 import { ReportList } from './ReportList';
@@ -49,6 +51,43 @@ export const PredictionQualityView = () => {
 		setCurrentMeasurement(measurement);
 	}, [report]);
 
+	const InfluencerDistributions = () => {
+		const { activeEventKey } = useContext(AccordionContext);
+		return (
+			<>
+				{activeEventKey === '0' && (
+					<Row>
+						<Col>
+							<InfluencerDistributionGraphView
+								distributionBetSuccess={
+									currentMeasurement?.distributionBetOnThis ||
+									[]
+								}
+								distributionBetFailed={
+									currentMeasurement?.distributionDontBetOnThis ||
+									[]
+								}
+							/>
+						</Col>
+
+						<Col>
+							<InfluencerDistributionGraphView
+								distributionBetSuccess={
+									currentMeasurement?.distributionBetOnThisFailed ||
+									[]
+								}
+								distributionBetFailed={
+									currentMeasurement?.distributionDontBetOnThisFailed ||
+									[]
+								}
+							/>
+						</Col>
+					</Row>
+				)}
+			</>
+		);
+	};
+
 	return (
 		<>
 			<Row>
@@ -92,22 +131,25 @@ export const PredictionQualityView = () => {
 				}}
 			/>
 			<PredictionGraphView measurement={currentMeasurement} />
-			<InfluencerDistributionGraphView
-				distributionBetSuccess={
-					currentMeasurement?.distributionBetOnThis || []
-				}
-				distributionBetFailed={
-					currentMeasurement?.distributionDontBetOnThis || []
-				}
-			/>
-			<InfluencerDistributionGraphView
-				distributionBetSuccess={
-					currentMeasurement?.distributionBetOnThisFailed || []
-				}
-				distributionBetFailed={
-					currentMeasurement?.distributionDontBetOnThisFailed || []
-				}
-			/>
+
+			<Accordion
+				title={translate(
+					'renderer.predictionqualitiyview.influencerdistributiongraph'
+				)}
+			>
+				<Accordion.Item eventKey="0">
+					<AccordionHeader>
+						{translate(
+							'renderer.predictionqualitiyview.influencerdistributiongraph'
+						)}
+					</AccordionHeader>
+					<AccordionBody>
+						<>
+							<InfluencerDistributions />
+						</>
+					</AccordionBody>
+				</Accordion.Item>
+			</Accordion>
 		</>
 	);
 };
