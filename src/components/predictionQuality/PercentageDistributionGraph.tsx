@@ -9,14 +9,14 @@ import {
 	Tooltip,
 } from 'recharts';
 import { uniqueId } from 'lodash';
-import { PredictionPercentDistribution } from '../../app/services/prediction/PredictionQualityService.types';
+import { PercentDistribution } from '../../app/services/prediction/PredictionQualityService.types';
 
 export type PercentageDistributionGraphProps = {
 	graphs: PercentageDistributionGraphData[];
 };
 
 export type PercentageDistributionGraphData = {
-	data?: PredictionPercentDistribution[];
+	data?: PercentDistribution[];
 	name: string;
 };
 

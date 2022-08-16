@@ -29,6 +29,8 @@
 	"renderer.predictionqualitiyview.table.col.five": "erfolgreich bewertet (nicht wetten)",
 	"renderer.predictionqualitiyview.table.col.six": "falsch bewertet (nicht wetten)",
 	"renderer.predictionqualitiyview.influencerdistributiongraph": "Influencer Details",
+	"renderer.predictionqualitiyview.influencerpredictionquality": "Influencer Vorhersage Qualität",
+	"renderer.predictionqualitiyview.influencerpredictionquality.nodata": "Für Influencer {0} liegen keine Daten vor",
 	"renderer.influencerdistributiongraph.scatterdiagram.betsuccess": "Erfolgreich bewertet",
 	"renderer.influencerdistributiongraph.scatterdiagram.betfailed": "Nicht erfolgreich bewertet"
 }

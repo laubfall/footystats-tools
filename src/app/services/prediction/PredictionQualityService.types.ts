@@ -33,18 +33,19 @@ export type BetPredictionQuality = {
  * Type to describe distribution of calculated prediction for a bet.
  */
 export type PredictionPercentDistribution = {
-	predictionPercent: number;
-	count: number; // count of occourences of this prediction value (predictionPercent)
 	influencerDistribution: InfluencerPercentDistribution[];
-};
+} & PercentDistribution;
 
 /**
  * Type to describe the distribution of calculated influence of single influencer.
  */
 export type InfluencerPercentDistribution = {
 	influencerName: InfluencerName;
-	predictionPercent: number;
 	precheckResult: PrecheckResult;
+} & PercentDistribution;
+
+export type PercentDistribution = {
+	predictionPercent: number;
 	count: number; // count of bets where the influencer calculated the same prediction in percent value (field predictionPercent)
 };
 

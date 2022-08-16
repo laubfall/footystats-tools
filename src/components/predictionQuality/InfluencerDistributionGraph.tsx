@@ -9,11 +9,12 @@ import {
 	YAxis,
 	ZAxis,
 } from 'recharts';
-import { union, uniq, uniqueId } from 'lodash';
+import { union, uniqueId } from 'lodash';
 import { BetPredictionDistribution } from '../../app/services/prediction/PredictionQualityService.types';
 import { InfluencerName } from '../../app/services/prediction/PredictionService.types';
 import translate from '../../i18n/translate';
 import { PrecheckResult } from '../../app/types/prediction/BetResultInfluencer';
+import { collectInfluencerNames } from './functions';
 
 type GraphData = {
 	predictionTotal: number;
@@ -60,21 +61,6 @@ function createGraphData(
 	});
 
 	return result;
-}
-
-function collectInfluencerNames(
-	measurement: BetPredictionDistribution
-): string[] {
-	let names: string[] = [];
-	measurement.forEach((m) => {
-		const uniqueNames = uniq(
-			m.influencerDistribution.map((id) => id.influencerName)
-		);
-		names.push(...uniqueNames);
-		names = uniq(names);
-	});
-
-	return names;
 }
 
 export const InfluencerDistributionGraph = ({

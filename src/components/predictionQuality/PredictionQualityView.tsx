@@ -14,6 +14,7 @@ import {
 import { PredictionGraphView } from './PredictionGraphView';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import { InfluencerDistributionGraphView } from './InfluencerDistributionGraph';
+import { InfluencerPredictionGraphView } from './InfluencerPredictionGraphView';
 
 export const PredictionQualityView = () => {
 	const [report, setReport] = useState<PredictionQualityReport>();
@@ -137,6 +138,20 @@ export const PredictionQualityView = () => {
 					'renderer.predictionqualitiyview.influencerdistributiongraph'
 				)}
 			>
+				<Accordion.Item eventKey="1">
+					<AccordionHeader>
+						{translate(
+							'renderer.predictionqualitiyview.influencerpredictionquality'
+						)}
+					</AccordionHeader>
+					<AccordionBody>
+						{currentMeasurement && (
+							<InfluencerPredictionGraphView
+								measurement={currentMeasurement}
+							/>
+						)}
+					</AccordionBody>
+				</Accordion.Item>
 				<Accordion.Item eventKey="0">
 					<AccordionHeader>
 						{translate(
@@ -144,9 +159,7 @@ export const PredictionQualityView = () => {
 						)}
 					</AccordionHeader>
 					<AccordionBody>
-						<>
-							<InfluencerDistributions />
-						</>
+						<InfluencerDistributions />
 					</AccordionBody>
 				</Accordion.Item>
 			</Accordion>
