@@ -8,9 +8,17 @@ import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from 'react-data-table-component/dist/src/DataTable/types';
+import {
+	ListGroup,
+	ListGroupItem,
+	OverlayTrigger,
+	Popover,
+} from 'react-bootstrap';
+import { uniqueId } from 'lodash';
 import { Bet } from '../../app/types/prediction/BetPredictionContext';
 import translate from '../../i18n/translate';
 import { PredictionResult } from '../../app/services/prediction/PredictionService.types';
+import { PrecheckResult } from '../../app/types/prediction/BetResultInfluencer';
 
 export type BetPrediction = {
 	bet: Bet;
@@ -50,22 +58,55 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
 				// eslint-disable-next-line react/display-name
 				cell: (row) => {
 					const b = row.betPredictions.find((v) => v.bet === bet);
+
+					const relevantDetails =
+						b?.prediction.influencerDetailedResult.filter(
+							(d) => d.precheckResult === PrecheckResult.OK
+						);
 					return (
-						<>
-							{b?.prediction.betSuccessInPercent}
-							{b?.prediction.betOnThis === true && (
-								<>
-									&nbsp;
-									<BsFillArrowUpCircleFill />
-								</>
-							)}
-							{b?.prediction.betOnThis === false && (
-								<>
-									&nbsp;
-									<BsFillArrowDownCircleFill />
-								</>
-							)}
-						</>
+						<OverlayTrigger
+							placement="right"
+							overlay={
+								<Popover id="popover-basic">
+									<Popover.Header as="h3">
+										{translate(
+											'renderer.matchlist.influencer.popup.title'
+										)}
+									</Popover.Header>
+									<Popover.Body>
+										<ListGroup>
+											{relevantDetails &&
+												relevantDetails.map((d) => (
+													<ListGroupItem
+														key={uniqueId()}
+													>
+														{d.influencerName}:{' '}
+														{
+															d.influencerPredictionValue
+														}
+													</ListGroupItem>
+												))}
+										</ListGroup>
+									</Popover.Body>
+								</Popover>
+							}
+						>
+							<span>
+								{b?.prediction.betSuccessInPercent}
+								{b?.prediction.betOnThis === true && (
+									<>
+										&nbsp;
+										<BsFillArrowUpCircleFill />
+									</>
+								)}
+								{b?.prediction.betOnThis === false && (
+									<>
+										&nbsp;
+										<BsFillArrowDownCircleFill />
+									</>
+								)}
+							</span>
+						</OverlayTrigger>
 					);
 				},
 				conditionalCellStyles: [
