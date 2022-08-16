@@ -1,6 +1,7 @@
 import React from 'react';
 import { union, uniqueId } from 'lodash';
 import { Alert } from 'react-bootstrap';
+import { colord } from 'colord';
 import {
 	BetPredictionDistribution,
 	BetPredictionQuality,
@@ -11,11 +12,13 @@ import { collectInfluencerNames } from './functions';
 import { InfluencerName } from '../../app/services/prediction/PredictionService.types';
 import translate from '../../i18n/translate';
 import { PrecheckResult } from '../../app/types/prediction/BetResultInfluencer';
+import { Bet } from '../../app/types/prediction/BetPredictionContext';
 
 export type InfluencerPredictionGraphProps = {
 	i1Distribution: PercentDistribution[];
 	i2Distribution: PercentDistribution[];
-	title: string;
+	name: InfluencerName;
+	bet: Bet;
 };
 
 export type InfluencerPredictionGraphViewProps = {
@@ -25,7 +28,8 @@ export type InfluencerPredictionGraphViewProps = {
 const InfluencerPredictionGraph = ({
 	i1Distribution,
 	i2Distribution,
-	title,
+	name,
+	bet,
 }: InfluencerPredictionGraphProps) => {
 	if (i1Distribution.length === 0 && i2Distribution.length === 0) {
 		return (
@@ -33,7 +37,7 @@ const InfluencerPredictionGraph = ({
 				<Alert variant="info">
 					{translate(
 						'renderer.predictionqualitiyview.influencerpredictionquality.nodata',
-						[title]
+						[name]
 					)}
 				</Alert>
 			</>
@@ -42,11 +46,24 @@ const InfluencerPredictionGraph = ({
 
 	return (
 		<>
-			<h3>{title}</h3>
+			<h3>{name}</h3>
 			<PercentageDistributionGraph
 				graphs={[
-					{ name: 'i1Distribution', data: i1Distribution },
-					{ name: 'i2Distribution', data: i2Distribution },
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[bet]}`
+						)} ${translate('renderer.predictiongraphview.bet')}`,
+						data: i1Distribution,
+						color: colord('rgb(40,200,0)').toRgb(),
+					},
+					{
+						name: `${translate(
+							`renderer.matchesview.bet.${Bet[bet]}`
+						)} ${translate(
+							'renderer.predictiongraphview.bet.failed'
+						)}`,
+						data: i2Distribution,
+					},
 				]}
 			/>
 		</>
@@ -112,7 +129,8 @@ export const InfluencerPredictionGraphView = ({
 					<InfluencerPredictionGraph
 						i1Distribution={g1Data}
 						i2Distribution={g2Data}
-						title={name}
+						name={name}
+						bet={measurement.bet}
 						key={uniqueId()}
 					/>
 				);

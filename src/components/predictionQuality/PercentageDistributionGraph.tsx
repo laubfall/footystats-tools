@@ -9,6 +9,7 @@ import {
 	Tooltip,
 } from 'recharts';
 import { uniqueId } from 'lodash';
+import { colord, RgbColor } from 'colord';
 import { PercentDistribution } from '../../app/services/prediction/PredictionQualityService.types';
 
 export type PercentageDistributionGraphProps = {
@@ -18,6 +19,7 @@ export type PercentageDistributionGraphProps = {
 export type PercentageDistributionGraphData = {
 	data?: PercentDistribution[];
 	name: string;
+	color?: RgbColor;
 };
 
 type Data = {
@@ -103,7 +105,9 @@ export const PercentageDistributionGraph = ({
 						key={uniqueId()}
 						dataKey={`y${idx}`}
 						name={val.name}
-						stroke="#8884d8"
+						stroke={
+							val.color ? colord(val.color).toHex() : '#8884d8'
+						}
 					/>
 				);
 			})}

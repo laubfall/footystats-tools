@@ -1,4 +1,5 @@
 import React from 'react';
+import { colord } from 'colord';
 import { BetPredictionQuality } from '../../app/services/prediction/PredictionQualityService.types';
 import { PercentageDistributionGraph } from './PercentageDistributionGraph';
 import translate from '../../i18n/translate';
@@ -23,6 +24,7 @@ export const PredictionGraphView = ({
 							`renderer.matchesview.bet.${Bet[measurement.bet]}`
 						)} ${translate('renderer.predictiongraphview.bet')}`,
 						data: measurement.distributionBetOnThis,
+						color: colord('rgb(40,200,0)').toRgb(),
 					},
 					{
 						name: `${translate(
