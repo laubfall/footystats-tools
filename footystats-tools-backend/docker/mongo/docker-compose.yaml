@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  footystats-mongodb:
+    image: mongo:3.6
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=hello
+      - MONGO_INITDB_DATABASE=footystats
+    ports:
+      - 27017:27017
+      - 9229:9229
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  footystats-mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=footystats-mongodb
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=hello
