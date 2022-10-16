@@ -1,8 +1,9 @@
 package de.ludwig.footystats.tools.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.ludwig.footystats.tools.backend.model.Match;
-import de.ludwig.footystats.tools.backend.model.MatchStatus;
+import de.ludwig.footystats.tools.backend.services.match.Match;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.InfluencerResult;
 import de.ludwig.footystats.tools.backend.services.prediction.PrecheckResult;
@@ -73,7 +74,7 @@ public class MatchControllerTest {
         var match = new Match();
         match.setCountry("Germany");
         match.setLeague("Bundesliga");
-        match.setRevision(1);
+        match.setRevision(new PredictionQualityRevision(1));
         match.setDateGMT(date);
         matchRepository.insert(match);
 
@@ -100,7 +101,7 @@ public class MatchControllerTest {
         var match = new Match();
         match.setCountry("Germany");
         match.setLeague("Bundesliga");
-        match.setRevision(1);
+        match.setRevision(new PredictionQualityRevision(1));
         match.setDateUnix(date.getLong(ChronoField.ERA));
         match.setDateGMT(date);
         match.setAwayTeam("Blah");

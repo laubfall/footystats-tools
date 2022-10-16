@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.prediction;
 
-import de.ludwig.footystats.tools.backend.model.MatchStatus;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import de.ludwig.footystats.tools.backend.services.prediction.influencer.*;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +9,8 @@ import java.util.List;
 
 @Service
 public class PredictionService {
-    public static final int NO_REVISION_SO_FAR = -1;
 
-    private final BetResultInfluencer[] betResultInfluencer = {
+	private final BetResultInfluencer[] betResultInfluencer = {
             new OddsBttsYesInfluencer(),
             new OddsGoalOverInfluencer(),
             new FootyStatsBttsYesPredictionInfluencer(),

@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.csv;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

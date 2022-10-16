@@ -1,6 +1,5 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import org.springframework.data.mongodb.core.MongoTemplate;

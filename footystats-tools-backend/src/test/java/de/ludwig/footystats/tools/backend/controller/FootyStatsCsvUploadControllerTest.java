@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsRepository;
 import org.junit.jupiter.api.Assertions;

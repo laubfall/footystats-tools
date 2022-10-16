@@ -1,8 +1,5 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
-import de.ludwig.footystats.tools.backend.model.MatchStatus;
-import de.ludwig.footystats.tools.backend.mongo.MongoConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Date;
 import java.util.List;
 
 @ActiveProfiles("test")

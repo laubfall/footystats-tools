@@ -1,4 +1,4 @@
-package de.ludwig.footystats.tools.backend.model;
+package de.ludwig.footystats.tools.backend.services.stats;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;

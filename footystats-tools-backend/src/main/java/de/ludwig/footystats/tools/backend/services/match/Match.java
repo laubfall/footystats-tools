@@ -1,5 +1,7 @@
-package de.ludwig.footystats.tools.backend.model;
+package de.ludwig.footystats.tools.backend.services.match;
 
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
@@ -54,5 +56,5 @@ public class Match {
     private PredictionResult bttsYes;
     @Getter
     @Setter
-    private Integer revision;
+    private PredictionQualityRevision revision;
 }

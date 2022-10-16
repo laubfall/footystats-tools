@@ -1,18 +1,13 @@
 package de.ludwig.footystats.tools.backend;
 
-import de.ludwig.footystats.tools.backend.model.MatchStats;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @SpringBootApplication
 @EnableMongoRepositories

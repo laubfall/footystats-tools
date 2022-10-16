@@ -1,4 +1,4 @@
-package de.ludwig.footystats.tools.backend.model;
+package de.ludwig.footystats.tools.backend.services.stats;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
@@ -6,10 +6,8 @@ import com.opencsv.bean.CsvDate;
 import de.ludwig.footystats.tools.backend.services.csv.FloatConverter;
 import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 

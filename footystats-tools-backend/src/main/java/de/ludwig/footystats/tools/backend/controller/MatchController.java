@@ -1,13 +1,12 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.model.Match;
+import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 

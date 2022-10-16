@@ -1,15 +1,12 @@
 package de.ludwig.footystats.tools.backend.model;
 
-import org.apache.commons.compress.utils.IOUtils;
-import org.junit.jupiter.api.Assertions;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.io.IOException;
 
 @ActiveProfiles("test")
 @JsonTest
