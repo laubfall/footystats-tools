@@ -262,7 +262,7 @@ public class PredictionQualityService {
 		});
 	}
 
-	private PredictionQualityReport recomputeQuality(PredictionQualityRevision revision) {
+	public PredictionQualityReport recomputeQuality(PredictionQualityRevision revision) {
 		var report = predictionQualityReportRepository.findByRevision_Revision(revision);
 		if (report == null) {
 			return null;
