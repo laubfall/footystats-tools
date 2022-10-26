@@ -1,8 +1,11 @@
-import {Precast, PredictionQualityReport, PredictionQualityRevision,} from "./PredictionQualityService.types";
+import {
+	Precast,
+	PredictionQualityReport,
+	PredictionQualityRevision,
+} from "./PredictionQualityService.types";
 
 class IpcPredictionQualityService {
 	computeQuality(): Promise<PredictionQualityReport> {
-
 		return Promise.resolve(undefined);
 	}
 
