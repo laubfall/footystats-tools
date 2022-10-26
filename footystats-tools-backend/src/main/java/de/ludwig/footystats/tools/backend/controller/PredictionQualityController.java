@@ -40,8 +40,8 @@ public class PredictionQualityController {
 		return predictionQualityReportRepository.findTopByOrderByRevisionDesc();
 	}
 
-	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"})
-	public PredictionQualityReport recomputeQuality(PredictionQualityRevision revision){
+	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute‚"})
+	public PredictionQualityReport recomputeQuality(@RequestBody PredictionQualityRevision revision){
 		return predictionQualityService.recomputeQuality(revision);
 	}
 }

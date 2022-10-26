@@ -14,7 +14,7 @@ import java.util.List;
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
-@ContextConfiguration(classes = {Configuration.class})
+@ContextConfiguration(classes = {MatchStatsServiceConfiguration.class})
 public class MatchStatsServiceTest {
 
     @Autowired

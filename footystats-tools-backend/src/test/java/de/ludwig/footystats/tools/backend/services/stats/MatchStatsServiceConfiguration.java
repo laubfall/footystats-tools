@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
  */
 @Import({JackonsConfiguration.class})
 @TestConfiguration
-public class Configuration {
+public class MatchStatsServiceConfiguration {
     @Bean
     public PredictionService predictionService() {
         return new PredictionService();

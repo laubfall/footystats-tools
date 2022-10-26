@@ -19,7 +19,7 @@ import java.util.Date;
 
 @ActiveProfiles("test")
 @DataMongoTest
-@ContextConfiguration(classes = {Configuration.class})
+@ContextConfiguration(classes = {MatchStatsServiceConfiguration.class})
 @AutoConfigureDataMongo
 public class MatchStatsRepositoryTest {
 
