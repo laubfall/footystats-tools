@@ -1,6 +1,7 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.jackson.JackonsConfiguration;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
@@ -14,7 +15,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 /**
  * Test configuration for JsonTests. Actually empty but required to avoid using the SpringBoot Config.
  */
-@Import({JackonsConfiguration.class})
+@Import({JackonsConfiguration.class, FootystatsProperties.class})
 @TestConfiguration
 public class MatchStatsServiceConfiguration {
     @Bean
