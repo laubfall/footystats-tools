@@ -44,7 +44,7 @@ public class PredictionQualityService {
 
 		var latestRevision = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
 		PredictionQualityReport report;
-		if (latestRevision.getRevision() == PredictionQualityRevision.NO_REVISION) {
+		if (latestRevision == null) {
 			report = new PredictionQualityReport(new PredictionQualityRevision(0), new ArrayList<>());
 			predictionQualityReportRepository.insert(report);
 		} else {

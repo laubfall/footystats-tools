@@ -30,7 +30,7 @@ public class PredictionQualityController {
 		return report.getRevision();
 	}
 
-	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"})
+	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"}, path = {"/precast"})
 	public Precast precast(@RequestBody PredictionQualityRevision revision){
 		return predictionQualityService.precast(revision);
 	}
@@ -40,7 +40,7 @@ public class PredictionQualityController {
 		return predictionQualityReportRepository.findTopByOrderByRevisionDesc();
 	}
 
-	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute‚"})
+	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute"})
 	public PredictionQualityReport recomputeQuality(@RequestBody PredictionQualityRevision revision){
 		return predictionQualityService.recomputeQuality(revision);
 	}
