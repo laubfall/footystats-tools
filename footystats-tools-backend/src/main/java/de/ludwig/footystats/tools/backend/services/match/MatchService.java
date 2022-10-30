@@ -6,7 +6,6 @@ import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import de.ludwig.footystats.tools.backend.services.prediction.influencer.BetPredictionContext;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
