@@ -663,15 +663,26 @@ export interface MatchStats {
     bttsaverage?: number;
 }
 
+
 /**
-* @export
-* @enum {string}
-*/
-export enum MatchStatsMatchStatusEnum {
-    Complete = 'complete',
-    Incomplete = 'incomplete',
-    Suspended = 'suspended',
-    Canceled = 'canceled'
+ * @export
+ */
+export const MatchStatsMatchStatusEnum = {
+    Complete: 'complete',
+    Incomplete: 'incomplete',
+    Suspended: 'suspended',
+    Canceled: 'canceled'
+} as const;
+export type MatchStatsMatchStatusEnum = typeof MatchStatsMatchStatusEnum[keyof typeof MatchStatsMatchStatusEnum];
+
+
+/**
+ * Check if a given object implements the MatchStats interface.
+ */
+export function instanceOfMatchStats(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function MatchStatsFromJSON(json: any): MatchStats {

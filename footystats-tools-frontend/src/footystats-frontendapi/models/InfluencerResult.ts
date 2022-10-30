@@ -39,15 +39,26 @@ export interface InfluencerResult {
     precheckResult?: InfluencerResultPrecheckResultEnum;
 }
 
+
 /**
-* @export
-* @enum {string}
-*/
-export enum InfluencerResultPrecheckResultEnum {
-    NotEnoughInformation = 'NOT_ENOUGH_INFORMATION',
-    DontKnowWhatToCalculateForBet = 'DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET',
-    Exception = 'EXCEPTION',
-    Ok = 'OK'
+ * @export
+ */
+export const InfluencerResultPrecheckResultEnum = {
+    NotEnoughInformation: 'NOT_ENOUGH_INFORMATION',
+    DontKnowWhatToCalculateForBet: 'DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET',
+    Exception: 'EXCEPTION',
+    Ok: 'OK'
+} as const;
+export type InfluencerResultPrecheckResultEnum = typeof InfluencerResultPrecheckResultEnum[keyof typeof InfluencerResultPrecheckResultEnum];
+
+
+/**
+ * Check if a given object implements the InfluencerResult interface.
+ */
+export function instanceOfInfluencerResult(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function InfluencerResultFromJSON(json: any): InfluencerResult {

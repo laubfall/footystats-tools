@@ -5,143 +5,140 @@ import AccordionHeader from "react-bootstrap/AccordionHeader";
 import translate from "../../i18n/translate";
 import IpcPredictionQualityService from "../../app/services/prediction/IpcPredictionQualityService";
 import { ReportList } from "./ReportList";
-import {
-  BetPredictionQuality,
-  NO_REVISION_SO_FAR,
-  PredictionQualityReport,
-} from "../../app/services/prediction/PredictionQualityService.types";
 import { PredictionGraphView } from "./PredictionGraphView";
 import { Bet } from "../../app/types/prediction/BetPredictionContext";
 import { InfluencerDistributionGraphView } from "./InfluencerDistributionGraph";
 import { InfluencerPredictionGraphView } from "./InfluencerPredictionGraphView";
+import { BetPredictionQuality, BetPredictionQualityBetEnum, PredictionQualityReport } from "../../footystats-frontendapi";
+import { NO_REVISION_SO_FAR } from "../../app/services/prediction/PredictionQualityService.types";
 
 export const PredictionQualityView = () => {
-  const [report, setReport] = useState<PredictionQualityReport>();
+	const [report, setReport] = useState<PredictionQualityReport>();
 
-  const [currentMeasurement, setCurrentMeasurement] =
-    useState<BetPredictionQuality>();
+	const [currentMeasurement, setCurrentMeasurement] =
+		useState<BetPredictionQuality>();
 
-  const [recalculateAvailable, setRecalculateAvailable] = useState(false);
+	const [recalculateAvailable, setRecalculateAvailable] = useState(false);
 
-  const predictionQualityService = new IpcPredictionQualityService();
+	const predictionQualityService = new IpcPredictionQualityService();
 
-  useEffect(() => {
-    predictionQualityService
-      .latestReport()
-      .then((rep) => setReport(rep))
-      .catch((reason) => console.error("Failed to get latest report", reason));
+	useEffect(() => {
+		predictionQualityService
+			.latestReport()
+			.then((rep) => setReport(rep))
+			.catch((reason) => console.error("Failed to get latest report", reason));
 
-    predictionQualityService
-      .latestRevision()
-      .then((rev) => setRecalculateAvailable(rev !== NO_REVISION_SO_FAR))
-      .catch((reason) =>
-        console.error("Failed to compute state for recalculate button", reason),
-      );
-  }, []);
+		predictionQualityService
+			.latestRevision()
+			.then((rev) => setRecalculateAvailable(rev !== NO_REVISION_SO_FAR))
+			.catch((reason) =>
+				console.error("Failed to compute state for recalculate button", reason),
+			);
+	}, []);
 
-  useEffect(() => {
-    const measurement = report?.measurements.find(
-      (bpc) => bpc.bet === Bet.BTTS_YES,
-    );
-    setCurrentMeasurement(measurement);
-  }, [report]);
+	useEffect(() => {
+		const measurement = report?.measurements.find(
+			(bpc) => bpc.bet === BetPredictionQualityBetEnum.BttsYes,
+		);
+		setCurrentMeasurement(measurement);
+	}, [report]);
 
-  const InfluencerDistributions = () => {
-    const { activeEventKey } = useContext(AccordionContext);
-    return (
-      <>
-        {activeEventKey === "0" && (
-          <Row>
-            <Col>
-              <InfluencerDistributionGraphView
-                distributionBetSuccess={
-                  currentMeasurement?.distributionBetOnThis || []
-                }
-                distributionBetFailed={
-                  currentMeasurement?.distributionDontBetOnThis || []
-                }
-              />
-            </Col>
+	const InfluencerDistributions = () => {
+		const { activeEventKey } = useContext(AccordionContext);
+		return (
+			<>
+				{activeEventKey === "0" && (
+					<Row>
+						<Col>
+							<InfluencerDistributionGraphView
+								distributionBetSuccess={
+									currentMeasurement?.distributionBetOnThis || []
+								}
+								distributionBetFailed={
+									currentMeasurement?.distributionDontBetOnThis || []
+								}
+							/>
+						</Col>
 
-            <Col>
-              <InfluencerDistributionGraphView
-                distributionBetSuccess={
-                  currentMeasurement?.distributionBetOnThisFailed || []
-                }
-                distributionBetFailed={
-                  currentMeasurement?.distributionDontBetOnThisFailed || []
-                }
-              />
-            </Col>
-          </Row>
-        )}
-      </>
-    );
-  };
+						<Col>
+							<InfluencerDistributionGraphView
+								distributionBetSuccess={
+									currentMeasurement?.distributionBetOnThisFailed || []
+								}
+								distributionBetFailed={
+									currentMeasurement?.distributionDontBetOnThisFailed || []
+								}
+							/>
+						</Col>
+					</Row>
+				)}
+			</>
+		);
+	};
 
-  return (
-    <>
-      <Row>
-        <Col>
-          <Button
-            onClick={async () => {
-              setReport(await predictionQualityService.computeQuality());
-            }}
-          >
-            {translate("renderer.predictionqualityview.button.calculate")}
-          </Button>
-          <Button
-            disabled={recalculateAvailable === false}
-            onClick={async () => {
-              const lr = await predictionQualityService.latestRevision();
-              setReport(await predictionQualityService.recomputeQuality(lr));
-            }}
-          >
-            {translate("renderer.predictionqualityview.button.recalculate")}
-          </Button>
-        </Col>
-      </Row>
-      <ReportList
-        report={report}
-        onRowClicked={(row) => {
-          const measurement = report?.measurements.find(
-            (bpq) => bpq.bet === row.bet,
-          );
-          setCurrentMeasurement(measurement);
-        }}
-      />
-      <PredictionGraphView measurement={currentMeasurement} />
+	return (
+		<>
+			<Row>
+				<Col>
+					<Button
+						onClick={async () => {
+							setReport(await predictionQualityService.computeQuality());
+						}}
+					>
+						{translate("renderer.predictionqualityview.button.calculate")}
+					</Button>
+					<Button
+						disabled={recalculateAvailable === false}
+						onClick={async () => {
+							const lr = await predictionQualityService.latestRevision();
+							setReport(await predictionQualityService.recomputeQuality(lr));
+						}}
+					>
+						{translate("renderer.predictionqualityview.button.recalculate")}
+					</Button>
+				</Col>
+			</Row>
+			<ReportList
+				report={report}
+				onRowClicked={(row) => {
+					const measurement = report?.measurements.find(
+						(bpq) => bpq.bet === row.bet,
+					);
+					setCurrentMeasurement(measurement);
+				}}
+			/>
+			<PredictionGraphView measurement={currentMeasurement} />
 
-      <Accordion
-        title={translate(
-          "renderer.predictionqualitiyview.influencerdistributiongraph",
-        )}
-      >
-        <Accordion.Item eventKey="1">
-          <AccordionHeader>
-            {translate(
-              "renderer.predictionqualitiyview.influencerpredictionquality",
-            )}
-          </AccordionHeader>
-          <AccordionBody>
-            {currentMeasurement && (
-              <InfluencerPredictionGraphView measurement={currentMeasurement} />
-            )}
-          </AccordionBody>
-        </Accordion.Item>
-        <Accordion.Item eventKey="0">
-          <AccordionHeader>
-            {translate(
-              "renderer.predictionqualitiyview.influencerdistributiongraph",
-            )}
-          </AccordionHeader>
-          <AccordionBody>
-            <InfluencerDistributions />
-          </AccordionBody>
-        </Accordion.Item>
-      </Accordion>
-    </>
-  );
+			<Accordion
+				title={translate(
+					"renderer.predictionqualitiyview.influencerdistributiongraph",
+				)}
+			>
+				<Accordion.Item eventKey="1">
+					<AccordionHeader>
+						{translate(
+							"renderer.predictionqualitiyview.influencerpredictionquality",
+						)}
+					</AccordionHeader>
+					<AccordionBody>
+						{currentMeasurement && (
+							<InfluencerPredictionGraphView measurement={currentMeasurement} />
+						)}
+					</AccordionBody>
+				</Accordion.Item>
+				<Accordion.Item eventKey="0">
+					<AccordionHeader>
+						{translate(
+							"renderer.predictionqualitiyview.influencerdistributiongraph",
+						)}
+					</AccordionHeader>
+					<AccordionBody>
+						<InfluencerDistributions />
+					</AccordionBody>
+				</Accordion.Item>
+			</Accordion>
+		</>
+	);
 };
 
 export default { PredictionQualityView };

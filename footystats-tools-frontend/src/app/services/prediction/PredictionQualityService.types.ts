@@ -2,6 +2,10 @@ import { Bet } from '../../types/prediction/BetPredictionContext';
 import { InfluencerName } from './PredictionService.types';
 import { PrecheckResult } from '../../types/prediction/BetResultInfluencer';
 
+/**
+ * DEPRECATED!!!
+ */
+
 export type Precast = {
 	revision: PredictionQualityRevision;
 
