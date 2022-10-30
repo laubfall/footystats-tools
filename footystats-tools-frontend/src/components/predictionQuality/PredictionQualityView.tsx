@@ -30,7 +30,7 @@ export const PredictionQualityView = () => {
 
 		predictionQualityService
 			.latestRevision()
-			.then((rev) => setRecalculateAvailable(rev !== NO_REVISION_SO_FAR))
+			.then((rev) => setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR))
 			.catch((reason) =>
 				console.error("Failed to compute state for recalculate button", reason),
 			);
