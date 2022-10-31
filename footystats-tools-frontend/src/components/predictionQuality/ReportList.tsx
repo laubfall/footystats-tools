@@ -1,6 +1,9 @@
 import React from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { BetPredictionQuality, PredictionQualityReport } from "../../footystats-frontendapi";
+import {
+	BetPredictionQuality,
+	PredictionQualityReport,
+} from "../../footystats-frontendapi";
 import translate from "../../i18n/translate";
 
 export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
@@ -8,7 +11,9 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.one"),
 			selector: (bpq) =>
-				translate(`renderer.predictionqualitiyview.table.col.one.${bpq.bet}`),
+				translate(
+					`renderer.predictionqualitiyview.table.col.one.${bpq.bet}`,
+				),
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.two"),

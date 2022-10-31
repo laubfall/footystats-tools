@@ -32,11 +32,10 @@ public class PredictionQualityReportRepositoryTest {
 
 	@Test
 	public void revisionHasToBeUnique() {
-		var revision = new PredictionQualityRevision(0);
+		final var revision = new PredictionQualityRevision(0);
 		var report = new PredictionQualityReport(revision, Collections.emptyList());
 		predictionQualityReportRepository.insert(report);
 
-		predictionQualityReportRepository.insert(report);
-		Assertions.fail();
+		Assertions.assertThrows(RuntimeException.class, () -> predictionQualityReportRepository.insert(new PredictionQualityReport(revision, Collections.emptyList())));
 	}
 }

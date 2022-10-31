@@ -6,18 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonComponent
-@CompoundIndexes({
-	@CompoundIndex(name = "unique", def = "{'revision' : 1}")
-})
+@Document
 public class PredictionQualityReport {
+	@Indexed(unique = true)
 	@Getter
 	@Setter
 	private PredictionQualityRevision revision;

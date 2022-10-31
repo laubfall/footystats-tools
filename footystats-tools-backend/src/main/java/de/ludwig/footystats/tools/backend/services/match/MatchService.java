@@ -38,7 +38,6 @@ public class MatchService extends MongoService<Match> {
 				.dateGMT(matchStats.getDateGmt())
 				.footyStatsUrl(matchStats.getMatchFootyStatsURL())
 				.state(matchStats.getMatchStatus())
-				// .revision(PredictionQualityRevision.NO_REVISION)
 				.awayTeam(matchStats.getAwayTeam())
 				.homeTeam(matchStats.getHomeTeam())
 				.goalsAwayTeam(matchStats.getResultAwayTeamGoals())

@@ -3,7 +3,10 @@ import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
 import translate from "../../i18n/translate";
 import { Bet } from "../../app/types/prediction/BetPredictionContext";
-import { BetPredictionQuality } from "../../footystats-frontendapi";
+import {
+	BetPredictionQuality,
+	BetPredictionQualityBetEnum,
+} from "../../footystats-frontendapi";
 
 export type PredictionGraphViewProps = {
 	measurement?: BetPredictionQuality;
@@ -28,8 +31,12 @@ export const PredictionGraphView = ({
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
-						)} ${translate("renderer.predictiongraphview.bet.failed")}`,
+							`renderer.matchesview.bet.${
+								BetPredictionQualityBetEnum[measurement.bet]
+							}`,
+						)} ${translate(
+							"renderer.predictiongraphview.bet.failed",
+						)}`,
 						data: measurement.distributionBetOnThisFailed,
 					},
 				]}
@@ -40,13 +47,17 @@ export const PredictionGraphView = ({
 					{
 						name: `${translate(
 							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
-						)} ${translate("renderer.predictiongraphview.dontbet")}`,
+						)} ${translate(
+							"renderer.predictiongraphview.dontbet",
+						)}`,
 						data: measurement.distributionDontBetOnThis,
 					},
 					{
 						name: `${translate(
 							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
-						)} ${translate("renderer.predictiongraphview.dontbet.failed")}`,
+						)} ${translate(
+							"renderer.predictiongraphview.dontbet.failed",
+						)}`,
 						data: measurement.distributionDontBetOnThisFailed,
 					},
 				]}

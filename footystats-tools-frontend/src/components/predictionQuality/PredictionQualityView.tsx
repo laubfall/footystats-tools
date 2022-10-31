@@ -6,10 +6,13 @@ import translate from "../../i18n/translate";
 import IpcPredictionQualityService from "../../app/services/prediction/IpcPredictionQualityService";
 import { ReportList } from "./ReportList";
 import { PredictionGraphView } from "./PredictionGraphView";
-import { Bet } from "../../app/types/prediction/BetPredictionContext";
 import { InfluencerDistributionGraphView } from "./InfluencerDistributionGraph";
 import { InfluencerPredictionGraphView } from "./InfluencerPredictionGraphView";
-import { BetPredictionQuality, BetPredictionQualityBetEnum, PredictionQualityReport } from "../../footystats-frontendapi";
+import {
+	BetPredictionQuality,
+	BetPredictionQualityBetEnum,
+	PredictionQualityReport,
+} from "../../footystats-frontendapi";
 import { NO_REVISION_SO_FAR } from "../../app/services/prediction/PredictionQualityService.types";
 
 export const PredictionQualityView = () => {
@@ -26,13 +29,20 @@ export const PredictionQualityView = () => {
 		predictionQualityService
 			.latestReport()
 			.then((rep) => setReport(rep))
-			.catch((reason) => console.error("Failed to get latest report", reason));
+			.catch((reason) =>
+				console.error("Failed to get latest report", reason),
+			);
 
 		predictionQualityService
 			.latestRevision()
-			.then((rev) => setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR))
+			.then((rev) =>
+				setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR),
+			)
 			.catch((reason) =>
-				console.error("Failed to compute state for recalculate button", reason),
+				console.error(
+					"Failed to compute state for recalculate button",
+					reason,
+				),
 			);
 	}, []);
 
@@ -52,10 +62,12 @@ export const PredictionQualityView = () => {
 						<Col>
 							<InfluencerDistributionGraphView
 								distributionBetSuccess={
-									currentMeasurement?.distributionBetOnThis || []
+									currentMeasurement?.distributionBetOnThis ||
+									[]
 								}
 								distributionBetFailed={
-									currentMeasurement?.distributionDontBetOnThis || []
+									currentMeasurement?.distributionDontBetOnThis ||
+									[]
 								}
 							/>
 						</Col>
@@ -63,10 +75,12 @@ export const PredictionQualityView = () => {
 						<Col>
 							<InfluencerDistributionGraphView
 								distributionBetSuccess={
-									currentMeasurement?.distributionBetOnThisFailed || []
+									currentMeasurement?.distributionBetOnThisFailed ||
+									[]
 								}
 								distributionBetFailed={
-									currentMeasurement?.distributionDontBetOnThisFailed || []
+									currentMeasurement?.distributionDontBetOnThisFailed ||
+									[]
 								}
 							/>
 						</Col>
@@ -82,19 +96,30 @@ export const PredictionQualityView = () => {
 				<Col>
 					<Button
 						onClick={async () => {
-							setReport(await predictionQualityService.computeQuality());
+							setReport(
+								await predictionQualityService.computeQuality(),
+							);
 						}}
 					>
-						{translate("renderer.predictionqualityview.button.calculate")}
+						{translate(
+							"renderer.predictionqualityview.button.calculate",
+						)}
 					</Button>
 					<Button
 						disabled={recalculateAvailable === false}
 						onClick={async () => {
-							const lr = await predictionQualityService.latestRevision();
-							setReport(await predictionQualityService.recomputeQuality(lr));
+							const lr =
+								await predictionQualityService.latestRevision();
+							setReport(
+								await predictionQualityService.recomputeQuality(
+									lr,
+								),
+							);
 						}}
 					>
-						{translate("renderer.predictionqualityview.button.recalculate")}
+						{translate(
+							"renderer.predictionqualityview.button.recalculate",
+						)}
 					</Button>
 				</Col>
 			</Row>
@@ -122,7 +147,9 @@ export const PredictionQualityView = () => {
 					</AccordionHeader>
 					<AccordionBody>
 						{currentMeasurement && (
-							<InfluencerPredictionGraphView measurement={currentMeasurement} />
+							<InfluencerPredictionGraphView
+								measurement={currentMeasurement}
+							/>
 						)}
 					</AccordionBody>
 				</Accordion.Item>
