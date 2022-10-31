@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface PredictionQualityReportRepository extends MongoRepository<PredictionQualityReport, String> {
 	PredictionQualityReport findTopByOrderByRevisionDesc();
 
-	PredictionQualityReport findByRevision_Revision(PredictionQualityRevision revision);
+	PredictionQualityReport findByRevision(PredictionQualityRevision revision);
 }

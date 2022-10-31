@@ -6,12 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonComponent
+@CompoundIndexes({
+	@CompoundIndex(name = "unique", def = "{'revision' : 1}")
+})
 public class PredictionQualityReport {
 	@Getter
 	@Setter

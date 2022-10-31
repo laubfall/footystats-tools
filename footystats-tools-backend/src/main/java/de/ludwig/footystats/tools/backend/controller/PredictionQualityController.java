@@ -1,7 +1,10 @@
 package de.ludwig.footystats.tools.backend.controller;
 
 import de.ludwig.footystats.tools.backend.services.prediction.quality.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/predictionquality")
@@ -42,6 +45,12 @@ public class PredictionQualityController {
 
 	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute"})
 	public PredictionQualityReport recomputeQuality(@RequestBody PredictionQualityRevision revision){
-		return predictionQualityService.recomputeQuality(revision);
+		var report = predictionQualityService.recomputeQuality(revision);
+
+		if(report == null){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
+
+		return report;
 	}
 }

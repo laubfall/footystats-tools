@@ -3,23 +3,25 @@ package de.ludwig.footystats.tools.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.Assert;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,8 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { Configuration.class })
 @AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
-public class PredictionQualityControllerTest {
-
+public class PredictionQualityControllerWithMatchesTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -37,35 +38,31 @@ public class PredictionQualityControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private PredictionQualityService predictionQualityService;
+	private PredictionQualityReportRepository qualityReportRepository;
 
 	@Autowired
-	private PredictionQualityReportRepository qualityReportRepository;
+	private CsvFileService<MatchStats> csvFileService;
+
+	@Autowired
+	private MatchStatsService matchStatsService;
 
 	@Test
 	public void compute() throws Exception {
+
+		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_PredictionQualityReportWithMatchesTest.csv"), MatchStats.class);
+		matchStats.forEach(matchStatsService::importMatchStats);
+
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
-				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.empty()));
-	}
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.hasSize(2)));
 
-	@Test
-	public void latestReport() throws Exception {
-		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
-	}
+		var reportCnt = qualityReportRepository.count();
+		Assertions.assertEquals(1, reportCnt);
 
-	@Test
-	public void precast() throws Exception {
-		var revision = new PredictionQualityRevision(0);
-		var requestBody = objectMapper.writeValueAsString(revision);
-		mockMvc.perform(RestDocumentationRequestBuilders.post("/predictionquality/precast")
-				.content(requestBody)
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.predictionsToAssess", Matchers.equalTo(0)))
-				.andExpect(status().isOk());
+		var firstReport = qualityReportRepository.findTopByOrderByRevisionDesc();
+		Assertions.assertNotNull(firstReport);
+		Assertions.assertEquals(2, firstReport.getMeasurements().size());
 	}
 }

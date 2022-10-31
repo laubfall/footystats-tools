@@ -1,9 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 
 @AllArgsConstructor

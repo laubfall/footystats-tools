@@ -12,7 +12,7 @@ public interface MatchRepository extends MongoRepository<Match, String> {
 	Page<Match> findMatchesByCountryAndLeagueAndDateGMTBetween(String country, String league, LocalDateTime from,
 			LocalDateTime until, PageRequest pageRequest);
 
-	Collection<Match> findMatchesByRevision_Revision(PredictionQualityRevision revision);
+	Collection<Match> findMatchesByRevision(PredictionQualityRevision revision);
 
 	Collection<Match> findMatchesByRevision_RevisionIsNull();
 }

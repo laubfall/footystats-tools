@@ -1,9 +1,14 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
+import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class PredictionQualityService {
+public class PredictionQualityService extends MongoService<PredictionQualityReport> {
 
 	private MatchRepository matchRepository;
 
@@ -22,14 +27,15 @@ public class PredictionQualityService {
 	private PredictionQualityReportRepository predictionQualityReportRepository;
 
 	public PredictionQualityService(MatchRepository matchRepository, MatchService matchService,
-			PredictionQualityReportRepository predictionQualityReportRepository) {
+									PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter) {
+		super(mongoTemplate, mappingMongoConverter);
 		this.matchRepository = matchRepository;
 		this.predictionQualityReportRepository = predictionQualityReportRepository;
 		this.matchService = matchService;
 	}
 
 	public Precast precast(PredictionQualityRevision revision) {
-		var result = matchRepository.findMatchesByRevision_Revision(revision);
+		var result = matchRepository.findMatchesByRevision(revision);
 		var nextRevision = nextRevision(revision);
 		var precast = new Precast();
 		precast.setRevision(nextRevision);
@@ -43,7 +49,6 @@ public class PredictionQualityService {
 		if (latestReport == null) {
 			latestRevision = new PredictionQualityRevision(0);
 			latestReport = new PredictionQualityReport(latestRevision, new ArrayList<>());
-			predictionQualityReportRepository.insert(latestReport);
 		}
 
 		var matchesByRevision = matchRepository.findMatchesByRevision_RevisionIsNull();
@@ -56,7 +61,8 @@ public class PredictionQualityService {
 			matchService.upsert(match);
 		}
 
-		predictionQualityReportRepository.save(latestReport);
+
+		upsert(latestReport);
 		return latestReport;
 	}
 
@@ -77,20 +83,20 @@ public class PredictionQualityService {
 	Collection<BetPredictionQuality> measure(Match match) {
 		Collection<BetPredictionQuality> measurements = new ArrayList<>();
 		Function<PredictionResult, Boolean> relevantPredictionResult = (
-				PredictionResult prediction) -> prediction != null &&
-						(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
-								PredictionAnalyze.FAILED.equals(prediction.analyzeResult()));
+			PredictionResult prediction) -> prediction != null &&
+			(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
+				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()));
 		if (match.getO05() != null && relevantPredictionResult.apply(match.getO05())) {
 
 			var predictionBuilder = BetPredictionQuality.builder().bet(Bet.OVER_ZERO_FIVE).countAssessed(1L)
-					.countSuccess(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult())
-							&& match.getO05().betOnThis() ? 1L : 0L)
-					.countFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult())
-							&& match.getO05().betOnThis() ? 1L : 0L)
-					.countSuccessDontBet(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult())
-							&& match.getO05().betOnThis() == false ? 1L : 0L)
-					.countFailedDontBet(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult())
-							&& match.getO05().betOnThis() == false ? 1L : 0L);
+				.countSuccess(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult())
+					&& match.getO05().betOnThis() ? 1L : 0L)
+				.countFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult())
+					&& match.getO05().betOnThis() ? 1L : 0L)
+				.countSuccessDontBet(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult())
+					&& match.getO05().betOnThis() == false ? 1L : 0L)
+				.countFailedDontBet(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult())
+					&& match.getO05().betOnThis() == false ? 1L : 0L);
 
 			addDistribution(predictionBuilder, match.getO05());
 			measurements.add(predictionBuilder.build());
@@ -99,14 +105,14 @@ public class PredictionQualityService {
 		if (match.getBttsYes() != null && relevantPredictionResult.apply(match.getBttsYes())) {
 			var bttsYesAnalyze = match.getBttsYes();
 			var predictionBuilder = BetPredictionQuality.builder().bet(Bet.BTTS_YES).countAssessed(1l)
-					.countFailed(PredictionAnalyze.FAILED.equals(bttsYesAnalyze.analyzeResult())
-							&& bttsYesAnalyze.betOnThis() ? 1l : 0L)
-					.countSuccess(PredictionAnalyze.SUCCESS.equals(bttsYesAnalyze.analyzeResult())
-							&& bttsYesAnalyze.betOnThis() ? 1L : 0L)
-					.countFailedDontBet(PredictionAnalyze.FAILED.equals(bttsYesAnalyze.analyzeResult())
-							&& bttsYesAnalyze.betOnThis() == false ? 1L : 0L)
-					.countSuccessDontBet(PredictionAnalyze.SUCCESS.equals(bttsYesAnalyze.analyzeResult())
-							&& bttsYesAnalyze.betOnThis() == false ? 1L : 0L);
+				.countFailed(PredictionAnalyze.FAILED.equals(bttsYesAnalyze.analyzeResult())
+					&& bttsYesAnalyze.betOnThis() ? 1l : 0L)
+				.countSuccess(PredictionAnalyze.SUCCESS.equals(bttsYesAnalyze.analyzeResult())
+					&& bttsYesAnalyze.betOnThis() ? 1L : 0L)
+				.countFailedDontBet(PredictionAnalyze.FAILED.equals(bttsYesAnalyze.analyzeResult())
+					&& bttsYesAnalyze.betOnThis() == false ? 1L : 0L)
+				.countSuccessDontBet(PredictionAnalyze.SUCCESS.equals(bttsYesAnalyze.analyzeResult())
+					&& bttsYesAnalyze.betOnThis() == false ? 1L : 0L);
 
 			addDistribution(predictionBuilder, match.getBttsYes());
 			measurements.add(predictionBuilder.build());
@@ -116,54 +122,58 @@ public class PredictionQualityService {
 	}
 
 	private void addDistribution(
-			BetPredictionQuality.BetPredictionQualityBuilder quality,
-			PredictionResult prediction) {
+		BetPredictionQuality.BetPredictionQualityBuilder quality,
+		PredictionResult prediction) {
 		BetPredictionDistribution dist = new BetPredictionDistribution(prediction.betSuccessInPercent(), 1L,
-				addInfluencerDistribution(prediction));
+			addInfluencerDistribution(prediction));
+
+		// Initialize every list.
+		quality.distributionBetSuccessful(new ArrayList<>()).distributionBetOnThis(new ArrayList<>()).distributionBetOnThisFailed(new ArrayList<>()).distributionDontBetOnThis(new ArrayList<>()).distributionDontBetOnThisFailed(new ArrayList<>());
 
 		if (prediction.betOnThis() == true &&
-				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) {
-			quality.distributionBetOnThis(List.of(dist));
+			PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) {
+			quality.distributionBetOnThis(new ArrayList<>(List.of(dist)));
 		} else if (prediction.betOnThis() == false &&
-				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) {
-			quality.distributionDontBetOnThis(List.of(dist));
+			PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) {
+			quality.distributionDontBetOnThis(new ArrayList<>(List.of(dist)));
 		}
 
 		if (prediction.betOnThis() && PredictionAnalyze.FAILED.equals(prediction.analyzeResult())) {
-			quality.distributionBetOnThisFailed(List.of(dist));
+			quality.distributionBetOnThisFailed(new ArrayList<>(List.of(dist)));
 		}
 
 		if (prediction.betOnThis() == false &&
-				PredictionAnalyze.FAILED.equals(prediction.analyzeResult())) {
-			quality.distributionDontBetOnThisFailed(List.of(dist));
+			PredictionAnalyze.FAILED.equals(prediction.analyzeResult())) {
+			quality.distributionDontBetOnThisFailed(new ArrayList<>(List.of(dist)));
 		}
 
 		if ((prediction.betOnThis() == true &&
-				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) ||
-				(prediction.betOnThis() == false &&
-						PredictionAnalyze.FAILED.equals(prediction.analyzeResult()))) {
-			quality.distributionBetSuccessful(List.of(dist));
+			PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult())) ||
+			(prediction.betOnThis() == false &&
+				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()))) {
+			quality.distributionBetSuccessful(new ArrayList<>(List.of(dist)));
 		}
 	}
 
 	private List<InfluencerPercentDistribution> addInfluencerDistribution(PredictionResult prediction) {
 		return prediction.influencerDetailedResult().stream()
-				.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
-						1L, influencerResult.influencerName(), influencerResult.precheckResult()))
-				.collect(Collectors.toList());
+			.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
+				1L, influencerResult.influencerName(), influencerResult.precheckResult()))
+			.collect(Collectors.toList());
 	}
 
 	private void merge(
-			PredictionQualityReport report,
-			Collection<BetPredictionQuality> measurements) {
+		PredictionQualityReport report,
+		Collection<BetPredictionQuality> measurements) {
 		measurements.forEach((msm) -> {
 			var reportMsmOpt = report.getMeasurements().stream()
-					.filter((BetPredictionQuality rMsm) -> rMsm.getBet() == msm.getBet()).findAny();
+				.filter((BetPredictionQuality rMsm) -> rMsm.getBet() == msm.getBet()).findAny();
 			var reportMsm = new BetPredictionQuality();
 			if (reportMsmOpt.isEmpty()) {
 				reportMsm = msm.toBuilder().build();
 				report.getMeasurements().add(reportMsm);
 			} else {
+				reportMsm = reportMsmOpt.get();
 				reportMsm.setCountAssessed(reportMsm.getCountAssessed() + msm.getCountAssessed());
 				reportMsm.setCountSuccess(reportMsm.getCountSuccess() + msm.getCountSuccess());
 				reportMsm.setCountFailed(reportMsm.getCountFailed() + msm.getCountFailed());
@@ -175,42 +185,42 @@ public class PredictionQualityService {
 	}
 
 	private void mergeDistributions(
-			BetPredictionQuality fullReport,
-			BetPredictionQuality matchReport) {
+		BetPredictionQuality fullReport,
+		BetPredictionQuality matchReport) {
 		if (matchReport.getDistributionBetOnThis() != null) {
 			mergeDistribution(
-					fullReport.getDistributionBetOnThis(),
-					matchReport.getDistributionBetOnThis());
+				fullReport.getDistributionBetOnThis(),
+				matchReport.getDistributionBetOnThis());
 		}
 
 		if (matchReport.getDistributionDontBetOnThis() != null) {
 			this.mergeDistribution(
-					fullReport.getDistributionDontBetOnThis(),
-					matchReport.getDistributionDontBetOnThis());
+				fullReport.getDistributionDontBetOnThis(),
+				matchReport.getDistributionDontBetOnThis());
 		}
 
 		if (matchReport.getDistributionBetSuccessful() != null) {
 			this.mergeDistribution(
-					fullReport.getDistributionBetSuccessful(),
-					matchReport.getDistributionBetSuccessful());
+				fullReport.getDistributionBetSuccessful(),
+				matchReport.getDistributionBetSuccessful());
 		}
 
 		if (matchReport.getDistributionBetOnThisFailed() != null) {
 			this.mergeDistribution(
-					fullReport.getDistributionBetOnThisFailed(),
-					matchReport.getDistributionBetOnThisFailed());
+				fullReport.getDistributionBetOnThisFailed(),
+				matchReport.getDistributionBetOnThisFailed());
 		}
 
 		if (matchReport.getDistributionDontBetOnThisFailed() != null) {
 			this.mergeDistribution(
-					fullReport.getDistributionDontBetOnThisFailed(),
-					matchReport.getDistributionDontBetOnThisFailed());
+				fullReport.getDistributionDontBetOnThisFailed(),
+				matchReport.getDistributionDontBetOnThisFailed());
 		}
 	}
 
 	private void mergeDistribution(
-			List<BetPredictionDistribution> target,
-			List<BetPredictionDistribution> source) {
+		List<BetPredictionDistribution> target,
+		List<BetPredictionDistribution> source) {
 		source.forEach((sp) -> {
 			var idx = target.stream().filter((tp) -> tp.getPredictionPercent() == sp.getPredictionPercent()).findAny();
 
@@ -226,17 +236,17 @@ public class PredictionQualityService {
 	}
 
 	private void mergeInfluencerDistribution(
-			BetPredictionDistribution target,
-			BetPredictionDistribution source) {
+		BetPredictionDistribution target,
+		BetPredictionDistribution source) {
 		source.getInfluencerDistribution().forEach((sId) -> {
 			if (target.getInfluencerDistribution() == null) {
 				target.setInfluencerDistribution(new ArrayList<>());
 			}
 			var idx = target.getInfluencerDistribution().stream().filter(
 					(InfluencerPercentDistribution tId) -> tId.getInfluencerName() == sId.getInfluencerName() &&
-							tId.getPredictionPercent() == sId.getPredictionPercent() &&
-							tId.getPrecheckResult() == sId.getPrecheckResult())
-					.findAny();
+						tId.getPredictionPercent() == sId.getPredictionPercent() &&
+						tId.getPrecheckResult() == sId.getPrecheckResult())
+				.findAny();
 
 			if (idx.isPresent()) {
 				var ipd = idx.get();
@@ -248,12 +258,12 @@ public class PredictionQualityService {
 	}
 
 	public PredictionQualityReport recomputeQuality(PredictionQualityRevision revision) {
-		var report = predictionQualityReportRepository.findByRevision_Revision(revision);
+		var report = predictionQualityReportRepository.findByRevision(revision);
 		if (report == null) {
 			return null;
 		}
 
-		Collection<Match> result = matchRepository.findMatchesByRevision_Revision(revision);
+		Collection<Match> result = matchRepository.findMatchesByRevision(revision);
 
 		report.setMeasurements(new ArrayList<>());
 
@@ -265,5 +275,15 @@ public class PredictionQualityService {
 		predictionQualityReportRepository.save(report);
 
 		return report;
+	}
+
+	@Override
+	public Query upsertQuery(PredictionQualityReport example) {
+		return Query.query(Criteria.where("revision").is(example.getRevision()));
+	}
+
+	@Override
+	public Class<PredictionQualityReport> upsertType() {
+		return PredictionQualityReport.class;
 	}
 }
