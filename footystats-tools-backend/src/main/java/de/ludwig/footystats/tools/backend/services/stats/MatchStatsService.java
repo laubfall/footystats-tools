@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
+import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,15 +13,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MatchStatsService extends MongoService<MatchStats> {
 
+	public static final String COUNTRY_ESPORTS = "Esports";
+	private FootystatsProperties fsProperties;
+
     private final MatchService matchService;
 
-    public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, MatchService matchService) {
+    public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties fsProperties, MatchService matchService) {
         super(mongoTemplate, mappingMongoConverter);
-        this.matchService = matchService;
+		this.fsProperties = fsProperties;
+		this.matchService = matchService;
     }
 
     @Transactional
     public void importMatchStats(MatchStats matchStats) {
+		if(matchStats == null){
+			return;
+		}
+
+		if(COUNTRY_ESPORTS.equals(matchStats.getCountry()) && fsProperties.isImportEsports() == false){
+			return;
+		}
+
         upsert(matchStats);
         matchService.writeMatch(matchStats);
     }

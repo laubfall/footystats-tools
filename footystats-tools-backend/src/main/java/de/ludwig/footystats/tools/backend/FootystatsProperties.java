@@ -12,4 +12,8 @@ public class FootystatsProperties {
     @Getter
     @Setter
     private String allowedOrigins;
+
+	@Getter
+	@Setter
+	private boolean importEsports;
 }

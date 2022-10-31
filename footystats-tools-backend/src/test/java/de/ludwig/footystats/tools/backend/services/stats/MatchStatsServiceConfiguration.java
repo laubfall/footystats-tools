@@ -29,7 +29,7 @@ public class MatchStatsServiceConfiguration {
     }
 
     @Bean
-    public MatchStatsService matchStatsService(MongoTemplate template, MappingMongoConverter mappingMongoConverter, MatchService matchService) {
-        return new MatchStatsService(template, mappingMongoConverter, matchService);
+    public MatchStatsService matchStatsService(MongoTemplate template, MappingMongoConverter mappingMongoConverter, MatchService matchService, FootystatsProperties fsProperties) {
+        return new MatchStatsService(template, mappingMongoConverter, fsProperties, matchService);
     }
 }
