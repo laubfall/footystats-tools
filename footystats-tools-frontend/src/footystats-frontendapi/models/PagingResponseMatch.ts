@@ -13,8 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Match } from './Match';
 import {
-    Match,
     MatchFromJSON,
     MatchFromJSONTyped,
     MatchToJSON,
@@ -44,6 +44,15 @@ export interface PagingResponseMatch {
      * @memberof PagingResponseMatch
      */
     elements?: Array<Match>;
+}
+
+/**
+ * Check if a given object implements the PagingResponseMatch interface.
+ */
+export function instanceOfPagingResponseMatch(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function PagingResponseMatchFromJSON(json: any): PagingResponseMatch {

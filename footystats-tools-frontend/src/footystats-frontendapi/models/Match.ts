@@ -13,8 +13,14 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { PredictionQualityRevision } from './PredictionQualityRevision';
 import {
-    PredictionResult,
+    PredictionQualityRevisionFromJSON,
+    PredictionQualityRevisionFromJSONTyped,
+    PredictionQualityRevisionToJSON,
+} from './PredictionQualityRevision';
+import type { PredictionResult } from './PredictionResult';
+import {
     PredictionResultFromJSON,
     PredictionResultFromJSONTyped,
     PredictionResultToJSON,
@@ -100,21 +106,32 @@ export interface Match {
     bttsYes?: PredictionResult;
     /**
      * 
-     * @type {number}
+     * @type {PredictionQualityRevision}
      * @memberof Match
      */
-    revision?: number;
+    revision?: PredictionQualityRevision;
 }
 
+
 /**
-* @export
-* @enum {string}
-*/
-export enum MatchStateEnum {
-    Complete = 'complete',
-    Incomplete = 'incomplete',
-    Suspended = 'suspended',
-    Canceled = 'canceled'
+ * @export
+ */
+export const MatchStateEnum = {
+    Complete: 'complete',
+    Incomplete: 'incomplete',
+    Suspended: 'suspended',
+    Canceled: 'canceled'
+} as const;
+export type MatchStateEnum = typeof MatchStateEnum[keyof typeof MatchStateEnum];
+
+
+/**
+ * Check if a given object implements the Match interface.
+ */
+export function instanceOfMatch(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function MatchFromJSON(json: any): Match {
@@ -139,7 +156,7 @@ export function MatchFromJSONTyped(json: any, ignoreDiscriminator: boolean): Mat
         'footyStatsUrl': !exists(json, 'footyStatsUrl') ? undefined : json['footyStatsUrl'],
         'o05': !exists(json, 'o05') ? undefined : PredictionResultFromJSON(json['o05']),
         'bttsYes': !exists(json, 'bttsYes') ? undefined : PredictionResultFromJSON(json['bttsYes']),
-        'revision': !exists(json, 'revision') ? undefined : json['revision'],
+        'revision': !exists(json, 'revision') ? undefined : PredictionQualityRevisionFromJSON(json['revision']),
     };
 }
 
@@ -164,7 +181,7 @@ export function MatchToJSON(value?: Match | null): any {
         'footyStatsUrl': value.footyStatsUrl,
         'o05': PredictionResultToJSON(value.o05),
         'bttsYes': PredictionResultToJSON(value.bttsYes),
-        'revision': value.revision,
+        'revision': PredictionQualityRevisionToJSON(value.revision),
     };
 }
 

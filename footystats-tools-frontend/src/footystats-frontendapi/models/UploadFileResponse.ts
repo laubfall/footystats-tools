@@ -39,6 +39,15 @@ export interface UploadFileResponse {
     size?: number;
 }
 
+/**
+ * Check if a given object implements the UploadFileResponse interface.
+ */
+export function instanceOfUploadFileResponse(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
+}
+
 export function UploadFileResponseFromJSON(json: any): UploadFileResponse {
     return UploadFileResponseFromJSONTyped(json, false);
 }

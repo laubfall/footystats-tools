@@ -13,8 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { InfluencerResult } from './InfluencerResult';
 import {
-    InfluencerResult,
     InfluencerResultFromJSON,
     InfluencerResultFromJSONTyped,
     InfluencerResultToJSON,
@@ -52,17 +52,28 @@ export interface PredictionResult {
     influencerDetailedResult?: Array<InfluencerResult>;
 }
 
+
 /**
-* @export
-* @enum {string}
-*/
-export enum PredictionResultAnalyzeResultEnum {
-    Success = 'SUCCESS',
-    Close = 'CLOSE',
-    Failed = 'FAILED',
-    NotCompleted = 'NOT_COMPLETED',
-    NotAnalyzed = 'NOT_ANALYZED',
-    NotPredicted = 'NOT_PREDICTED'
+ * @export
+ */
+export const PredictionResultAnalyzeResultEnum = {
+    Success: 'SUCCESS',
+    Close: 'CLOSE',
+    Failed: 'FAILED',
+    NotCompleted: 'NOT_COMPLETED',
+    NotAnalyzed: 'NOT_ANALYZED',
+    NotPredicted: 'NOT_PREDICTED'
+} as const;
+export type PredictionResultAnalyzeResultEnum = typeof PredictionResultAnalyzeResultEnum[keyof typeof PredictionResultAnalyzeResultEnum];
+
+
+/**
+ * Check if a given object implements the PredictionResult interface.
+ */
+export function instanceOfPredictionResult(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function PredictionResultFromJSON(json: any): PredictionResult {

@@ -14,8 +14,10 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  MatchStats,
+} from '../models';
 import {
-    MatchStats,
     MatchStatsFromJSON,
     MatchStatsToJSON,
 } from '../models';
@@ -31,7 +33,7 @@ export class MatchStatsControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async findByCountryRaw(requestParameters: FindByCountryRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<MatchStats>>> {
+    async findByCountryRaw(requestParameters: FindByCountryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MatchStats>>> {
         if (requestParameters.country === null || requestParameters.country === undefined) {
             throw new runtime.RequiredError('country','Required parameter requestParameters.country was null or undefined when calling findByCountry.');
         }
@@ -52,7 +54,7 @@ export class MatchStatsControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async findByCountry(requestParameters: FindByCountryRequest, initOverrides?: RequestInit): Promise<Array<MatchStats>> {
+    async findByCountry(requestParameters: FindByCountryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<MatchStats>> {
         const response = await this.findByCountryRaw(requestParameters, initOverrides);
         return await response.value();
     }

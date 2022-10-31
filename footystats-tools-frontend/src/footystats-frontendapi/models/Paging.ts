@@ -45,13 +45,24 @@ export interface Paging {
     properties?: Array<string>;
 }
 
+
 /**
-* @export
-* @enum {string}
-*/
-export enum PagingDirectionEnum {
-    Asc = 'ASC',
-    Desc = 'DESC'
+ * @export
+ */
+export const PagingDirectionEnum = {
+    Asc: 'ASC',
+    Desc: 'DESC'
+} as const;
+export type PagingDirectionEnum = typeof PagingDirectionEnum[keyof typeof PagingDirectionEnum];
+
+
+/**
+ * Check if a given object implements the Paging interface.
+ */
+export function instanceOfPaging(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function PagingFromJSON(json: any): Paging {

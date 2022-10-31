@@ -9,16 +9,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
-    private static final long serialVersionUID = 1355852411036457107L;
 
-    private static final DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-
-    @Override
-    public void serialize(LocalDateTime value, JsonGenerator jsonGenerator,
-                          SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(formatter.format(value));
-    }
+	@Override
+	public void serialize(LocalDateTime value, JsonGenerator jsonGenerator,
+			SerializerProvider serializerProvider) throws IOException {
+		jsonGenerator.writeString(formatter.format(value));
+	}
 
 }

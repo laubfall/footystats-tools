@@ -14,8 +14,10 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  UploadFileResponse,
+} from '../models';
 import {
-    UploadFileResponse,
     UploadFileResponseFromJSON,
     UploadFileResponseToJSON,
 } from '../models';
@@ -35,7 +37,7 @@ export class FootyStatsCsvUploadControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async uploadFileRaw(requestParameters: UploadFileRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<UploadFileResponse>> {
+    async uploadFileRaw(requestParameters: UploadFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UploadFileResponse>> {
         if (requestParameters.file === null || requestParameters.file === undefined) {
             throw new runtime.RequiredError('file','Required parameter requestParameters.file was null or undefined when calling uploadFile.');
         }
@@ -77,14 +79,14 @@ export class FootyStatsCsvUploadControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async uploadFile(requestParameters: UploadFileRequest, initOverrides?: RequestInit): Promise<UploadFileResponse> {
+    async uploadFile(requestParameters: UploadFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UploadFileResponse> {
         const response = await this.uploadFileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async uploadMultipleFilesRaw(requestParameters: UploadMultipleFilesRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<UploadFileResponse>>> {
+    async uploadMultipleFilesRaw(requestParameters: UploadMultipleFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<UploadFileResponse>>> {
         if (requestParameters.files === null || requestParameters.files === undefined) {
             throw new runtime.RequiredError('files','Required parameter requestParameters.files was null or undefined when calling uploadMultipleFiles.');
         }
@@ -128,7 +130,7 @@ export class FootyStatsCsvUploadControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async uploadMultipleFiles(requestParameters: UploadMultipleFilesRequest, initOverrides?: RequestInit): Promise<Array<UploadFileResponse>> {
+    async uploadMultipleFiles(requestParameters: UploadMultipleFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<UploadFileResponse>> {
         const response = await this.uploadMultipleFilesRaw(requestParameters, initOverrides);
         return await response.value();
     }

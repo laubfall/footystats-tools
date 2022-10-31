@@ -1,28 +1,25 @@
-import {
-	Precast,
-	PredictionQualityReport,
-	PredictionQualityRevision,
-} from "./PredictionQualityService.types";
+import { Precast, PredictionQualityReport, PredictionQualityRevision } from "../../../footystats-frontendapi";
+import { RestAPI } from "../../constants";
 
 class IpcPredictionQualityService {
 	computeQuality(): Promise<PredictionQualityReport> {
-		return Promise.resolve(undefined);
+		return RestAPI.predictionQuality.computeQuality();
 	}
 
 	latestRevision(): Promise<PredictionQualityRevision> {
-		return Promise.resolve(undefined);
+		return RestAPI.predictionQuality.latestRevision();
 	}
 
 	precast(revision?: PredictionQualityRevision): Promise<Precast> {
-		return Promise.resolve(undefined);
+		return RestAPI.predictionQuality.precast({ predictionQualityRevision: revision });
 	}
 
 	latestReport(): Promise<PredictionQualityReport> {
-		return Promise.resolve(undefined);
+		return RestAPI.predictionQuality.latestReport();
 	}
 
-	recomputeQuality(revision: number): Promise<PredictionQualityReport> {
-		return Promise.resolve(undefined);
+	recomputeQuality(revision: PredictionQualityRevision): Promise<PredictionQualityReport> {
+		return RestAPI.predictionQuality.recomputeQuality({ predictionQualityRevision: revision });
 	}
 }
 

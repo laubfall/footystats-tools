@@ -14,11 +14,13 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  ListMatchRequest,
+  PagingResponseMatch,
+} from '../models';
 import {
-    ListMatchRequest,
     ListMatchRequestFromJSON,
     ListMatchRequestToJSON,
-    PagingResponseMatch,
     PagingResponseMatchFromJSON,
     PagingResponseMatchToJSON,
 } from '../models';
@@ -34,7 +36,7 @@ export class MatchControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async listMatchesRaw(requestParameters: ListMatchesRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<PagingResponseMatch>> {
+    async listMatchesRaw(requestParameters: ListMatchesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagingResponseMatch>> {
         if (requestParameters.listMatchRequest === null || requestParameters.listMatchRequest === undefined) {
             throw new runtime.RequiredError('listMatchRequest','Required parameter requestParameters.listMatchRequest was null or undefined when calling listMatches.');
         }
@@ -58,7 +60,7 @@ export class MatchControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async listMatches(requestParameters: ListMatchesRequest, initOverrides?: RequestInit): Promise<PagingResponseMatch> {
+    async listMatches(requestParameters: ListMatchesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagingResponseMatch> {
         const response = await this.listMatchesRaw(requestParameters, initOverrides);
         return await response.value();
     }

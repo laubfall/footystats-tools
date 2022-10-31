@@ -13,8 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Paging } from './Paging';
 import {
-    Paging,
     PagingFromJSON,
     PagingFromJSONTyped,
     PagingToJSON,
@@ -56,6 +56,15 @@ export interface ListMatchRequest {
      * @memberof ListMatchRequest
      */
     paging?: Paging;
+}
+
+/**
+ * Check if a given object implements the ListMatchRequest interface.
+ */
+export function instanceOfListMatchRequest(value: object): boolean {
+    let isInstance = true;
+
+    return isInstance;
 }
 
 export function ListMatchRequestFromJSON(json: any): ListMatchRequest {
