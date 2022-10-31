@@ -3,6 +3,7 @@ package de.ludwig.footystats.tools.backend.services.prediction;
 import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -15,32 +16,32 @@ public class BetPredictionQuality {
 	private Bet bet;
 	@Getter
 	@Setter
-	private Long countAssessed; // Count of Matches a prediction was made for the chosen bet.
+	private Long countAssessed = 0l; // Count of Matches a prediction was made for the chosen bet.
 	@Getter
 	@Setter
-	private Long countSuccess; // PredictionAnalyze Success for bets you better bet on
+	private Long countSuccess = 0l; // PredictionAnalyze Success for bets you better bet on
 	@Getter
 	@Setter
-	private Long countFailed; // PredictionAnalyse Failed for bets you better bet on
+	private Long countFailed = 0l; // PredictionAnalyse Failed for bets you better bet on
 	@Getter
 	@Setter
-	private Long countSuccessDontBet;
+	private Long countSuccessDontBet = 0l;
 	@Getter
 	@Setter
-	private Long countFailedDontBet;
+	private Long countFailedDontBet = 0l;
 	@Getter
 	@Setter
-	private List<BetPredictionDistribution> distributionBetOnThis;
+	private List<BetPredictionDistribution> distributionBetOnThis = new ArrayList();
 	@Getter
 	@Setter
-	private List<BetPredictionDistribution> distributionBetOnThisFailed;
+	private List<BetPredictionDistribution> distributionBetOnThisFailed = new ArrayList();
 	@Getter
 	@Setter
-	private List<BetPredictionDistribution> distributionDontBetOnThis;
+	private List<BetPredictionDistribution> distributionDontBetOnThis = new ArrayList();
 	@Getter
 	@Setter
-	private List<BetPredictionDistribution> distributionDontBetOnThisFailed;
+	private List<BetPredictionDistribution> distributionDontBetOnThisFailed = new ArrayList();
 	@Getter
 	@Setter
-	private List<BetPredictionDistribution> distributionBetSuccessful;
+	private List<BetPredictionDistribution> distributionBetSuccessful = new ArrayList();
 }
