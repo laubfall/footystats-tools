@@ -54,4 +54,19 @@ public class MatchStatsRepositoryTest {
         Page<MatchStats> paged = matchStatsRepository.findMatchStatsByCountryAndLeagueAndDateUnixBetween("Germany", "2. Bundesliga", DateUtils.addDays(now, -1).getTime(), DateUtils.addDays(now, 2).getTime(), PageRequest.of(0, 10));
         Assertions.assertEquals(1, paged.getTotalPages());
     }
+
+	@Test
+	public void insertDifferentMatchesWithSameDateUnixGmt() {
+		var matchTime = LocalDateTime.of(2022, 1, 1, 12, 0);
+		var country = "Fantasy";
+		var builder = MatchStats.builder().dateGmt(matchTime).dateUnix(matchTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).country(country).league("Bundesliga").awayTeam("Team Away").homeTeam("Team Home").matchStatus(MatchStatus.complete).resultAwayTeamGoals(1).resultHomeTeamGoals(1);
+
+		matchStatsRepository.insert(builder.build());
+		builder.homeTeam("Home Team 2").awayTeam("Away Team 2");
+		matchStatsRepository.insert(builder.build());
+
+		var matches = matchStatsRepository.findByCountry(country);
+		Assertions.assertEquals(2l, matches.size());
+
+	}
 }

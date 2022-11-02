@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @ActiveProfiles("test")
@@ -51,6 +53,23 @@ public class MatchStatsServiceTest {
         var loadedMatchStats = persistedMatchStats.get(0);
         Assertions.assertEquals("test", loadedMatchStats.getMatchFootyStatsURL());
     }
+
+	@Test
+	public void upsertTwoDifferentMatchStats(){
+		var country = "Fantasia";
+		var localDateTime = LocalDateTime.of(2022, 9, 1, 12, 30);
+		var builder = MatchStats.builder().country(country).league("Bundesliga").dateUnix(localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGmt(localDateTime).homeTeam("Home Team").awayTeam("Away Team");
+		var matchStats = builder.build();
+
+		matchStatsService.upsert(matchStats);
+
+		builder.homeTeam("Home Team 2").awayTeam("Away Team 2");
+		matchStats = builder.build();
+		matchStatsService.upsert(matchStats);
+
+		List<MatchStats> byCountry = matchStatsRepository.findByCountry(country);
+		Assertions.assertEquals(2, byCountry.size());
+	}
 
     @Test
     public void importMatchStats(){

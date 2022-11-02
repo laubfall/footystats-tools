@@ -1,10 +1,13 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
+import de.ludwig.footystats.tools.backend.controller.FootyStatsCsvUploadController;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,11 +17,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class PredictionQualityService extends MongoService<PredictionQualityReport> {
+
+	private static final Logger logger = LoggerFactory.getLogger(PredictionQualityService.class);
 
 	private MatchRepository matchRepository;
 
@@ -52,6 +58,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 		}
 
 		var matchesByRevision = matchRepository.findMatchesByRevision_RevisionIsNull();
+		logger.debug("Start computing prediction quality for " + matchesByRevision.size() + " matches.");
 		for (Match match : matchesByRevision) {
 			var msm = measure(match);
 			merge(latestReport, msm);
@@ -221,16 +228,16 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 	private void mergeDistribution(
 		List<BetPredictionDistribution> target,
 		List<BetPredictionDistribution> source) {
-		source.forEach((sp) -> {
-			var idx = target.stream().filter((tp) -> tp.getPredictionPercent() == sp.getPredictionPercent()).findAny();
+		source.forEach((sourceBetPredictionDistribution) -> {
+			var betPredictionDistributionOpt = target.stream().filter((tp) -> Objects.equals(tp.getPredictionPercent(), sourceBetPredictionDistribution.getPredictionPercent())).findAny();
 
-			if (idx.isPresent()) {
-				var ppd = idx.get();
-				ppd.setCount(ppd.getCount() + sp.getCount());
-				this.mergeInfluencerDistribution(ppd, sp);
+			if (betPredictionDistributionOpt.isPresent()) {
+				var ppd = betPredictionDistributionOpt.get();
+				ppd.setCount(ppd.getCount() + sourceBetPredictionDistribution.getCount());
+				this.mergeInfluencerDistribution(ppd, sourceBetPredictionDistribution);
 			} else {
-				sp.setInfluencerDistribution(new ArrayList<>());
-				target.add(sp);
+				sourceBetPredictionDistribution.setInfluencerDistribution(new ArrayList<>());
+				target.add(sourceBetPredictionDistribution);
 			}
 		});
 	}

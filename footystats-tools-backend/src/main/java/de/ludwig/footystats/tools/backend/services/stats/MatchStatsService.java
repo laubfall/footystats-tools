@@ -40,7 +40,7 @@ public class MatchStatsService extends MongoService<MatchStats> {
 
     @Override
     public Query upsertQuery(MatchStats example) {
-        return Query.query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix()));
+        return Query.query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix()).and("homeTeam").is(example.getHomeTeam()).and("awayTeam").is(example.getAwayTeam()));
     }
 
     @Override

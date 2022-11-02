@@ -52,7 +52,7 @@ public class MatchService extends MongoService<Match> {
 	@Override
 	public Query upsertQuery(Match example) {
 		return Query.query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague())
-				.and("dateUnix").is(example.getDateUnix()));
+				.and("dateUnix").is(example.getDateUnix()).and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
 	}
 
 	@Override

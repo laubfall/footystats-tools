@@ -2,6 +2,7 @@ package de.ludwig.footystats.tools.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
+import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
@@ -64,5 +65,11 @@ public class PredictionQualityControllerWithMatchesTest {
 		var firstReport = qualityReportRepository.findTopByOrderByRevisionDesc();
 		Assertions.assertNotNull(firstReport);
 		Assertions.assertEquals(2, firstReport.getMeasurements().size());
+
+		var optBetOverZeroFive = firstReport.getMeasurements().stream().filter(bpq -> Bet.OVER_ZERO_FIVE.equals(bpq.getBet())).findAny();
+		Assertions.assertTrue(optBetOverZeroFive.isPresent());
+
+		var betOverZeroFive = optBetOverZeroFive.get();
+		Assertions.assertEquals(4l, betOverZeroFive.getCountAssessed());
 	}
 }
