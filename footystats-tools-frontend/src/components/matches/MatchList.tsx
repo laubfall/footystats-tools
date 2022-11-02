@@ -52,9 +52,7 @@ function createBetPredictionColumns(
 	return (
 		predictionForBets?.map((bet) => {
 			const tr: TableColumn<MatchListEntry> = {
-				name: translate(
-					`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
-				),
+				name: translate(`renderer.matchesview.bet.${bet}`),
 				selector: (row) => {
 					const betPrediction = row.betPredictions.find(
 						(v) => v.bet === bet,

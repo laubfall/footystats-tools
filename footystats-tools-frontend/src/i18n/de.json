@@ -1,8 +1,8 @@
 {
 	"main.msg.STARTED_IMPORT_DIRECTORY_WATCH": "Überwachung von Import-Verzeichnis begonnen",
 	"main.msg.MATCH_FILE_IMPORTED": "Match CSV Datei importiert",
-	"renderer.matchesview.bet.OverZeroFive": "Ü0.5",
-	"renderer.matchesview.bet.BttsYes": "BTTS ja",
+	"renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
+	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
 	"renderer.menu.brand": "Footystats Tools",
 	"renderer.menu.item.configuration": "Konfiguration",
 	"renderer.menu.item.matchview": "Matches",

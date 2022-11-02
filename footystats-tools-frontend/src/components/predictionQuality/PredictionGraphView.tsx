@@ -2,7 +2,6 @@ import React from "react";
 import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
 import translate from "../../i18n/translate";
-import { Bet } from "../../app/types/prediction/BetPredictionContext";
 import {
 	BetPredictionQuality,
 	BetPredictionQualityBetEnum,
@@ -24,18 +23,14 @@ export const PredictionGraphView = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${
-								BetPredictionQualityBetEnum[measurement.bet]
-							}`,
+							`renderer.matchesview.bet.${measurement.bet}`,
 						)} ${translate("renderer.predictiongraphview.bet")}`,
 						data: measurement.distributionBetOnThis,
 						color: colord("rgb(40,200,0)").toRgb(),
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${
-								BetPredictionQualityBetEnum[measurement.bet]
-							}`,
+							`renderer.matchesview.bet.${measurement.bet}`,
 						)} ${translate(
 							"renderer.predictiongraphview.bet.failed",
 						)}`,
@@ -48,9 +43,7 @@ export const PredictionGraphView = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${
-								BetPredictionQualityBetEnum[measurement.bet]
-							}`,
+							`renderer.matchesview.bet.${measurement.bet}`,
 						)} ${translate(
 							"renderer.predictiongraphview.dontbet",
 						)}`,
@@ -58,9 +51,7 @@ export const PredictionGraphView = ({
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${
-								BetPredictionQualityBetEnum[measurement.bet]
-							}`,
+							`renderer.matchesview.bet.${measurement.bet}`,
 						)} ${translate(
 							"renderer.predictiongraphview.dontbet.failed",
 						)}`,
