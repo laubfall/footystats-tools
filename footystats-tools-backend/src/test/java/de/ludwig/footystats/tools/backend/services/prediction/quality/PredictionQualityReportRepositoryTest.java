@@ -22,7 +22,7 @@ public class PredictionQualityReportRepositoryTest {
 
 	@Test
 	public void findByRevision() {
-		var revision = new PredictionQualityRevision(0);
+		var revision = new PredictionQualityRevision(4711);
 		var report = new PredictionQualityReport(revision, Collections.emptyList());
 		predictionQualityReportRepository.insert(report);
 
