@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
 import Select, { MultiValue, PropsValue } from "react-select";
-import IpcAppControllService from "../../app/services/IpcAppControllService";
 import { NDate, NString } from "../../app/types/General";
+import countriesAndLeagues from "../../app/countriesAndLeagues";
 
 export type SelectOption = {
 	label: string;
@@ -86,58 +86,41 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	const [timeUntil, setTimeUntil] = useState<NDate>(null);
 
 	useEffect(() => {
-		const appControllService = new IpcAppControllService();
-		appControllService.findCountries().then((availableCountries) => {
-			const cSelOptions: SelectOption[] = [];
-			availableCountries.forEach((c) => {
-				cSelOptions.push({
-					label: c.name,
-					value: c.name,
-				});
+		const cSelOptions: SelectOption[] = [];
+		countriesAndLeagues.Countries.forEach((c) => {
+			cSelOptions.push({
+				label: c.name,
+				value: c.name,
 			});
-			setCountries(cSelOptions);
-			return null;
 		});
+		setCountries(cSelOptions);
+		return null;
 	}, []);
 
 	useEffect(() => {
-		const appControllService = new IpcAppControllService();
 		const lSelOptions: SelectOption[] = [];
-		appControllService
-			.findCountries()
-			.then((availableCountries) => {
-				availableCountries
-					.filter((c) => {
-						if (selectedCountry?.length === 0) {
-							return true;
-						}
 
-						return (
-							selectedCountry?.find(
-								(sl) => sl.value === c.name,
-							) !== undefined
-						);
-					})
-					.forEach((c) => {
-						const availableLeagues =
-							c.leagues?.map(
-								(league) =>
-									({
-										label: league.name,
-										value: league.name,
-									} as SelectOption),
-							) || [];
-						lSelOptions.push(...availableLeagues);
-						setLeagues(lSelOptions);
-					});
-				return undefined;
-			})
-			.catch((reason) =>
-				console.error(
-					"MatchFilter: Failed to retrieve available countries",
-					reason,
-				),
+		countriesAndLeagues.Countries.filter((c) => {
+			if (selectedCountry?.length === 0) {
+				return true;
+			}
+
+			return (
+				selectedCountry?.find((sl) => sl.value === c.name) !== undefined
 			);
+		}).forEach((c) => {
+			const availableLeagues =
+				c.leagues?.map(
+					(league) =>
+						({
+							label: league.name,
+							value: league.name,
+						} as SelectOption),
+				) || [];
+			lSelOptions.push(...availableLeagues);
+			setLeagues(lSelOptions);
+		});
+		return undefined;
 
 		return undefined;
 	}, [selectedCountry]);

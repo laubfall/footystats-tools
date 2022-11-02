@@ -15,4 +15,5 @@ public interface MatchRepository extends MongoRepository<Match, String> {
 	Collection<Match> findMatchesByRevision(PredictionQualityRevision revision);
 
 	Collection<Match> findMatchesByRevision_RevisionIsNull();
+
 }
