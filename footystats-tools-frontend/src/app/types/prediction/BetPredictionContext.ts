@@ -1,6 +1,6 @@
-import { LeagueStats } from '../stats/LeagueStats';
-import { MatchStats } from '../stats/MatchStats';
-import TeamStats from '../stats/TeamStats';
+import { LeagueStats } from "../stats/LeagueStats";
+import { MatchStats } from "../stats/MatchStats";
+import TeamStats from "../stats/TeamStats";
 
 export type BetPredictionContext = {
 	match: MatchStats;

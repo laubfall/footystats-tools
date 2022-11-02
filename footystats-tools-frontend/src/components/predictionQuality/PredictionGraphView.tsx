@@ -24,7 +24,9 @@ export const PredictionGraphView = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
+							`renderer.matchesview.bet.${
+								BetPredictionQualityBetEnum[measurement.bet]
+							}`,
 						)} ${translate("renderer.predictiongraphview.bet")}`,
 						data: measurement.distributionBetOnThis,
 						color: colord("rgb(40,200,0)").toRgb(),
@@ -46,7 +48,9 @@ export const PredictionGraphView = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
+							`renderer.matchesview.bet.${
+								BetPredictionQualityBetEnum[measurement.bet]
+							}`,
 						)} ${translate(
 							"renderer.predictiongraphview.dontbet",
 						)}`,
@@ -54,7 +58,9 @@ export const PredictionGraphView = ({
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[measurement.bet]}`,
+							`renderer.matchesview.bet.${
+								BetPredictionQualityBetEnum[measurement.bet]
+							}`,
 						)} ${translate(
 							"renderer.predictiongraphview.dontbet.failed",
 						)}`,

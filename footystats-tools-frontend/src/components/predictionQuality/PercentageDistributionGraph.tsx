@@ -78,7 +78,9 @@ export const PercentageDistributionGraph = ({
 		<LineChart
 			width={730}
 			height={250}
-			data={data?.sort((a, b) => a.predictionPercent - b.predictionPercent)}
+			data={data?.sort(
+				(a, b) => a.predictionPercent - b.predictionPercent,
+			)}
 			margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
 		>
 			<CartesianGrid strokeDasharray="3 3" />
@@ -104,7 +106,9 @@ export const PercentageDistributionGraph = ({
 						key={uniqueId()}
 						dataKey={`y${idx}`}
 						name={val.name}
-						stroke={val.color ? colord(val.color).toHex() : "#8884d8"}
+						stroke={
+							val.color ? colord(val.color).toHex() : "#8884d8"
+						}
 					/>
 				);
 			})}
