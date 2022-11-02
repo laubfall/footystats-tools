@@ -15,7 +15,6 @@ import {
 	Popover,
 } from "react-bootstrap";
 import { uniqueId } from "lodash";
-import { Bet } from "../../app/types/prediction/BetPredictionContext";
 import translate from "../../i18n/translate";
 import {
 	BetPredictionQualityBetEnum,
@@ -53,7 +52,9 @@ function createBetPredictionColumns(
 	return (
 		predictionForBets?.map((bet) => {
 			const tr: TableColumn<MatchListEntry> = {
-				name: translate(`renderer.matchesview.bet.${Bet[bet]}`),
+				name: translate(
+					`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
+				),
 				selector: (row) => {
 					const betPrediction = row.betPredictions.find(
 						(v) => v.bet === bet,

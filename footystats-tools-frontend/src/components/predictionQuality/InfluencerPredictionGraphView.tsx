@@ -6,8 +6,12 @@ import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
 import { collectInfluencerNames } from "./functions";
 import { InfluencerName } from "../../app/services/prediction/PredictionService.types";
 import translate from "../../i18n/translate";
-import { Bet } from "../../app/types/prediction/BetPredictionContext";
-import { BetPredictionDistribution, BetPredictionQuality, BetPredictionQualityBetEnum, InfluencerPercentDistributionPrecheckResultEnum } from "../../footystats-frontendapi";
+import {
+	BetPredictionDistribution,
+	BetPredictionQuality,
+	BetPredictionQualityBetEnum,
+	InfluencerPercentDistributionPrecheckResultEnum,
+} from "../../footystats-frontendapi";
 import { PercentDistribution } from "../../app/services/prediction/PredictionQualityService.types";
 
 export type InfluencerPredictionGraphProps = {
@@ -47,15 +51,17 @@ const InfluencerPredictionGraph = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[bet]}`,
+							`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
 						)} ${translate("renderer.predictiongraphview.bet")}`,
 						data: i1Distribution,
 						color: colord("rgb(40,200,0)").toRgb(),
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${Bet[bet]}`,
-						)} ${translate("renderer.predictiongraphview.bet.failed")}`,
+							`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
+						)} ${translate(
+							"renderer.predictiongraphview.bet.failed",
+						)}`,
 						data: i2Distribution,
 					},
 				]}
@@ -76,7 +82,11 @@ function influencerPercentDistributions(
 		.forEach((influencerDistributions) => {
 			influencerDistributions
 				.filter((infDist) => infDist.influencerName === name)
-				.filter((infDist) => infDist.precheckResult === InfluencerPercentDistributionPrecheckResultEnum.Ok)
+				.filter(
+					(infDist) =>
+						infDist.precheckResult ===
+						InfluencerPercentDistributionPrecheckResultEnum.Ok,
+				)
 				.forEach((infDist) => {
 					const existing = aggregatePredictionPercentAndCount.get(
 						infDist.predictionPercent,
@@ -84,10 +94,13 @@ function influencerPercentDistributions(
 					if (existing) {
 						existing.count += infDist.count;
 					} else {
-						aggregatePredictionPercentAndCount.set(infDist.predictionPercent, {
-							count: infDist.count,
-							predictionPercent: infDist.predictionPercent,
-						});
+						aggregatePredictionPercentAndCount.set(
+							infDist.predictionPercent,
+							{
+								count: infDist.count,
+								predictionPercent: infDist.predictionPercent,
+							},
+						);
 					}
 				});
 		});
