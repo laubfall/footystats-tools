@@ -5,7 +5,6 @@ import {
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
 import { NDate, NString } from "../../app/types/General";
-import { Bet } from "../../app/types/prediction/BetPredictionContext";
 import { FilterSettings, MatchFilterHoc } from "./MatchFilter";
 import {
 	BetPrediction,
