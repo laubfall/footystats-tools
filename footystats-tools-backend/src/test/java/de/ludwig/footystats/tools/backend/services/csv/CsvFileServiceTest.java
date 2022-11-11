@@ -2,6 +2,7 @@ package de.ludwig.footystats.tools.backend.services.csv;
 
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.TeamStats;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class CsvFileServiceTest {
 
 	@Autowired
 	private CsvFileService<LeagueStats> leagueStatsCsvFileService;
+
+	@Autowired
+	private CsvFileService<TeamStats> teamStatsCsvFileService;
 
     @Test
     public void importMatchStats(){
@@ -47,6 +51,21 @@ public class CsvFileServiceTest {
 
 			var leagueStats = entries.get(0);
 			Assertions.assertEquals("Someleague", leagueStats.getName());
+		} catch (IOException e) {
+			Assertions.fail();
+		}
+	}
+
+	@Test
+	public void importTeamStats(){
+		try(var inputStream = getClass().getResourceAsStream("some-country-teams-2020-to-2021-stats.csv");) {
+			var entries = teamStatsCsvFileService.importFile(inputStream, TeamStats.class);
+			Assertions.assertNotNull(entries);
+			Assertions.assertEquals(2, entries.size());
+
+			var leagueStats = entries.get(0);
+			Assertions.assertEquals("Somecountry", leagueStats.getCountry());
+			Assertions.assertEquals("2020/2021", leagueStats.getSeason());
 		} catch (IOException e) {
 			Assertions.fail();
 		}

@@ -5,6 +5,7 @@ import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
+import de.ludwig.footystats.tools.backend.services.stats.TeamStatsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -30,11 +31,14 @@ public class FootyStatsCsvUploadController {
 
 	private final LeagueStatsService leagueStatsService;
 
+	private final TeamStatsService teamStatsService;
+
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-										 MatchStatsService matchStatsService, LeagueStatsService leagueStatsService) {
+										 MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsService = matchStatsService;
 		this.leagueStatsService = leagueStatsService;
+		this.teamStatsService = teamStatsService;
 	}
 
 	@PostMapping(path = "/uploadFile", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -77,7 +81,7 @@ public class FootyStatsCsvUploadController {
 				matchStats.forEach(this.matchStatsService::importMatchStats);
 				break;
 			case TEAM_STATS:
-				// this.teamStatsService.readTeamStats(pathToFile);
+				this.teamStatsService.readTeamStats(file.getInputStream());
 				break;
 			default:
 				logger.warn(
