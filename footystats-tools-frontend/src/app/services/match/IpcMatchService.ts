@@ -1,14 +1,7 @@
 import { NDate, NString } from "../../types/General";
-import { MatchStats } from "../../types/stats/MatchStats";
-import { PredictionResult } from "../prediction/PredictionService.types";
-import {
-	BetPredictionQualityBetEnum,
-	MatchControllerApi,
-	Paging,
-} from "../../../footystats-frontendapi";
+import { MatchControllerApi, Paging } from "../../../footystats-frontendapi";
 
 class IpcMatchService {
-
 	async matchesByFilter(
 		country: NString,
 		league: NString,
@@ -22,6 +15,8 @@ class IpcMatchService {
 				country,
 				league,
 				paging,
+				start: from,
+				end: until,
 			},
 		});
 	}
