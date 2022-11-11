@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
+import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
@@ -27,10 +28,13 @@ public class FootyStatsCsvUploadController {
 
 	private final MatchStatsService matchStatsService;
 
+	private final LeagueStatsService leagueStatsService;
+
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-			MatchStatsService matchStatsService) {
+										 MatchStatsService matchStatsService, LeagueStatsService leagueStatsService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsService = matchStatsService;
+		this.leagueStatsService = leagueStatsService;
 	}
 
 	@PostMapping(path = "/uploadFile", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -66,7 +70,7 @@ public class FootyStatsCsvUploadController {
 		logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
 		switch (csvFileInformation.type()) {
 			case LEAGUE_STATS:
-				// this.leagueStatsService.readLeagueStats(pathToFile);
+				this.leagueStatsService.readLeagueStats(file.getInputStream());
 				break;
 			case MATCH_STATS:
 				List<MatchStats> matchStats = this.csvFileService.importFile(file.getInputStream(), MatchStats.class);

@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
+import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsRepository;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsRepository;
@@ -31,12 +32,16 @@ public class FootyStatsCsvUploadControllerTest {
     @Autowired
     private MatchRepository matchRepository;
 
+	@Autowired
+	private LeagueStatsRepository leagueStatsRepository;
+
     @Autowired
     private MockMvc mvc;
 
     @BeforeEach
     private void cleanup(){
         matchStatsRepository.deleteAll();
+		leagueStatsRepository.deleteAll();
     }
 
     @Test
@@ -56,4 +61,20 @@ public class FootyStatsCsvUploadControllerTest {
             Assertions.fail(e);
         }
     }
+
+	@Test
+	void uploadLeagueStats(){
+		var originalFileName = "some-country-league-2020-to-2021-stats.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+
+			var allLeagueStats = leagueStatsRepository.findAll();
+			Assertions.assertNotNull(allLeagueStats);
+			Assertions.assertEquals(1, allLeagueStats.size());
+
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
+	}
 }
