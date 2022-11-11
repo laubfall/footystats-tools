@@ -3,10 +3,7 @@ package de.ludwig.footystats.tools.backend.services.stats;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import de.ludwig.footystats.tools.backend.services.csv.FloatConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -26,7 +23,7 @@ public class TeamStats {
     @CsvBindByName(column = "common_name")
     @Getter
     @Setter
-    private String common_name;
+    private String commonName;
     @CsvBindByName(column = "season")
     @Getter
     @Setter

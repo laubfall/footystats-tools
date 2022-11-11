@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @TestConfiguration
 public class TeamStatsServiceConfiguration {
 	@Bean
-	public TeamStatsService teamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService){
-		return new TeamStatsService(mongoTemplate, mappingMongoConverter, teamStatsCsvFileService);
+	public TeamStatsService teamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository){
+		return new TeamStatsService(mongoTemplate, mappingMongoConverter, teamStatsCsvFileService, teamStatsRepository);
 	}
 }
