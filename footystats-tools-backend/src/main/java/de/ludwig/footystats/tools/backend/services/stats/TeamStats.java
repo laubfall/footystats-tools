@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonComponent
 @NoArgsConstructor
 @CompoundIndexes({
-	@CompoundIndex(name = "unique", def = "{'teamName' : 1, 'season': 1, 'country': 1}")
+	@CompoundIndex(name = "unique", def = "{'teamName' : 1, 'commonName': 1, 'season': 1, 'country': 1}")
 })
 public class TeamStats {
     @CsvBindByName(column = "team_name")

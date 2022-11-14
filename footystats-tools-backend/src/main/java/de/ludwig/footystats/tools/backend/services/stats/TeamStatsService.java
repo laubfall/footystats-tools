@@ -31,29 +31,11 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		return stats;
 	}
 
-	/*
 	public Collection<TeamStats> latestThree(String team, String country, Integer year) {
-		const baseYear = year || getYear(new Date());
-
-		const season = [
-			`${baseYear - 1}/${baseYear}`,
-			`${baseYear - 2}/${baseYear - 1}`,
-			`${baseYear}/${baseYear + 1}`,
-		baseYear,
-			baseYear + 1,
-			baseYear - 1,
-		];
-
-		const result: UniqueTeamStats[] = (await this.dbService.asyncFind({
-			$and: [
-		{ country },
-		{ $or: [{ team_name: team }, { common_name: team }] },
-		{ season: { $in: season } },
-			],
-		})) as UniqueTeamStats[];
-
-		return Promise.resolve(result);
-	}*/
+		var seasons = new String[]{year -1 + "/" +year, year-2+"/"+(year-1),year+"/"+(year+1), year +"", year +1+"",year-1+""};
+		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons).orOperator(Criteria.where("teamName").is(team), Criteria.where("commonName").is(team)));
+		return mongoTemplate.find(query, TeamStats.class);
+	}
 
 	@Override
 	public Query upsertQuery(TeamStats example) {

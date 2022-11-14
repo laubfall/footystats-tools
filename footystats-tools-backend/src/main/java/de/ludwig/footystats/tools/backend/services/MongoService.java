@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.query.BasicUpdate;
 import org.springframework.data.mongodb.core.query.Query;
 
 public abstract class MongoService<MONGO_DOC> {
-    MongoTemplate mongoTemplate;
+    protected MongoTemplate mongoTemplate;
 
-    MappingMongoConverter mappingMongoConverter;
+    protected MappingMongoConverter mappingMongoConverter;
 
     public MongoService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter) {
         this.mongoTemplate = mongoTemplate;
