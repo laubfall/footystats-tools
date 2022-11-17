@@ -37,4 +37,18 @@ public class TeamStatsServiceTest {
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.isEmpty());
 	}
+
+	@Test
+	public void aggregate(){
+		Collection<TeamStats> teamStats = teamStatsService.readTeamStats(getClass().getResourceAsStream("one-team-different-season-stats.csv"));
+		Assertions.assertFalse(teamStats.isEmpty());
+		Assertions.assertEquals(2, teamStats.size());
+
+		TeamStats aggregate = teamStatsService.aggregate(teamStats);
+		Assertions.assertEquals(7, aggregate.getWins_away());
+		Assertions.assertEquals(1.55f, aggregate.getPoints_per_game());
+		Assertions.assertEquals(1.6, aggregate.getPoints_per_game_home());
+		Assertions.assertEquals(45, aggregate.getGoals_scored());
+		Assertions.assertNotNull(aggregate);
+	}
 }

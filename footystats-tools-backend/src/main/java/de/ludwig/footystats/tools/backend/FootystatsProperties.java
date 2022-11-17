@@ -16,4 +16,8 @@ public class FootystatsProperties {
 	@Getter
 	@Setter
 	private boolean importEsports;
+
+	@Getter
+	@Setter
+	private int ignoreTeamStatsWithGamesPlayedLowerThan;
 }

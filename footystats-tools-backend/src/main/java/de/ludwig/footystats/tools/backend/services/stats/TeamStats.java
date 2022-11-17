@@ -2,6 +2,7 @@ package de.ludwig.footystats.tools.backend.services.stats;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
+import de.ludwig.footystats.tools.backend.services.csv.DoubleConverter;
 import de.ludwig.footystats.tools.backend.services.csv.FloatConverter;
 import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
@@ -88,10 +89,10 @@ public class TeamStats {
     @Getter
     @Setter
     private Float points_per_game;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_home")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_home")
     @Getter
     @Setter
-    private Float points_per_game_home;
+    private Double points_per_game_home;
     @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_away")
     @Getter
     @Setter

@@ -18,7 +18,7 @@ public class TeamStatsServiceConfiguration {
 	}
 
 	@Bean
-	public TeamStatsService teamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository) {
-		return new TeamStatsService(mongoTemplate, mappingMongoConverter, teamStatsCsvFileService, teamStatsRepository);
+	public TeamStatsService teamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository, FootystatsProperties footystatsProperties) {
+		return new TeamStatsService(mongoTemplate, mappingMongoConverter, teamStatsCsvFileService, teamStatsRepository, footystatsProperties);
 	}
 }
