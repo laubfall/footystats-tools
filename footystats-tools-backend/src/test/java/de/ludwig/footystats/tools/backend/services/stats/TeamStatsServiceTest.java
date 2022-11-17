@@ -46,8 +46,8 @@ public class TeamStatsServiceTest {
 
 		TeamStats aggregate = teamStatsService.aggregate(teamStats);
 		Assertions.assertEquals(7, aggregate.getWins_away());
-		Assertions.assertEquals(1.55f, aggregate.getPoints_per_game());
 		Assertions.assertEquals(1.6, aggregate.getPoints_per_game_home());
+		Assertions.assertEquals(1.55, aggregate.getPoints_per_game());
 		Assertions.assertEquals(45, aggregate.getGoals_scored());
 		Assertions.assertNotNull(aggregate);
 	}

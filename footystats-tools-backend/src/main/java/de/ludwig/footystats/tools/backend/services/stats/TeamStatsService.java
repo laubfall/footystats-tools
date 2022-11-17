@@ -76,7 +76,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setLosses_home(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosses_home));
 		tsNew.setLosses_away(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosses_away));
 		tsNew.setPoints_per_game(floatAverage(matchingTeamStats, TeamStats::getPoints_per_game));
-		tsNew.setPoints_per_game_home(matchingTeamStats.stream().mapToDouble(ts -> ts.getPoints_per_game_home()).average().getAsDouble());
+		tsNew.setPoints_per_game_home(floatAverage(matchingTeamStats, TeamStats::getPoints_per_game_home));
 		tsNew.setPoints_per_game_away(floatAverage(matchingTeamStats, TeamStats::getPoints_per_game_away));
 		tsNew.setLeague_position(integerAverageRoundUp(matchingTeamStats, TeamStats::getLeague_position));
 		tsNew.setLeague_position_home(integerAverageRoundUp(matchingTeamStats, TeamStats::getLeague_position_home));
@@ -361,11 +361,14 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		return (int)Math.round(stats.stream().mapToInt(mapper).average().getAsDouble());
 	}
 
-	private Float floatAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper){
-		var mean = stats.stream().mapToDouble(mapper).average().getAsDouble();
-		var bdMean = new BigDecimal(mean);
-		bdMean.setScale(2, RoundingMode.DOWN);
-		return (float)bdMean.doubleValue();
+	private Double floatAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper){
+		var bd = stats.stream().map(ts -> new BigDecimal(mapper.applyAsDouble(ts))).collect(Collectors.toList());
+		var res = BigDecimal.ZERO;
+		for (BigDecimal bigDecimal : bd) {
+			res = res.add(bigDecimal);
+		}
+
+		return res.divide(new BigDecimal(bd.size()), RoundingMode.HALF_UP).doubleValue();
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package de.ludwig.footystats.tools.backend.services.stats;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import de.ludwig.footystats.tools.backend.services.csv.DoubleConverter;
-import de.ludwig.footystats.tools.backend.services.csv.FloatConverter;
+import de.ludwig.footystats.tools.backend.services.csv.DoubleConverter;
 import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -85,18 +85,18 @@ public class TeamStats {
     @Getter
     @Setter
     private Integer losses_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game")
     @Getter
     @Setter
-    private Float points_per_game;
+    private Double points_per_game;
     @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_home")
     @Getter
     @Setter
     private Double points_per_game_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_away")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_away")
     @Getter
     @Setter
-    private Float points_per_game_away;
+    private Double points_per_game_away;
     @CsvBindByName(column = "league_position")
     @Getter
     @Setter
@@ -389,90 +389,90 @@ public class TeamStats {
     @Getter
     @Setter
     private Integer losing_at_half_time_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_half_time")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_half_time")
     @Getter
     @Setter
-    private Float points_per_game_half_time;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_half_time_home")
+    private Double points_per_game_half_time;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_half_time_home")
     @Getter
     @Setter
-    private Float points_per_game_half_time_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "points_per_game_half_time_away")
+    private Double points_per_game_half_time_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "points_per_game_half_time_away")
     @Getter
     @Setter
-    private Float points_per_game_half_time_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "average_total_goals_per_match")
+    private Double points_per_game_half_time_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "average_total_goals_per_match")
     @Getter
     @Setter
-    private Float average_total_goals_per_match;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "average_total_goals_per_match_home")
+    private Double average_total_goals_per_match;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "average_total_goals_per_match_home")
     @Getter
     @Setter
-    private Float average_total_goals_per_match_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "average_total_goals_per_match_away")
+    private Double average_total_goals_per_match_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "average_total_goals_per_match_away")
     @Getter
     @Setter
-    private Float average_total_goals_per_match_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match")
+    private Double average_total_goals_per_match_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match")
     @Getter
     @Setter
-    private Float goals_scored_per_match;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match_home")
+    private Double goals_scored_per_match;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match_home")
     @Getter
     @Setter
-    private Float goals_scored_per_match_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match_away")
+    private Double goals_scored_per_match_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match_away")
     @Getter
     @Setter
-    private Float goals_scored_per_match_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match")
+    private Double goals_scored_per_match_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match")
     @Getter
     @Setter
-    private Float goals_conceded_per_match;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match_home")
+    private Double goals_conceded_per_match;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match_home")
     @Getter
     @Setter
-    private Float goals_conceded_per_match_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match_away")
+    private Double goals_conceded_per_match_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match_away")
     @Getter
     @Setter
-    private Float goals_conceded_per_match_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "total_goals_per_match_half_time")
+    private Double goals_conceded_per_match_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "total_goals_per_match_half_time")
     @Getter
     @Setter
-    private Float total_goals_per_match_half_time;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "total_goals_per_match_half_time_home")
+    private Double total_goals_per_match_half_time;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "total_goals_per_match_half_time_home")
     @Getter
     @Setter
-    private Float total_goals_per_match_half_time_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "total_goals_per_match_half_time_away")
+    private Double total_goals_per_match_half_time_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "total_goals_per_match_half_time_away")
     @Getter
     @Setter
-    private Float total_goals_per_match_half_time_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match_half_time")
+    private Double total_goals_per_match_half_time_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match_half_time")
     @Getter
     @Setter
-    private Float goals_scored_per_match_half_time;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match_half_time_home")
+    private Double goals_scored_per_match_half_time;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match_half_time_home")
     @Getter
     @Setter
-    private Float goals_scored_per_match_half_time_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_scored_per_match_half_time_away")
+    private Double goals_scored_per_match_half_time_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_scored_per_match_half_time_away")
     @Getter
     @Setter
-    private Float goals_scored_per_match_half_time_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match_half_time")
+    private Double goals_scored_per_match_half_time_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match_half_time")
     @Getter
     @Setter
-    private Float goals_conceded_per_match_half_time;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match_half_time_home")
+    private Double goals_conceded_per_match_half_time;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match_half_time_home")
     @Getter
     @Setter
-    private Float goals_conceded_per_match_half_time_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "goals_conceded_per_match_half_time_away")
+    private Double goals_conceded_per_match_half_time_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "goals_conceded_per_match_half_time_away")
     @Getter
     @Setter
-    private Float goals_conceded_per_match_half_time_away;
+    private Double goals_conceded_per_match_half_time_away;
     @CsvBindByName(column = "over05_count")
     @Getter
     @Setter
@@ -1001,34 +1001,34 @@ public class TeamStats {
     @Getter
     @Setter
     private Integer losing_at_half_time_percentage_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "losing_at_half_time_percentage_away")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "losing_at_half_time_percentage_away")
     @Getter
     @Setter
-    private Float losing_at_half_time_percentage_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "corners_per_match")
+    private Double losing_at_half_time_percentage_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "corners_per_match")
     @Getter
     @Setter
-    private Float corners_per_match;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "corners_per_match_home")
+    private Double corners_per_match;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "corners_per_match_home")
     @Getter
     @Setter
-    private Float corners_per_match_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "corners_per_match_away")
+    private Double corners_per_match_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "corners_per_match_away")
     @Getter
     @Setter
-    private Float corners_per_match_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "cards_per_match")
+    private Double corners_per_match_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "cards_per_match")
     @Getter
     @Setter
-    private Float cards_per_match;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "cards_per_match_home")
+    private Double cards_per_match;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "cards_per_match_home")
     @Getter
     @Setter
-    private Float cards_per_match_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "cards_per_match_away")
+    private Double cards_per_match_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "cards_per_match_away")
     @Getter
     @Setter
-    private Float cards_per_match_away;
+    private Double cards_per_match_away;
     @CsvBindByName(column = "over65_corners_percentage")
     @Getter
     @Setter
@@ -1061,30 +1061,30 @@ public class TeamStats {
     @Getter
     @Setter
     private Integer over135_corners_percentage;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_for_avg_overall")
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_for_avg_overall")
     @Getter
     @Setter
-    private Float xg_for_avg_overall;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_for_avg_home")
+    private Double xg_for_avg_overall;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_for_avg_home")
     @Getter
     @Setter
-    private Float xg_for_avg_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_for_avg_away")
+    private Double xg_for_avg_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_for_avg_away")
     @Getter
     @Setter
-    private Float xg_for_avg_away;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_against_avg_overall")
+    private Double xg_for_avg_away;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_against_avg_overall")
     @Getter
     @Setter
-    private Float xg_against_avg_overall;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_against_avg_home")
+    private Double xg_against_avg_overall;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_against_avg_home")
     @Getter
     @Setter
-    private Float xg_against_avg_home;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "xg_against_avg_away")
+    private Double xg_against_avg_home;
+    @CsvCustomBindByName(converter = DoubleConverter.class, column = "xg_against_avg_away")
     @Getter
     @Setter
-    private Float xg_against_avg_away;
+    private Double xg_against_avg_away;
     @CsvBindByName(column = "prediction_risk")
     @Getter
     @Setter
