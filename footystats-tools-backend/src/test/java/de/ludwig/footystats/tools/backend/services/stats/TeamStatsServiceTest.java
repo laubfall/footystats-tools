@@ -1,11 +1,13 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
+import de.ludwig.footystats.tools.backend.services.csv.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -14,6 +16,7 @@ import java.util.Collection;
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
+@Import({Configuration.class})
 @ContextConfiguration(classes = {TeamStatsServiceConfiguration.class})
 public class TeamStatsServiceTest {
 
