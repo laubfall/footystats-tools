@@ -11,12 +11,6 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @Import({FootystatsProperties.class})
 @TestConfiguration
 public class TeamStatsServiceConfiguration {
-
-	@Bean
-	public CsvFileService<TeamStats> teamStatsCsvFileService(){
-		return new CsvFileService<>();
-	}
-
 	@Bean
 	public TeamStatsService teamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository, FootystatsProperties footystatsProperties) {
 		return new TeamStatsService(mongoTemplate, mappingMongoConverter, teamStatsCsvFileService, teamStatsRepository, footystatsProperties);
