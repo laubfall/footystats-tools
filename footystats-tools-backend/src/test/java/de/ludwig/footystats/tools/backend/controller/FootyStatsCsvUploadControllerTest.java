@@ -61,7 +61,6 @@ public class FootyStatsCsvUploadControllerTest {
             var msss = matchStatsRepository.findAll();
             List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry("Germany");
             Assertions.assertFalse(matchStatsImported.isEmpty());
-
         } catch (Exception e) {
             Assertions.fail(e);
         }

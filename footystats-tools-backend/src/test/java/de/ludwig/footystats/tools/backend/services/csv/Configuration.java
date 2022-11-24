@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.csv;
 
+import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStats;
@@ -17,4 +18,7 @@ public class Configuration {
 
 	@Bean
 	public CsvFileService<TeamStats> teamStatsCsvFileService() {return new CsvFileService<>();}
+
+	@Bean
+	public CsvFileDownloadService fileDownloadService(){return new CsvFileDownloadService();}
 }

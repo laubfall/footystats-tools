@@ -26,6 +26,7 @@ public class MappingMongoConverterConfiguration {
     private MongoCustomConversions customConversions() {
         List<Object> converters = new ArrayList<>();
         converters.addAll(Jsr310Converters.getConvertersToRegister());
+		converters.addAll(PasswordConverters.converters());
         return new MongoCustomConversions(converters);
     }
 }
