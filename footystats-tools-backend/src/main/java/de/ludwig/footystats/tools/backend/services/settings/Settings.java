@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.settings;
 
-import de.ludwig.footystats.tools.backend.mongo.Password;
+import de.ludwig.footystats.tools.backend.mongo.converter.Password;
 import lombok.Getter;
 import lombok.Setter;
 

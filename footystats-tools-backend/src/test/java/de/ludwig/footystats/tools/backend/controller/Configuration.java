@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.mongo.MappingMongoConverterConfiguration;
+import de.ludwig.footystats.tools.backend.mongo.converter.MappingMongoConverterConfiguration;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsServiceConfiguration;

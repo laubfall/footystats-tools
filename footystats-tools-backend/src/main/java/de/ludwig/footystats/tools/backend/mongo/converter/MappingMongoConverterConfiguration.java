@@ -1,5 +1,6 @@
-package de.ludwig.footystats.tools.backend.mongo;
+package de.ludwig.footystats.tools.backend.mongo.converter;
 
+import de.ludwig.footystats.tools.backend.mongo.converter.ConverterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.convert.Jsr310Converters;
@@ -16,17 +17,17 @@ import java.util.List;
 @Configuration
 public class MappingMongoConverterConfiguration {
     @Bean
-    public MappingMongoConverter mongoConverter(MongoDatabaseFactory dbFactory, MongoMappingContext mongoMappingContext) throws Exception {
+    public MappingMongoConverter mongoConverter(MongoDatabaseFactory dbFactory, MongoMappingContext mongoMappingContext, ConverterRegistry converterRegistry) {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(dbFactory);
         MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
-        mongoConverter.setCustomConversions(customConversions());
+        mongoConverter.setCustomConversions(customConversions(converterRegistry));
         return mongoConverter;
     }
 
-    private MongoCustomConversions customConversions() {
+    private MongoCustomConversions customConversions(ConverterRegistry converterRegistry) {
         List<Object> converters = new ArrayList<>();
         converters.addAll(Jsr310Converters.getConvertersToRegister());
-		converters.addAll(PasswordConverters.converters());
+		converters.addAll(converterRegistry.converters());
         return new MongoCustomConversions(converters);
     }
 }

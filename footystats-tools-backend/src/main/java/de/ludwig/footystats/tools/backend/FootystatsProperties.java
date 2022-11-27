@@ -20,4 +20,8 @@ public class FootystatsProperties {
 	@Getter
 	@Setter
 	private int ignoreTeamStatsWithGamesPlayedLowerThan;
+
+	@Getter
+	@Setter
+	private String encryptionSecret;
 }

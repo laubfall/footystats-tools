@@ -1,4 +1,4 @@
-package de.ludwig.footystats.tools.backend.mongo;
+package de.ludwig.footystats.tools.backend.mongo.converter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

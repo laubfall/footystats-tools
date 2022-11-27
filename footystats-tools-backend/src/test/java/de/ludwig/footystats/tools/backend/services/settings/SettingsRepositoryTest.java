@@ -1,8 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.settings;
 
-import de.ludwig.footystats.tools.backend.FootystatsProperties;
-import de.ludwig.footystats.tools.backend.mongo.MappingMongoConverterConfiguration;
-import de.ludwig.footystats.tools.backend.mongo.Password;
+import de.ludwig.footystats.tools.backend.mongo.converter.Password;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +8,19 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import support.MongoMappingConverterConfiguration;
 
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
-@Import({FootystatsProperties.class, MappingMongoConverterConfiguration.class})
+@Import({MongoMappingConverterConfiguration.class})
 public class SettingsRepositoryTest {
 
 	@Autowired
 	private SettingsRepository settingsRepository;
 
 	@Test
-	public void saveAndLoadWithEncryptedPassword(){
+	public void saveAndLoadWithEncryptedPassword() {
 		var setting = new Settings();
 		setting.setFootyStatsUsername("daniel");
 		setting.setFootyStatsPassword(new Password("verystrongpassword"));
