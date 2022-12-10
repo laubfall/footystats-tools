@@ -24,4 +24,22 @@ public class FootystatsProperties {
 	@Getter
 	@Setter
 	private String encryptionSecret;
+
+	@Getter
+	@Setter
+	private FootystatsWebpageProperties webpage;
+
+	public class FootystatsWebpageProperties {
+		@Getter
+		@Setter
+		private String baseUrl;
+
+		@Getter
+		@Setter
+		private String matchStatsDownloadRessource;
+
+		@Getter
+		@Setter
+		private String loginRessource;
+	}
 }

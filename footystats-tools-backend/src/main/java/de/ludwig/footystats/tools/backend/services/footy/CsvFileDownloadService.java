@@ -1,12 +1,19 @@
 package de.ludwig.footystats.tools.backend.services.footy;
 
+import de.ludwig.footystats.tools.backend.FootystatsProperties;
+import de.ludwig.footystats.tools.backend.services.EncryptionService;
+import de.ludwig.footystats.tools.backend.services.ServiceException;
+import de.ludwig.footystats.tools.backend.services.settings.Settings;
+import de.ludwig.footystats.tools.backend.services.settings.SettingsRepository;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -15,17 +22,30 @@ import java.util.*;
 @Service
 public class CsvFileDownloadService {
 
-	public void download(LocalDate matchStatsForDay){
-		var sessionCookie = login();
-		download(matchStatsForDay, sessionCookie);
+	private static final Logger logger = LoggerFactory.getLogger(CsvFileDownloadService.class);
+
+	private final FootystatsProperties properties;
+
+	private final SettingsRepository settingsRepository;
+
+	private final EncryptionService encryptionService;
+
+	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository, EncryptionService encryptionService) {
+		this.properties = properties;
+		this.settingsRepository = settingsRepository;
+		this.encryptionService = encryptionService;
 	}
 
-	public void download(LocalDate matchStatsForDay, SessionCookie sessionCookie){
-		URL url = null;
+	public List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {
+		var sessionCookie = login();
+		return downloadMatchStatsCsvFile(matchStatsForDay, sessionCookie);
+	}
+
+	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
 		try {
-			url = new URL("https://footystats.org/c-dl.php?type=custom&t=matches_expanded&comp=1&un=" + matchStatsForDay.toEpochSecond(LocalTime.of(0,0,0), ZoneOffset.UTC));
+			final URL url = new URL(properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource() + matchStatsForDay.toEpochSecond(LocalTime.of(0, 0, 0), ZoneOffset.UTC));
 			URLConnection con = url.openConnection();
-			HttpURLConnection http = (HttpURLConnection)con;
+			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("GET"); // PUT is another valid option
 			http.setDoOutput(true);
 			http.setRequestProperty("cookie", sessionCookie.cookie());
@@ -33,31 +53,33 @@ public class CsvFileDownloadService {
 			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			http.connect();
 			var lines = IOUtils.readLines(http.getInputStream(), StandardCharsets.UTF_8);
-			System.out.println(lines);
-
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		} catch (ProtocolException e) {
-			throw new RuntimeException(e);
+			return lines;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException("Failed to download footystats matchstats csv file", e);
 		}
 	}
 
-	public SessionCookie login(){
-		URL url = null;
+	public SessionCookie login() {
+
+		Optional<Settings> optSettings = settingsRepository.findAll().stream().findAny();
+		if (optSettings.isEmpty()) {
+			throw new ServiceException("No download of footystats csv files cause there are no settings present at the moment.");
+		}
+
+		var settings = optSettings.get();
+
 		try {
-			url = new URL("https://footystats.org/login?log_me_in=1");
+			final URL url = new URL(properties.getWebpage().getBaseUrl() + properties.getWebpage().getLoginRessource());
 			URLConnection con = url.openConnection();
-			HttpURLConnection http = (HttpURLConnection)con;
+			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("POST"); // PUT is another valid option
 			http.setDoOutput(true);
 
-			Map<String,String> arguments = new HashMap<>();
-			arguments.put("username", "");
-			arguments.put("password", "");
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put("username", settings.getFootyStatsUsername());
+			arguments.put("password", settings.getFootyStatsPassword().getPassword());
 			StringJoiner sj = new StringJoiner("&");
-			for(Map.Entry<String,String> entry : arguments.entrySet())
+			for (Map.Entry<String, String> entry : arguments.entrySet())
 				sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
 					+ URLEncoder.encode(entry.getValue(), "UTF-8"));
 			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
@@ -66,20 +88,18 @@ public class CsvFileDownloadService {
 			http.setFixedLengthStreamingMode(length);
 			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			http.connect();
-			try(OutputStream os = http.getOutputStream()) {
+			try (OutputStream os = http.getOutputStream()) {
 				os.write(out);
 			}
 
 			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream().filter(sc -> sc.startsWith("PHPSESSID")).findAny();
+			if(phpsessid.isEmpty()){
+				throw new ServiceException("");
+			}
 			var sc = new SessionCookie(phpsessid.get());
 			return sc;
-
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		} catch (ProtocolException e) {
-			throw new RuntimeException(e);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException("Failed to get footystats login token", e);
 		}
 	}
 }

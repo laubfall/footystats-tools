@@ -18,7 +18,4 @@ public class Configuration {
 
 	@Bean
 	public CsvFileService<TeamStats> teamStatsCsvFileService() {return new CsvFileService<>();}
-
-	@Bean
-	public CsvFileDownloadService fileDownloadService(){return new CsvFileDownloadService();}
 }

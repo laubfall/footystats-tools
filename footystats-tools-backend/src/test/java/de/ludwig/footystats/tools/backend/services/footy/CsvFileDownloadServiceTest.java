@@ -18,6 +18,6 @@ public class CsvFileDownloadServiceTest {
 
 	@Test
 	public void login(){
-		fileDownloadService.download(LocalDate.now());
+		fileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
 	}
 }
