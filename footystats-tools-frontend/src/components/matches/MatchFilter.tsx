@@ -162,7 +162,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 			props.somethingChanged({
 				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
-				timeFrom: timeFromNew,
+				timeFrom: timeFromNew === null ? undefined : timeFromNew,
 				timeUntil,
 			});
 		}
@@ -176,7 +176,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
 				timeFrom,
-				timeUntil: timeUntilNew,
+				timeUntil: timeUntilNew === null ? undefined : timeUntilNew,
 			});
 		}
 
