@@ -55,7 +55,7 @@ public class CsvFileDownloadService {
 			var lines = IOUtils.readLines(http.getInputStream(), StandardCharsets.UTF_8);
 			return lines;
 		} catch (IOException e) {
-			throw new ServiceException("Failed to download footystats matchstats csv file", e);
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_DL_FAILED, e);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class CsvFileDownloadService {
 
 		Optional<Settings> optSettings = settingsRepository.findAll().stream().findAny();
 		if (optSettings.isEmpty()) {
-			throw new ServiceException("No download of footystats csv files cause there are no settings present at the moment.");
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SETTINGS_MISSING);
 		}
 
 		var settings = optSettings.get();
@@ -94,12 +94,12 @@ public class CsvFileDownloadService {
 
 			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream().filter(sc -> sc.startsWith("PHPSESSID")).findAny();
 			if(phpsessid.isEmpty()){
-				throw new ServiceException("");
+				throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SESSION_ID_MISSING);
 			}
 			var sc = new SessionCookie(phpsessid.get());
 			return sc;
 		} catch (IOException e) {
-			throw new ServiceException("Failed to get footystats login token", e);
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_RETRIEVING_SESSION_FAILED, e);
 		}
 	}
 }

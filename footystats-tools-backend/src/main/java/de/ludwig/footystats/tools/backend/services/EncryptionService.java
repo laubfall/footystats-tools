@@ -27,7 +27,7 @@ public class EncryptionService {
 			encode.init(Cipher.ENCRYPT_MODE, key);
 			decode.init(Cipher.DECRYPT_MODE, key);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException(ServiceException.Type.ENCRYPTION_SERVICE_CREATION_FAILED,e);
 		}
 	}
 
@@ -35,7 +35,7 @@ public class EncryptionService {
 		try {
 			return encode.doFinal(data);
 		} catch (IllegalBlockSizeException | BadPaddingException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException(ServiceException.Type.ENCRYPTION_SERVICE_ENCODING_FAILED, e);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class EncryptionService {
 		try {
 			return decode.doFinal(data);
 		} catch (IllegalBlockSizeException | BadPaddingException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException(ServiceException.Type.ENCRYPTION_SERVICE_DECODING_FAILED, e);
 		}
 	}
 }
