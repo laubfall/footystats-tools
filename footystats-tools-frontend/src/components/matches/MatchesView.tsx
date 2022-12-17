@@ -183,6 +183,11 @@ export const MatchesView = () => {
 								changedFilter.league,
 								changedFilter.timeFrom,
 								changedFilter.timeUntil,
+								{
+									page: page,
+									size: perPage,
+									direction: sortOrder,
+								},
 							);
 							setFilter(changedFilter);
 						}}

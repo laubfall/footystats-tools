@@ -11,8 +11,8 @@ export type SelectOption = {
 };
 
 export type FilterSettings = {
-	timeFrom: NDate;
-	timeUntil: NDate;
+	timeFrom: Date;
+	timeUntil: Date;
 	country: NString[];
 	league: NString[];
 };
@@ -29,8 +29,8 @@ export type MatchFilterProps = {
 	selectedCountry?: PropsValue<SelectOption>;
 	countries: SelectOption[];
 	leagues: SelectOption[];
-	timeFrom?: NDate;
-	timeUntil?: NDate;
+	timeFrom?: Date;
+	timeUntil?: Date;
 } & MatchFilterHocProps;
 
 export const MatchFilter = ({
@@ -160,7 +160,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	function onTimeFromChanged(timeFromNew: Date) {
 		if (props.somethingChanged) {
 			props.somethingChanged({
-				country: selectedCountry.map((mvc) => mvc.value),
+				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
 				timeFrom: timeFromNew,
 				timeUntil,
@@ -173,7 +173,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	function onTimeUntilChanged(timeUntilNew: Date) {
 		if (props.somethingChanged) {
 			props.somethingChanged({
-				country: selectedCountry.map((mvc) => mvc.value),
+				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
 				timeFrom,
 				timeUntil: timeUntilNew,

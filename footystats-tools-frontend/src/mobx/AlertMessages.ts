@@ -8,8 +8,12 @@ export class AlertMessages {
 	addMessage(msg: string): void {
 		this._messages.push(msg);
 		setTimeout(() => {
-			this._messages = [];
+			this.clearMessages();
 		}, 5000);
+	}
+
+	clearMessages(): void {
+		this._messages = [];
 	}
 
 	get messages(): string[] {
