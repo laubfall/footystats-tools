@@ -73,6 +73,9 @@
 	"dependencies": {
 		"bootstrap": "^5.2.1",
 		"colord": "^2.9.3",
+		"date-fns": "^2.29.3",
+		"mobx": "^6.7.0",
+		"mobx-react-lite": "^3.4.0",
 		"react-bootstrap": "^2.5.0",
 		"react-data-table-component": "^7.5.3",
 		"react-datetime-picker": "^4.0.0",

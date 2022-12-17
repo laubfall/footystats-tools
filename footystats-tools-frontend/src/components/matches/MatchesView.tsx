@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
+import { add, sub } from "date-fns";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
@@ -19,6 +20,7 @@ import {
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
+import AlertMessages from "../../mobx/AlertMessages";
 
 function matchToBetPrediction(match: Match): BetPrediction[] {
 	const betPredictions: BetPrediction[] = [];
@@ -95,10 +97,11 @@ export const MatchesView = () => {
 	function loadMatches(
 		country: NString[],
 		league: NString[],
-		from: NDate,
-		until: NDate,
+		from: Date,
+		until: Date,
 		paging?: Paging,
 	) {
+		const alertMessages = AlertMessages;
 		const mss = new IpcMatchService();
 		mss.matchesByFilter(undefined, undefined, from, until, paging)
 			.then(async (n) => {
@@ -106,9 +109,10 @@ export const MatchesView = () => {
 				const r = await createMatchListEntries(n.elements);
 				setMatches(r);
 			})
-			.catch((reason) =>
-				console.error("Failed to load matches for MatchesView", reason),
-			);
+			.catch((reason) => {
+				console.error("Failed to load matches for MatchesView", reason);
+				alertMessages.addMessage("hurz");
+			});
 	}
 
 	const sortHandler: SortHandler = (column, newSortOrder) => {
@@ -162,7 +166,10 @@ export const MatchesView = () => {
 	};
 
 	useEffect(() => {
-		loadMatches([], [], null, null, { page: 0, size: perPage });
+		loadMatches([], [], undefined, undefined, {
+			page: 0,
+			size: perPage,
+		});
 	}, []);
 
 	return (

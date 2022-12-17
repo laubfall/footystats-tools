@@ -82,8 +82,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	const [selectedLeagues, setSelectedLeagues] =
 		useState<MultiValue<SelectOption>>();
 
-	const [timeFrom, setTimeFrom] = useState<NDate>(null);
-	const [timeUntil, setTimeUntil] = useState<NDate>(null);
+	const [timeFrom, setTimeFrom] = useState<Date>(undefined);
+	const [timeUntil, setTimeUntil] = useState<Date>(undefined);
 
 	useEffect(() => {
 		const cSelOptions: SelectOption[] = [];
@@ -94,7 +94,6 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 			});
 		});
 		setCountries(cSelOptions);
-		return null;
 	}, []);
 
 	useEffect(() => {
@@ -120,9 +119,6 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 			lSelOptions.push(...availableLeagues);
 			setLeagues(lSelOptions);
 		});
-		return undefined;
-
-		return undefined;
 	}, [selectedCountry]);
 
 	function onChangeCountry(country: MultiValue<SelectOption>) {
@@ -162,7 +158,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	function onTimeFromChanged(timeFromNew: Date) {
-		if (props.somethingChanged && selectedCountry != null) {
+		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry.map((mvc) => mvc.value),
 				league: [],
@@ -175,7 +171,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	function onTimeUntilChanged(timeUntilNew: Date) {
-		if (props.somethingChanged && selectedCountry != null) {
+		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry.map((mvc) => mvc.value),
 				league: [],
