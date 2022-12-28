@@ -11,8 +11,7 @@ import java.util.Base64;
 
 @ReadingConverter
 @Component
-@Scope("singleton")
-public class PasswordReadingConverter implements Converter<DBObject, Password> {
+public class PasswordReadingConverter implements Converter<String, Password> {
 
 	private final EncryptionService encryptionService;
 
@@ -20,12 +19,12 @@ public class PasswordReadingConverter implements Converter<DBObject, Password> {
 		this.encryptionService = encryptionService;
 	}
 
-	public Password convertToEntityAttribute(DBObject dbData) {
-		return new Password(new String(encryptionService.decrypt(Base64.getDecoder().decode(dbData.get("password").toString()))));
+	public Password convertToEntityAttribute(String dbData) {
+		return new Password(new String(encryptionService.decrypt(Base64.getDecoder().decode(dbData))));
 	}
 
 	@Override
-	public Password convert(DBObject source) {
+	public Password convert(String source) {
 		return convertToEntityAttribute(source);
 	}
 }

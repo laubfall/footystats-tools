@@ -1,9 +1,6 @@
 package de.ludwig.footystats.tools.backend.mongo.converter;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import de.ludwig.footystats.tools.backend.services.EncryptionService;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Component;
@@ -13,8 +10,7 @@ import java.util.Base64;
 
 @WritingConverter
 @Component
-@Scope("singleton")
-public class PasswordWritingConverter implements Converter<Password, DBObject> {
+public class PasswordWritingConverter implements Converter<Password, String> {
 
 	private EncryptionService encryptionService;
 
@@ -22,14 +18,12 @@ public class PasswordWritingConverter implements Converter<Password, DBObject> {
 		this.encryptionService = encryptionService;
 	}
 
-	private DBObject convertToDatabaseColumn(Password attribute) {
-		var document = new BasicDBObject();
-		document.put("password", Base64.getEncoder().encodeToString(encryptionService.encrypt(attribute.getPassword().getBytes())));
-		return document;
+	private String convertToDatabaseColumn(Password attribute) {
+		return Base64.getEncoder().encodeToString(encryptionService.encrypt(attribute.getPassword().getBytes()));
 	}
 
 	@Override
-	public DBObject convert(Password source) {
+	public String convert(Password source) {
 		return convertToDatabaseColumn(source);
 	}
 }
