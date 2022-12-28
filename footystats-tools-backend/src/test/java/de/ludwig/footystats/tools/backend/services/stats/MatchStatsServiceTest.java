@@ -26,7 +26,7 @@ public class MatchStatsServiceTest {
     private MatchStatsRepository matchStatsRepository;
 
     @BeforeEach
-    private void cleanup(){
+    public void cleanup(){
         matchStatsRepository.deleteAll();
     }
 

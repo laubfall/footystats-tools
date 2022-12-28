@@ -58,7 +58,7 @@ public class MatchControllerTest {
     }
 
     @BeforeEach
-    private void cleanup() {
+    public void cleanup() {
         matchRepository.deleteAll();
     }
 

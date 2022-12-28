@@ -43,7 +43,7 @@ public class FootyStatsCsvUploadControllerTest {
     private MockMvc mvc;
 
     @BeforeEach
-    private void cleanup(){
+    public void cleanup(){
         matchStatsRepository.deleteAll();
 		leagueStatsRepository.deleteAll();
 		teamStatsRepository.deleteAll();
