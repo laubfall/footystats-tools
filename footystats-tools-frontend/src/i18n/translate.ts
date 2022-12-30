@@ -1,12 +1,12 @@
-import * as i18n from './de.json';
+import * as i18n from './translations/de.json';
 
-const substitutionStartTag = '{';
+const substitutionStartTag = "{";
 
-const substitutionEndTag = '}';
+const substitutionEndTag = "}";
 
 export default function translate(
 	key: string,
-	substitutions?: string[]
+	substitutions?: string[],
 ): string {
 	let translation = (<any>i18n)[key];
 
@@ -14,7 +14,7 @@ export default function translate(
 		for (let i = 0; i < substitutions.length; i += 1) {
 			translation = translation.replace(
 				substitutionStartTag + i + substitutionEndTag,
-				substitutions[i]
+				substitutions[i],
 			);
 		}
 	}

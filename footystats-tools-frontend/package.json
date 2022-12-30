@@ -74,6 +74,7 @@
 		"bootstrap": "^5.2.1",
 		"colord": "^2.9.3",
 		"date-fns": "^2.29.3",
+		"formik": "^2.2.9",
 		"mobx": "^6.7.0",
 		"mobx-react-lite": "^3.4.0",
 		"react-bootstrap": "^2.5.0",
@@ -84,6 +85,7 @@
 		"react-router-dom": "^6.4.0",
 		"react-select": "^5.4.0",
 		"recharts": "^2.1.14",
-		"styled-components": "^5.3.6"
+		"styled-components": "^5.3.6",
+		"yup": "^0.32.11"
 	}
 }

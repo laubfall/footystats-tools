@@ -8,6 +8,7 @@ import { UploadMatchStatsView } from "./matchstats/UploadMatchStatsView";
 import AlertMessagesStore from "../mobx/AlertMessages";
 import { observer } from "mobx-react-lite";
 import { Messages } from "./alert/Messages";
+import {SettingsView} from "./settings/SettingsView";
 
 const FootyStatsTools = () => {
 
@@ -30,6 +31,7 @@ const FootyStatsTools = () => {
 						path="uploadmatchstats"
 						element={<UploadMatchStatsView />}
 					/>
+					<Route path={"settings"} element={<SettingsView />} />
 				</Route>
 			</Routes>
 		</>

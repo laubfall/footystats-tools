@@ -2,6 +2,7 @@ apis/FootyStatsCsvUploadControllerApi.ts
 apis/MatchControllerApi.ts
 apis/MatchStatsControllerApi.ts
 apis/PredictionQualityControllerApi.ts
+apis/SettingsControllerApi.ts
 apis/index.ts
 index.ts
 models/BetPredictionDistribution.ts
@@ -13,10 +14,12 @@ models/Match.ts
 models/MatchStats.ts
 models/Paging.ts
 models/PagingResponseMatch.ts
+models/Password.ts
 models/Precast.ts
 models/PredictionQualityReport.ts
 models/PredictionQualityRevision.ts
 models/PredictionResult.ts
+models/Settings.ts
 models/UploadFileResponse.ts
 models/index.ts
 runtime.ts
