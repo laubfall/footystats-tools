@@ -69,7 +69,7 @@ export class SettingsControllerApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/settings/`,
+            path: `/settings`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,

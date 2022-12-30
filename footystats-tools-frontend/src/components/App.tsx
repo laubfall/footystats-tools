@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router";
+import React from "react";
+import { Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import { MatchesView } from "./matches/MatchesView";
 import { Menu } from "./Menu";
@@ -8,10 +8,9 @@ import { UploadMatchStatsView } from "./matchstats/UploadMatchStatsView";
 import AlertMessagesStore from "../mobx/AlertMessages";
 import { observer } from "mobx-react-lite";
 import { Messages } from "./alert/Messages";
-import {SettingsView} from "./settings/SettingsView";
+import { SettingsView } from "./settings/SettingsView";
 
 const FootyStatsTools = () => {
-
 	const ObsMessages = observer(() => (
 		<Messages messages={[...AlertMessagesStore.messages]} />
 	));

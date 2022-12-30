@@ -22,7 +22,7 @@ public class SettingsController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PostMapping(value = "/", consumes = {"application/json"}, produces = {"application/json"})
+	@PostMapping(consumes = {"application/json"}, produces = {"application/json"})
 	public void saveSettings(@RequestBody Settings settings){
 		Optional<Settings> any = settingsRepository.findAll().stream().findAny();
 		if(any.isEmpty()){
@@ -38,7 +38,10 @@ public class SettingsController {
 
 	@GetMapping(produces = {"application/json"})
 	public Settings loadSettings(){
-
-		return null;
+		Optional<Settings> any = settingsRepository.findAll().stream().findAny();
+		if(any.isEmpty()){
+			return new Settings();
+		}
+		return any.get();
 	}
 }

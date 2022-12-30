@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
-import { Formik } from "formik";
+import {Formik, FormikValues} from "formik";
 import { Button, Form } from "react-bootstrap";
 import translate from "../../i18n/translate";
+import { SettingsControllerApi } from "../../footystats-frontendapi";
 
 export const SettingsView = () => {
+	const sca = new SettingsControllerApi();
+
 	const validationSchema = yup.object({
 		footyusername: yup
 			.string()
@@ -18,14 +21,31 @@ export const SettingsView = () => {
 			),
 	});
 
-	const initialValues = {
-		footyusername: "foobar@example.com",
-		footypassword: "foobar",
+	const [initialValues, setInitialValues] = useState({
+		footyusername: "footy-username",
+		footypassword: "footy-password",
+	});
+
+	const handleSubmit = (values: FormikValues) => {
+		sca.saveSettings({
+			settings: {
+				footyStatsUsername: values.footyusername,
+				footyStatsPassword: {
+					password: values.footypassword,
+				},
+			},
+		});
 	};
 
-	const handleSubmit = (values) => {
-		alert(JSON.stringify(values, null, 2));
-	};
+	useEffect(() => {
+		sca.loadSettings().then((response) =>
+			setInitialValues({
+				...initialValues,
+				footyusername: response.footyStatsUsername,
+				footypassword: response.footyStatsPassword?.password,
+			}),
+		);
+	}, []);
 
 	return (
 		<>
@@ -33,6 +53,7 @@ export const SettingsView = () => {
 				initialValues={initialValues}
 				onSubmit={handleSubmit}
 				validationSchema={validationSchema}
+				enableReinitialize={true}
 			>
 				{({ values, errors, handleChange, handleSubmit }) => (
 					<Form onSubmit={handleSubmit} noValidate>
