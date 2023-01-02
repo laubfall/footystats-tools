@@ -28,12 +28,9 @@ public class CsvFileDownloadService {
 
 	private final SettingsRepository settingsRepository;
 
-	private final EncryptionService encryptionService;
-
-	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository, EncryptionService encryptionService) {
+	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository) {
 		this.properties = properties;
 		this.settingsRepository = settingsRepository;
-		this.encryptionService = encryptionService;
 	}
 
 	public List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {
@@ -43,7 +40,9 @@ public class CsvFileDownloadService {
 
 	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
 		try {
-			final URL url = new URL(properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource() + matchStatsForDay.toEpochSecond(LocalTime.of(0, 0, 0), ZoneOffset.UTC));
+			final URL url = new URL(
+					properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
+							+ matchStatsForDay.toEpochSecond(LocalTime.of(0, 0, 0), ZoneOffset.UTC));
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("GET"); // PUT is another valid option
@@ -81,7 +80,7 @@ public class CsvFileDownloadService {
 			StringJoiner sj = new StringJoiner("&");
 			for (Map.Entry<String, String> entry : arguments.entrySet())
 				sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-					+ URLEncoder.encode(entry.getValue(), "UTF-8"));
+						+ URLEncoder.encode(entry.getValue(), "UTF-8"));
 			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
 			int length = out.length;
 
@@ -92,8 +91,9 @@ public class CsvFileDownloadService {
 				os.write(out);
 			}
 
-			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream().filter(sc -> sc.startsWith("PHPSESSID")).findAny();
-			if(phpsessid.isEmpty()){
+			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream()
+					.filter(sc -> sc.startsWith("PHPSESSID")).findAny();
+			if (phpsessid.isEmpty()) {
 				throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SESSION_ID_MISSING);
 			}
 			var sc = new SessionCookie(phpsessid.get());

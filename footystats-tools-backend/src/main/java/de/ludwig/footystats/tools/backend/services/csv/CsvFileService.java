@@ -47,7 +47,8 @@ public class CsvFileService<T> {
 		var splittedFileName = split(fileNameWithoutExt, '-');
 		var length = splittedFileName.length;
 
-		CsvFileInformation cfi = new CsvFileInformation(csvFileTypeByName(splittedFileName[length - 5]), splittedFileName[0]);
+		CsvFileInformation cfi = new CsvFileInformation(csvFileTypeByName(splittedFileName[length - 5]),
+				splittedFileName[0]);
 		return cfi;
 	}
 }

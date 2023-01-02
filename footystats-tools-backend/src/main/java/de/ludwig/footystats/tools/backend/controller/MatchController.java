@@ -1,59 +1,90 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.services.match.Match;
-import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
+import de.ludwig.footystats.tools.backend.services.match.Match;
+import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
+import lombok.Getter;
+import lombok.Setter;
 
 @RestController
 @RequestMapping("/match")
 public class MatchController {
-    private MatchRepository matchRepository;
+	private MatchRepository matchRepository;
 
-    public MatchController(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
+	private CsvFileDownloadService csvFileDownloadService;
 
-    @PostMapping(value = "/list", consumes = {"application/json"}, produces = {"application/json"})
-    public PagingResponse<Match> listMatches(@RequestBody ListMatchRequest request) {
-        var pageRequest = request.paging.convert();
-        var matcher = ExampleMatcher.matching();
-        var sampleMatch = new Match();
-        var example = Example.of(sampleMatch, matcher);
-        var matches = matchRepository.findAll(example, pageRequest);
-        var pr = new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
-        return pr;
-    }
+	public MatchController(MatchRepository matchRepository, CsvFileDownloadService csvFileDownloadService) {
+		this.matchRepository = matchRepository;
+		this.csvFileDownloadService = csvFileDownloadService;
+	}
 
-    @JsonComponent
-    public static class ListMatchRequest {
-        @Setter
-        @Getter
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        private LocalDateTime start;
+	@PostMapping(value = "/list", consumes = { "application/json" }, produces = { "application/json" })
+	public PagingResponse<Match> listMatches(@RequestBody ListMatchRequest request) {
+		var pageRequest = request.paging.convert();
+		var matcher = ExampleMatcher.matching();
+		var sampleMatch = new Match();
+		var example = Example.of(sampleMatch, matcher);
+		var matches = matchRepository.findAll(example, pageRequest);
+		var pr = new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
+		return pr;
+	}
 
-        @Setter
-        @Getter
-        private String country;
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@GetMapping(value = "/loadMatchesOfTheDayFromFooty")
+	public void loadMatchesOfTheDayFromFooty() {
+		var rawMatches = csvFileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
+		File tmpFile = null;
+		try {
+			tmpFile = File.createTempFile("matchStats", "csv");
+			FileUtils.writeLines(tmpFile, rawMatches);
+		} catch (IOException e) {
+			if (tmpFile != null && tmpFile.exists()) {
+				FileUtils.deleteQuietly(tmpFile);
+			}
+		}
+	}
 
-        @Setter
-        @Getter
-        private String league;
+	@JsonComponent
+	public static class ListMatchRequest {
+		@Setter
+		@Getter
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+		private LocalDateTime start;
 
-        @Setter
-        @Getter
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private LocalDateTime end;
+		@Setter
+		@Getter
+		private String country;
 
-        @Setter
-        @Getter
-        private Paging paging;
-    }
+		@Setter
+		@Getter
+		private String league;
+
+		@Setter
+		@Getter
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+		private LocalDateTime end;
+
+		@Setter
+		@Getter
+		private Paging paging;
+	}
 }
-
