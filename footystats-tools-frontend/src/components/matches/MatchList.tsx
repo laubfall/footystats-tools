@@ -22,30 +22,6 @@ import {
 	PredictionResult,
 } from "../../footystats-frontendapi";
 
-export type BetPrediction = {
-	bet: BetPredictionQualityBetEnum;
-	prediction: PredictionResult;
-};
-
-export type MatchListEntry = {
-	gameStartsAt: Date;
-	awayTeam: string;
-	homeTeam: string;
-	country: string;
-	result: string;
-	footyStatsUrl: string;
-	betPredictions: BetPrediction[];
-};
-
-export type MatchListProps = {
-	entries: MatchListEntry[];
-	totalRows: number;
-	sortHandler: SortHandler;
-	pageChange?: PaginationChangePage;
-	pageSizeChange?: PaginationChangeRowsPerPage;
-	predictionForBets?: BetPredictionQualityBetEnum[];
-};
-
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
 ) {
@@ -215,6 +191,30 @@ export const MatchList = ({
 			/>
 		</>
 	);
+};
+
+export type BetPrediction = {
+	bet: BetPredictionQualityBetEnum;
+	prediction: PredictionResult;
+};
+
+export type MatchListEntry = {
+	gameStartsAt: Date;
+	awayTeam: string;
+	homeTeam: string;
+	country: string;
+	result: string;
+	footyStatsUrl: string;
+	betPredictions: BetPrediction[];
+};
+
+export type MatchListProps = {
+	entries: MatchListEntry[];
+	totalRows: number;
+	sortHandler: SortHandler;
+	pageChange?: PaginationChangePage;
+	pageSizeChange?: PaginationChangeRowsPerPage;
+	predictionForBets?: BetPredictionQualityBetEnum[];
 };
 
 export type SortHandler = {

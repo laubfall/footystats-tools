@@ -88,8 +88,8 @@ export const MatchesView = () => {
 	const [filter, setFilter] = useState<FilterSettings>({
 		country: [],
 		league: [],
-		timeFrom: null,
-		timeUntil: null,
+		timeFrom: undefined,
+		timeUntil: undefined,
 	});
 
 	function createMatchListEntries(n: Match[]) {
