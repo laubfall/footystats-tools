@@ -70,7 +70,7 @@ export const SettingsView = () => {
 								isInvalid={!!errors.footyusername}
 							/>
 							<Form.Control.Feedback type="invalid">
-								{errors.footyusername}
+								{errors.footyusername as string}
 							</Form.Control.Feedback>
 						</Form.Group>
 
@@ -87,7 +87,7 @@ export const SettingsView = () => {
 								isInvalid={!!errors.footypassword}
 							/>
 							<Form.Control.Feedback type="invalid">
-								{errors.footypassword}
+								{errors.footypassword as string}
 							</Form.Control.Feedback>
 						</Form.Group>
 

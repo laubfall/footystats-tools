@@ -31,6 +31,12 @@ export interface Settings {
      * @type {string}
      * @memberof Settings
      */
+    getId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Settings
+     */
     footyStatsUsername?: string;
     /**
      * 
@@ -59,6 +65,7 @@ export function SettingsFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'getId': !exists(json, 'get_id') ? undefined : json['get_id'],
         'footyStatsUsername': !exists(json, 'footyStatsUsername') ? undefined : json['footyStatsUsername'],
         'footyStatsPassword': !exists(json, 'footyStatsPassword') ? undefined : PasswordFromJSON(json['footyStatsPassword']),
     };
@@ -73,6 +80,7 @@ export function SettingsToJSON(value?: Settings | null): any {
     }
     return {
         
+        'get_id': value.getId,
         'footyStatsUsername': value.footyStatsUsername,
         'footyStatsPassword': PasswordToJSON(value.footyStatsPassword),
     };

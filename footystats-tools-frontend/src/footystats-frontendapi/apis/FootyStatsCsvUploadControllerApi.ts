@@ -37,6 +37,29 @@ export class FootyStatsCsvUploadControllerApi extends runtime.BaseAPI {
 
     /**
      */
+    async loadMatchesOfTheDayFromFootyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/loadMatchesOfTheDayFromFooty`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async loadMatchesOfTheDayFromFooty(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.loadMatchesOfTheDayFromFootyRaw(initOverrides);
+    }
+
+    /**
+     */
     async uploadFileRaw(requestParameters: UploadFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UploadFileResponse>> {
         if (requestParameters.file === null || requestParameters.file === undefined) {
             throw new runtime.RequiredError('file','Required parameter requestParameters.file was null or undefined when calling uploadFile.');

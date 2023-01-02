@@ -1,21 +1,25 @@
 package de.ludwig.footystats.tools.backend.controller;
 
+import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStatsService;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +31,8 @@ public class FootyStatsCsvUploadController {
 
 	private final CsvFileService<MatchStats> csvFileService;
 
+	private final CsvFileDownloadService matchStatsFileDownloadService;
+
 	private final MatchStatsService matchStatsService;
 
 	private final LeagueStatsService leagueStatsService;
@@ -34,8 +40,9 @@ public class FootyStatsCsvUploadController {
 	private final TeamStatsService teamStatsService;
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-										 MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService) {
+										 CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService) {
 		this.csvFileService = fileStorageService;
+		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 		this.matchStatsService = matchStatsService;
 		this.leagueStatsService = leagueStatsService;
 		this.teamStatsService = teamStatsService;
@@ -60,6 +67,24 @@ public class FootyStatsCsvUploadController {
 				.stream()
 				.map(file -> uploadFile(file))
 				.collect(Collectors.toList());
+	}
+
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@GetMapping(value = "/loadMatchesOfTheDayFromFooty")
+	public void loadMatchesOfTheDayFromFooty() {
+		var rawMatches = matchStatsFileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
+		File tmpFile = null;
+		try {
+			tmpFile = File.createTempFile("matchStats", "csv");
+			FileUtils.writeLines(tmpFile, rawMatches);
+
+			List<MatchStats> matchStats = csvFileService.importFile(new FileInputStream(tmpFile), MatchStats.class);
+			matchStats.forEach(matchStatsService::importMatchStats);
+		} catch (IOException e) {
+			if (tmpFile != null && tmpFile.exists()) {
+				FileUtils.deleteQuietly(tmpFile);
+			}
+		}
 	}
 
 	private void store(MultipartFile file) throws IOException {

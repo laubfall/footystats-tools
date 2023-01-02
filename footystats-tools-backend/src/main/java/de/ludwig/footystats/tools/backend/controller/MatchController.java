@@ -1,12 +1,15 @@
 package de.ludwig.footystats.tools.backend.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -30,11 +33,8 @@ import lombok.Setter;
 public class MatchController {
 	private MatchRepository matchRepository;
 
-	private CsvFileDownloadService csvFileDownloadService;
-
-	public MatchController(MatchRepository matchRepository, CsvFileDownloadService csvFileDownloadService) {
+	public MatchController(MatchRepository matchRepository, CsvFileDownloadService csvFileDownloadService, CsvFileService<MatchStats> matchStatsCsvFileService) {
 		this.matchRepository = matchRepository;
-		this.csvFileDownloadService = csvFileDownloadService;
 	}
 
 	@PostMapping(value = "/list", consumes = { "application/json" }, produces = { "application/json" })
@@ -46,21 +46,6 @@ public class MatchController {
 		var matches = matchRepository.findAll(example, pageRequest);
 		var pr = new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
 		return pr;
-	}
-
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@GetMapping(value = "/loadMatchesOfTheDayFromFooty")
-	public void loadMatchesOfTheDayFromFooty() {
-		var rawMatches = csvFileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
-		File tmpFile = null;
-		try {
-			tmpFile = File.createTempFile("matchStats", "csv");
-			FileUtils.writeLines(tmpFile, rawMatches);
-		} catch (IOException e) {
-			if (tmpFile != null && tmpFile.exists()) {
-				FileUtils.deleteQuietly(tmpFile);
-			}
-		}
 	}
 
 	@JsonComponent

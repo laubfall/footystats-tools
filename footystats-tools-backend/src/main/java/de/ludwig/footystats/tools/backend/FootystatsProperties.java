@@ -29,7 +29,7 @@ public class FootystatsProperties {
 	@Setter
 	private FootystatsWebpageProperties webpage;
 
-	public class FootystatsWebpageProperties {
+	public static class FootystatsWebpageProperties {
 		@Getter
 		@Setter
 		private String baseUrl;

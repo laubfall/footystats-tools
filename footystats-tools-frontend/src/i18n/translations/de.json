@@ -5,6 +5,7 @@
 	"renderer.influencerdistributiongraph.scatterdiagram.betsuccess": "Erfolgreich bewertet",
 	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
 	"renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
+	"renderer.matchesview.button.loadmatchstats": "Aktuelle Statistiken von Footystats laden",
 	"renderer.matchlist.influencer.popup.title": "Influencer Details",
 	"renderer.matchlist.table.col.five": "Ergebnis",
 	"renderer.matchlist.table.col.four": "Land",

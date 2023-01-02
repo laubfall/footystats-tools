@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { add, sub } from "date-fns";
 import {
 	PaginationChangePage,
@@ -15,12 +15,14 @@ import {
 } from "./MatchList";
 import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
-	BetPredictionQualityBetEnum,
+	BetPredictionQualityBetEnum, FootyStatsCsvUploadControllerApi,
 	Match,
+	MatchControllerApi,
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
 import AlertMessages from "../../mobx/AlertMessages";
+import translate from "../../i18n/translate";
 
 function matchToBetPrediction(match: Match): BetPrediction[] {
 	const betPredictions: BetPrediction[] = [];
@@ -165,6 +167,11 @@ export const MatchesView = () => {
 		setPerPage(newPerPage);
 	};
 
+	const loadLatestMatchStats = () => {
+		const footyStatsApi = new FootyStatsCsvUploadControllerApi();
+		footyStatsApi.loadMatchesOfTheDayFromFooty();
+	};
+
 	useEffect(() => {
 		loadMatches([], [], undefined, undefined, {
 			page: 0,
@@ -192,6 +199,13 @@ export const MatchesView = () => {
 							setFilter(changedFilter);
 						}}
 					/>
+				</Col>
+				<Col>
+					<Button onClick={loadLatestMatchStats}>
+						{translate(
+							"renderer.matchesview.button.loadmatchstats",
+						)}
+					</Button>
 				</Col>
 			</Row>
 			<MatchList
