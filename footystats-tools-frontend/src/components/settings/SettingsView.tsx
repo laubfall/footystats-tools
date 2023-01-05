@@ -3,10 +3,10 @@ import * as yup from "yup";
 import {Formik, FormikValues} from "formik";
 import { Button, Form } from "react-bootstrap";
 import translate from "../../i18n/translate";
-import { SettingsControllerApi } from "../../footystats-frontendapi";
+import {Configuration, SettingsControllerApi} from "../../footystats-frontendapi";
 
 export const SettingsView = () => {
-	const sca = new SettingsControllerApi();
+	const sca = new SettingsControllerApi(new Configuration({basePath: ""}));
 
 	const validationSchema = yup.object({
 		footyusername: yup

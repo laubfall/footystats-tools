@@ -168,6 +168,9 @@
 									<artifactId>lombok</artifactId>
 								</exclude>
 							</excludes>
+							<profiles>
+								<profile>openapi</profile>
+							</profiles>
 						</configuration>
 					</plugin>
 					<plugin>

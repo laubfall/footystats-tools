@@ -5,6 +5,7 @@ db.createUser( { user: "admin",
 	roles: [ "userAdminAnyDatabase",
 		"dbAdminAnyDatabase",
 		"readWriteAnyDatabase"] } )
+
 */
 db = db.getSiblingDB('footystats');
 db.createUser(
@@ -14,4 +15,3 @@ db.createUser(
         roles: [{ role: 'readWrite', db: 'footystats' }]
     }
 );
-db.createCollection('matches');
