@@ -9,8 +9,8 @@ mvn install -P openapi
 cd - || exit
 echo "Build footystats-tools frontend"
 cd ../footystats-tools-frontend || exit
-npm run-script build
 yarn run openapi-generator-cli generate -g typescript-fetch -i ../footystats-tools-backend/target/openapi/openapi.json -o src/footystats-frontendapi --additional-properties=typescriptThreePlus=true --server-variables=env=ubuntu,port=8080
+npm run-script build
 
 cd ..
 zipName=$1

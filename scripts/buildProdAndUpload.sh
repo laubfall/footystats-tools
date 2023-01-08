@@ -5,8 +5,8 @@
 # 3: Path to copy footystats
 
 zipName="footystats-tools-release.zip"
-if test -f nonexistent_file; then
-  rm nonexistent_file
+if test -f $zipName; then
+  rm $zipName
 fi
 
 source buildAll.sh $zipName
