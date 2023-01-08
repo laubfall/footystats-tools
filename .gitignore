@@ -58,3 +58,6 @@ npm-debug.log.*
 # Visual Studio Code
 .vscode/tasks-context.json
 .history
+
+### Build artifacts
+footystats-tools-release.zip

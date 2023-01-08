@@ -1,15 +1,15 @@
 [Unit]
-Description=My Webapp Java REST Service
+Description=Footystats Tools Frontend and Backend
 [Service]
 User=ubuntu
 # The configuration file application.properties should be here:
 
 #change this to your workspace
-WorkingDirectory=/home/ubuntu/workspace
+WorkingDirectory=/home/ubuntu/apps/footystats-tools
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/home/ubuntu/workspace/my-webapp
+ExecStart=/home/ubuntu/apps/footystats-tools/start-footystats-tools.sh
 
 SuccessExitStatus=143
 TimeoutStopSec=10
