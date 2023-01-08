@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class MatchStatsDownloadTask {
@@ -19,7 +18,7 @@ public class MatchStatsDownloadTask {
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 	}
 
-	@Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 12)
+	@Scheduled(cron = "0 0 0,12 * * *")
 	public void runMatchStatsDownload() {
 		logger.info("Start downloading matchStats from footystats as background task.");
 		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now());
