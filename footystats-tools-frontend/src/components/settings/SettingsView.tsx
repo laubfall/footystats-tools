@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
-import {Formik, FormikValues} from "formik";
+import { Formik, FormikValues } from "formik";
 import { Button, Form } from "react-bootstrap";
 import translate from "../../i18n/translate";
-import {Configuration, SettingsControllerApi} from "../../footystats-frontendapi";
+import {
+	Configuration,
+	SettingsControllerApi,
+} from "../../footystats-frontendapi";
 
 export const SettingsView = () => {
-	const sca = new SettingsControllerApi(new Configuration({basePath: ""}));
+	const sca = new SettingsControllerApi();
 
 	const validationSchema = yup.object({
 		footyusername: yup
