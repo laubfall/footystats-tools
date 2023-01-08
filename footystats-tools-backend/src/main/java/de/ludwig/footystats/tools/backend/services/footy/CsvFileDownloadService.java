@@ -1,15 +1,20 @@
 package de.ludwig.footystats.tools.backend.services.footy;
 
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
-import de.ludwig.footystats.tools.backend.services.EncryptionService;
 import de.ludwig.footystats.tools.backend.services.ServiceException;
+import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.settings.Settings;
 import de.ludwig.footystats.tools.backend.services.settings.SettingsRepository;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
@@ -28,9 +33,31 @@ public class CsvFileDownloadService {
 
 	private final SettingsRepository settingsRepository;
 
-	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository) {
+	private final CsvFileService<MatchStats> csvFileService;
+
+	private final MatchStatsService matchStatsService;
+
+	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository, CsvFileService<MatchStats> csvFileService, MatchStatsService matchStatsService) {
 		this.properties = properties;
 		this.settingsRepository = settingsRepository;
+		this.csvFileService = csvFileService;
+		this.matchStatsService = matchStatsService;
+	}
+
+	public void downloadMatchStatsCsvFileAndImport(LocalDate matchStatsForDay){
+		var rawMatches = downloadMatchStatsCsvFile(LocalDate.now());
+		File tmpFile = null;
+		try {
+			tmpFile = File.createTempFile("matchStats", "csv");
+			FileUtils.writeLines(tmpFile, rawMatches);
+
+			List<MatchStats> matchStats = csvFileService.importFile(new FileInputStream(tmpFile), MatchStats.class);
+			matchStats.forEach(matchStatsService::importMatchStats);
+		} catch (IOException e) {
+			if (tmpFile != null && tmpFile.exists()) {
+				FileUtils.deleteQuietly(tmpFile);
+			}
+		}
 	}
 
 	public List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {

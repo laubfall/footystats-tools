@@ -19,14 +19,11 @@ public class MatchStatsDownloadTask {
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 	}
 
-	@Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 15)
+	@Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 12)
 	public void runMatchStatsDownload() {
 		logger.info("Start downloading matchStats from footystats as background task.");
-		try {
-			matchStatsFileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
-		} catch (RuntimeException e){
-			logger.error("Failed executing download service", e);
-		}
+		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now());
+		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now().plusDays(1));
 		logger.info("Finished downloading matchStats from footystats as background task.");
 	}
 }

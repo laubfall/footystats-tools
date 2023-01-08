@@ -32,9 +32,7 @@ public class FootyStatsCsvUploadController {
 	private final CsvFileService<MatchStats> csvFileService;
 
 	private final CsvFileDownloadService matchStatsFileDownloadService;
-
 	private final MatchStatsService matchStatsService;
-
 	private final LeagueStatsService leagueStatsService;
 
 	private final TeamStatsService teamStatsService;
@@ -72,19 +70,7 @@ public class FootyStatsCsvUploadController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@GetMapping(value = "/loadMatchesOfTheDayFromFooty")
 	public void loadMatchesOfTheDayFromFooty() {
-		var rawMatches = matchStatsFileDownloadService.downloadMatchStatsCsvFile(LocalDate.now());
-		File tmpFile = null;
-		try {
-			tmpFile = File.createTempFile("matchStats", "csv");
-			FileUtils.writeLines(tmpFile, rawMatches);
-
-			List<MatchStats> matchStats = csvFileService.importFile(new FileInputStream(tmpFile), MatchStats.class);
-			matchStats.forEach(matchStatsService::importMatchStats);
-		} catch (IOException e) {
-			if (tmpFile != null && tmpFile.exists()) {
-				FileUtils.deleteQuietly(tmpFile);
-			}
-		}
+		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now());
 	}
 
 	private void store(MultipartFile file) throws IOException {
