@@ -1,5 +1,8 @@
 package de.ludwig.footystats.tools.backend.services.match;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @JsonComponent
 @CompoundIndexes({
-        @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
+        @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
 })
 public class Match {
     @Getter
@@ -23,6 +26,7 @@ public class Match {
     private Long dateUnix;
     @Getter
     @Setter
+	@JsonFormat(pattern = "YYYY-MM-DD hh:mm")
     private LocalDateTime dateGMT;
     @Getter
     @Setter

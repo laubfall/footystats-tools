@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
-import { add, sub } from "date-fns";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
@@ -46,7 +45,7 @@ function matchToBetPrediction(match: Match): BetPrediction[] {
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
 		const mle: MatchListEntry = {
-			gameStartsAt: ms.dateGMT,
+			gameStartsAt: new Date(ms.dateGMT.toJSON()),
 			awayTeam: ms.awayTeam,
 			homeTeam: ms.homeTeam,
 			country: ms.country,
@@ -80,7 +79,7 @@ export const MatchesView = () => {
 	const [perPage, setPerPage] = useState(10);
 	const [page, setPage] = useState(0);
 	const [sortColumn, setSortColumn] = useState<string | undefined>(
-		"date_unix",
+		"dateGMT",
 	);
 	const [sortOrder, setSortOrder] = useState<PagingDirectionEnum>(
 		PagingDirectionEnum.Desc,
@@ -129,7 +128,7 @@ export const MatchesView = () => {
 			filter.league,
 			filter.timeFrom,
 			filter.timeUntil,
-			{ page: page, size: perPage, direction: sortThatWay },
+			{ page: page, size: perPage, direction: sortThatWay, properties: [column.sortField] },
 		);
 	};
 
@@ -145,6 +144,7 @@ export const MatchesView = () => {
 				page: newPage,
 				size: perPage,
 				direction: sortOrder,
+				properties: [sortColumn],
 			},
 		);
 	};
@@ -162,6 +162,7 @@ export const MatchesView = () => {
 				page: currentPage,
 				size: newPerPage,
 				direction: sortOrder,
+				properties: [sortColumn],
 			},
 		);
 		setPerPage(newPerPage);
@@ -176,6 +177,8 @@ export const MatchesView = () => {
 		loadMatches([], [], undefined, undefined, {
 			page: 0,
 			size: perPage,
+			direction: sortOrder,
+			properties: [sortColumn],
 		});
 	}, []);
 
@@ -194,6 +197,7 @@ export const MatchesView = () => {
 									page: page,
 									size: perPage,
 									direction: sortOrder,
+									properties: [sortColumn],
 								},
 							);
 							setFilter(changedFilter);

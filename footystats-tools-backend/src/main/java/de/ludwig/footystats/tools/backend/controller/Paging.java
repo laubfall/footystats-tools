@@ -29,21 +29,10 @@ public class Paging implements Serializable {
 			return PageRequest.of(page, size);
 		}
 
-		if (direction != null) {
+		if (direction != null && (properties == null || properties.isEmpty())) {
 			return PageRequest.of(page, size, Sort.by(direction, "country"));
 		}
 
-		/*
-		 * if(sort != null){
-		 * return PageRequest.of(page, size, sort);
-		 * }
-		 *
-		 */
-
-		if (direction != null && properties != null) {
-			return PageRequest.of(page, size, direction, properties.toArray(new String[] {}));
-		}
-
-		return null;
+		return PageRequest.of(page, size, direction, properties.toArray(new String[] {}));
 	}
 }

@@ -146,7 +146,7 @@ export const MatchList = ({
 			name: translate("renderer.matchlist.table.col.one"),
 			selector: (row) => row.gameStartsAt.toDateString(),
 			sortable: true,
-			sortField: "date_unix",
+			sortField: "dateGMT",
 		},
 		{
 			name: translate("renderer.matchlist.table.col.two"),
