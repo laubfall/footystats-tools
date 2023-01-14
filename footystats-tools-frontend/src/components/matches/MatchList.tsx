@@ -15,6 +15,8 @@ import {
 	Popover,
 } from "react-bootstrap";
 import { uniqueId } from "lodash";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
 import {
 	BetPredictionQualityBetEnum,
@@ -144,7 +146,10 @@ export const MatchList = ({
 	let columns: TableColumn<MatchListEntry>[] = [
 		{
 			name: translate("renderer.matchlist.table.col.one"),
-			selector: (row) => row.gameStartsAt.toDateString(),
+			selector: (row) =>
+				format(row.gameStartsAt, "E dd.MM.yyyy hh:mm", {
+					locale: de,
+				}),
 			sortable: true,
 			sortField: "dateGMT",
 		},

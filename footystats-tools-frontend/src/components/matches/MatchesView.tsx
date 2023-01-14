@@ -4,7 +4,7 @@ import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
-import { NDate, NString } from "../../app/types/General";
+import { NString } from "../../app/types/General";
 import { FilterSettings, MatchFilterHoc } from "./MatchFilter";
 import {
 	BetPrediction,
@@ -14,33 +14,14 @@ import {
 } from "./MatchList";
 import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
-	BetPredictionQualityBetEnum, FootyStatsCsvUploadControllerApi,
+	BetPredictionQualityBetEnum,
+	FootyStatsCsvUploadControllerApi,
 	Match,
-	MatchControllerApi,
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
 import AlertMessages from "../../mobx/AlertMessages";
 import translate from "../../i18n/translate";
-
-function matchToBetPrediction(match: Match): BetPrediction[] {
-	const betPredictions: BetPrediction[] = [];
-	if (match.o05) {
-		betPredictions.push({
-			bet: BetPredictionQualityBetEnum.OverZeroFive,
-			prediction: match.o05,
-		});
-	}
-
-	if (match.bttsYes) {
-		betPredictions.push({
-			bet: BetPredictionQualityBetEnum.BttsYes,
-			prediction: match.bttsYes,
-		});
-	}
-
-	return betPredictions;
-}
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
@@ -78,9 +59,7 @@ export const MatchesView = () => {
 	const [totalRows, setTotalRows] = useState<number>(0);
 	const [perPage, setPerPage] = useState(10);
 	const [page, setPage] = useState(0);
-	const [sortColumn, setSortColumn] = useState<string | undefined>(
-		"dateGMT",
-	);
+	const [sortColumn, setSortColumn] = useState<string | undefined>("dateGMT");
 	const [sortOrder, setSortOrder] = useState<PagingDirectionEnum>(
 		PagingDirectionEnum.Desc,
 	);
@@ -128,7 +107,12 @@ export const MatchesView = () => {
 			filter.league,
 			filter.timeFrom,
 			filter.timeUntil,
-			{ page: page, size: perPage, direction: sortThatWay, properties: [column.sortField] },
+			{
+				page: page,
+				size: perPage,
+				direction: sortThatWay,
+				properties: [column.sortField],
+			},
 		);
 	};
 
@@ -141,7 +125,7 @@ export const MatchesView = () => {
 			filter.timeFrom,
 			filter.timeUntil,
 			{
-				page: newPage,
+				page: newPageValue,
 				size: perPage,
 				direction: sortOrder,
 				properties: [sortColumn],
@@ -159,7 +143,7 @@ export const MatchesView = () => {
 			filter.timeFrom,
 			filter.timeUntil,
 			{
-				page: currentPage,
+				page: currentPage - 1,
 				size: newPerPage,
 				direction: sortOrder,
 				properties: [sortColumn],
