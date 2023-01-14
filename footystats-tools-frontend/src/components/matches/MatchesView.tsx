@@ -22,6 +22,7 @@ import {
 } from "../../footystats-frontendapi";
 import AlertMessages from "../../mobx/AlertMessages";
 import translate from "../../i18n/translate";
+import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
@@ -83,6 +84,8 @@ export const MatchesView = () => {
 	) {
 		const alertMessages = AlertMessages;
 		const mss = new IpcMatchService();
+		const loadingOverlayStore = LoadingOverlayStore;
+		loadingOverlayStore.loadingNow();
 		mss.matchesByFilter(undefined, undefined, from, until, paging)
 			.then(async (n) => {
 				setTotalRows(n.totalElements);
@@ -92,7 +95,8 @@ export const MatchesView = () => {
 			.catch((reason) => {
 				console.error("Failed to load matches for MatchesView", reason);
 				alertMessages.addMessage("hurz");
-			});
+			})
+			.finally(() => loadingOverlayStore.notLoadingNow());
 	}
 
 	const sortHandler: SortHandler = (column, newSortOrder) => {
@@ -154,7 +158,11 @@ export const MatchesView = () => {
 
 	const loadLatestMatchStats = () => {
 		const footyStatsApi = new FootyStatsCsvUploadControllerApi();
-		footyStatsApi.loadMatchesOfTheDayFromFooty();
+		const loadingOverlayStore = LoadingOverlayStore;
+		loadingOverlayStore.loadingNow();
+		footyStatsApi
+			.loadMatchesOfTheDayFromFooty()
+			.finally(() => loadingOverlayStore.notLoadingNow());
 	};
 
 	useEffect(() => {

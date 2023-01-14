@@ -9,30 +9,55 @@ import AlertMessagesStore from "../mobx/AlertMessages";
 import { observer } from "mobx-react-lite";
 import { Messages } from "./alert/Messages";
 import { SettingsView } from "./settings/SettingsView";
+import LoadingOverlay from "react-loading-overlay";
+import { Spinner } from "react-bootstrap";
+import LoadingOverlayStore from "../mobx/LoadingOverlayStore";
 
 const FootyStatsTools = () => {
 	const ObsMessages = observer(() => (
 		<Messages messages={[...AlertMessagesStore.messages]} />
 	));
 
+	const loadingOverlayStore = LoadingOverlayStore;
+
+	const ObsLoadingOverlay = observer(
+		({ children, loading = loadingOverlayStore.loading }: any) => {
+			return (
+				<LoadingOverlay
+					spinner={<Spinner animation="border" />}
+					active={loading}
+				>
+					{children}
+				</LoadingOverlay>
+			);
+		},
+	);
+
 	return (
 		<>
 			<ObsMessages />
 			<Menu />
-			<Routes>
-				<Route path="/">
-					<Route path="matchList" element={<MatchesView />} />
-					<Route
-						path="predictionQuality"
-						element={<PredictionQualityView />}
-					/>
-					<Route
-						path="uploadmatchstats"
-						element={<UploadMatchStatsView />}
-					/>
-					<Route path={"settings"} element={<SettingsView />} />
-				</Route>
-			</Routes>
+			<ObsLoadingOverlay>
+				<>
+					<Routes>
+						<Route path="/">
+							<Route path="matchList" element={<MatchesView />} />
+							<Route
+								path="predictionQuality"
+								element={<PredictionQualityView />}
+							/>
+							<Route
+								path="uploadmatchstats"
+								element={<UploadMatchStatsView />}
+							/>
+							<Route
+								path={"settings"}
+								element={<SettingsView />}
+							/>
+						</Route>
+					</Routes>
+				</>
+			</ObsLoadingOverlay>
 		</>
 	);
 };

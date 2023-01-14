@@ -83,6 +83,7 @@
 		"react-data-table-component": "^7.5.3",
 		"react-datetime-picker": "^4.0.0",
 		"react-icons": "^4.4.0",
+		"react-loading-overlay": "^1.0.1",
 		"react-router": "^6.4.0",
 		"react-router-dom": "^6.4.0",
 		"react-select": "^5.4.0",
