@@ -12,6 +12,7 @@ import { SettingsView } from "./settings/SettingsView";
 import LoadingOverlay from "react-loading-overlay";
 import { Spinner } from "react-bootstrap";
 import LoadingOverlayStore from "../mobx/LoadingOverlayStore";
+import { SpinnerWithMessage } from "./spinner/SpinnerWithMessage";
 
 const FootyStatsTools = () => {
 	const ObsMessages = observer(() => (
@@ -21,10 +22,14 @@ const FootyStatsTools = () => {
 	const loadingOverlayStore = LoadingOverlayStore;
 
 	const ObsLoadingOverlay = observer(
-		({ children, loading = loadingOverlayStore.loading }: any) => {
+		({
+			children,
+			loading = loadingOverlayStore.loading,
+			message = loadingOverlayStore.loadingMessage,
+		}: any) => {
 			return (
 				<LoadingOverlay
-					spinner={<Spinner animation="border" />}
+					spinner={<SpinnerWithMessage message={message} />}
 					active={loading}
 				>
 					{children}

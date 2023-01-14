@@ -159,7 +159,9 @@ export const MatchesView = () => {
 	const loadLatestMatchStats = () => {
 		const footyStatsApi = new FootyStatsCsvUploadControllerApi();
 		const loadingOverlayStore = LoadingOverlayStore;
-		loadingOverlayStore.loadingNow();
+		loadingOverlayStore.loadingNow(
+			translate("renderer.matchesview.overlay.loading.footystats"),
+		);
 		footyStatsApi
 			.loadMatchesOfTheDayFromFooty()
 			.finally(() => loadingOverlayStore.notLoadingNow());
