@@ -8,7 +8,7 @@ public class OddsBttsYesInfluencer implements BetResultInfluencer {
 
 	private static final float LOWER_ODDS_BOUND = 1f;
 
-	private static final float CALCULATION_BASE = UPPER_ODDS_BOUND - LOWER_ODDS_BOUND;
+	private static final float VALUE_RANGE = UPPER_ODDS_BOUND - LOWER_ODDS_BOUND;
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
 
@@ -36,7 +36,9 @@ public class OddsBttsYesInfluencer implements BetResultInfluencer {
 			return 0F;
 		}
 
-		return (1 - ((ctx.match().getOddsBTTS_Yes() - LOWER_ODDS_BOUND) / CALCULATION_BASE)) * 100;
+		// with 1 - ... odds with value of 3 result in 0% while odds with value of 1
+		// result in 100 %
+		return (1 - ((ctx.match().getOddsBTTS_Yes() - LOWER_ODDS_BOUND) / VALUE_RANGE)) * 100;
 	}
 
 	// eslint-disable-next-line class-methods-use-this
