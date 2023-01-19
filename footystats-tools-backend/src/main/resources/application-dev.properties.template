@@ -1,0 +1,13 @@
+
+logging.level.org.springframework.data.mongodb.core.MongoTemplate=DEBUG
+
+# 8081 is used by mongo express
+#server.port=8082
+
+spring.config.import=application.properties
+
+#springdoc-openapi-maven-plugin=true
+#springdoc.api-docs.enabled=true
+springdoc.writer-with-default-pretty-printer=true
+
+footystats.allowedOrigins=http://localhost:8082

@@ -8,6 +8,8 @@ import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
@@ -18,9 +20,11 @@ import java.time.LocalDateTime;
 @CompoundIndexes({
         @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
 })
+@Document
 public class MatchStats {
 
 
+	@Indexed
     @CsvBindByName(column = "date_unix")
     @Getter
     @Setter

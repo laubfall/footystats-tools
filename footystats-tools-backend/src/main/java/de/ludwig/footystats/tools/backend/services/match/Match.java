@@ -10,15 +10,17 @@ import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+@Document
 @Builder()
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonComponent
 @CompoundIndexes({
-        @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
+        @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1, 'state': 1}")
 })
 public class Match {
     @Getter
