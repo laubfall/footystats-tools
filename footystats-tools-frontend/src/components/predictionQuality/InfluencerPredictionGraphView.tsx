@@ -51,14 +51,14 @@ const InfluencerPredictionGraph = ({
 				graphs={[
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
+							`renderer.matchesview.bet.${bet}`,
 						)} ${translate("renderer.predictiongraphview.bet")}`,
 						data: i1Distribution,
 						color: colord("rgb(40,200,0)").toRgb(),
 					},
 					{
 						name: `${translate(
-							`renderer.matchesview.bet.${BetPredictionQualityBetEnum[bet]}`,
+							`renderer.matchesview.bet.${bet}`,
 						)} ${translate(
 							"renderer.predictiongraphview.bet.failed",
 						)}`,
@@ -117,7 +117,7 @@ export const InfluencerPredictionGraphView = ({
 
 	return (
 		<>
-			{relevantInfluencerNames.map((name) => {
+			{relevantInfluencerNames.map((name, idx) => {
 				const g1Data = influencerPercentDistributions(
 					name,
 					measurement.distributionBetOnThis || [],
@@ -127,7 +127,8 @@ export const InfluencerPredictionGraphView = ({
 					name,
 					measurement.distributionBetOnThisFailed || [],
 				);
-				return (
+
+				const Graph = (
 					<InfluencerPredictionGraph
 						i1Distribution={g1Data}
 						i2Distribution={g2Data}
@@ -136,6 +137,8 @@ export const InfluencerPredictionGraphView = ({
 						key={uniqueId()}
 					/>
 				);
+
+				return Graph;
 			})}
 		</>
 	);

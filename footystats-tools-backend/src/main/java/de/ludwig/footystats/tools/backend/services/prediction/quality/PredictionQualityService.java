@@ -6,6 +6,7 @@ import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.*;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -60,6 +61,11 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 		var matchesByRevision = matchRepository.findMatchesByRevision_RevisionIsNull();
 		logger.debug("Start computing prediction quality for " + matchesByRevision.size() + " matches.");
 		for (Match match : matchesByRevision) {
+
+			if(MatchStatus.complete.equals(match.getState()) == false){
+				continue;
+			}
+
 			var msm = measure(match);
 			merge(latestReport, msm);
 
