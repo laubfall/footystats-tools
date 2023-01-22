@@ -25,8 +25,8 @@ export const SettingsView = () => {
 	});
 
 	const [initialValues, setInitialValues] = useState({
-		footyusername: "footy-username",
-		footypassword: "footy-password",
+		footyusername: "",
+		footypassword: "",
 	});
 
 	const handleSubmit = (values: FormikValues) => {

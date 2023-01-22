@@ -1,6 +1,7 @@
 {
 	"main.msg.MATCH_FILE_IMPORTED": "Match CSV Datei importiert",
 	"main.msg.STARTED_IMPORT_DIRECTORY_WATCH": "Überwachung von Import-Verzeichnis begonnen",
+	"renderer.api.error.id.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED": "Login bei Footystats hat nicht geklappt.",
 	"renderer.influencerdistributiongraph.scatterdiagram.betfailed": "Nicht erfolgreich bewertet",
 	"renderer.influencerdistributiongraph.scatterdiagram.betsuccess": "Erfolgreich bewertet",
 	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
@@ -40,5 +41,5 @@
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
 	"renderer.settings.input.footyusername": "Benutzername Footystats",
-  "renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
+	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
 }

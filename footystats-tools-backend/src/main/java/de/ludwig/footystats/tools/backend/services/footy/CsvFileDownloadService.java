@@ -9,6 +9,7 @@ import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.TimeZones;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 
 @Service
@@ -67,9 +66,10 @@ public class CsvFileDownloadService {
 
 	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
 		try {
+			LocalDateTime now = LocalDateTime.now();
 			final URL url = new URL(
 					properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
-							+ matchStatsForDay.toEpochSecond(LocalTime.of(0, 0, 0), ZoneOffset.UTC));
+							+ matchStatsForDay.toEpochSecond(LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("GET"); // PUT is another valid option
@@ -118,6 +118,8 @@ public class CsvFileDownloadService {
 				os.write(out);
 			}
 
+			checkLogin(http);
+
 			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream()
 					.filter(sc -> sc.startsWith("PHPSESSID")).findAny();
 			if (phpsessid.isEmpty()) {
@@ -127,6 +129,13 @@ public class CsvFileDownloadService {
 			return sc;
 		} catch (IOException e) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_RETRIEVING_SESSION_FAILED, e);
+		}
+	}
+
+	private static void checkLogin(HttpURLConnection http) throws IOException {
+		var content = IOUtils.toString(http.getInputStream(), "UTF-8");
+		if(content.contains("Your Username, Email or Password is incorrect.")){
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED);
 		}
 	}
 }

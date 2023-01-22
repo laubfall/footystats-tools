@@ -22,7 +22,6 @@ public class MatchStatsDownloadTask {
 	public void runMatchStatsDownload() {
 		logger.info("Start downloading matchStats from footystats as background task.");
 		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now());
-		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now().plusDays(1));
 		logger.info("Finished downloading matchStats from footystats as background task.");
 	}
 }

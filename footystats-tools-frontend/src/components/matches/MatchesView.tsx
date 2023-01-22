@@ -20,9 +20,10 @@ import {
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
-import AlertMessages from "../../mobx/AlertMessages";
+import AlertMessagesStore from "../../mobx/AlertMessages";
 import translate from "../../i18n/translate";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
+import {apiCatchReasonHandler} from "../functions";
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
@@ -82,7 +83,7 @@ export const MatchesView = () => {
 		until: Date,
 		paging?: Paging,
 	) {
-		const alertMessages = AlertMessages;
+		const alertMessages = AlertMessagesStore;
 		const mss = new IpcMatchService();
 		const loadingOverlayStore = LoadingOverlayStore;
 		loadingOverlayStore.loadingNow();
@@ -155,7 +156,6 @@ export const MatchesView = () => {
 		);
 		setPerPage(newPerPage);
 	};
-
 	const loadLatestMatchStats = () => {
 		const footyStatsApi = new FootyStatsCsvUploadControllerApi();
 		const loadingOverlayStore = LoadingOverlayStore;
@@ -164,6 +164,21 @@ export const MatchesView = () => {
 		);
 		footyStatsApi
 			.loadMatchesOfTheDayFromFooty()
+			.then(() =>
+				loadMatches(
+					filter.country,
+					filter.league,
+					filter.timeFrom,
+					filter.timeUntil,
+					{
+						page: page,
+						size: perPage,
+						direction: sortOrder,
+						properties: [sortColumn],
+					},
+				),
+			)
+			.catch(apiCatchReasonHandler)
 			.finally(() => loadingOverlayStore.notLoadingNow());
 	};
 

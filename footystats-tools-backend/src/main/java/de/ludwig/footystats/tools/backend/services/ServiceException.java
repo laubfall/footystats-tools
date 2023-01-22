@@ -16,6 +16,9 @@ public class ServiceException extends RuntimeException{
 		this.type = type;
 	}
 
+	public Type getType() {
+		return type;
+	}
 
 	public static enum Type {
 		ENCRYPTION_SERVICE_CREATION_FAILED(1),
@@ -25,6 +28,7 @@ public class ServiceException extends RuntimeException{
 		CSV_FILE_DOWNLOAD_SERVICE_SETTINGS_MISSING(5),
 		CSV_FILE_DOWNLOAD_SERVICE_RETRIEVING_SESSION_FAILED(6),
 		CSV_FILE_DOWNLOAD_SERVICE_SESSION_ID_MISSING(7),
+		CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED(8),
 		;
 		int code;
 
