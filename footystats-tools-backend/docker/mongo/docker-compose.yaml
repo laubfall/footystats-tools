@@ -2,8 +2,9 @@ version: "3.8"
 
 services:
   footystats-mongodb:
-    image: mongo:3.6
+    image: mongo:4.4.18
     restart: always
+    command: --replSet rs0 --keyFile /replica_set.key
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=hello
@@ -13,6 +14,8 @@ services:
       - 9229:9229
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./replica_set.key:/replica_set.key:ro
+      - ./replica_set_init.js:/replica_set_init.js:ro
 
   footystats-mongo-express:
     image: mongo-express

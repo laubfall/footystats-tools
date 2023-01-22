@@ -1,12 +1,3 @@
-
-/*
-db.createUser( { user: "admin",
-	pwd: "admin",
-	roles: [ "userAdminAnyDatabase",
-		"dbAdminAnyDatabase",
-		"readWriteAnyDatabase"] } )
-
-*/
 db = db.getSiblingDB('footystats');
 db.createUser(
     {
@@ -15,3 +6,4 @@ db.createUser(
         roles: [{ role: 'readWrite', db: 'footystats' }]
     }
 );
+
