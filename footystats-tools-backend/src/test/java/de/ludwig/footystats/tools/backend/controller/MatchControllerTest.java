@@ -79,8 +79,8 @@ public class MatchControllerTest {
         matchRepository.insert(match);
 
         var request = new MatchController.ListMatchRequest();
-        request.setCountry("Germany");
-        request.setLeague("Bundesliga");
+        request.setCountry(List.of("Germany"));
+        request.setLeague(List.of("Bundesliga"));
         request.setStart(date.minusDays(1));
         request.setEnd(date.plusDays(1));
         var paging = Paging.builder().page(0).size(10).build();

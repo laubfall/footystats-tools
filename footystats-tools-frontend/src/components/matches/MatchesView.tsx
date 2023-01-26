@@ -23,7 +23,7 @@ import {
 import AlertMessagesStore from "../../mobx/AlertMessages";
 import translate from "../../i18n/translate";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
-import {apiCatchReasonHandler} from "../functions";
+import { apiCatchReasonHandler } from "../functions";
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
@@ -77,26 +77,22 @@ export const MatchesView = () => {
 	}
 
 	function loadMatches(
-		country: NString[],
-		league: NString[],
+		country: string[],
+		league: string[],
 		from: Date,
 		until: Date,
 		paging?: Paging,
 	) {
-		const alertMessages = AlertMessagesStore;
 		const mss = new IpcMatchService();
 		const loadingOverlayStore = LoadingOverlayStore;
 		loadingOverlayStore.loadingNow();
-		mss.matchesByFilter(undefined, undefined, from, until, paging)
+		mss.matchesByFilter(paging, country, league, from, until)
 			.then(async (n) => {
 				setTotalRows(n.totalElements);
 				const r = await createMatchListEntries(n.elements);
 				setMatches(r);
 			})
-			.catch((reason) => {
-				console.error("Failed to load matches for MatchesView", reason);
-				alertMessages.addMessage("hurz");
-			})
+			.catch(apiCatchReasonHandler)
 			.finally(() => loadingOverlayStore.notLoadingNow());
 	}
 

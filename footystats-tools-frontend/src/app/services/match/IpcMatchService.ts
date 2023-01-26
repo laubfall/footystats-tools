@@ -3,11 +3,11 @@ import { MatchControllerApi, Paging } from "../../../footystats-frontendapi";
 
 class IpcMatchService {
 	async matchesByFilter(
-		country: NString,
-		league: NString,
-		from: NDate,
-		until: NDate,
-		paging?: Paging,
+		paging: Paging,
+		country?: string[],
+		league?: string[],
+		from?: NDate,
+		until?: NDate,
 	) {
 		const api = new MatchControllerApi();
 		return api.listMatches({

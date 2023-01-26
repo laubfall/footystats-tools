@@ -34,16 +34,16 @@ export interface ListMatchRequest {
     start?: Date;
     /**
      * 
-     * @type {string}
+     * @type {Array<string>}
      * @memberof ListMatchRequest
      */
-    country?: string;
+    country?: Array<string>;
     /**
      * 
-     * @type {string}
+     * @type {Array<string>}
      * @memberof ListMatchRequest
      */
-    league?: string;
+    league?: Array<string>;
     /**
      * 
      * @type {Date}
