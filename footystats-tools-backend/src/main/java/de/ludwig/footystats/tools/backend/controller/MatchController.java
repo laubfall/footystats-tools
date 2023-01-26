@@ -42,6 +42,8 @@ public class MatchController {
 			matches = matchRepository.findMatchesByCountryInAndLeagueIn(request.country, request.league, pageRequest);
 		} else if(CollectionUtils.isNotEmpty(request.country) && CollectionUtils.isNotEmpty(request.league) && request.start != null && request.end != null){
 			matches = matchRepository.findMatchesByCountryInAndLeagueInAndDateGMTBetween(request.country, request.league, request.start, request.end, pageRequest);
+		} else if(CollectionUtils.isEmpty(request.country) && CollectionUtils.isEmpty(request.league) && request.start!= null && request.end == null){
+			matches = matchRepository.findMatchesByDateGMTGreaterThanEqual(request.start, pageRequest);
 		}
 
 		if(matches != null){

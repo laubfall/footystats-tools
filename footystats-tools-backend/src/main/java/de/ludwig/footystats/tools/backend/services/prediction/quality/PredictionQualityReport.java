@@ -6,16 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonComponent
 @Document
 public class PredictionQualityReport {
+	@Id
+	@Getter
+	@Setter
+	private String _id; // Mongo document id. Required in order to be able to delete this.
+
 	@Indexed(unique = true)
 	@Getter
 	@Setter
@@ -23,4 +28,9 @@ public class PredictionQualityReport {
 	@Getter
 	@Setter
 	private List<BetPredictionQuality> measurements;
+
+	public PredictionQualityReport(PredictionQualityRevision revision, List<BetPredictionQuality> measurements) {
+		this.revision = revision;
+		this.measurements = measurements;
+	}
 }

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -270,6 +271,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 		});
 	}
 
+	@Transactional
 	public PredictionQualityReport recomputeQuality(PredictionQualityRevision revision) {
 		var report = predictionQualityReportRepository.findByRevision(revision);
 		if (report == null) {
@@ -285,6 +287,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			this.merge(report, msm);
 		});
 
+		predictionQualityReportRepository.delete(report);
 		predictionQualityReportRepository.save(report);
 
 		return report;

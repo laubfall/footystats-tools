@@ -84,8 +84,7 @@ export const MatchesView = () => {
 		paging?: Paging,
 	) {
 		const mss = new IpcMatchService();
-		const loadingOverlayStore = LoadingOverlayStore;
-		loadingOverlayStore.loadingNow();
+		LoadingOverlayStore.loadingNow();
 		mss.matchesByFilter(paging, country, league, from, until)
 			.then(async (n) => {
 				setTotalRows(n.totalElements);
@@ -93,7 +92,7 @@ export const MatchesView = () => {
 				setMatches(r);
 			})
 			.catch(apiCatchReasonHandler)
-			.finally(() => loadingOverlayStore.notLoadingNow());
+			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}
 
 	const sortHandler: SortHandler = (column, newSortOrder) => {
@@ -154,8 +153,7 @@ export const MatchesView = () => {
 	};
 	const loadLatestMatchStats = () => {
 		const footyStatsApi = new FootyStatsCsvUploadControllerApi();
-		const loadingOverlayStore = LoadingOverlayStore;
-		loadingOverlayStore.loadingNow(
+		LoadingOverlayStore.loadingNow(
 			translate("renderer.matchesview.overlay.loading.footystats"),
 		);
 		footyStatsApi
@@ -175,7 +173,7 @@ export const MatchesView = () => {
 				),
 			)
 			.catch(apiCatchReasonHandler)
-			.finally(() => loadingOverlayStore.notLoadingNow());
+			.finally(() => LoadingOverlayStore.notLoadingNow());
 	};
 
 	useEffect(() => {

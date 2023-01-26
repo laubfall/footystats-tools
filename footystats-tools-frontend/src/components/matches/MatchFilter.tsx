@@ -2,36 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
 import Select, { MultiValue, PropsValue } from "react-select";
-import { NDate, NString } from "../../app/types/General";
+import { NString } from "../../app/types/General";
 import countriesAndLeagues from "../../app/countriesAndLeagues";
-
-export type SelectOption = {
-	label: string;
-	value: NString;
-};
-
-export type FilterSettings = {
-	timeFrom: Date;
-	timeUntil: Date;
-	country: NString[];
-	league: NString[];
-};
-
-export type MatchFilterHocProps = {
-	timeFromChanged?: (date: Date) => void;
-	timeUntilChanged?: (date: Date) => void;
-	countryChanged?: (newSelectedCountry: MultiValue<SelectOption>) => void;
-	leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
-	somethingChanged?: (actualFilter: FilterSettings) => void;
-};
-
-export type MatchFilterProps = {
-	selectedCountry?: PropsValue<SelectOption>;
-	countries: SelectOption[];
-	leagues: SelectOption[];
-	timeFrom?: Date;
-	timeUntil?: Date;
-} & MatchFilterHocProps;
 
 export const MatchFilter = ({
 	selectedCountry,
@@ -199,3 +171,31 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		</>
 	);
 };
+
+export type SelectOption = {
+	label: string;
+	value: NString;
+};
+
+export type FilterSettings = {
+	timeFrom: Date;
+	timeUntil: Date;
+	country: NString[];
+	league: NString[];
+};
+
+export type MatchFilterHocProps = {
+	timeFromChanged?: (date: Date) => void;
+	timeUntilChanged?: (date: Date) => void;
+	countryChanged?: (newSelectedCountry: MultiValue<SelectOption>) => void;
+	leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
+	somethingChanged?: (actualFilter: FilterSettings) => void;
+};
+
+export type MatchFilterProps = {
+	selectedCountry?: PropsValue<SelectOption>;
+	countries: SelectOption[];
+	leagues: SelectOption[];
+	timeFrom?: Date;
+	timeUntil?: Date;
+} & MatchFilterHocProps;

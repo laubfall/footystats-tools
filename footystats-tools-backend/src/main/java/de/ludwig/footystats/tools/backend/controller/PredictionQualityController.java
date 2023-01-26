@@ -40,7 +40,12 @@ public class PredictionQualityController {
 
 	@GetMapping("/latest/report")
 	public PredictionQualityReport latestReport(){
-		return predictionQualityReportRepository.findTopByOrderByRevisionDesc();
+		var report = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
+		if(report != null){
+			return report;
+		}
+
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 	}
 
 	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute"})

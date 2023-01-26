@@ -14,6 +14,9 @@ import {
 	PredictionQualityReport,
 } from "../../footystats-frontendapi";
 import { NO_REVISION_SO_FAR } from "../../app/services/prediction/PredictionQualityService.types";
+import { apiCatchReasonHandler } from "../functions";
+import AlertMessageStore from "../../mobx/AlertMessages";
+import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 
 export const PredictionQualityView = () => {
 	const [report, setReport] = useState<PredictionQualityReport>();
@@ -26,24 +29,34 @@ export const PredictionQualityView = () => {
 	const predictionQualityService = new IpcPredictionQualityService();
 
 	useEffect(() => {
-		predictionQualityService
-			.latestReport()
-			.then((rep) => setReport(rep))
-			.catch((reason) =>
-				console.error("Failed to get latest report", reason),
-			);
+		LoadingOverlayStore.loadingNow();
+		try {
+			predictionQualityService
+				.latestReport()
+				.then((rep) => setReport(rep))
+				.catch((reason) => {
+					if (reason.response?.status === 404) {
+						AlertMessageStore.addMessage(
+							translate(
+								"renderer.predictionqualitiyview.messages.noreport",
+							),
+						);
+						return reason;
+					}
+					apiCatchReasonHandler(reason);
+				});
 
-		predictionQualityService
-			.latestRevision()
-			.then((rev) =>
-				setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR),
-			)
-			.catch((reason) =>
-				console.error(
-					"Failed to compute state for recalculate button",
-					reason,
-				),
-			);
+			predictionQualityService
+				.latestRevision()
+				.then((rev) =>
+					setRecalculateAvailable(
+						rev.revision !== NO_REVISION_SO_FAR,
+					),
+				)
+				.catch(apiCatchReasonHandler);
+		} finally {
+			LoadingOverlayStore.notLoadingNow();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -90,32 +103,41 @@ export const PredictionQualityView = () => {
 		);
 	};
 
+	function handleOnClickComputeQuality() {
+		LoadingOverlayStore.loadingNow();
+		predictionQualityService
+			.computeQuality()
+			.then(setReport)
+			.catch(apiCatchReasonHandler)
+			.finally(() => LoadingOverlayStore.notLoadingNow());
+	}
+
+	function handleOnClickRecomputeQuality() {
+		LoadingOverlayStore.loadingNow();
+		predictionQualityService
+			.latestRevision()
+			.then((revision) =>
+				predictionQualityService
+					.recomputeQuality(revision)
+					.then(setReport)
+					.catch(apiCatchReasonHandler),
+			)
+			.catch(apiCatchReasonHandler)
+			.finally(() => LoadingOverlayStore.notLoadingNow());
+	}
+
 	return (
 		<>
 			<Row>
 				<Col>
-					<Button
-						onClick={async () => {
-							setReport(
-								await predictionQualityService.computeQuality(),
-							);
-						}}
-					>
+					<Button onClick={handleOnClickComputeQuality}>
 						{translate(
 							"renderer.predictionqualityview.button.calculate",
 						)}
 					</Button>
 					<Button
 						disabled={recalculateAvailable === false}
-						onClick={async () => {
-							const lr =
-								await predictionQualityService.latestRevision();
-							setReport(
-								await predictionQualityService.recomputeQuality(
-									lr,
-								),
-							);
-						}}
+						onClick={handleOnClickRecomputeQuality}
 					>
 						{translate(
 							"renderer.predictionqualityview.button.recalculate",

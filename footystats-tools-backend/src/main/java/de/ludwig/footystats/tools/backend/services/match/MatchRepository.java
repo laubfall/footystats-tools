@@ -21,6 +21,8 @@ public interface MatchRepository extends MongoRepository<Match, String> {
 
 	Page<Match> findMatchesByDateGMTBetween(LocalDateTime from, LocalDateTime until, PageRequest pageRequest);
 
+	Page<Match> findMatchesByDateGMTGreaterThanEqual(LocalDateTime from, PageRequest pageRequest);
+
 	Page<Match> findMatchesByCountryIn(List<String> countries, PageRequest pageRequest);
 
 	Page<Match> findMatchesByCountryInAndLeagueIn(List<String> countries, List<String> leagues, PageRequest pageRequest);
