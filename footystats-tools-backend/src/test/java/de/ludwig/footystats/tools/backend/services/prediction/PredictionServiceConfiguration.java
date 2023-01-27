@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @TestConfiguration
 public class PredictionServiceConfiguration {
 	@Bean
-	public PredictionQualityService predictionQualityService(MatchRepository matchRepository, MatchService matchService, PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter){
-		return new PredictionQualityService(matchRepository, matchService, predictionQualityReportRepository, mongoTemplate, mappingMongoConverter);
+	public PredictionQualityService predictionQualityService(MatchRepository matchRepository, MatchService matchService, PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties properties){
+		return new PredictionQualityService(matchRepository, matchService, predictionQualityReportRepository, mongoTemplate, mappingMongoConverter, properties);
 	}
 }

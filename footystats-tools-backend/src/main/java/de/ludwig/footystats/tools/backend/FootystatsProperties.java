@@ -29,6 +29,10 @@ public class FootystatsProperties {
 	@Setter
 	private FootystatsWebpageProperties webpage;
 
+	@Getter
+	@Setter
+	private PredictionQualityProperties predictionQuality;
+
 	public static class FootystatsWebpageProperties {
 		@Getter
 		@Setter
@@ -41,5 +45,13 @@ public class FootystatsProperties {
 		@Getter
 		@Setter
 		private String loginRessource;
+	}
+
+	public static class PredictionQualityProperties
+	{
+		// Count of matches to retrieve when finding matches for calculating prediction quality
+		@Getter
+		@Setter
+		private int pageSizeFindingRevisionMatches;
 	}
 }

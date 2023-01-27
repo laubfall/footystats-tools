@@ -12,5 +12,5 @@ public class Precast {
 
 	@Getter
 	@Setter
-	private Integer predictionsToAssess;
+	private Long predictionsToAssess;
 }

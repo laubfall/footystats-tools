@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
-import de.ludwig.footystats.tools.backend.controller.FootyStatsCsvUploadController;
+import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
@@ -9,6 +9,10 @@ import de.ludwig.footystats.tools.backend.services.prediction.*;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,26 +32,31 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 
 	private static final Logger logger = LoggerFactory.getLogger(PredictionQualityService.class);
 
-	private MatchRepository matchRepository;
+	private final MatchRepository matchRepository;
 
-	private MatchService matchService;
+	private final MatchService matchService;
 
-	private PredictionQualityReportRepository predictionQualityReportRepository;
+	private final PredictionQualityReportRepository predictionQualityReportRepository;
+
+	private final FootystatsProperties properties;
 
 	public PredictionQualityService(MatchRepository matchRepository, MatchService matchService,
-									PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter) {
+									PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties properties) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.matchRepository = matchRepository;
 		this.predictionQualityReportRepository = predictionQualityReportRepository;
 		this.matchService = matchService;
+		this.properties = properties;
 	}
 
 	public Precast precast(PredictionQualityRevision revision) {
-		var result = matchRepository.findMatchesByRevision(revision);
+		var probe = new Match();
+		probe.setRevision(revision);
+		var matchCount = matchRepository.count(Example.of(probe));
 		var nextRevision = nextRevision(revision);
 		var precast = new Precast();
 		precast.setRevision(nextRevision);
-		precast.setPredictionsToAssess(result.size());
+		precast.setPredictionsToAssess(matchCount);
 		return precast;
 	}
 
@@ -59,21 +68,28 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			latestReport = new PredictionQualityReport(latestRevision, new ArrayList<>());
 		}
 
-		var matchesByRevision = matchRepository.findMatchesByRevision_RevisionIsNull();
-		logger.debug("Start computing prediction quality for " + matchesByRevision.size() + " matches.");
-		for (Match match : matchesByRevision) {
+		var sort = Sort.TypedSort.sort(Match.class).by(Match::getDateGMT);
+		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+		Page<Match> matchesPage;
+		var pageCnt = 1;
+		matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
+		while(matchesPage.hasContent()) {
+			logger.info("Start computing prediction quality.");
+			var matchesByRevision = matchesPage.getContent();
+			for (Match match : matchesByRevision) {
+				var msm = measure(match);
+				merge(latestReport, msm);
 
-			if(MatchStatus.complete.equals(match.getState()) == false){
-				continue;
+				// update match with revision number
+				match.setRevision(latestReport.getRevision());
+				matchService.upsert(match);
 			}
 
-			var msm = measure(match);
-			merge(latestReport, msm);
-
-			// update match with revision number
-			match.setRevision(latestReport.getRevision());
-			matchService.upsert(match);
-		}
+			logger.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
+			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+			matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
+			pageCnt+=1;
+		};
 
 
 		upsert(latestReport);
@@ -278,14 +294,21 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			return null;
 		}
 
-		Collection<Match> result = matchRepository.findMatchesByRevision(revision);
-
+		var sort = Sort.TypedSort.sort(Match.class).by(Match::getDateGMT);
+		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
 		report.setMeasurements(new ArrayList<>());
+		var pageCnt = 1;
+		while(result.hasContent()){
+			result.forEach((match) -> {
+				var msm = this.measure(match);
+				this.merge(report, msm);
+			});
 
-		result.forEach((match) -> {
-			var msm = this.measure(match);
-			this.merge(report, msm);
-		});
+			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
+			pageCnt+=1;
+		};
 
 		predictionQualityReportRepository.delete(report);
 		predictionQualityReportRepository.save(report);
