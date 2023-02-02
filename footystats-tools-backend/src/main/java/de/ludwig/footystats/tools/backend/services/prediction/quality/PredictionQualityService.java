@@ -68,8 +68,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			latestReport = new PredictionQualityReport(latestRevision, new ArrayList<>());
 		}
 
-		var sort = Sort.TypedSort.sort(Match.class).by(Match::getDateGMT);
-		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 		Page<Match> matchesPage;
 		var pageCnt = 1;
 		matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
@@ -86,7 +85,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			}
 
 			logger.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
-			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 			matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
 			pageCnt+=1;
 		};
@@ -294,8 +293,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			return null;
 		}
 
-		var sort = Sort.TypedSort.sort(Match.class).by(Match::getDateGMT);
-		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
 		report.setMeasurements(new ArrayList<>());
 		var pageCnt = 1;
@@ -305,7 +303,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 				this.merge(report, msm);
 			});
 
-			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches(), sort);
+			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
 			pageCnt+=1;
 		};
