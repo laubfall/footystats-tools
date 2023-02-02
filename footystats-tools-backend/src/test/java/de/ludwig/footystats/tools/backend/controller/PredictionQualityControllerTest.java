@@ -49,10 +49,6 @@ public class PredictionQualityControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.empty()));
-	}
-
-	@Test
-	public void latestReport() throws Exception {
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
