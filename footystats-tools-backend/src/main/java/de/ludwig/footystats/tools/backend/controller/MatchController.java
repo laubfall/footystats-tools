@@ -4,14 +4,14 @@ import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
+import de.ludwig.footystats.tools.backend.services.match.MatchSearch;
+import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,31 +24,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/match")
 public class MatchController {
-	private MatchRepository matchRepository;
 
-	public MatchController(MatchRepository matchRepository, CsvFileDownloadService csvFileDownloadService, CsvFileService<MatchStats> matchStatsCsvFileService) {
-		this.matchRepository = matchRepository;
+	private MatchService matchService;
+
+	public MatchController(MatchService matchService) {
+		this.matchService = matchService;
 	}
 
 	@PostMapping(value = "/list", consumes = {"application/json"}, produces = {"application/json"})
 	public PagingResponse<Match> listMatches(@RequestBody ListMatchRequest request) {
-		Page<Match> matches = null;
-		var pageRequest = request.paging.convert();
-		if(CollectionUtils.isEmpty(request.country) && CollectionUtils.isEmpty(request.league) && request.start == null && request.end == null){
-			matches = matchRepository.findAll(pageRequest);
-		} else if(CollectionUtils.isNotEmpty(request.country) && CollectionUtils.isEmpty(request.league) && request.start == null && request.end == null){
-			matches = matchRepository.findMatchesByCountryIn(request.country, pageRequest);
-		} else if(CollectionUtils.isNotEmpty(request.country) && CollectionUtils.isNotEmpty(request.league) && request.start == null && request.end == null){
-			matches = matchRepository.findMatchesByCountryInAndLeagueIn(request.country, request.league, pageRequest);
-		} else if(CollectionUtils.isNotEmpty(request.country) && CollectionUtils.isNotEmpty(request.league) && request.start != null && request.end != null){
-			matches = matchRepository.findMatchesByCountryInAndLeagueInAndDateGMTBetween(request.country, request.league, request.start, request.end, pageRequest);
-		} else if(CollectionUtils.isEmpty(request.country) && CollectionUtils.isEmpty(request.league) && request.start!= null && request.end == null){
-			matches = matchRepository.findMatchesByDateGMTGreaterThanEqual(request.start, pageRequest);
-		}
+		var matches = matchService.find(MatchSearch.builder().countries(request.country).leagues(request.league).start(request.start).end(request.end).pageable(request.paging.convert()).build());
 
 		if(matches != null){
-			var pr = new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
-			return pr;
+			return new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
 		}
 		return new PagingResponse<>(0, 0, List.of());
 	}

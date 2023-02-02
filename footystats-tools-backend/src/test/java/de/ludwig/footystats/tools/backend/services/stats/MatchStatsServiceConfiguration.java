@@ -24,8 +24,8 @@ public class MatchStatsServiceConfiguration {
     }
 
     @Bean
-    public MatchService matchService(MongoTemplate mongoTemplate, MatchRepository matchRepository, ObjectMapper objectMapper, PredictionService predictionService, MappingMongoConverter mappingMongoConverter) {
-        return new MatchService(mongoTemplate, mappingMongoConverter, matchRepository, objectMapper, predictionService);
+    public MatchService matchService(MongoTemplate mongoTemplate, PredictionService predictionService, MappingMongoConverter mappingMongoConverter) {
+        return new MatchService(mongoTemplate, mappingMongoConverter, predictionService);
     }
 
     @Bean

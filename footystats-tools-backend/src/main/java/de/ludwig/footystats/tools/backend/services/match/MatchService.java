@@ -7,27 +7,62 @@ import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import de.ludwig.footystats.tools.backend.services.prediction.influencer.BetPredictionContext;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Service
 public class MatchService extends MongoService<Match> {
 
-	private MatchRepository matchRepository;
-
-	private ObjectMapper objectMapper;
-
 	private PredictionService predictionService;
 
-	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
-			MatchRepository matchRepository, ObjectMapper objectMapper, PredictionService predictionService) {
+	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService) {
 		super(mongoTemplate, mappingMongoConverter);
-		this.matchRepository = matchRepository;
-		this.objectMapper = objectMapper;
+
 		this.predictionService = predictionService;
+	}
+
+	public Page<Match> find(final MatchSearch search){
+		List<Criteria> searchCriterias = new ArrayList<>();
+		if(CollectionUtils.isEmpty(search.getCountries()) == false) {
+			searchCriterias.add(Criteria.where("country").in(search.getCountries()));
+		}
+
+		if(CollectionUtils.isEmpty(search.getLeagues()) == false){
+			searchCriterias.add(Criteria.where("league").in(search.getLeagues()));
+		}
+
+		if(search.getStart() != null){
+			searchCriterias.add(Criteria.where("dateGMT").gte(search.getStart()));
+		}
+
+		if(search.getEnd() != null){
+			searchCriterias.add(Criteria.where("dateGMT").lte(search.getEnd()));
+		}
+
+		var c = new Criteria();
+		if(searchCriterias.isEmpty() == false){
+			c = c.andOperator(searchCriterias);
+		}
+		Query countQuery = query(c);
+		var matchCount = mongoTemplate.count(countQuery, Match.class);
+
+		Query matchSearchQuery = query(c).with(search.getPageable());
+
+		var result = mongoTemplate.find(matchSearchQuery, Match.class);
+		return new PageImpl<>(result, search.getPageable(), matchCount);
 	}
 
 	public void writeMatch(MatchStats matchStats) {
@@ -51,7 +86,7 @@ public class MatchService extends MongoService<Match> {
 
 	@Override
 	public Query upsertQuery(Match example) {
-		return Query.query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague())
+		return query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague())
 				.and("dateUnix").is(example.getDateUnix()).and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
 	}
 
