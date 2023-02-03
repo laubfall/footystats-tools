@@ -34,6 +34,12 @@ import {
 export interface PredictionQualityReport {
     /**
      * 
+     * @type {string}
+     * @memberof PredictionQualityReport
+     */
+    getId?: string;
+    /**
+     * 
      * @type {PredictionQualityRevision}
      * @memberof PredictionQualityReport
      */
@@ -65,6 +71,7 @@ export function PredictionQualityReportFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
+        'getId': !exists(json, 'get_id') ? undefined : json['get_id'],
         'revision': !exists(json, 'revision') ? undefined : PredictionQualityRevisionFromJSON(json['revision']),
         'measurements': !exists(json, 'measurements') ? undefined : ((json['measurements'] as Array<any>).map(BetPredictionQualityFromJSON)),
     };
@@ -79,6 +86,7 @@ export function PredictionQualityReportToJSON(value?: PredictionQualityReport | 
     }
     return {
         
+        'get_id': value.getId,
         'revision': PredictionQualityRevisionToJSON(value.revision),
         'measurements': value.measurements === undefined ? undefined : ((value.measurements as Array<any>).map(BetPredictionQualityToJSON)),
     };

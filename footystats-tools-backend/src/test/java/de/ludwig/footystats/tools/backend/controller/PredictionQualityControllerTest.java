@@ -44,6 +44,9 @@ public class PredictionQualityControllerTest {
 
 	@Test
 	public void compute() throws Exception {
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().is4xxClientError());
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
