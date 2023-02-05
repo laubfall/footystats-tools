@@ -6,7 +6,7 @@ import translate from "../../i18n/translate";
 import IpcPredictionQualityService from "../../app/services/prediction/IpcPredictionQualityService";
 import { ReportList } from "./ReportList";
 import { PredictionGraphView } from "./PredictionGraphView";
-import { InfluencerDistributionGraphView } from "./InfluencerDistributionGraph";
+import { InfluencerDistributionScatterChartView } from "./InfluencerDistributionScatterChart";
 import { InfluencerPredictionGraphView } from "./InfluencerPredictionGraphView";
 import {
 	BetPredictionQuality,
@@ -73,7 +73,7 @@ export const PredictionQualityView = () => {
 				{activeEventKey === "0" && (
 					<Row>
 						<Col>
-							<InfluencerDistributionGraphView
+							<InfluencerDistributionScatterChartView
 								distributionBetSuccess={
 									currentMeasurement?.distributionBetOnThis ||
 									[]
@@ -86,7 +86,7 @@ export const PredictionQualityView = () => {
 						</Col>
 
 						<Col>
-							<InfluencerDistributionGraphView
+							<InfluencerDistributionScatterChartView
 								distributionBetSuccess={
 									currentMeasurement?.distributionBetOnThisFailed ||
 									[]

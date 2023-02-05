@@ -14,17 +14,6 @@ import {
 } from "../../footystats-frontendapi";
 import { PercentDistribution } from "../../app/services/prediction/PredictionQualityService.types";
 
-export type InfluencerPredictionGraphProps = {
-	i1Distribution: PercentDistribution[];
-	i2Distribution: PercentDistribution[];
-	name: InfluencerName;
-	bet: BetPredictionQualityBetEnum;
-};
-
-export type InfluencerPredictionGraphViewProps = {
-	measurement: BetPredictionQuality;
-};
-
 const InfluencerPredictionGraph = ({
 	i1Distribution,
 	i2Distribution,
@@ -142,6 +131,17 @@ export const InfluencerPredictionGraphView = ({
 			})}
 		</>
 	);
+};
+
+export type InfluencerPredictionGraphProps = {
+	i1Distribution: PercentDistribution[];
+	i2Distribution: PercentDistribution[];
+	name: InfluencerName;
+	bet: BetPredictionQualityBetEnum;
+};
+
+export type InfluencerPredictionGraphViewProps = {
+	measurement: BetPredictionQuality;
 };
 
 export default { InfluencerPredictionGraphView };

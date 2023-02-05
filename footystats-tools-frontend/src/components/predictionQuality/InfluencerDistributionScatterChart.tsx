@@ -62,7 +62,7 @@ function createGraphData(
 	return result;
 }
 
-export const InfluencerDistributionGraph = ({
+export const InfluencerDistributionScatterChart = ({
 	distributionBetSuccess,
 	distributionBetFailed,
 	relevantInfluencer,
@@ -82,8 +82,8 @@ export const InfluencerDistributionGraph = ({
 		<>
 			<h3>{relevantInfluencer}</h3>
 			<ScatterChart
-				width={1024}
-				height={768}
+				width={600}
+				height={450}
 				margin={{ top: 20, right: 20, bottom: 10, left: 10 }}
 			>
 				<CartesianGrid strokeDasharray="3 3" />
@@ -124,7 +124,7 @@ export const InfluencerDistributionGraph = ({
 /**
  * This view renders a scatter diagramm for every influencer that was utilized calculating predictions.
  */
-export const InfluencerDistributionGraphView = ({
+export const InfluencerDistributionScatterChartView = ({
 	distributionBetSuccess,
 	distributionBetFailed,
 }: InfluencerDistributionGraphViewProps) => {
@@ -134,7 +134,7 @@ export const InfluencerDistributionGraphView = ({
 	return (
 		<>
 			{result.map((inf) => (
-				<InfluencerDistributionGraph
+				<InfluencerDistributionScatterChart
 					key={uniqueId()}
 					relevantInfluencer={inf}
 					distributionBetSuccess={distributionBetSuccess}
@@ -145,4 +145,4 @@ export const InfluencerDistributionGraphView = ({
 	);
 };
 
-export default { InfluencerDistributionGraph };
+export default { InfluencerDistributionGraph: InfluencerDistributionScatterChart };
