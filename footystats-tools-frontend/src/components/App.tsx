@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import { MatchesView } from "./matches/MatchesView";
 import { Menu } from "./Menu";
@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 import { Messages } from "./alert/Messages";
 import { SettingsView } from "./settings/SettingsView";
 import LoadingOverlay from "react-loading-overlay";
-import { Spinner } from "react-bootstrap";
 import LoadingOverlayStore from "../mobx/LoadingOverlayStore";
 import { SpinnerWithMessage } from "./spinner/SpinnerWithMessage";
 
@@ -45,21 +44,20 @@ const FootyStatsTools = () => {
 			<ObsLoadingOverlay>
 				<>
 					<Routes>
-						<Route path="/">
-							<Route path="matchList" element={<MatchesView />} />
-							<Route
-								path="predictionQuality"
-								element={<PredictionQualityView />}
-							/>
-							<Route
-								path="uploadmatchstats"
-								element={<UploadMatchStatsView />}
-							/>
-							<Route
-								path={"settings"}
-								element={<SettingsView />}
-							/>
-						</Route>
+						<Route
+							path="/"
+							element={<Navigate replace to={"/matchList"} />}
+						/>
+						<Route path="matchList" element={<MatchesView />} />
+						<Route
+							path="predictionQuality"
+							element={<PredictionQualityView />}
+						/>
+						<Route
+							path="uploadmatchstats"
+							element={<UploadMatchStatsView />}
+						/>
+						<Route path={"settings"} element={<SettingsView />} />
 					</Routes>
 				</>
 			</ObsLoadingOverlay>
