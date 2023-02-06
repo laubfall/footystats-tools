@@ -73,26 +73,28 @@ export const PredictionQualityView = () => {
 				{activeEventKey === "0" && (
 					<Row>
 						<Col>
+							<h3>{translate("renderer.predictionqualitiyview.header.influencerdistribution.bet")}</h3>
 							<InfluencerDistributionScatterChartView
 								distributionBetSuccess={
 									currentMeasurement?.distributionBetOnThis ||
 									[]
 								}
 								distributionBetFailed={
-									currentMeasurement?.distributionDontBetOnThis ||
+									currentMeasurement?.distributionBetOnThisFailed ||
 									[]
 								}
 							/>
 						</Col>
 
 						<Col>
+							<h3>{translate("renderer.predictionqualitiyview.header.influencerdistribution.dontbet")}</h3>
 							<InfluencerDistributionScatterChartView
-								distributionBetSuccess={
-									currentMeasurement?.distributionBetOnThisFailed ||
-									[]
-								}
 								distributionBetFailed={
 									currentMeasurement?.distributionDontBetOnThisFailed ||
+									[]
+								}
+								distributionBetSuccess={
+									currentMeasurement?.distributionDontBetOnThis ||
 									[]
 								}
 							/>

@@ -25,6 +25,8 @@
 	"renderer.predictiongraphview.bet.failed": "(wetten falsch)",
 	"renderer.predictiongraphview.dontbet": "(nicht wetten)",
 	"renderer.predictiongraphview.dontbet.failed": "(nicht wetten falsch)",
+	"renderer.predictionqualitiyview.header.influencerdistribution.bet": "Verteilung der Influencer Ergebnisse bei 'Wetten'",
+	"renderer.predictionqualitiyview.header.influencerdistribution.dontbet": "Verteilung der Influencer Ergebnisse bei 'Nicht wetten'",
 	"renderer.predictionqualitiyview.influencerdistributiongraph": "Influencer Details",
 	"renderer.predictionqualitiyview.influencerpredictionquality": "Influencer Vorhersage Qualität",
 	"renderer.predictionqualitiyview.influencerpredictionquality.nodata": "Für Influencer {0} liegen keine Daten vor",
@@ -43,6 +45,6 @@
 	"renderer.predictionqualityview.button.recalculate": "Komplett neu berechnen",
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
-	"renderer.settings.input.footyusername": "Benutzername Footystats",
-	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
+  "renderer.settings.input.footyusername": "Benutzername Footystats",
+  "renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
 }

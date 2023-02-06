@@ -75,12 +75,12 @@ export const InfluencerDistributionScatterChart = ({
 	const g2Data = createGraphData(distributionBetFailed, relevantInfluencer);
 
 	if (g1Data.length === 0 || g2Data.length === 0) {
-		return null;
+		//return null;
 	}
 
 	return (
 		<>
-			<h3>{relevantInfluencer}</h3>
+			<h5>{relevantInfluencer}</h5>
 			<ScatterChart
 				width={600}
 				height={450}
