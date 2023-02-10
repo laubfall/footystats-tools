@@ -1,14 +1,11 @@
 package de.ludwig.footystats.tools.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
+import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
@@ -25,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("test")
 @WebMvcTest
-@ContextConfiguration(classes = { Configuration.class })
+@ContextConfiguration(classes = {Configuration.class})
 @AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class PredictionQualityControllerTest {
@@ -37,10 +34,12 @@ public class PredictionQualityControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private PredictionQualityService predictionQualityService;
+	private MatchRepository matchRepository;
 
-	@Autowired
-	private PredictionQualityReportRepository qualityReportRepository;
+	@BeforeEach
+	public void cleanup() {
+		matchRepository.deleteAll();
+	}
 
 	@Test
 	public void compute() throws Exception {
@@ -48,13 +47,13 @@ public class PredictionQualityControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().is4xxClientError());
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
-				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.empty()));
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.empty()));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+			.andExpect(status().isOk());
 	}
 
 	@Test
@@ -64,7 +63,7 @@ public class PredictionQualityControllerTest {
 		mockMvc.perform(RestDocumentationRequestBuilders.post("/predictionquality/precast")
 				.content(requestBody)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.predictionsToAssess", Matchers.equalTo(0)))
-				.andExpect(status().isOk());
+			.andExpect(MockMvcResultMatchers.jsonPath("$.predictionsToAssess", Matchers.equalTo(0)))
+			.andExpect(status().isOk());
 	}
 }
