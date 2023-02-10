@@ -2,6 +2,7 @@ package de.ludwig.footystats.tools.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -36,9 +37,13 @@ public class PredictionQualityControllerTest {
 	@Autowired
 	private MatchRepository matchRepository;
 
+	@Autowired
+	private PredictionQualityReportRepository predictionQualityReportRepository;
+
 	@BeforeEach
 	public void cleanup() {
 		matchRepository.deleteAll();
+		predictionQualityReportRepository.deleteAll();
 	}
 
 	@Test
