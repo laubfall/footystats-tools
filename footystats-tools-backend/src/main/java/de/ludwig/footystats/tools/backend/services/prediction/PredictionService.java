@@ -33,7 +33,7 @@ public class PredictionService {
 			case OVER_ZERO_FIVE: {
 				var goals = ctx.match().getResultAwayTeamGoals() +
 						ctx.match().getResultHomeTeamGoals();
-				if (goals > 0 && betOnThis) {
+				if ((goals > 0 && betOnThis) || (goals == 0 && !betOnThis)) {
 					return PredictionAnalyze.SUCCESS;
 				}
 
