@@ -79,5 +79,33 @@ public class MatchStatsServiceTest {
 
         matchStatsService.importMatchStats(matchStats);
         List<MatchStats> persistedMatchStats = matchStatsRepository.findByCountry("France");
+		Assertions.assertNotNull(persistedMatchStats);
+		Assertions.assertEquals(1, persistedMatchStats.size());
     }
+
+	@Test
+	public void reimportMatchStats(){
+		var time = System.currentTimeMillis();
+		var builder = MatchStats.builder().country("Denmark").league("La Ligue").dateUnix(time).awayTeam("Team 1").homeTeam("Team 2").resultAwayTeamGoals(1).resultHomeTeamGoals(1).matchStatus(MatchStatus.complete).bTTSAverage(50);
+		var matchStats = builder.build();
+
+		matchStatsService.importMatchStats(matchStats);
+		var denmarkMatches = matchStatsRepository.findByCountry("Denmark");
+		Assertions.assertNotNull(denmarkMatches);
+		Assertions.assertEquals(1, denmarkMatches.size());
+		var match = denmarkMatches.get(0);
+		Assertions.assertEquals(50, match.getBTTSAverage());
+
+		builder = builder.bTTSAverage(60);
+		matchStats = builder.build();
+		matchStatsService.upsert(matchStats);
+
+		matchStatsService.reimportMatchStats();
+
+		denmarkMatches = matchStatsRepository.findByCountry("Denmark");
+		Assertions.assertNotNull(denmarkMatches);
+		Assertions.assertEquals(1, denmarkMatches.size());
+		match = denmarkMatches.get(0);
+		Assertions.assertEquals(60, match.getBTTSAverage());
+	}
 }

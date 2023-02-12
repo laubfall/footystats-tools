@@ -1,9 +1,7 @@
 package de.ludwig.footystats.tools.backend.services.stats;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.jackson.JackonsConfiguration;
-import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -29,7 +27,7 @@ public class MatchStatsServiceConfiguration {
     }
 
     @Bean
-    public MatchStatsService matchStatsService(MongoTemplate template, MappingMongoConverter mappingMongoConverter, MatchService matchService, FootystatsProperties fsProperties) {
-        return new MatchStatsService(template, mappingMongoConverter, fsProperties, matchService);
+    public MatchStatsService matchStatsService(MongoTemplate template, MappingMongoConverter mappingMongoConverter, MatchService matchService, FootystatsProperties fsProperties, MatchStatsRepository matchStatsRepository) {
+        return new MatchStatsService(template, mappingMongoConverter, fsProperties, matchService, matchStatsRepository);
     }
 }
