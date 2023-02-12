@@ -22,10 +22,10 @@ public class OddsGoalOverInfluencer implements BetResultInfluencer {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    public Float calculateInfluence(
+    public Integer calculateInfluence(
             BetPredictionContext ctx
     ) {
-        var amount = 0F;
+        var amount = 0;
         // eslint-disable-next-line default-case
         switch (ctx.bet()) {
             case OVER_ZERO_FIVE:
@@ -37,19 +37,19 @@ public class OddsGoalOverInfluencer implements BetResultInfluencer {
         return amount;
     }
 
-    private Float calculateFor05And15(BetPredictionContext ctx) {
+    private Integer calculateFor05And15(BetPredictionContext ctx) {
         var zeroFiveModifier = ctx.bet() == Bet.OVER_ZERO_FIVE ? 0.2 : 0;
         var oddsOver15 = ctx.match().getOddsOver15(); // Odds Over05 info does not exist in csv
         var diffOddToOdd2 = 2 - oddsOver15 - zeroFiveModifier; // e.g.: 2 - 1,3 = 0,7, the subtraction of 0.2 is cause of the stat
         if (diffOddToOdd2 < 0) {
-            return 0F; // odds for over 1.5 are so high that it seems to be impossible for even over 05
+            return 0; // odds for over 1.5 are so high that it seems to be impossible for even over 05
         }
 
         if (diffOddToOdd2 > 1) {
-            return 100F;
+            return 100;
         }
 
-        return (float) (100 * diffOddToOdd2);
+        return (int)(100 * diffOddToOdd2);
     }
 
     // eslint-disable-next-line class-methods-use-this

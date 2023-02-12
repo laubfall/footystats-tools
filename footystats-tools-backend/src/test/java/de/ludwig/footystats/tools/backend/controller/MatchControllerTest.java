@@ -107,8 +107,8 @@ public class MatchControllerTest {
         match.setAwayTeam("Blah");
         match.setHomeTeam("Blub");
         match.setFootyStatsUrl("fjlksdjflkds");
-        match.setBttsYes(new PredictionResult(1.4f, true, PredictionAnalyze.SUCCESS, null));
-        match.setO05(new PredictionResult(1.4f, true, PredictionAnalyze.SUCCESS, List.of(new InfluencerResult("testInfluencer", 1.4f, PrecheckResult.OK))));
+        match.setBttsYes(new PredictionResult(40, true, PredictionAnalyze.SUCCESS, null));
+        match.setO05(new PredictionResult(40, true, PredictionAnalyze.SUCCESS, List.of(new InfluencerResult("testInfluencer", 40, PrecheckResult.OK))));
         match.setState(MatchStatus.complete);
         match.setGoalsAwayTeam(2);
         match.setGoalsHomeTeam(1);

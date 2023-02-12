@@ -15,15 +15,15 @@ public class OddsBttsYesInfluencerTest {
 		ms.setOddsBTTS_Yes(1f);
 		var ctx = new BetPredictionContext(ms, null, null, Bet.BTTS_YES);
 		var result = influencer.calculateInfluence(ctx);
-		Assertions.assertEquals(100f, Math.floor(result));
+		Assertions.assertEquals(100, result);
 
 		ms.setOddsBTTS_Yes(2f);
 		result = influencer.calculateInfluence(ctx);
-		Assertions.assertEquals(50f, Math.floor(result));
+		Assertions.assertEquals(50, result);
 
 		ms.setOddsBTTS_Yes(3.0f);
 		result = influencer.calculateInfluence(ctx);
-		Assertions.assertEquals(0f, result);
+		Assertions.assertEquals(0, result);
 	}
 
 	@Test

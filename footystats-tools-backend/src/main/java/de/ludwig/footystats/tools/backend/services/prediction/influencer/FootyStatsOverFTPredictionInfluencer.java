@@ -19,7 +19,7 @@ public class FootyStatsOverFTPredictionInfluencer implements BetResultInfluencer
     }
 
     // eslint-disable-next-line class-methods-use-this
-    public Float calculateInfluence(BetPredictionContext ctx) {
+    public Integer calculateInfluence(BetPredictionContext ctx) {
         return ctx.match().getOver05Average();
     }
 

@@ -57,7 +57,7 @@ public class PredictionService {
 	}
 
 	public PredictionResult prediction(BetPredictionContext ctx) {
-		var result = 0F;
+		var result = 0;
 
 		List<InfluencerResult> influencerDetailedResult = new ArrayList<>();
 
@@ -74,7 +74,7 @@ public class PredictionService {
 						.add(new InfluencerResult(influencer.influencerName(), predictionInfluence, preCheckResult));
 			} else if (preCheckResult == PrecheckResult.NOT_ENOUGH_INFORMATION ||
 					preCheckResult == PrecheckResult.EXCEPTION) {
-				influencerDetailedResult.add(new InfluencerResult(influencer.influencerName(), 0F, preCheckResult));
+				influencerDetailedResult.add(new InfluencerResult(influencer.influencerName(), 0, preCheckResult));
 			}
 		}
 		;

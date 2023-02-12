@@ -25,12 +25,12 @@ public class LeaguePositionInfluencer implements BetResultInfluencer {
 	 * @param ctx Mandatory. bet ctx.
 	 * @returns Influencer result.
 	 */
-	public Float calculateInfluence(
+	public Integer calculateInfluence(
 			BetPredictionContext ctx) {
 		return this.overBet(ctx);
 	}
 
-	private Float overBet(BetPredictionContext ctx) {
+	private Integer overBet(BetPredictionContext ctx) {
 		var teamStats = ctx.teamStats();
 		/*
 		 * var leagueStats = {number_of_clubs:0, ...ctx.leagueStats() };
@@ -43,7 +43,7 @@ public class LeaguePositionInfluencer implements BetResultInfluencer {
 		 *
 		 * return (INFLUENCER_POINTS * ((awayPosPerc + homePosPerc) / 2)) / 100;
 		 */
-		return 0F;
+		return 0;
 	}
 
 	public String influencerName() {

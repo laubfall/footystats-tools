@@ -30,15 +30,16 @@ public class OddsBttsYesInfluencer implements BetResultInfluencer {
 	}
 
 	// eslint-disable-next-line class-methods-use-this
-	public Float calculateInfluence(BetPredictionContext ctx) {
+	public Integer calculateInfluence(BetPredictionContext ctx) {
 		// odds between 1 and 3 are relevant, other odds are extremas.
 		if (ctx.match().getOddsBTTS_Yes() > UPPER_ODDS_BOUND) {
-			return 0F;
+			return 0;
 		}
 
 		// with 1 - ... odds with value of 3 result in 0% while odds with value of 1
 		// result in 100 %
-		return (1 - ((ctx.match().getOddsBTTS_Yes() - LOWER_ODDS_BOUND) / VALUE_RANGE)) * 100;
+		float calculation = (1 - ((ctx.match().getOddsBTTS_Yes() - LOWER_ODDS_BOUND) / VALUE_RANGE));
+		return (int)(calculation * 100);
 	}
 
 	// eslint-disable-next-line class-methods-use-this

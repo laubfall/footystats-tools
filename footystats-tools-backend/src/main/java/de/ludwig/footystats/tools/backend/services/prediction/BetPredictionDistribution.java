@@ -14,7 +14,7 @@ import java.util.List;
 public class BetPredictionDistribution {
 	@Getter
 	@Setter
-	private Float predictionPercent;
+	private Integer predictionPercent;
 	@Getter
 	@Setter
 	private Long count;

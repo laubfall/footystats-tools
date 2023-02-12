@@ -13,7 +13,7 @@ public class InfluencerPercentDistribution
 {
 	@Getter
 	@Setter
-	private Float predictionPercent;
+	private Integer predictionPercent;
 	@Getter
 	@Setter
 	private Long count;

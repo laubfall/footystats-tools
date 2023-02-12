@@ -74,46 +74,46 @@ public class MatchStats {
     @Getter
     @Setter
     private Float averageGoals;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "BTTS Average")
+    @CsvBindByName(column = "BTTS Average")
     @Getter
     @Setter
-    private Float bTTSAverage;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over05 Average")
+    private Integer bTTSAverage;
+    @CsvBindByName(column = "Over05 Average")
     @Getter
     @Setter
-    private Float over05Average;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over15 Average")
+    private Integer over05Average;
+    @CsvBindByName(column = "Over15 Average")
     @Getter
     @Setter
-    private Float over15Average;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over25 Average")
+    private Integer over15Average;
+    @CsvBindByName(column = "Over25 Average")
     @Getter
     @Setter
-    private Float over25Average;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over35 Average")
+    private Integer over25Average;
+    @CsvBindByName(column = "Over35 Average")
     @Getter
     @Setter
-    private Float over35Average;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over45 Average")
+    private Integer over35Average;
+    @CsvBindByName(column = "Over45 Average")
     @Getter
     @Setter
-    private Float over45Average;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over05 FHG HT Average")
+    private Integer over45Average;
+    @CsvBindByName(column = "Over05 FHG HT Average")
     @Getter
     @Setter
-    private Float over05FHGHTAverage;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over15 FHG HT Average")
+    private Integer over05FHGHTAverage;
+    @CsvBindByName(column = "Over15 FHG HT Average")
     @Getter
     @Setter
-    private Float over15FHGHTAverage;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over05 2HG Average")
+    private Integer over15FHGHTAverage;
+    @CsvBindByName(column = "Over05 2HG Average")
     @Getter
     @Setter
-    private Float over052HGAverage;
-    @CsvCustomBindByName(converter = FloatConverter.class, column = "Over15 2HG Average")
+    private Integer over052HGAverage;
+    @CsvBindByName(column = "Over15 2HG Average")
     @Getter
     @Setter
-    private Float over152HGAverage;
+    private Integer over152HGAverage;
     @CsvCustomBindByName(converter = FloatConverter.class, column = "Average Corners")
     @Getter
     @Setter
