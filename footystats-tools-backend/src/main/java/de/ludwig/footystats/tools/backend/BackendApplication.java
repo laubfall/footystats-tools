@@ -27,7 +27,7 @@ public class BackendApplication implements CommandLineRunner {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(fsProperties.getAllowedOrigins());
+                registry.addMapping("/**").allowedOrigins(fsProperties.getAllowedOrigins()).allowedMethods("POST", "GET", "PUT", "PATCH", "DELETE");
             }
         };
     }

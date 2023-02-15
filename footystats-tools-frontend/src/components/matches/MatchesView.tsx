@@ -1,29 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
-import {
-	PaginationChangePage,
-	PaginationChangeRowsPerPage,
-} from "react-data-table-component/dist/src/DataTable/types";
-import { NString } from "../../app/types/General";
-import { FilterSettings, MatchFilterHoc } from "./MatchFilter";
-import {
-	BetPrediction,
-	MatchList,
-	MatchListEntry,
-	SortHandler,
-} from "./MatchList";
+import React, {useEffect, useState} from "react";
+import {Button, Col, Row} from "react-bootstrap";
+import {PaginationChangePage, PaginationChangeRowsPerPage,} from "react-data-table-component/dist/src/DataTable/types";
+import {FilterSettings, MatchFilterHoc} from "./MatchFilter";
+import {MatchList, MatchListEntry, SortHandler,} from "./MatchList";
 import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
 	BetPredictionQualityBetEnum,
 	FootyStatsCsvUploadControllerApi,
 	Match,
+	MatchControllerApi,
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
-import AlertMessagesStore from "../../mobx/AlertMessages";
 import translate from "../../i18n/translate";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
-import { apiCatchReasonHandler } from "../functions";
+import {apiCatchReasonHandler} from "../functions";
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
@@ -176,6 +167,36 @@ export const MatchesView = () => {
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	};
 
+	const reimportMatchStats = () => {
+		const matchControllerApi = new MatchControllerApi();
+		LoadingOverlayStore.loadingNow(
+			translate("renderer.matchesview.overlay.loading.footystats"),
+		);
+
+		matchControllerApi
+			.reimportMatchStats({
+				listMatchRequest: {
+					country: filter.country,
+					league: filter.league,
+					start: filter.timeFrom,
+					end: filter.timeUntil,
+					paging: {
+						page: page,
+						size: perPage,
+						direction: sortOrder,
+						properties: [sortColumn],
+					},
+				},
+			})
+			.then(async (n) => {
+				setTotalRows(n.totalElements);
+				const r = await createMatchListEntries(n.elements);
+				setMatches(r);
+			})
+			.catch(apiCatchReasonHandler)
+			.finally(() => LoadingOverlayStore.notLoadingNow());
+	};
+
 	useEffect(() => {
 		loadMatches([], [], undefined, undefined, {
 			page: 0,
@@ -211,6 +232,13 @@ export const MatchesView = () => {
 					<Button onClick={loadLatestMatchStats}>
 						{translate(
 							"renderer.matchesview.button.loadmatchstats",
+						)}
+					</Button>
+				</Col>
+				<Col>
+					<Button onClick={reimportMatchStats}>
+						{translate(
+							"renderer.matchesview.button.reimportmatchstats",
 						)}
 					</Button>
 				</Col>

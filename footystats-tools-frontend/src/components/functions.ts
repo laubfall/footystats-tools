@@ -3,7 +3,7 @@ import translate from "../i18n/translate";
 
 export async function apiCatchReasonHandler(reason) {
 	const body = await reason.response?.json();
-	if (body.EXCEPTION_RESPONSE) {
+	if (body?.EXCEPTION_RESPONSE) {
 		const exceptionResponse = body as ExceptionResponse;
 		let msg = translate("renderer.api.error.id." + exceptionResponse.id);
 		if (msg === undefined || msg === "")

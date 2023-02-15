@@ -1,22 +1,14 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
-import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
-import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchSearch;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.data.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,8 +19,11 @@ public class MatchController {
 
 	private MatchService matchService;
 
-	public MatchController(MatchService matchService) {
+	private MatchStatsService matchStatsService;
+
+	public MatchController(MatchService matchService, MatchStatsService matchStatsService) {
 		this.matchService = matchService;
+		this.matchStatsService = matchStatsService;
 	}
 
 	@PostMapping(value = "/list", consumes = {"application/json"}, produces = {"application/json"})
@@ -39,6 +34,17 @@ public class MatchController {
 			return new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), matches.stream().toList());
 		}
 		return new PagingResponse<>(0, 0, List.of());
+	}
+
+	@PatchMapping(value = "/stats", consumes = {"application/json"}, produces = {"application/json"})
+	public PagingResponse<Match> reimportMatchStats(@RequestBody ListMatchRequest request){
+		matchStatsService.reimportMatchStats();
+
+		if(request == null) {
+			return new PagingResponse<>(0, 0, List.of());
+		}
+
+		return listMatches(request);
 	}
 
 	@JsonComponent

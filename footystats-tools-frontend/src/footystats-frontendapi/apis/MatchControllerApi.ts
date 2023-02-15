@@ -29,6 +29,10 @@ export interface ListMatchesRequest {
     listMatchRequest: ListMatchRequest;
 }
 
+export interface ReimportMatchStatsRequest {
+    listMatchRequest: ListMatchRequest;
+}
+
 /**
  * 
  */
@@ -62,6 +66,37 @@ export class MatchControllerApi extends runtime.BaseAPI {
      */
     async listMatches(requestParameters: ListMatchesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagingResponseMatch> {
         const response = await this.listMatchesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async reimportMatchStatsRaw(requestParameters: ReimportMatchStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagingResponseMatch>> {
+        if (requestParameters.listMatchRequest === null || requestParameters.listMatchRequest === undefined) {
+            throw new runtime.RequiredError('listMatchRequest','Required parameter requestParameters.listMatchRequest was null or undefined when calling reimportMatchStats.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/match/stats`,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ListMatchRequestToJSON(requestParameters.listMatchRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagingResponseMatchFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async reimportMatchStats(requestParameters: ReimportMatchStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagingResponseMatch> {
+        const response = await this.reimportMatchStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
