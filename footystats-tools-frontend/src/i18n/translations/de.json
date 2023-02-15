@@ -9,7 +9,7 @@
 	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
 	"renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
 	"renderer.matchesview.button.loadmatchstats": "Spieldaten von Footystats laden",
-	"renderer.matchesview.button.reimportmatchstats": "Spieldaten erneut importieren",
+	"renderer.matchesview.button.reimportmatchstats": "Vorhersagen neu berechnen",
 	"renderer.matchesview.overlay.loading.footystats": "Lade MatchStats.csv von footystats.org",
 	"renderer.matchlist.influencer.popup.title": "Influencer Details",
 	"renderer.matchlist.table.col.five": "Ergebnis",
