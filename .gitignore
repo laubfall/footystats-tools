@@ -60,4 +60,4 @@ npm-debug.log.*
 .history
 
 ### Build artifacts
-footystats-tools-release.zip
+footystats-*.zip
