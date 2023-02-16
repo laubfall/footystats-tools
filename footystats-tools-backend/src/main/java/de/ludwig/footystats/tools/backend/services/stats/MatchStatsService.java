@@ -2,7 +2,10 @@ package de.ludwig.footystats.tools.backend.services.stats;
 
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.MongoService;
+import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchStatsService extends MongoService<MatchStats> {
+	private static final Logger logger = LoggerFactory.getLogger(MatchStatsService.class);
 
 	public static final String COUNTRY_ESPORTS = "Esports";
+
 	private FootystatsProperties fsProperties;
 
 	private final MatchService matchService;
@@ -49,6 +54,7 @@ public class MatchStatsService extends MongoService<MatchStats> {
 		Pageable pageable = PageRequest.of(0, pageSize);
 
 		do {
+			logger.info("Doing reimport for page " + pageable.getPageNumber());
 			var page = matchStatsRepository.findAll(pageable);
 			if(page.hasNext() == false){
 				break;

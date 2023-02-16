@@ -9,7 +9,6 @@ import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.TimeZones;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -43,7 +48,7 @@ public class CsvFileDownloadService {
 		this.matchStatsService = matchStatsService;
 	}
 
-	public void downloadMatchStatsCsvFileAndImport(LocalDate matchStatsForDay){
+	public void downloadMatchStatsCsvFileAndImport(LocalDate matchStatsForDay) {
 		var rawMatches = downloadMatchStatsCsvFile(LocalDate.now());
 		File tmpFile = null;
 		try {
@@ -68,8 +73,8 @@ public class CsvFileDownloadService {
 		try {
 			LocalDateTime now = LocalDateTime.now();
 			final URL url = new URL(
-					properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
-							+ matchStatsForDay.toEpochSecond(LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
+				properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
+					+ matchStatsForDay.toEpochSecond(LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("GET"); // PUT is another valid option
@@ -107,7 +112,7 @@ public class CsvFileDownloadService {
 			StringJoiner sj = new StringJoiner("&");
 			for (Map.Entry<String, String> entry : arguments.entrySet())
 				sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-						+ URLEncoder.encode(entry.getValue(), "UTF-8"));
+					+ URLEncoder.encode(entry.getValue(), "UTF-8"));
 			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
 			int length = out.length;
 
@@ -121,7 +126,7 @@ public class CsvFileDownloadService {
 			checkLogin(http);
 
 			Optional<String> phpsessid = http.getHeaderFields().get("Set-Cookie").stream()
-					.filter(sc -> sc.startsWith("PHPSESSID")).findAny();
+				.filter(sc -> sc.startsWith("PHPSESSID")).findAny();
 			if (phpsessid.isEmpty()) {
 				throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SESSION_ID_MISSING);
 			}
@@ -134,7 +139,7 @@ public class CsvFileDownloadService {
 
 	private static void checkLogin(HttpURLConnection http) throws IOException {
 		var content = IOUtils.toString(http.getInputStream(), "UTF-8");
-		if(content.contains("Your Username, Email or Password is incorrect.")){
+		if (content.contains("Your Username, Email or Password is incorrect.")) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED);
 		}
 	}
