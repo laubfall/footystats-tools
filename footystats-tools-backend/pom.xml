@@ -16,6 +16,7 @@
 	<properties>
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
+		<frontend.api.generator.backendurl>localhost</frontend.api.generator.backendurl>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -189,6 +190,29 @@
 							<outputFileName>openapi.json</outputFileName>
 							<outputDir>${project.basedir}/target/openapi</outputDir>
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.openapitools</groupId>
+						<artifactId>openapi-generator-maven-plugin</artifactId>
+						<!-- RELEASE_VERSION -->
+						<version>6.3.0</version>
+						<!-- /RELEASE_VERSION -->
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<inputSpec>${project.basedir}/target/openapi/openapi.json</inputSpec>
+									<generatorName>typescript-fetch</generatorName>
+									<output>${project.basedir}/../footystats-tools-frontend/src/footystats-frontendapi
+									</output>
+									<serverVariableOverrides>env=${frontend.api.generator.backendurl},port=8080</serverVariableOverrides>
+									<additionalProperties>typescriptThreePlus=true</additionalProperties>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
