@@ -85,7 +85,7 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			}
 
 			logger.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
-			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
+			// we don't increment the page for pageRequest because the result entities are modified in that way that the query won't match them anymore.
 			matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
 			pageCnt+=1;
 		};
