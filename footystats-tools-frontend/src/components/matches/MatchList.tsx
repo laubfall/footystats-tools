@@ -15,7 +15,7 @@ import {
 	Popover,
 } from "react-bootstrap";
 import { uniqueId } from "lodash";
-import { format } from "date-fns";
+import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
 import {
@@ -147,9 +147,7 @@ export const MatchList = ({
 		{
 			name: translate("renderer.matchlist.table.col.one"),
 			selector: (row) =>
-				format(row.gameStartsAt, "E dd.MM.yyyy hh:mm", {
-					locale: de,
-				}),
+				format(row.gameStartsAt, "E dd.MM.yyyy HH:mm"),
 			sortable: true,
 			sortField: "dateGMT",
 		},

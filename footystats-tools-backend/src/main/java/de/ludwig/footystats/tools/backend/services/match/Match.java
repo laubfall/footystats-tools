@@ -28,7 +28,7 @@ public class Match {
     private Long dateUnix;
     @Getter
     @Setter
-	@JsonFormat(pattern = "YYYY-MM-dd hh:mm")
+	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
     private LocalDateTime dateGMT;
     @Getter
     @Setter

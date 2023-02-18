@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {Button, Col, Row} from "react-bootstrap";
-import {PaginationChangePage, PaginationChangeRowsPerPage,} from "react-data-table-component/dist/src/DataTable/types";
-import {FilterSettings, MatchFilterHoc} from "./MatchFilter";
-import {MatchList, MatchListEntry, SortHandler,} from "./MatchList";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+import {
+	PaginationChangePage,
+	PaginationChangeRowsPerPage,
+} from "react-data-table-component/dist/src/DataTable/types";
+import { FilterSettings, MatchFilterHoc } from "./MatchFilter";
+import { MatchList, MatchListEntry, SortHandler } from "./MatchList";
 import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
 	BetPredictionQualityBetEnum,
@@ -14,12 +17,16 @@ import {
 } from "../../footystats-frontendapi";
 import translate from "../../i18n/translate";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
-import {apiCatchReasonHandler} from "../functions";
+import { apiCatchReasonHandler } from "../functions";
+import { utcToZonedTime } from "date-fns-tz";
 
 function matchListEntries(n: Match[]) {
 	const r = n.map(async (ms) => {
 		const mle: MatchListEntry = {
-			gameStartsAt: new Date(ms.dateGMT.toJSON()),
+			gameStartsAt: utcToZonedTime(
+				new Date(ms.dateGMT.toJSON()),
+				"Europe/Berlin",
+			),
 			awayTeam: ms.awayTeam,
 			homeTeam: ms.homeTeam,
 			country: ms.country,
