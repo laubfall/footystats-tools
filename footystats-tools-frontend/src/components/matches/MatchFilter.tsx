@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
 import Select, { MultiValue, PropsValue } from "react-select";
 import { NString } from "../../app/types/General";
 import countriesAndLeagues from "../../app/countriesAndLeagues";
+import translate from "../../i18n/translate";
 
 export const MatchFilter = ({
 	selectedCountry,
@@ -16,30 +17,36 @@ export const MatchFilter = ({
 	countryChanged,
 	leagueChanged,
 }: MatchFilterProps) => (
-	<Row>
-		<Col>
+	<Row className={"m-2"}>
+		<Form.Group as={Col} className={"col-3"}>
+			<Form.Label>{translate("renderer.matchfilter.label.country")}</Form.Label>
 			<Select
 				options={countries}
 				value={selectedCountry}
 				onChange={countryChanged}
 				isMulti
 			/>
-		</Col>
-		<Col>
+		</Form.Group>
+		<Form.Group as={Col}>
+			<Form.Label>{translate("renderer.matchfilter.label.league")}</Form.Label>
 			<Select options={leagues} onChange={leagueChanged} isMulti />
-		</Col>
-		<Col>
+		</Form.Group>
+		<Form.Group as={Col} className={"col-2"}>
+			<Form.Label>{translate("renderer.matchfilter.label.start")}</Form.Label>
+			<br />
 			<DateTimePicker
 				value={timeFrom as Date}
 				onChange={timeFromChanged}
 			/>
-		</Col>
-		<Col>
+		</Form.Group>
+		<Form.Group as={Col}>
+			<Form.Label>{translate("renderer.matchfilter.label.end")}</Form.Label>
+			<br />
 			<DateTimePicker
 				value={timeUntil as Date}
 				onChange={timeUntilChanged}
 			/>
-		</Col>
+		</Form.Group>
 	</Row>
 );
 

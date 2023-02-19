@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
@@ -215,41 +215,24 @@ export const MatchesView = () => {
 
 	return (
 		<>
-			<Row>
-				<Col md={9}>
-					<MatchFilterHoc
-						somethingChanged={(changedFilter) => {
-							loadMatches(
-								changedFilter.country,
-								changedFilter.league,
-								changedFilter.timeFrom,
-								changedFilter.timeUntil,
-								{
-									page: page,
-									size: perPage,
-									direction: sortOrder,
-									properties: [sortColumn],
-								},
-							);
-							setFilter(changedFilter);
-						}}
-					/>
-				</Col>
-				<Col>
-					<Button onClick={loadLatestMatchStats}>
-						{translate(
-							"renderer.matchesview.button.loadmatchstats",
-						)}
-					</Button>
-				</Col>
-				<Col>
-					<Button onClick={reimportMatchStats}>
-						{translate(
-							"renderer.matchesview.button.reimportmatchstats",
-						)}
-					</Button>
-				</Col>
-			</Row>
+			<MatchFilterHoc
+				somethingChanged={(changedFilter) => {
+					loadMatches(
+						changedFilter.country,
+						changedFilter.league,
+						changedFilter.timeFrom,
+						changedFilter.timeUntil,
+						{
+							page: page,
+							size: perPage,
+							direction: sortOrder,
+							properties: [sortColumn],
+						},
+					);
+					setFilter(changedFilter);
+				}}
+			/>
+
 			<MatchList
 				entries={matches}
 				totalRows={totalRows}
@@ -261,6 +244,22 @@ export const MatchesView = () => {
 					BetPredictionQualityBetEnum.BttsYes,
 				]}
 			/>
+			<div className={"m-2 d-flex justify-content-end"}>
+				<div className={"me-2"}>
+					<Button onClick={loadLatestMatchStats}>
+						{translate(
+							"renderer.matchesview.button.loadmatchstats",
+						)}
+					</Button>
+				</div>
+				<div>
+					<Button onClick={reimportMatchStats}>
+						{translate(
+							"renderer.matchesview.button.reimportmatchstats",
+						)}
+					</Button>
+				</div>
+			</div>
 		</>
 	);
 };
