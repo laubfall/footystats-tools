@@ -12,6 +12,7 @@
 	"renderer.matchesview.button.reimportmatchstats": "Vorhersagen neu berechnen",
 	"renderer.matchesview.overlay.loading.footystats": "Lade MatchStats.csv von footystats.org",
 	"renderer.matchfilter.label.country": "Land",
+	"renderer.matchfilter.label.currentmatches": "laufende Spiele",
 	"renderer.matchfilter.label.end": "bis",
 	"renderer.matchfilter.label.league": "Liga",
 	"renderer.matchfilter.label.start": "von",
@@ -25,7 +26,7 @@
 	"renderer.menu.item.configuration": "Konfiguration",
 	"renderer.menu.item.matchview": "Matches",
 	"renderer.menu.item.predictionqualityview": "Qualität Vorhersage",
-	"renderer.menu.item.uploadmatchstats": "MatchStats hochladen",
+	"renderer.menu.item.uploadmatchstats": "FootyStats-CSV hochladen",
 	"renderer.predictiongraphview.bet": "(wetten)",
 	"renderer.predictiongraphview.bet.failed": "(wetten falsch)",
 	"renderer.predictiongraphview.dontbet": "(nicht wetten)",
@@ -51,5 +52,5 @@
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
 	"renderer.settings.input.footyusername": "Benutzername Footystats",
-  "renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
+	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
 }

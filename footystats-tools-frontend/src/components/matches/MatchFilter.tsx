@@ -5,6 +5,7 @@ import Select, { MultiValue, PropsValue } from "react-select";
 import { NString } from "../../app/types/General";
 import countriesAndLeagues from "../../app/countriesAndLeagues";
 import translate from "../../i18n/translate";
+import {addMinutes, subMinutes} from "date-fns";
 
 export const MatchFilter = ({
 	selectedCountry,
@@ -16,38 +17,60 @@ export const MatchFilter = ({
 	timeUntilChanged,
 	countryChanged,
 	leagueChanged,
+	currentMatches,
 }: MatchFilterProps) => (
-	<Row className={"m-2"}>
-		<Form.Group as={Col} className={"col-3"}>
-			<Form.Label>{translate("renderer.matchfilter.label.country")}</Form.Label>
-			<Select
-				options={countries}
-				value={selectedCountry}
-				onChange={countryChanged}
-				isMulti
-			/>
-		</Form.Group>
-		<Form.Group as={Col}>
-			<Form.Label>{translate("renderer.matchfilter.label.league")}</Form.Label>
-			<Select options={leagues} onChange={leagueChanged} isMulti />
-		</Form.Group>
-		<Form.Group as={Col} className={"col-2"}>
-			<Form.Label>{translate("renderer.matchfilter.label.start")}</Form.Label>
-			<br />
-			<DateTimePicker
-				value={timeFrom as Date}
-				onChange={timeFromChanged}
-			/>
-		</Form.Group>
-		<Form.Group as={Col}>
-			<Form.Label>{translate("renderer.matchfilter.label.end")}</Form.Label>
-			<br />
-			<DateTimePicker
-				value={timeUntil as Date}
-				onChange={timeUntilChanged}
-			/>
-		</Form.Group>
-	</Row>
+	<>
+		<Row className={"m-2"}>
+			<Form.Group as={Col} className={"col-3"}>
+				<Form.Label>
+					{translate("renderer.matchfilter.label.country")}
+				</Form.Label>
+				<Select
+					options={countries}
+					value={selectedCountry}
+					onChange={countryChanged}
+					isMulti
+				/>
+			</Form.Group>
+			<Form.Group as={Col}>
+				<Form.Label>
+					{translate("renderer.matchfilter.label.league")}
+				</Form.Label>
+				<Select options={leagues} onChange={leagueChanged} isMulti />
+			</Form.Group>
+			<Form.Group as={Col} className={"col-2"}>
+				<Form.Label>
+					{translate("renderer.matchfilter.label.start")}
+				</Form.Label>
+				<br />
+				<DateTimePicker
+					value={timeFrom as Date}
+					onChange={timeFromChanged}
+				/>
+			</Form.Group>
+			<Form.Group as={Col}>
+				<Form.Label>
+					{translate("renderer.matchfilter.label.end")}
+				</Form.Label>
+				<br />
+				<DateTimePicker
+					value={timeUntil as Date}
+					onChange={timeUntilChanged}
+				/>
+			</Form.Group>
+		</Row>
+		<Row className={"m-2"}>
+			<Form.Group as={Col}>
+				<Form.Check
+					type="checkbox"
+					label={translate(
+						"renderer.matchfilter.label.currentmatches",
+					)}
+					onChange={(e) => currentMatches(e.target.checked)}
+				/>
+			</Form.Group>
+		</Row>
+	</>
 );
 
 export const MatchFilterHoc = (props: MatchFilterHocProps) => {
@@ -162,6 +185,23 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		setTimeUntil(timeUntilNew);
 	}
 
+	function onCurrentMatches(checked: boolean) {
+		let tf = timeFrom;
+		let tu = timeUntil;
+		if (checked) {
+			tf = subMinutes(new Date(), 90);
+			tu = new Date();
+		}
+		if (props.somethingChanged) {
+			props.somethingChanged({
+				country: selectedCountry?.map((mvc) => mvc.value),
+				league: [],
+				timeFrom: tf,
+				timeUntil: tu,
+			});
+		}
+	}
+
 	return (
 		<>
 			<MatchFilter
@@ -169,6 +209,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 				countries={countries}
 				selectedCountry={selectedCountry}
 				countryChanged={onChangeCountry}
+				currentMatches={onCurrentMatches}
 				leagueChanged={onChangeLeague}
 				timeFromChanged={onTimeFromChanged}
 				timeUntilChanged={onTimeUntilChanged}
@@ -197,6 +238,7 @@ export type MatchFilterHocProps = {
 	countryChanged?: (newSelectedCountry: MultiValue<SelectOption>) => void;
 	leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
 	somethingChanged?: (actualFilter: FilterSettings) => void;
+	currentMatches?: (checked: boolean) => void;
 };
 
 export type MatchFilterProps = {
