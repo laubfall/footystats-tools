@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# https://stackoverflow.com/questions/3042437/how-to-change-the-commit-author-for-a-single-commit
 git filter-branch --env-filter '
 
 OLD_EMAIL="daniel.ludwig.extern@deutschepost.de"
