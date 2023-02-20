@@ -20,7 +20,7 @@ export const PredictionGraphView = ({
 	}
 	return (
 		<Row>
-			<Col md={6}>
+			<Col md={5}>
 				<PercentageDistributionGraph
 					graphs={[
 						{

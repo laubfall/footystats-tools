@@ -10,7 +10,6 @@ import {
 } from "recharts";
 import { uniqueId } from "lodash";
 import { colord, RgbColor } from "colord";
-import { PercentDistribution } from "../../app/services/prediction/PredictionQualityService.types";
 import { BetPredictionDistribution } from "../../footystats-frontendapi";
 
 export type PercentageDistributionGraphProps = {

@@ -132,6 +132,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		}
 
 		if (props.somethingChanged && country != null) {
+			const [timeFrom, timeUntil] = startAndEnd(currentMatches);
 			const countryNames = country.map((mvc) => mvc.value);
 			props.somethingChanged({
 				country: countryNames,
@@ -150,6 +151,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		}
 
 		if (props.somethingChanged && league != null) {
+			const [timeFrom, timeUntil] = startAndEnd(currentMatches);
 			const leagueNames = league.map((mvc) => mvc.value);
 			props.somethingChanged({
 				country: selectedCountry?.map((sc) => sc.value) || [],
@@ -189,7 +191,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	function onCurrentMatches(checked: boolean) {
-		const [timeFrom, timeUntil] = startAndEnd();
+		setCurrentMatches(checked);
+		const [timeFrom, timeUntil] = startAndEnd(checked);
 		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry?.map((mvc) => mvc.value),
@@ -200,8 +203,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		}
 	}
 
-	function startAndEnd(): [Date, Date] {
-		if (currentMatches) {
+	function startAndEnd(checked): [Date, Date] {
+		if (checked) {
 			return [subMinutes(new Date(), 90), new Date()];
 		}
 
