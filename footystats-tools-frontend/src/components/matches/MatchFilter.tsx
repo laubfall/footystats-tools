@@ -5,7 +5,7 @@ import Select, { MultiValue, PropsValue } from "react-select";
 import { NString } from "../../app/types/General";
 import countriesAndLeagues from "../../app/countriesAndLeagues";
 import translate from "../../i18n/translate";
-import {addMinutes, subMinutes} from "date-fns";
+import { subMinutes } from "date-fns";
 
 export const MatchFilter = ({
 	selectedCountry,
@@ -13,11 +13,12 @@ export const MatchFilter = ({
 	leagues,
 	timeFrom,
 	timeUntil,
+	currentMatches,
 	timeFromChanged,
 	timeUntilChanged,
 	countryChanged,
 	leagueChanged,
-	currentMatches,
+	currentMatchesChanged,
 }: MatchFilterProps) => (
 	<>
 		<Row className={"m-2"}>
@@ -66,7 +67,8 @@ export const MatchFilter = ({
 					label={translate(
 						"renderer.matchfilter.label.currentmatches",
 					)}
-					onChange={(e) => currentMatches(e.target.checked)}
+					checked={currentMatches}
+					onChange={(e) => currentMatchesChanged(e.target.checked)}
 				/>
 			</Form.Group>
 		</Row>
@@ -86,6 +88,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 
 	const [timeFrom, setTimeFrom] = useState<Date>(undefined);
 	const [timeUntil, setTimeUntil] = useState<Date>(undefined);
+	const [currentMatches, setCurrentMatches] = useState(false);
 
 	useEffect(() => {
 		const cSelOptions: SelectOption[] = [];
@@ -186,20 +189,23 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	function onCurrentMatches(checked: boolean) {
-		let tf = timeFrom;
-		let tu = timeUntil;
-		if (checked) {
-			tf = subMinutes(new Date(), 90);
-			tu = new Date();
-		}
+		const [timeFrom, timeUntil] = startAndEnd();
 		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
-				timeFrom: tf,
-				timeUntil: tu,
+				timeFrom,
+				timeUntil,
 			});
 		}
+	}
+
+	function startAndEnd(): [Date, Date] {
+		if (currentMatches) {
+			return [subMinutes(new Date(), 90), new Date()];
+		}
+
+		return [timeFrom, timeUntil];
 	}
 
 	return (
@@ -209,7 +215,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 				countries={countries}
 				selectedCountry={selectedCountry}
 				countryChanged={onChangeCountry}
-				currentMatches={onCurrentMatches}
+				currentMatches={currentMatches}
+				currentMatchesChanged={onCurrentMatches}
 				leagueChanged={onChangeLeague}
 				timeFromChanged={onTimeFromChanged}
 				timeUntilChanged={onTimeUntilChanged}
@@ -238,7 +245,7 @@ export type MatchFilterHocProps = {
 	countryChanged?: (newSelectedCountry: MultiValue<SelectOption>) => void;
 	leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
 	somethingChanged?: (actualFilter: FilterSettings) => void;
-	currentMatches?: (checked: boolean) => void;
+	currentMatchesChanged?: (checked: boolean) => void;
 };
 
 export type MatchFilterProps = {
@@ -247,4 +254,5 @@ export type MatchFilterProps = {
 	leagues: SelectOption[];
 	timeFrom?: Date;
 	timeUntil?: Date;
+	currentMatches?: boolean;
 } & MatchFilterHocProps;
