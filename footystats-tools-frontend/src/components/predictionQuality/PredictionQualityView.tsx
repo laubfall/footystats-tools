@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Accordion, AccordionContext, Button, Col, Row } from "react-bootstrap";
+import {Accordion, AccordionContext, Button, Col, Row, Stack} from "react-bootstrap";
 import AccordionBody from "react-bootstrap/AccordionBody";
 import AccordionHeader from "react-bootstrap/AccordionHeader";
 import translate from "../../i18n/translate";
@@ -73,7 +73,11 @@ export const PredictionQualityView = () => {
 				{activeEventKey === "0" && (
 					<Row>
 						<Col>
-							<h3>{translate("renderer.predictionqualitiyview.header.influencerdistribution.bet")}</h3>
+							<h3>
+								{translate(
+									"renderer.predictionqualitiyview.header.influencerdistribution.bet",
+								)}
+							</h3>
 							<InfluencerDistributionScatterChartView
 								distributionBetSuccess={
 									currentMeasurement?.distributionBetOnThis ||
@@ -87,7 +91,11 @@ export const PredictionQualityView = () => {
 						</Col>
 
 						<Col>
-							<h3>{translate("renderer.predictionqualitiyview.header.influencerdistribution.dontbet")}</h3>
+							<h3>
+								{translate(
+									"renderer.predictionqualitiyview.header.influencerdistribution.dontbet",
+								)}
+							</h3>
 							<InfluencerDistributionScatterChartView
 								distributionBetFailed={
 									currentMeasurement?.distributionDontBetOnThisFailed ||
@@ -130,23 +138,6 @@ export const PredictionQualityView = () => {
 
 	return (
 		<>
-			<Row>
-				<Col>
-					<Button onClick={handleOnClickComputeQuality}>
-						{translate(
-							"renderer.predictionqualityview.button.calculate",
-						)}
-					</Button>
-					<Button
-						disabled={recalculateAvailable === false}
-						onClick={handleOnClickRecomputeQuality}
-					>
-						{translate(
-							"renderer.predictionqualityview.button.recalculate",
-						)}
-					</Button>
-				</Col>
-			</Row>
 			<ReportList
 				report={report}
 				onRowClicked={(row) => {
@@ -188,6 +179,25 @@ export const PredictionQualityView = () => {
 					</AccordionBody>
 				</Accordion.Item>
 			</Accordion>
+			<div className={"m-2 d-flex justify-content-end"}>
+				<div className={"me-2"}>
+					<Button onClick={handleOnClickComputeQuality}>
+						{translate(
+							"renderer.predictionqualityview.button.calculate",
+						)}
+					</Button>
+				</div>
+				<div>
+					<Button
+						disabled={recalculateAvailable === false}
+						onClick={handleOnClickRecomputeQuality}
+					>
+						{translate(
+							"renderer.predictionqualityview.button.recalculate",
+						)}
+					</Button>
+				</div>
+			</div>
 		</>
 	);
 };
