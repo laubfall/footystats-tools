@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {Accordion, AccordionContext, Button, Col, Row, Stack} from "react-bootstrap";
+import { Accordion, AccordionContext, Button, Col, Row } from "react-bootstrap";
 import AccordionBody from "react-bootstrap/AccordionBody";
 import AccordionHeader from "react-bootstrap/AccordionHeader";
 import translate from "../../i18n/translate";
@@ -30,33 +30,30 @@ export const PredictionQualityView = () => {
 
 	useEffect(() => {
 		LoadingOverlayStore.loadingNow();
-		try {
-			predictionQualityService
-				.latestReport()
-				.then((rep) => setReport(rep))
-				.catch((reason) => {
-					if (reason.response?.status === 404) {
-						AlertMessageStore.addMessage(
-							translate(
-								"renderer.predictionqualitiyview.messages.noreport",
-							),
-						);
-						return reason;
-					}
-					apiCatchReasonHandler(reason);
-				});
+		predictionQualityService
+			.latestReport()
+			.then((rep) => setReport(rep))
+			.catch((reason) => {
+				if (reason.response?.status === 404) {
+					AlertMessageStore.addMessage(
+						translate(
+							"renderer.predictionqualitiyview.messages.noreport",
+						),
+					);
+					return reason;
+				}
+				apiCatchReasonHandler(reason);
+			});
 
-			predictionQualityService
-				.latestRevision()
-				.then((rev) =>
-					setRecalculateAvailable(
-						rev.revision !== NO_REVISION_SO_FAR,
-					),
-				)
-				.catch(apiCatchReasonHandler);
-		} finally {
-			LoadingOverlayStore.notLoadingNow();
-		}
+		predictionQualityService
+			.latestRevision()
+			.then((rev) =>
+				setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR),
+			)
+			.catch(apiCatchReasonHandler)
+			.finally(() => {
+				LoadingOverlayStore.notLoadingNow();
+			});
 	}, []);
 
 	useEffect(() => {
