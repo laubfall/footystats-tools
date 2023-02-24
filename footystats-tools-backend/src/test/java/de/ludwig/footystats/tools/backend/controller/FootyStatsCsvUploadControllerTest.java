@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller;
 
+import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigRepository;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsRepository;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
@@ -39,6 +40,9 @@ public class FootyStatsCsvUploadControllerTest {
 	@Autowired
 	private TeamStatsRepository teamStatsRepository;
 
+	@Autowired
+	private DownloadConfigRepository downloadConfigRepository;
+
     @Autowired
     private MockMvc mvc;
 
@@ -47,7 +51,23 @@ public class FootyStatsCsvUploadControllerTest {
         matchStatsRepository.deleteAll();
 		leagueStatsRepository.deleteAll();
 		teamStatsRepository.deleteAll();
+		downloadConfigRepository.deleteAll();
     }
+
+	@Test
+	void uploadDownloadConfig(){
+		var originalFileName = "download_config-footy-stats-152153323.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+
+			var config = downloadConfigRepository.findAllBySeasonEndsWithAndDownloadBitmaskGreaterThan("2023", 0);
+			Assertions.assertNotNull(config);
+			Assertions.assertEquals(2, config.size());
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
+	}
 
     @Test
     void uploadMatchStats() throws Exception {
@@ -56,9 +76,6 @@ public class FootyStatsCsvUploadControllerTest {
             var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
             mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
 
-            var m = matchRepository.findAll();
-
-            var msss = matchStatsRepository.findAll();
             List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry("Germany");
             Assertions.assertFalse(matchStatsImported.isEmpty());
         } catch (Exception e) {

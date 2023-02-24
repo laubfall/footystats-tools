@@ -4,6 +4,7 @@ import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.EncryptionService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadServiceTest;
+import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadCountryLeagueStatsConfig;
 import de.ludwig.footystats.tools.backend.services.settings.SettingsRepository;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
@@ -28,4 +29,7 @@ public class Configuration {
 
 	@Bean
 	public CsvFileService<TeamStats> teamStatsCsvFileService() {return new CsvFileService<>();}
+
+	@Bean
+	public CsvFileService<DownloadCountryLeagueStatsConfig> downloadConfigCsvFileService() {return new CsvFileService<>();}
 }

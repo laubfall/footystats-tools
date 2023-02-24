@@ -33,6 +33,8 @@ public class CsvFileService<T> {
 				return CsvFileType.TEAM_2_STATS;
 			case "matches_expanded":
 				return CsvFileType.LEAGUE_MATCH_STATS;
+			case "download_onfig":
+				return CsvFileType.DOWNLOAD_CONFIG;
 			default:
 				return null;
 		}
@@ -41,6 +43,10 @@ public class CsvFileService<T> {
 	public static CsvFileInformation csvFileInformationByFileName(String fileName) {
 		if (StringUtils.startsWith(fileName, "matches_expanded")) {
 			return new CsvFileInformation(CsvFileType.MATCH_STATS, null);
+		}
+
+		if (StringUtils.startsWith(fileName, "download_config")) {
+			return new CsvFileInformation(CsvFileType.DOWNLOAD_CONFIG, null);
 		}
 
 		var fileNameWithoutExt = fileName.substring(0, fileName.length() - 3);
