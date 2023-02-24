@@ -1,5 +1,5 @@
 # Footystats-Tools
-Footystats-Tools is a bet prediction web application that does its predictions based on footystats (footystats.org) csv-files. To use this software you need an account at footystats.org in order to download the necessary csv-files and deploy this application for your own.
+Footystats-Tools is a bet prediction web application that does its predictions based on footystats (footystats.org) csv-files. To use this software you need an account at footystats.org in order to download the necessary csv-files and deploy this application for your own on your private network.
 
 # Usage-Manual
 ## Generating the Download-CSV
