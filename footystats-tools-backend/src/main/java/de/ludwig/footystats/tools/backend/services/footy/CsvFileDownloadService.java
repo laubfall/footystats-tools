@@ -48,7 +48,11 @@ public class CsvFileDownloadService {
 		this.matchStatsService = matchStatsService;
 	}
 
-	public void downloadMatchStatsCsvFileAndImport(LocalDate matchStatsForDay) {
+	public void downloadConfiguredStats(){
+
+	}
+
+	public void downloadMatchStatsCsvFileAndImport() {
 		var rawMatches = downloadMatchStatsCsvFile(LocalDate.now());
 		File tmpFile = null;
 		try {
@@ -58,13 +62,14 @@ public class CsvFileDownloadService {
 			List<MatchStats> matchStats = csvFileService.importFile(new FileInputStream(tmpFile), MatchStats.class);
 			matchStats.forEach(matchStatsService::importMatchStats);
 		} catch (IOException e) {
+			logger.error("An exception occured while reading match stats", e);
 			if (tmpFile != null && tmpFile.exists()) {
 				FileUtils.deleteQuietly(tmpFile);
 			}
 		}
 	}
 
-	public List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {
+	List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {
 		var sessionCookie = login();
 		return downloadMatchStatsCsvFile(matchStatsForDay, sessionCookie);
 	}
@@ -90,8 +95,7 @@ public class CsvFileDownloadService {
 		}
 	}
 
-	public SessionCookie login() {
-
+	private SessionCookie login() {
 		Optional<Settings> optSettings = settingsRepository.findAll().stream().findAny();
 		if (optSettings.isEmpty()) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SETTINGS_MISSING);

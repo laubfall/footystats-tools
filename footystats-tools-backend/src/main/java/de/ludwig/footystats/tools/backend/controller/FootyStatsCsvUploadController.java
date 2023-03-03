@@ -68,7 +68,7 @@ public class FootyStatsCsvUploadController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@GetMapping(value = "/loadMatchesOfTheDayFromFooty")
 	public void loadMatchesOfTheDayFromFooty() {
-		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport(LocalDate.now());
+		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
 	}
 
 	private void store(MultipartFile file) throws IOException {
