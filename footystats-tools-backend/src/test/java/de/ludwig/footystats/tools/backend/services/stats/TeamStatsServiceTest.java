@@ -48,10 +48,10 @@ public class TeamStatsServiceTest {
 		Assertions.assertEquals(2, teamStats.size());
 
 		TeamStats aggregate = teamStatsService.aggregate(teamStats);
-		Assertions.assertEquals(7, aggregate.getWins_away());
-		Assertions.assertEquals(1.6, aggregate.getPoints_per_game_home());
-		Assertions.assertEquals(1.55, aggregate.getPoints_per_game());
-		Assertions.assertEquals(45, aggregate.getGoals_scored());
+		Assertions.assertEquals(7, aggregate.getWinsAway());
+		Assertions.assertEquals(1.6, aggregate.getPointsPerGameHome());
+		Assertions.assertEquals(1.55, aggregate.getPointsPerGame());
+		Assertions.assertEquals(45, aggregate.getGoalsScored());
 		Assertions.assertNotNull(aggregate);
 	}
 }
