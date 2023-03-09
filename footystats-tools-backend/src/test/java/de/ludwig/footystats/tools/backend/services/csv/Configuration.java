@@ -5,9 +5,11 @@ import de.ludwig.footystats.tools.backend.services.EncryptionService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadServiceTest;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadCountryLeagueStatsConfig;
+import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadCountryLeagueStatsCsvEntry;
 import de.ludwig.footystats.tools.backend.services.settings.SettingsRepository;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.Team2Stats;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -31,5 +33,8 @@ public class Configuration {
 	public CsvFileService<TeamStats> teamStatsCsvFileService() {return new CsvFileService<>();}
 
 	@Bean
-	public CsvFileService<DownloadCountryLeagueStatsConfig> downloadConfigCsvFileService() {return new CsvFileService<>();}
+	public CsvFileService<Team2Stats> team2StatsCsvFileService() {return new CsvFileService<>();}
+
+	@Bean
+	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> downloadConfigCsvFileService() {return new CsvFileService<>();}
 }

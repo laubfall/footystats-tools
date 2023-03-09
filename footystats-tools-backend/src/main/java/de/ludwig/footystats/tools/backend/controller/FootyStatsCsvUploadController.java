@@ -4,10 +4,7 @@ import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigService;
-import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
-import de.ludwig.footystats.tools.backend.services.stats.TeamStatsService;
+import de.ludwig.footystats.tools.backend.services.stats.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,15 +28,17 @@ public class FootyStatsCsvUploadController {
 	private final MatchStatsService matchStatsService;
 	private final LeagueStatsService leagueStatsService;
 	private final TeamStatsService teamStatsService;
+	private final Team2StatsService team2StatsService;
 	private final DownloadConfigService downloadConfigService;
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-										 CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService, DownloadConfigService downloadConfigService) {
+										 CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 		this.matchStatsService = matchStatsService;
 		this.leagueStatsService = leagueStatsService;
 		this.teamStatsService = teamStatsService;
+		this.team2StatsService = team2StatsService;
 		this.downloadConfigService = downloadConfigService;
 	}
 
@@ -91,6 +89,9 @@ public class FootyStatsCsvUploadController {
 				break;
 			case TEAM_STATS:
 				this.teamStatsService.readTeamStats(file.getInputStream());
+				break;
+			case TEAM_2_STATS:
+				this.team2StatsService.readTeamStats(file.getInputStream());
 				break;
 			case DOWNLOAD_CONFIG:
 				this.downloadConfigService.readDownloadConfigs(file.getInputStream());

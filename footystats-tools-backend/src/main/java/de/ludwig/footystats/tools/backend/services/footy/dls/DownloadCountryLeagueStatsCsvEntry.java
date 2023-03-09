@@ -40,6 +40,6 @@ public class DownloadCountryLeagueStatsCsvEntry {
 	 */
 	@Getter
 	@Setter
-	@CsvBindByName(required = true, capture = "[0,1,2,4,8,16]{1}")
+	@CsvBindByName(required = true, capture = "(\\d{1})")
 	private Integer downloadBitmask;
 }

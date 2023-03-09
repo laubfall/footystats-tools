@@ -1,11 +1,8 @@
 package de.ludwig.footystats.tools.backend.controller;
 
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigRepository;
-import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsRepository;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.*;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStatsRepository;
-import de.ludwig.footystats.tools.backend.services.stats.TeamStatsRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +36,9 @@ public class FootyStatsCsvUploadControllerTest {
 
 	@Autowired
 	private TeamStatsRepository teamStatsRepository;
+
+	@Autowired
+	private Team2StatsRepository team2StatsRepository;
 
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
@@ -109,6 +109,22 @@ public class FootyStatsCsvUploadControllerTest {
 			var allLeagueStats = teamStatsRepository.findAll();
 			Assertions.assertNotNull(allLeagueStats);
 			Assertions.assertEquals(2, allLeagueStats.size());
+
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
+	}
+
+	@Test
+	void uploadTeam2Stats(){
+		var originalFileName = "some-country-teams2-2020-to-2021-stats.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+
+			var allLeagueStats = team2StatsRepository.findAll();
+			Assertions.assertNotNull(allLeagueStats);
+			Assertions.assertEquals(1, allLeagueStats.size());
 
 		} catch (Exception e) {
 			Assertions.fail(e);
