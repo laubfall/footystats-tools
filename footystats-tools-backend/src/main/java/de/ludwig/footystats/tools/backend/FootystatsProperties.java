@@ -45,6 +45,26 @@ public class FootystatsProperties {
 		@Getter
 		@Setter
 		private String loginRessource;
+
+		@Getter
+		@Setter
+		private String leagueStatsRessource;
+
+		@Getter
+		@Setter
+		private String teamStatsRessource;
+
+		@Getter
+		@Setter
+		private String team2StatsRessource;
+
+		@Getter
+		@Setter
+		private String playerStatsRessource;
+
+		@Getter
+		@Setter
+		private String matchStatsLeagueRessource;
 	}
 
 	public static class PredictionQualityProperties

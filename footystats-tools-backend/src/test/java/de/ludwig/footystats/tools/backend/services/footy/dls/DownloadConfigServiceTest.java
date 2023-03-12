@@ -24,9 +24,6 @@ public class DownloadConfigServiceTest {
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
-
 	@BeforeEach
 	public void cleanup(){
 		downloadConfigRepository.deleteAll();
@@ -45,7 +42,7 @@ public class DownloadConfigServiceTest {
 
 		downloadConfigRepository.insert(List.of(bundesliga, bundesliga2, bundesliga3));
 
-		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownload();
+		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForCurrentYear();
 		Assertions.assertNotNull(configs);
 		Assertions.assertEquals(2, configs.size());
 
@@ -59,7 +56,7 @@ public class DownloadConfigServiceTest {
 		var regionalliga = new DownloadCountryLeagueStatsConfig("Germany", "Regionalliga", 4711, currentYear + "/" + (currentYear + 1), null, null, null, null, null, null);
 		downloadConfigRepository.insert(regionalliga);
 
-		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownload();
+		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForCurrentYear();
 		Assertions.assertNotNull(configs);
 		Assertions.assertTrue(configs.isEmpty());
 	}
@@ -70,8 +67,39 @@ public class DownloadConfigServiceTest {
 		// Should be inside the result set cause last download of player stats is older then thirty days.
 		var bundesliga3 = new DownloadCountryLeagueStatsConfig("Germany", "3. Bundesliga", 4711, "2022/" + currentYear, 1, System.currentTimeMillis() - 1000l, null, null, null, null);
 		downloadConfigRepository.insert(bundesliga3);
-		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownload();
+		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForCurrentYear();
 		Assertions.assertNotNull(configs);
+		Assertions.assertTrue(configs.isEmpty());
+	}
+
+	@Test
+	public void configs_of_past_years_with_and_without_a_dl(){
+		var currentYear = LocalDate.now().getYear();
+		// last year, wants all dls but no dl so far.
+		var bundesliga = new DownloadCountryLeagueStatsConfig("Germany", "Bundesliga", 4711, String.valueOf(currentYear - 1), 31, null, null, null, null, null);
+		downloadConfigRepository.insert(bundesliga);
+
+		// last year, but already downloaded team stats
+		var bundesliga2 = new DownloadCountryLeagueStatsConfig("Germany", "2. Bundesliga", 4711, String.valueOf(currentYear - 1), 2, null, System.currentTimeMillis(), null, null, null);
+		downloadConfigRepository.insert(bundesliga2);
+
+		// last year, wanted league dl but no dl so far.
+		var bundesliga3 = new DownloadCountryLeagueStatsConfig("Germany", "3. Bundesliga", 4711, String.valueOf(currentYear -1), 1, null, null, null, null, null);
+		downloadConfigRepository.insert(bundesliga3);
+
+		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForPreviousYears();
+		Assertions.assertNotNull(configs);
+		Assertions.assertEquals(2, configs.size());
+	}
+
+	@Test
+	public void config_current_year_but_search_for_older_ones() {
+		var currentYear = LocalDate.now().getYear();
+		// wants a download for team2stats but is for the current year
+		var bundesliga2 = new DownloadCountryLeagueStatsConfig("Germany", "2. Bundesliga", 4711, String.valueOf(currentYear), 8, null, null, null, null, null);
+		downloadConfigRepository.insert(bundesliga2);
+
+		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForPreviousYears();
 		Assertions.assertTrue(configs.isEmpty());
 	}
 }

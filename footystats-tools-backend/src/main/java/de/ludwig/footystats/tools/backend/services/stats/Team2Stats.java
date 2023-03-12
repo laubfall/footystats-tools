@@ -1361,18 +1361,18 @@ public class Team2Stats {
 	@Getter
 	@Setter
 	private Integer foulsByThisTeamAway;
-	@CsvBindByName(column = "fouls_per_match_overall")
+	@CsvCustomBindByName(converter = DoubleConverter.class, column = "fouls_per_match_overall")
 	@Getter
 	@Setter
-	private Integer foulsPerMatchOverall;
-	@CsvBindByName(column = "fouls_per_match_home")
+	private Double foulsPerMatchOverall;
+	@CsvCustomBindByName(converter = DoubleConverter.class, column = "fouls_per_match_home")
 	@Getter
 	@Setter
-	private Integer foulsPerMatchHome;
-	@CsvBindByName(column = "fouls_per_match_away")
+	private Double foulsPerMatchHome;
+	@CsvCustomBindByName(converter = DoubleConverter.class, column = "fouls_per_match_away")
 	@Getter
 	@Setter
-	private Integer foulsPerMatchAway;
+	private Double foulsPerMatchAway;
 	@CsvBindByName(column = "offsides_total_overall")
 	@Getter
 	@Setter
