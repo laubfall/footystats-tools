@@ -73,18 +73,29 @@ public class CsvFileDownloadService {
 
 		SessionCookie login = login();
 		if (!currentYearConfigs.isEmpty()) {
-			logger.info("Start downloading configured stats csv files for the current year");
-			for (DownloadCountryLeagueStatsConfig cyc : currentYearConfigs) {
-				List<FileTypeBit> typesWithWantedDownload = cyc.typesWithWantedDownload();
-				if (typesWithWantedDownload.isEmpty()) {
-					logger.warn("Download config retrieved from db without wanted downloads, this seems to be a coding problem: " + cyc);
-					continue;
-				}
-				for (FileTypeBit fileTypeBit : typesWithWantedDownload) {
-					String dlResource = fileTypeBitToFootystatsRessource(fileTypeBit);
-					List<String> csvLines = downloadConfiguredStats(login, dlResource, cyc.getFootyStatsDlId());
-					importConfiguredStats(csvLines, fileTypeBit);
-				}
+			logger.info("Start downloading configured stats csv files for the current year.");
+			doDownloadingByConfig(currentYearConfigs, login);
+		}
+
+		if(!olderConfigs.isEmpty()){
+			logger.info("Start downloading configured stats csf files for older seasons.");
+			doDownloadingByConfig(olderConfigs, login);
+		}
+	}
+
+	private void doDownloadingByConfig(List<DownloadCountryLeagueStatsConfig> configs, SessionCookie login) {
+		for (DownloadCountryLeagueStatsConfig cyc : configs) {
+			List<FileTypeBit> typesWithWantedDownload = cyc.typesWithWantedDownload();
+			if (typesWithWantedDownload.isEmpty()) {
+				logger.warn("Download config retrieved from db without wanted downloads, this seems to be a coding problem: " + cyc);
+				continue;
+			}
+
+			for (FileTypeBit fileTypeBit : typesWithWantedDownload) {
+				logger.info("Start downloading configured stats of type " + fileTypeBit.getBit() + " country: " + cyc.getCountry() + " league: " + cyc.getLeague() + " season: " + cyc.getSeason());
+				String dlResource = fileTypeBitToFootystatsRessource(fileTypeBit);
+				List<String> csvLines = downloadConfiguredStats(login, dlResource, cyc.getFootyStatsDlId());
+				importConfiguredStats(csvLines, fileTypeBit);
 			}
 		}
 	}

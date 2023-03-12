@@ -104,6 +104,7 @@ public class CsvFileServiceTest {
 			var playerStats = entries.get(0);
 			Assertions.assertEquals("Some Club", playerStats.getCurrentClub());
 			Assertions.assertEquals("2020/2021", playerStats.getSeason());
+			Assertions.assertNull(playerStats.getPassesTotalOverall());
 		} catch (IOException e) {
 			Assertions.fail();
 		}
