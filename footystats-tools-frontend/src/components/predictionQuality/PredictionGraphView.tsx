@@ -2,15 +2,8 @@ import React from "react";
 import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
 import translate from "../../i18n/translate";
-import {
-	BetPredictionQuality,
-	BetPredictionQualityBetEnum,
-} from "../../footystats-frontendapi";
+import { BetPredictionQuality } from "../../footystats-frontendapi";
 import { Col, Row } from "react-bootstrap";
-
-export type PredictionGraphViewProps = {
-	measurement?: BetPredictionQuality;
-};
 
 export const PredictionGraphView = ({
 	measurement,
@@ -68,4 +61,8 @@ export const PredictionGraphView = ({
 			</Col>
 		</Row>
 	);
+};
+
+export type PredictionGraphViewProps = {
+	measurement?: BetPredictionQuality;
 };

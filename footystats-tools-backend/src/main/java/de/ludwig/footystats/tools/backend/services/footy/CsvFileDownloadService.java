@@ -9,10 +9,9 @@ import de.ludwig.footystats.tools.backend.services.footy.dls.FileTypeBit;
 import de.ludwig.footystats.tools.backend.services.settings.Settings;
 import de.ludwig.footystats.tools.backend.services.settings.SettingsRepository;
 import de.ludwig.footystats.tools.backend.services.stats.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -31,10 +30,9 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 
+@Slf4j
 @Service
 public class CsvFileDownloadService {
-
-	private static final Logger logger = LoggerFactory.getLogger(CsvFileDownloadService.class);
 
 	private final FootystatsProperties properties;
 
@@ -67,18 +65,18 @@ public class CsvFileDownloadService {
 		List<DownloadCountryLeagueStatsConfig> currentYearConfigs = downloadConfigService.configsWhoWantADownloadForCurrentYear();
 		List<DownloadCountryLeagueStatsConfig> olderConfigs = downloadConfigService.configsWhoWantADownloadForPreviousYears();
 		if (currentYearConfigs.isEmpty() && olderConfigs.isEmpty()) {
-			logger.info("Currently there are no configured downloads, so no stats are going to be downloaded from footystats.org.");
+			log.info("Currently there are no configured downloads, so no stats are going to be downloaded from footystats.org.");
 			return;
 		}
 
 		SessionCookie login = login();
 		if (!currentYearConfigs.isEmpty()) {
-			logger.info("Start downloading configured stats csv files for the current year.");
+			log.info("Start downloading configured stats csv files for the current year.");
 			doDownloadingByConfig(currentYearConfigs, login);
 		}
 
 		if(!olderConfigs.isEmpty()){
-			logger.info("Start downloading configured stats csf files for older seasons.");
+			log.info("Start downloading configured stats csf files for older seasons.");
 			doDownloadingByConfig(olderConfigs, login);
 		}
 	}
@@ -87,12 +85,12 @@ public class CsvFileDownloadService {
 		for (DownloadCountryLeagueStatsConfig cyc : configs) {
 			List<FileTypeBit> typesWithWantedDownload = cyc.typesWithWantedDownload();
 			if (typesWithWantedDownload.isEmpty()) {
-				logger.warn("Download config retrieved from db without wanted downloads, this seems to be a coding problem: " + cyc);
+				log.warn("Download config retrieved from db without wanted downloads, this seems to be a coding problem: " + cyc);
 				continue;
 			}
 
 			for (FileTypeBit fileTypeBit : typesWithWantedDownload) {
-				logger.info("Start downloading configured stats of type " + fileTypeBit.getBit() + " country: " + cyc.getCountry() + " league: " + cyc.getLeague() + " season: " + cyc.getSeason());
+				log.info("Start downloading configured stats of type " + fileTypeBit.getBit() + " country: " + cyc.getCountry() + " league: " + cyc.getLeague() + " season: " + cyc.getSeason());
 				String dlResource = fileTypeBitToFootystatsRessource(fileTypeBit);
 				List<String> csvLines = downloadConfiguredStats(login, dlResource, cyc.getFootyStatsDlId());
 				importConfiguredStats(csvLines, fileTypeBit);
@@ -105,6 +103,7 @@ public class CsvFileDownloadService {
 
 		workingWithTempFile(fileStream -> {
 			List<MatchStats> matchStats = csvFileService.importFile(fileStream, MatchStats.class);
+			log.info("MatchStatc csv ile contains " + matchStats.size() + " matches.");
 			matchStats.forEach(matchStatsService::importMatchStats);
 		}, rawMatches, "matchStats");
 	}
@@ -155,7 +154,7 @@ public class CsvFileDownloadService {
 			fis = new FileInputStream(tmpFile);
 			consumer.accept(fis);
 		} catch (IOException e) {
-			logger.error("An exception occured while processing csv tmp file", e);
+			log.error("An exception occured while processing csv tmp file", e);
 		} finally {
 			IOUtils.closeQuietly(fis);
 

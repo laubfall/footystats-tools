@@ -41,6 +41,10 @@ public class BetPredictionQuality {
 	@Getter
 	@Setter
 	private List<BetPredictionDistribution> distributionDontBetOnThisFailed = new ArrayList();
+	/**
+	 * Contains the BetPredictionDistributions if a bet was successful no matter if footystats
+	 * said bet on this or not.
+	 */
 	@Getter
 	@Setter
 	private List<BetPredictionDistribution> distributionBetSuccessful = new ArrayList();
