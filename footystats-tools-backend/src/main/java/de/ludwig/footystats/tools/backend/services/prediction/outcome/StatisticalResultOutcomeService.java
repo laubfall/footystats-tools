@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -39,35 +38,39 @@ public class StatisticalResultOutcomeService {
 			return null;
 		}
 
-		double matchStatisticalOutcome = 0d;
-
+		double matchStatisticalOutcome;
 		final Predicate<BetPredictionDistribution> predicateBetPredictionQuality = (betPredictionDistribution) -> betPredictionDistribution.getPredictionPercent().equals(result.betSuccessInPercent());
-		if(result.betSuccessInPercent() >= 50){
+		if (result.betSuccessInPercent() >= 50) {
 			var betOnThis = predictionQuality.get().getDistributionBetOnThis();
 			var betOnThisFailed = predictionQuality.get().getDistributionBetOnThisFailed();
 			var success = orDefault(betOnThis, predicateBetPredictionQuality, bet);
 			var failed = orDefault(betOnThisFailed, predicateBetPredictionQuality, bet);
-			matchStatisticalOutcome = success.getCount() / (success.getCount() + failed.getCount());
+			matchStatisticalOutcome = calcStatisticalMatchOutcome(success.getCount(), failed.getCount());
 		} else {
 			var dontBetOnThis = predictionQuality.get().getDistributionDontBetOnThis();
 			var dontBetOnThisFailed = predictionQuality.get().getDistributionDontBetOnThisFailed();
 			var failed = orDefault(dontBetOnThis, predicateBetPredictionQuality, bet);
 			var success = orDefault(dontBetOnThisFailed, predicateBetPredictionQuality, bet);
-			matchStatisticalOutcome = success.getCount() / (success.getCount() + failed.getCount());
+			matchStatisticalOutcome = calcStatisticalMatchOutcome(failed.getCount(), success.getCount());
 		}
 
-		return new StatisticalResultOutcome(matchStatisticalOutcome, new ArrayList<>(0));
+		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, new ArrayList<>(0));
 	}
 
-	private BetPredictionDistribution orDefault(List<BetPredictionDistribution> all, Predicate<BetPredictionDistribution> filter, Bet bet){
+
+
+	private BetPredictionDistribution orDefault(List<BetPredictionDistribution> all, Predicate<BetPredictionDistribution> filter, Bet bet) {
 		Optional<BetPredictionDistribution> result = all.stream().filter(filter).findFirst();
-		if(result.isEmpty()){
+		if (result.isEmpty()) {
 			return new BetPredictionDistribution(0, 0l, new ArrayList<>(0));
 		}
 
 		return result.get();
 	}
 
+	private double calcStatisticalMatchOutcome(Long success, Long failed) {
+		return (double) success / (double) (success + failed);
+	}
 
 	private PredictionQualityReport report() {
 		if (report == null) {

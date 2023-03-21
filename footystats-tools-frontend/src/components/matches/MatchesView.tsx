@@ -10,8 +10,8 @@ import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
 	BetPredictionQualityBetEnum,
 	FootyStatsCsvUploadControllerApi,
-	Match,
 	MatchControllerApi,
+	MatchListElement,
 	Paging,
 	PagingDirectionEnum,
 } from "../../footystats-frontendapi";
@@ -20,7 +20,7 @@ import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 import { apiCatchReasonHandler } from "../functions";
 import { utcToZonedTime } from "date-fns-tz";
 
-function matchListEntries(n: Match[]) {
+function matchListEntries(n: MatchListElement[]) {
 	const r = n.map(async (ms) => {
 		const mle: MatchListEntry = {
 			gameStartsAt: utcToZonedTime(
@@ -46,6 +46,7 @@ function matchListEntries(n: Match[]) {
 					prediction: ms.bttsYes,
 				},
 			],
+			statisticalResultOutcome: ms.statisticalResultOutcome,
 		};
 
 		return mle;
@@ -70,7 +71,7 @@ export const MatchesView = () => {
 		timeUntil: undefined,
 	});
 
-	function createMatchListEntries(n: Match[]) {
+	function createMatchListEntries(n: MatchListElement[]) {
 		return matchListEntries(n);
 	}
 

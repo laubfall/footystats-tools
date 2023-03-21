@@ -1,19 +1,31 @@
 # Footystats-Tools
 Footystats-Tools is a bet prediction web application that does its predictions based on footystats (footystats.org) csv-files. To use this software you need an account at footystats.org in order to download the necessary csv-files and deploy this application for your own on your private network. There are no plans to host this application on the public internet!
 
-# Project-Setup
+## Project-Setup
 Actually no build binaries exist so if you want to deploy the application or just want to code with me (PRs welcome :) ) you need to do some initial setup. 
 
-## Requirements
+### Requirements
 * Java 17 JDK
 * Node.js 18
 * Maven
 * Docker
 * An IDE (like Intellij or Visual Studio Code)
+* Openapi-Generator installed globally as a npm package.
 
-# Usage-Manual
-## Setup a standalone server
-## Generating the Download-CSV
+### Development Environment
+First switch to footystats-tool-backend/docker/mongo directory and execute the script start-mongo-container.sh. This scripty fires up docker-compose which creates a mongodb and mongo-express container. If this is done the script prepares the mongodb 'converting' it into a replicaset. This is necessary in order to make Spring Transactions work with the mongodb and it is the only reason why a shell script is needed to create and start the containers. So if the container exists you can start them via docker-compose start.
+
+Next step is starting backend and frontend. This is fairly simple, create a run configuration for both applications (steps may vary depending on your IDE) and start these. For the backend application make sure to activate the Spring Profile 'dev'.
+## Development
+### Changing Rest-API
+Changing the Rest Controller means that these changes need to be made inside the frontend code (footystats-tools-frontend) as well. Building the backend code with maven and profile 'openapi' generated a swagger file that is used by openapi generator that creates or rebuild the frontend code. The build command is like this (make sure the mongodb is up and running, s. chapter Developement Environment):
+
+```mvn install -DskipTests -P openapi```
+
+If maven executed without errors a swagger openapi file was generated an all the frontend code is generated. 
+## Usage-Manual
+### Setup a standalone server
+### Generating the Download-CSV
 For some bet predictions footystats-tools use Team-/League- and Player-Stats csv-files from footystats.org. Cause there are a lot of them footystats-tools has a mechanism to automatically download these files. That this is possible you have to provide a special csv file that you must create. This file contains the download-ids given by footystats.org so footystats-tools can create the download-link and download the file. This section describes the steps to create the download csv file.
 
 Use this little JQuery script to print the downloadlinks and country and league to console:

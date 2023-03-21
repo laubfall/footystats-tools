@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
 	BsFillArrowDownCircleFill,
@@ -14,7 +14,6 @@ import {
 	OverlayTrigger,
 	Popover,
 } from "react-bootstrap";
-import { uniqueId } from "lodash";
 import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
@@ -22,11 +21,18 @@ import {
 	BetPredictionQualityBetEnum,
 	InfluencerResultPrecheckResultEnum,
 	PredictionResult,
+	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
+import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
+import { uniqueId } from "lodash";
 
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
 ) {
+	type ForwarRefType = {
+		row: MatchListEntry;
+		betPrediction: BetPrediction;
+	};
 	return (
 		predictionForBets?.map((bet) => {
 			const tr: TableColumn<MatchListEntry> = {
@@ -39,14 +45,10 @@ function createBetPredictionColumns(
 				},
 				// eslint-disable-next-line react/display-name
 				cell: (row) => {
-					const b = row.betPredictions.find((v) => v.bet === bet);
+					const betPrediction = row.betPredictions.find(
+						(v) => v.bet === bet,
+					);
 
-					const relevantDetails =
-						b?.prediction.influencerDetailedResult.filter(
-							(d) =>
-								d.precheckResult ===
-								InfluencerResultPrecheckResultEnum.Ok,
-						);
 					return (
 						<OverlayTrigger
 							placement="right"
@@ -58,32 +60,27 @@ function createBetPredictionColumns(
 										)}
 									</Popover.Header>
 									<Popover.Body>
-										<ListGroup>
-											{relevantDetails &&
-												relevantDetails.map((d) => (
-													<ListGroupItem
-														key={uniqueId()}
-													>
-														{d.influencerName}:{" "}
-														{
-															d.influencerPredictionValue
-														}
-													</ListGroupItem>
-												))}
-										</ListGroup>
+										<BetDetailInfoOverlay
+											betPrediction={betPrediction}
+											statisticalOutcome={
+												row.statisticalResultOutcome.find(sro => sro.bet === bet)
+											}
+										/>
 									</Popover.Body>
 								</Popover>
 							}
 						>
 							<span>
-								{b?.prediction.betSuccessInPercent}
-								{b?.prediction.betOnThis === true && (
+								{betPrediction?.prediction.betSuccessInPercent}
+								{betPrediction?.prediction.betOnThis ===
+									true && (
 									<>
 										&nbsp;
 										<BsFillArrowUpCircleFill />
 									</>
 								)}
-								{b?.prediction.betOnThis === false && (
+								{betPrediction?.prediction.betOnThis ===
+									false && (
 									<>
 										&nbsp;
 										<BsFillArrowDownCircleFill />
@@ -209,6 +206,7 @@ export type MatchListEntry = {
 	result: string;
 	footyStatsUrl: string;
 	betPredictions: BetPrediction[];
+	statisticalResultOutcome?: StatisticalResultOutcome[];
 };
 
 export type MatchListProps = {
