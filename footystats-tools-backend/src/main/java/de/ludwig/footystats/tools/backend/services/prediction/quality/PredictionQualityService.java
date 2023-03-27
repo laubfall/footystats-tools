@@ -90,7 +90,6 @@ public class PredictionQualityService extends MongoService<PredictionQualityRepo
 			pageCnt+=1;
 		};
 
-
 		upsert(latestReport);
 		return latestReport;
 	}

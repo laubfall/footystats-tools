@@ -1,25 +1,24 @@
 package de.ludwig.footystats.tools.backend.services.prediction.outcome;
 
-import de.ludwig.footystats.tools.backend.services.prediction.Bet;
-import de.ludwig.footystats.tools.backend.services.prediction.BetPredictionDistribution;
-import de.ludwig.footystats.tools.backend.services.prediction.BetPredictionQuality;
-import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
+import de.ludwig.footystats.tools.backend.services.prediction.*;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReport;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @Scope("prototype")
 public class StatisticalResultOutcomeService {
 	private PredictionQualityReport report;
+
+	private Map<InfluencerStatisticalResultOutcomeKey, Double> influencerStatisticalResultOutcome = new HashMap<>();
 
 	private PredictionQualityReportRepository qualityReportRepository;
 
@@ -57,7 +56,28 @@ public class StatisticalResultOutcomeService {
 		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, new ArrayList<>(0));
 	}
 
+	public void computeInfluencerStatisticalOutcome(final PredictionResult result, Bet bet){
+		var currentReport = report();
+		if(currentReport == null){
+			return;
+		}
 
+
+		// Count bet success / count bet failed for all influencer with the same prediction value as given by the result.
+
+	}
+
+	private InfluencerStatisticalResultOutcome aggregate(BetPredictionQuality betPrediction, String influencerName){
+		List<InfluencerPercentDistribution> result = new ArrayList<>();
+
+		// collect to one list filter influencer that have the wanted name.
+		List<InfluencerPercentDistribution> influencerDistributionsForBetOnThis = betPrediction.getDistributionBetOnThis().stream().map(BetPredictionDistribution::getInfluencerDistribution).collect(() -> result, List::addAll, List::addAll).stream().filter(ipd -> ipd.getInfluencerName().equals(influencerName)).collect(Collectors.toList());
+		List<InfluencerPercentDistribution> influencerDistributionsForBetOnThisFailed = betPrediction.getDistributionBetOnThisFailed().stream().map(BetPredictionDistribution::getInfluencerDistribution).collect(() -> result, List::addAll, List::addAll).stream().filter(ipd -> ipd.getInfluencerName().equals(influencerName)).collect(Collectors.toList());
+
+
+
+		return null;
+	}
 
 	private BetPredictionDistribution orDefault(List<BetPredictionDistribution> all, Predicate<BetPredictionDistribution> filter, Bet bet) {
 		Optional<BetPredictionDistribution> result = all.stream().filter(filter).findFirst();
