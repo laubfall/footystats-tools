@@ -1,10 +1,13 @@
 package de.ludwig.footystats.tools.backend.services.prediction;
 
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package de.ludwig.footystats.tools.backend.services.prediction;
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionAggregateRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsServiceConfiguration;
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @TestConfiguration
 public class PredictionServiceConfiguration {
 	@Bean
-	public PredictionQualityService predictionQualityService(MatchRepository matchRepository, MatchService matchService, PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties properties){
-		return new PredictionQualityService(matchRepository, matchService, predictionQualityReportRepository, mongoTemplate, mappingMongoConverter, properties);
+	public PredictionQualityService predictionQualityService(MatchRepository matchRepository, MatchService matchService, PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties properties, BetPredictionAggregateRepository betPredictionAggregateRepository){
+		return new PredictionQualityService(matchRepository, matchService, predictionQualityReportRepository, mongoTemplate, mappingMongoConverter, betPredictionAggregateRepository, properties);
 	}
 }

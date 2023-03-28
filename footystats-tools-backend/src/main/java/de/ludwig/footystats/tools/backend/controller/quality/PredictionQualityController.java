@@ -1,4 +1,4 @@
-package de.ludwig.footystats.tools.backend.controller;
+package de.ludwig.footystats.tools.backend.controller.quality;
 
 import de.ludwig.footystats.tools.backend.services.prediction.quality.*;
 import org.springframework.http.HttpStatus;

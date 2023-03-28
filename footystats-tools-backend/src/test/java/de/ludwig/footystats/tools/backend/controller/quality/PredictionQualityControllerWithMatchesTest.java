@@ -1,6 +1,7 @@
-package de.ludwig.footystats.tools.backend.controller;
+package de.ludwig.footystats.tools.backend.controller.quality;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.ludwig.footystats.tools.backend.controller.Configuration;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;

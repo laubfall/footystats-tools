@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public class StatisticalResultOutcomeService {
 	private PredictionQualityReport report;
 
-	private Map<InfluencerStatisticalResultOutcomeKey, Double> influencerStatisticalResultOutcome = new HashMap<>();
-
 	private PredictionQualityReportRepository qualityReportRepository;
 
 	public StatisticalResultOutcomeService(PredictionQualityReportRepository qualityReportRepository) {

@@ -22,5 +22,5 @@ public class InfluencerPercentDistribution
 	private String influencerName;
 	@Getter
 	@Setter
-	private PrecheckResult precheckResult;
+	private PrecheckResult precheckResult; // why?
 }
