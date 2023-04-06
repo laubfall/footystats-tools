@@ -1,7 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
 import de.ludwig.footystats.tools.backend.services.prediction.BetPredictionQuality;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

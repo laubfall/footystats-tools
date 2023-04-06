@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonComponent
+@Deprecated
 public class BetPredictionDistribution {
 	@Getter
 	@Setter

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
+@Deprecated
 public class BetPredictionQuality {
 	@Getter
 	@Setter
