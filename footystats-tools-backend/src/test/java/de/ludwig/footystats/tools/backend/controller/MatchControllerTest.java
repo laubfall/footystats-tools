@@ -3,6 +3,7 @@ package de.ludwig.footystats.tools.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.InfluencerResult;
@@ -28,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -74,8 +76,10 @@ public class MatchControllerTest {
         var match = new Match();
         match.setCountry("Germany");
         match.setLeague("Bundesliga");
-        match.setRevision(new PredictionQualityRevision(1));
+        match.setRevision(PredictionQualityService.INITIAL_REVISION);
         match.setDateGMT(date);
+		match.setBttsYes(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
+		match.setO05(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
         matchRepository.insert(match);
 
         var request = new MatchController.ListMatchRequest();
