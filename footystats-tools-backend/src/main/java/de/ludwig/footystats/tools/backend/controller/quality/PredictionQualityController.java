@@ -1,10 +1,13 @@
 package de.ludwig.footystats.tools.backend.controller.quality;
 
+import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/predictionquality")
@@ -12,50 +15,44 @@ public class PredictionQualityController {
 
 	private PredictionQualityService predictionQualityService;
 
-	private PredictionQualityReportRepository predictionQualityReportRepository;
+	private BetPredictionQualityRepository betPredictionQualityRepository;
 
-	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityReportRepository predictionQualityReportRepository) {
+	public PredictionQualityController(PredictionQualityService predictionQualityService, BetPredictionQualityRepository betPredictionQualityRepository) {
 		this.predictionQualityService = predictionQualityService;
-		this.predictionQualityReportRepository = predictionQualityReportRepository;
+		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
 	@GetMapping("/compute")
-	public PredictionQualityReport computeQuality(){
-		return predictionQualityService.computeQuality();
-	}
-
-	@GetMapping("/latest/revision")
-	public PredictionQualityRevision latestRevision(){
-		var report = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
-		if(report == null){
-			return PredictionQualityRevision.NO_REVISION;
-		}
-		return report.getRevision();
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void computeQuality() {
+		predictionQualityService.computeQuality();
 	}
 
 	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"}, path = {"/precast"})
-	public Precast precast(@RequestBody PredictionQualityRevision revision){
+	public Precast precast(@RequestBody PredictionQualityRevision revision) {
 		return predictionQualityService.precast(revision);
 	}
 
 	@GetMapping("/latest/report")
-	public PredictionQualityReport latestReport(){
-		var report = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
-		if(report != null){
-			return report;
-		}
+	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
+		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
+		final List<BetPredictionQualityBetAggregate> betPercentDistributionResult = betPredictionQualityRepository.findAllByBetAndRevision(moreQualityDetailsForThisBetType, PredictionQualityService.INITIAL_REVISION, BetPredictionQualityBetAggregate.class);
 
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		final Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated = predictionQualityService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType);
+
+		// create prediction results for all bets
+		final List<BetPredictionQualityAllBetsAggregate> measuredPredictionCntAggregates = predictionQualityService.matchPredictionQualityMeasurementCounts();
+		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult,  influencerPredictionsAggregated);
 	}
 
-	@PostMapping(name = "/recompute", consumes = {"application/json"}, produces = {"application/json"}, path = {"/recompute"})
-	public PredictionQualityReport recomputeQuality(@RequestBody PredictionQualityRevision revision){
+
+	@PostMapping(name = "/recompute", consumes = {"application/json"}, path = {"/recompute"})
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void recomputeQuality(@RequestBody PredictionQualityRevision revision) {
 		var report = predictionQualityService.recomputeQuality(revision);
 
-		if(report == null){
+		if (report == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
-
-		return report;
 	}
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.jackson.JsonComponent;
 
-@JsonComponent
 public class Precast {
 	@Getter
 	@Setter

@@ -8,7 +8,6 @@ import org.springframework.boot.jackson.JsonComponent;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonComponent
 public class InfluencerPercentDistribution
 {
 	@Getter

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonComponent
 @Builder(toBuilder = true)
 public class BetPredictionQuality {
 	@Getter

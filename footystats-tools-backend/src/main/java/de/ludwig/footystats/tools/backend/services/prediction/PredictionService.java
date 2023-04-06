@@ -10,6 +10,8 @@ import java.util.List;
 @Service
 public class PredictionService {
 
+	public static final int LOWER_EXCLUSIVE_BORDER_BET_ON_THIS = 50;
+
 	private final BetResultInfluencer[] betResultInfluencer = {
 			new OddsBttsYesInfluencer(),
 			new OddsGoalOverInfluencer(),
@@ -82,7 +84,7 @@ public class PredictionService {
 		if (doneInfluencerCalculations > 0) {
 			result = Math.round(result / doneInfluencerCalculations);
 		}
-		var betOnThis = result > 50;
+		var betOnThis = result > LOWER_EXCLUSIVE_BORDER_BET_ON_THIS;
 		return new PredictionResult(result, betOnThis, analyze(ctx, doneInfluencerCalculations > 0, betOnThis),
 				influencerDetailedResult);
 	}

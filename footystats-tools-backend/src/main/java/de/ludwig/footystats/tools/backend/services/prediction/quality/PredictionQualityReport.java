@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonComponent
 @Document
+@Deprecated //
 public class PredictionQualityReport {
 	@Id
 	@Getter
