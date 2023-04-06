@@ -28,11 +28,6 @@ public class PredictionQualityController {
 		predictionQualityService.computeQuality();
 	}
 
-	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"}, path = {"/precast"})
-	public Precast precast(@RequestBody PredictionQualityRevision revision) {
-		return predictionQualityService.precast(revision);
-	}
-
 	@GetMapping("/latest/report")
 	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
@@ -49,10 +44,6 @@ public class PredictionQualityController {
 	@PostMapping(name = "/recompute", consumes = {"application/json"}, path = {"/recompute"})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void recomputeQuality(@RequestBody PredictionQualityRevision revision) {
-		var report = predictionQualityService.recomputeQuality(revision);
-
-		if (report == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		}
+		predictionQualityService.recomputeQuality(revision);
 	}
 }

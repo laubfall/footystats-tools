@@ -64,7 +64,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return precast;
 	}
 
-	public PredictionQualityReport computeQuality() {
+	public void computeQuality() {
 		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 		Page<Match> matchesPage;
 		var pageCnt = 1;
@@ -86,12 +86,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
 			pageCnt += 1;
 		}
-
-		return null; // TODO what do we return.
-	}
-
-	public List<BetPredictionQuality> forBet(Bet bet) {
-		return betPredictionAggregateRepository.findAllByBetAndRevision(bet, INITIAL_REVISION, BetPredictionQuality.class);
 	}
 
 	public Map<String, List<InfluencerPercentDistribution>> groupByInfluencerName(List<BetPredictionQuality> aggregates) {
@@ -288,32 +282,20 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	@Transactional
-	public PredictionQualityReport recomputeQuality(PredictionQualityRevision revision) {
-		var report = predictionQualityReportRepository.findByRevision(revision);
-		if (report == null) {
-			return null;
-		}
-
+	public void recomputeQuality(PredictionQualityRevision revision) {
 		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
-		report.setMeasurements(new ArrayList<>());
 		var pageCnt = 1;
 		while (result.hasContent()) {
 			result.forEach((match) -> {
 				var msm = this.measure(match);
-				//this.merge(report, msm);
+				this.merge(msm);
 			});
 
 			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
 			pageCnt += 1;
 		}
-		;
-
-		predictionQualityReportRepository.delete(report);
-		predictionQualityReportRepository.save(report);
-
-		return report;
 	}
 
 	@Override
