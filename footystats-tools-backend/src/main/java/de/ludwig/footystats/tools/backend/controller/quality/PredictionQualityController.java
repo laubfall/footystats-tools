@@ -28,7 +28,7 @@ public class PredictionQualityController {
 		predictionQualityService.computeQuality();
 	}
 
-	@GetMapping("/latest/report")
+	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
 	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
 		final List<BetPredictionQualityBetAggregate> betPercentDistributionResult = betPredictionQualityRepository.findAllByBetAndRevision(moreQualityDetailsForThisBetType, PredictionQualityService.INITIAL_REVISION, BetPredictionQualityBetAggregate.class);
@@ -40,10 +40,14 @@ public class PredictionQualityController {
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult,  influencerPredictionsAggregated);
 	}
 
-
 	@PostMapping(name = "/recompute", consumes = {"application/json"}, path = {"/recompute"})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void recomputeQuality(@RequestBody PredictionQualityRevision revision) {
 		predictionQualityService.recomputeQuality(revision);
+	}
+
+	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"}, path = {"/precast"})
+	public Precast precast(@RequestBody PredictionQualityRevision revision) {
+		return predictionQualityService.precast(revision);
 	}
 }

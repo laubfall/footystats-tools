@@ -214,6 +214,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getO05() != null && relevantPredictionResult.apply(match.getO05())) {
 			var predictionResult = match.getO05();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
+				.revision(PredictionQualityService.INITIAL_REVISION)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.OVER_ZERO_FIVE)
@@ -224,6 +225,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getBttsYes() != null && relevantPredictionResult.apply(match.getBttsYes())) {
 			var predictionResult = match.getBttsYes();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
+				.revision(PredictionQualityService.INITIAL_REVISION)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.BTTS_YES)

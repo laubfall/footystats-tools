@@ -49,17 +49,18 @@ public class PredictionQualityControllerTest {
 
 	@Test
 	public void compute() throws Exception {
-		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().is4xxClientError());
-		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.empty()));
-		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report")
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(4)));
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
+			.andExpect(status().isNoContent());
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(4)));
 	}
 
 	@Test

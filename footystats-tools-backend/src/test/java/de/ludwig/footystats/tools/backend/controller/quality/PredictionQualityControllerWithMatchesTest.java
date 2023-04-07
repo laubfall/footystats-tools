@@ -25,6 +25,9 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -33,14 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class PredictionQualityControllerWithMatchesTest {
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@Autowired
-	private PredictionQualityReportRepository qualityReportRepository;
 
 	@Autowired
 	private CsvFileService<MatchStats> csvFileService;
@@ -54,23 +52,23 @@ public class PredictionQualityControllerWithMatchesTest {
 		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_PredictionQualityReportWithMatchesTest.csv"), MatchStats.class);
 		matchStats.forEach(matchStatsService::importMatchStats);
 
-		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
+		mockMvc.perform(get("/predictionquality/compute"))
+			.andExpect(status().isNoContent());
+		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.jsonPath("$.revision", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.revision.revision", Matchers.equalTo(0)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.measurements", Matchers.hasSize(2)));
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", hasSize(4)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[0].bet", equalTo("OVER_ZERO_FIVE")))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[0].assessed", equalTo(4)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[0].betSuccess", equalTo(4)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[0].betFailed", equalTo(0)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].bet", equalTo("BTTS_YES")))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.influencerPercentDistributions.keys()", hasSize(2)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionDistributions", hasSize(3)))
+		;
 
-		var reportCnt = qualityReportRepository.count();
-		Assertions.assertEquals(1, reportCnt);
 
-		var firstReport = qualityReportRepository.findTopByOrderByRevisionDesc();
-		Assertions.assertNotNull(firstReport);
-		Assertions.assertEquals(2, firstReport.getMeasurements().size());
-
-		var optBetOverZeroFive = firstReport.getMeasurements().stream().filter(bpq -> Bet.OVER_ZERO_FIVE.equals(bpq.getBet())).findAny();
-		Assertions.assertTrue(optBetOverZeroFive.isPresent());
-
-		var betOverZeroFive = optBetOverZeroFive.get();
-		Assertions.assertEquals(4l, betOverZeroFive.getCountAssessed());
 	}
 }
