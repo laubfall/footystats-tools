@@ -76,7 +76,7 @@ public class MatchControllerTest {
         var match = new Match();
         match.setCountry("Germany");
         match.setLeague("Bundesliga");
-        match.setRevision(PredictionQualityService.INITIAL_REVISION);
+        match.setRevision(PredictionQualityRevision.NO_REVISION);
         match.setDateGMT(date);
 		match.setBttsYes(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
 		match.setO05(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));

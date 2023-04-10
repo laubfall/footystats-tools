@@ -40,8 +40,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 	private final FootystatsProperties properties;
 
-	public final static PredictionQualityRevision INITIAL_REVISION = new PredictionQualityRevision(0);
-
 	public PredictionQualityService(MatchRepository matchRepository, MatchService matchService,
 									PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
 									BetPredictionQualityRepository betPredictionAggregateRepository, FootystatsProperties properties) {
@@ -77,7 +75,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 				merge(predictionAggregates);
 
 				// update match with revision number
-				match.setRevision(INITIAL_REVISION);
+				match.setRevision(PredictionQualityRevision.NO_REVISION);
 				matchService.upsert(match);
 			}
 
@@ -214,7 +212,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getO05() != null && relevantPredictionResult.apply(match.getO05())) {
 			var predictionResult = match.getO05();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(PredictionQualityService.INITIAL_REVISION)
+				.revision(PredictionQualityRevision.NO_REVISION)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.OVER_ZERO_FIVE)
@@ -225,7 +223,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getBttsYes() != null && relevantPredictionResult.apply(match.getBttsYes())) {
 			var predictionResult = match.getBttsYes();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(PredictionQualityService.INITIAL_REVISION)
+				.revision(PredictionQualityRevision.NO_REVISION)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.BTTS_YES)
@@ -284,9 +282,9 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	@Transactional
-	public void recomputeQuality(PredictionQualityRevision revision) {
+	public void recomputeQuality() {
 		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
+		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
 		var pageCnt = 1;
 		while (result.hasContent()) {
 			result.forEach((match) -> {
@@ -295,7 +293,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			});
 
 			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, revision, pageRequest);
+			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
 			pageCnt += 1;
 		}
 	}

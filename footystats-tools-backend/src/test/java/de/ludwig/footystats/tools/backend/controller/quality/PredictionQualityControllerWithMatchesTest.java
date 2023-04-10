@@ -68,7 +68,5 @@ public class PredictionQualityControllerWithMatchesTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$.influencerPercentDistributions.keys()", hasSize(2)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionDistributions", hasSize(3)))
 		;
-
-
 	}
 }
