@@ -102,39 +102,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return result;
 	}
 
-	/**
-	 * Method groups influencer distributions by name and aggregates them by the percent value.
-	 *
-	 * @param aggregates Mandatory. All predictions for one type of bet.
-	 * @return see description, never null.
-	 */
-	public Map<String, List<InfluencerPercentDistribution>> groupByInfluencerNameAndAggregate(List<BetPredictionQuality> aggregates) {
-		final Map<String, List<InfluencerPercentDistribution>> grouped = groupByInfluencerName(aggregates);
-		final Map<String, List<InfluencerPercentDistribution>> allInfluencerAggregated = new HashMap<>();
-		for (String key : grouped.keySet()) {
-			final Map<Integer, InfluencerPercentDistribution> result = new HashMap<>();
-			var influencerPercentDistributions = grouped.get(key);
-			for (InfluencerPercentDistribution ipd : influencerPercentDistributions) {
-				if (!result.containsKey(ipd.getPredictionPercent())) {
-					var newAggregate = new InfluencerPercentDistribution();
-					newAggregate.setInfluencerName(ipd.getInfluencerName());
-					newAggregate.setPredictionPercent(ipd.getPredictionPercent());
-					newAggregate.setCount(0L);
-					result.put(ipd.getPredictionPercent(), newAggregate);
-				}
-
-				InfluencerPercentDistribution aggregate = result.get(ipd.getPredictionPercent());
-				aggregate.setCount(aggregate.getCount() + ipd.getCount());
-			}
-
-			var allAggregates = new ArrayList<InfluencerPercentDistribution>(result.values().size());
-			allAggregates.addAll(result.values());
-			allInfluencerAggregated.put(key, allAggregates);
-		}
-
-		return allInfluencerAggregated;
-	}
-
 	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet) {
 		final MatchOperation matchOperation = match(new Criteria("bet").is(bet));
 		UnwindOperation unwind = unwind("influencerDistribution");

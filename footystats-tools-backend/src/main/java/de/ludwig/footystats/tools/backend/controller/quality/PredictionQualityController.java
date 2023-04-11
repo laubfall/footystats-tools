@@ -29,13 +29,13 @@ public class PredictionQualityController {
 
 	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
 	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
+		final List<BetPredictionQualityAllBetsAggregate> measuredPredictionCntAggregates = predictionQualityService.matchPredictionQualityMeasurementCounts();
+
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
 		final List<BetPredictionQualityBetAggregate> betPercentDistributionResult = betPredictionQualityRepository.findAllByBetAndRevision(moreQualityDetailsForThisBetType, PredictionQualityRevision.NO_REVISION, BetPredictionQualityBetAggregate.class);
 
-		final Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated = predictionQualityService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType);
-
 		// create prediction results for all bets
-		final List<BetPredictionQualityAllBetsAggregate> measuredPredictionCntAggregates = predictionQualityService.matchPredictionQualityMeasurementCounts();
+		final Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated = predictionQualityService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType);
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult, influencerPredictionsAggregated);
 	}
 

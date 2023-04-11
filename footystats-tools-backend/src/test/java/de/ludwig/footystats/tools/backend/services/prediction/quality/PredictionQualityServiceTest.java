@@ -66,7 +66,7 @@ public class PredictionQualityServiceTest {
 	}
 
 	@Test
-	public void bet_multiple_measurements_differen_predictions_counts() {
+	public void bet_multiple_measurements_different_predictions_counts() {
 		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
