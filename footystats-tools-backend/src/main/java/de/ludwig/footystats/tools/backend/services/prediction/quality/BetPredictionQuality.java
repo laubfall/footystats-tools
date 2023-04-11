@@ -22,7 +22,7 @@ import java.util.List;
 	@CompoundIndex(name = "influencerDistribution", def = "{'influencerDistribution.influencerName' : 1, 'influencerDistribution.predictionPercent' : 1}")
 })
 @Document
-@Builder(toBuilder = true)
+@Builder(toBuilder = true, access = AccessLevel.PUBLIC)
 public class BetPredictionQuality implements IBetPredictionBaseData {
 	@Id
 	@Getter

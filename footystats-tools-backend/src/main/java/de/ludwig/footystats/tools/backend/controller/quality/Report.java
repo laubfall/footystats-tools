@@ -1,8 +1,8 @@
 package de.ludwig.footystats.tools.backend.controller.quality;
 
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityAllBetsAggregate;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityBetAggregate;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityInfluencerAggregate;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityAllBetsAggregate;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityBetAggregate;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 
 import java.util.List;
 import java.util.Map;

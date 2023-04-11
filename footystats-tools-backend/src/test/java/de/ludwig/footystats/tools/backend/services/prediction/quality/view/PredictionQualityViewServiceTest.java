@@ -1,8 +1,12 @@
-package de.ludwig.footystats.tools.backend.services.prediction.quality;
+package de.ludwig.footystats.tools.backend.services.prediction.quality.view;
 
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.InfluencerPercentDistribution;
 import de.ludwig.footystats.tools.backend.services.prediction.PrecheckResult;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,9 +19,9 @@ import java.util.Map;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class PredictionQualityServiceTest {
+public class PredictionQualityViewServiceTest {
 	@Autowired
-	private PredictionQualityService predictionQualityService;
+	private PredictionQualityViewService predictionQualityService;
 
 	@Autowired
 	private BetPredictionQualityRepository betPredictionAggregateRepository;
@@ -29,7 +33,7 @@ public class PredictionQualityServiceTest {
 
 	@Test
 	public void bet_measurement_counts() {
-		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
 		var docCount = betPredictionAggregateRepository.count();
@@ -46,10 +50,9 @@ public class PredictionQualityServiceTest {
 
 	@Test
 	public void bet_multiple_measurements_counts() {
-		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
-
-		BetPredictionQuality dontbet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(dontbet);
 
 		var docCount = betPredictionAggregateRepository.count();
@@ -67,16 +70,16 @@ public class PredictionQualityServiceTest {
 
 	@Test
 	public void bet_multiple_measurements_different_predictions_counts() {
-		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
-		bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(68).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		bet = BetPredictionQuality.builder().predictionPercent(68).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
-		BetPredictionQuality dontbet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(dontbet);
 
-		dontbet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(45).betSucceeded(12L).betFailed(5L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(12L).betFailed(5L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(dontbet);
 
 		var docCount = betPredictionAggregateRepository.count();
@@ -94,16 +97,16 @@ public class PredictionQualityServiceTest {
 
 	@Test
 	public void bet_multiple_measurements_and_bettypes_counts() {
-		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
-		BetPredictionQuality dontbet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
+		BetPredictionQuality dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(dontbet);
 
-		bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(20L).betFailed(5L).bet(Bet.OVER_ZERO_FIVE).revision(PredictionQualityRevision.NO_REVISION).build();
+		bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(20L).betFailed(5L).bet(Bet.OVER_ZERO_FIVE).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
-		dontbet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(45).betSucceeded(21L).betFailed(6L).bet(Bet.OVER_ZERO_FIVE).revision(PredictionQualityRevision.NO_REVISION).build();
+		dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(21L).betFailed(6L).bet(Bet.OVER_ZERO_FIVE).revision(PredictionQualityRevision.NO_REVISION).build();
 		betPredictionAggregateRepository.save(dontbet);
 
 		var docCount = betPredictionAggregateRepository.count();
@@ -134,11 +137,11 @@ public class PredictionQualityServiceTest {
 		String testinfluencer2 = "testinfluencer2";
 		var ipd = new InfluencerPercentDistribution(34, 20L, testinfluencer, PrecheckResult.OK);
 		var ipd2_1 = new InfluencerPercentDistribution(35, 23L, testinfluencer2, PrecheckResult.OK);
-		BetPredictionQuality bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1)).build();
+		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1)).build();
 		betPredictionAggregateRepository.save(bet);
 
 		var ipd2_2 = new InfluencerPercentDistribution(81, 12L, testinfluencer2, PrecheckResult.OK);
-		bet = new BetPredictionQuality.BetPredictionQualityBuilder().predictionPercent(66).betSucceeded(34L).betFailed(22L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1, ipd2_2)).build();
+		bet = BetPredictionQuality.builder().predictionPercent(66).betSucceeded(34L).betFailed(22L).bet(Bet.BTTS_YES).revision(PredictionQualityRevision.NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1, ipd2_2)).build();
 		betPredictionAggregateRepository.save(bet);
 
 		Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated = predictionQualityService.influencerPredictionsAggregated(Bet.BTTS_YES);

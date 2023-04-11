@@ -9,6 +9,7 @@ import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigServi
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcome;
 import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcomeService;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.view.PredictionQualityViewService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStatsServiceConfiguration;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Import;
 
 @Import({PredictionServiceConfiguration.class, de.ludwig.footystats.tools.backend.services.csv.Configuration.class,
 	FootyStatsCsvUploadController.class, MatchStatsServiceConfiguration.class, LeagueStatsServiceConfiguration.class,
-	TeamStatsServiceConfiguration.class, MappingMongoConverterConfiguration.class, ConverterRegistry.class,  EncryptionService.class, CsvFileDownloadService.class, DownloadConfigService.class, StatisticalResultOutcomeService.class})
+	TeamStatsServiceConfiguration.class, MappingMongoConverterConfiguration.class, ConverterRegistry.class,  EncryptionService.class, CsvFileDownloadService.class, DownloadConfigService.class, StatisticalResultOutcomeService.class, PredictionQualityViewService.class})
 @TestConfiguration
 public class Configuration {
 }

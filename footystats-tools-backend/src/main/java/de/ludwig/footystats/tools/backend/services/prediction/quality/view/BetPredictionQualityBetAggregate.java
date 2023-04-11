@@ -1,6 +1,7 @@
-package de.ludwig.footystats.tools.backend.services.prediction.quality;
+package de.ludwig.footystats.tools.backend.services.prediction.quality.view;
 
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.IBetPredictionBaseData;
 
 public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData {
 	private Bet bet;

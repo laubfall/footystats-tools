@@ -86,73 +86,21 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		}
 	}
 
-	public Map<String, List<InfluencerPercentDistribution>> groupByInfluencerName(List<BetPredictionQuality> aggregates) {
-		Map<String, List<InfluencerPercentDistribution>> result = new HashMap<>();
-		List<InfluencerPercentDistribution> allInfluencerDistributions = aggregates.stream().map(BetPredictionQuality::getInfluencerDistribution)
-			.collect(ArrayList::new, List::addAll, List::addAll);
+	@Transactional
+	public void recomputeQuality() {
+		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
+		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
+		var pageCnt = 1;
+		while (result.hasContent()) {
+			result.forEach((match) -> {
+				var msm = this.measure(match);
+				this.merge(msm);
+			});
 
-		for (InfluencerPercentDistribution aid : allInfluencerDistributions) {
-			if (!result.containsKey(aid.getInfluencerName())) {
-				result.put(aid.getInfluencerName(), new ArrayList<>());
-			}
-
-			result.get(aid.getInfluencerName()).add(aid);
+			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
+			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
+			pageCnt += 1;
 		}
-
-		return result;
-	}
-
-	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet) {
-		final MatchOperation matchOperation = match(new Criteria("bet").is(bet));
-		UnwindOperation unwind = unwind("influencerDistribution");
-		GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent").sum("betSucceeded").as("betSucceeded").sum("betFailed").as("betFailed").sum("influencerDistribution.count").as("count");
-		ProjectionOperation projectionOperation = project(Fields.from(Fields.field("influencerName", "$_id.influencerName"), Fields.field("predictionPercent", "$_id.predictionPercent"))).andExclude("$_id").andInclude("betSucceeded", "betFailed", "count");
-		Aggregation aggregation = newAggregation(matchOperation, unwind, groupOperation, projectionOperation);
-		AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
-		return aggregationResults.getMappedResults().stream().collect(Collectors.groupingBy(BetPredictionQualityInfluencerAggregate::influencerName, HashMap::new, Collectors.toCollection(ArrayList::new)));
-	}
-
-	/**
-	 * Based on the BetPredictionAggregates documents this method aggregates the counts of done prediction bet / dont bet succeeded / failed.
-	 * Aggregations are done via mongodb query.
-	 *
-	 * @return List of aggregated values.
-	 */
-	public List<BetPredictionQualityAllBetsAggregate> matchPredictionQualityMeasurementCounts() {
-		List<BetPredictionQualityAllBetsAggregate> result = new ArrayList<>();
-
-		for (Bet bet : Bet.values()) {
-			MatchOperation betOnThisMatch = match(
-				new Criteria("predictionPercent").gt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet));
-			GroupOperation betCount = group("bet").sum("betSucceeded").as("betSucceeded").sum("betFailed").as("betFailed");
-			Aggregation aggregation = newAggregation(betOnThisMatch, betCount);
-			AggregationResults<Document> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, Document.class);
-
-			var doc = aggregationResults.getUniqueMappedResult();
-			Long betSuccess = 0L;
-			Long betFailed = 0L;
-			if (doc != null) {
-				betSuccess = doc.get("betSucceeded", Long.class);
-				betFailed = doc.get("betFailed", Long.class);
-			}
-
-			betOnThisMatch = match(new Criteria("predictionPercent").lte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet));
-			aggregation = newAggregation(betOnThisMatch, betCount);
-			aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, Document.class);
-			doc = aggregationResults.getUniqueMappedResult();
-
-			Long dontBetSuccess = 0L;
-			Long dontBetFailed = 0L;
-			if (doc != null) {
-				dontBetSuccess = doc.get("betSucceeded", Long.class);
-				dontBetFailed = doc.get("betFailed", Long.class);
-			}
-
-			Long assessed = betSuccess + betFailed + dontBetSuccess + dontBetFailed;
-			result.add(new BetPredictionQualityAllBetsAggregate(bet, assessed, betSuccess, betFailed, dontBetSuccess, dontBetFailed));
-		}
-
-		return result;
 	}
 
 	PredictionQualityRevision nextRevision(PredictionQualityRevision revision) {
@@ -246,23 +194,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 				target.getInfluencerDistribution().add(sId);
 			}
 		});
-	}
-
-	@Transactional
-	public void recomputeQuality() {
-		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
-		var pageCnt = 1;
-		while (result.hasContent()) {
-			result.forEach((match) -> {
-				var msm = this.measure(match);
-				this.merge(msm);
-			});
-
-			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
-			pageCnt += 1;
-		}
 	}
 
 	@Override
