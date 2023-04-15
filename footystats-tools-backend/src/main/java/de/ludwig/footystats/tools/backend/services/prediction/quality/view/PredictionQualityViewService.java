@@ -3,6 +3,9 @@ package de.ludwig.footystats.tools.backend.services.prediction.quality.view;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -22,17 +25,33 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.newA
 public class PredictionQualityViewService {
 	private MongoTemplate mongoTemplate;
 
-	public PredictionQualityViewService(MongoTemplate mongoTemplate) {
+	private BetPredictionQualityRepository betPredictionQualityRepository;
+
+	public PredictionQualityViewService(MongoTemplate mongoTemplate, BetPredictionQualityRepository betPredictionQualityRepository) {
 		this.mongoTemplate = mongoTemplate;
+		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
-	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet) {
+	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis) {
 		final MatchOperation matchOperation = match(new Criteria("bet").is(bet));
-		UnwindOperation unwind = unwind("influencerDistribution");
-		GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent").sum("betSucceeded").as("betSucceeded").sum("betFailed").as("betFailed").sum("influencerDistribution.count").as("count");
-		ProjectionOperation projectionOperation = project(Fields.from(Fields.field("influencerName", "$_id.influencerName"), Fields.field("predictionPercent", "$_id.predictionPercent"))).andExclude("$_id").andInclude("betSucceeded", "betFailed", "count");
-		Aggregation aggregation = newAggregation(matchOperation, unwind, groupOperation, projectionOperation);
-		AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
+		MatchOperation predictionPercentMatch;
+		if(betOnThis){
+			predictionPercentMatch = match(Criteria.where("predictionPercent").gte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
+		} else{
+			predictionPercentMatch = match(Criteria.where("predictionPercent").lt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
+		}
+		final UnwindOperation unwind = unwind("influencerDistribution");
+		final GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent")
+			.sum("betSucceeded").as("betSucceeded")
+			.sum("betFailed").as("betFailed")
+			.sum("influencerDistribution.count").as("count");
+		final ProjectionOperation projectionOperation = project(Fields.from(
+			Fields.field("influencerName", "$_id.influencerName"),
+			Fields.field("predictionPercent", "$_id.predictionPercent")))
+				.andExclude("$_id")
+				.andInclude("betSucceeded", "betFailed", "count");
+		final Aggregation aggregation = newAggregation(matchOperation, predictionPercentMatch, unwind, groupOperation, projectionOperation);
+		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
 		return aggregationResults.getMappedResults().stream().collect(Collectors.groupingBy(BetPredictionQualityInfluencerAggregate::influencerName, HashMap::new, Collectors.toCollection(ArrayList::new)));
 	}
 
@@ -77,5 +96,13 @@ public class PredictionQualityViewService {
 		}
 
 		return result;
+	}
+
+	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet) {
+		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, PredictionQualityRevision.NO_REVISION, PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
+	}
+
+	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet) {
+		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, PredictionQualityRevision.NO_REVISION, PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
 	}
 }

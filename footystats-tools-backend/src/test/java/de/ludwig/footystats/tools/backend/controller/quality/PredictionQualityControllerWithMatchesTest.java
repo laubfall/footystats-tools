@@ -25,8 +25,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,7 +64,10 @@ public class PredictionQualityControllerWithMatchesTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.influencerPercentDistributions.keys()", hasSize(2)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(2)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betInfluencerPercentDistributions['FootyStatsOverFTPredictionInfluencer']", hasSize(2)))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.dontBetInfluencerPercentDistributions.keys()", empty()))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionDistributions", hasSize(3)))
 		;
 	}

@@ -15,10 +15,13 @@ import java.util.Map;
  * And last detailed influencer information that were involved while computing predictions for this bet.
  *
  * @param betPredictionResults           List for all types of bets we have quality measurements for.
- * @param betPredictionDistributions     List of percent distribution (for succeeded and failed bets) for one type of bet.
- * @param influencerPercentDistributions Influencer percent distributions keyed by influencer name. Only influencer for the chosen bet are included.
+ * @param betPredictionDistributions     List of percent distribution (for succeeded and failed bets) for one type of bet in case we want to bet.
+ * @param dontBetPredictionDistributions     List of percent distribution (for succeeded and failed bets) for one type of bet in case we don't want to bet.
+ * @param betInfluencerPercentDistributions Influencer percent distributions keyed by influencer name. Only influencer for the chosen bet are included.
  */
 public record Report(List<BetPredictionQualityAllBetsAggregate> betPredictionResults,
 					 List<BetPredictionQualityBetAggregate> betPredictionDistributions,
-					 Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPercentDistributions) {
+					 List<BetPredictionQualityBetAggregate> dontBetPredictionDistributions,
+					 Map<String, List<BetPredictionQualityInfluencerAggregate>> betInfluencerPercentDistributions,
+					 Map<String, List<BetPredictionQualityInfluencerAggregate>> dontBetInfluencerPercentDistributions) {
 }

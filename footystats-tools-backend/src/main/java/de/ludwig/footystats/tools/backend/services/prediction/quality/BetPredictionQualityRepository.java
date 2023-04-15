@@ -8,5 +8,6 @@ import java.util.List;
 public interface BetPredictionQualityRepository extends MongoRepository<BetPredictionQuality, String> {
 	BetPredictionQuality findByBetAndPredictionPercent(Bet bet, Integer percent);
 
-	<T extends IBetPredictionBaseData> List<T> findAllByBetAndRevision(Bet bet, PredictionQualityRevision revision, Class<T> target);
+	<T extends IBetPredictionBaseData> List<T> findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(Bet bet, PredictionQualityRevision revision, Integer betOnThisPercentLimit, Class<T> target);
+	<T extends IBetPredictionBaseData> List<T> findAllByBetAndRevisionAndPredictionPercentLessThan(Bet bet, PredictionQualityRevision revision, Integer betOnThisPercentLimit, Class<T> target);
 }
