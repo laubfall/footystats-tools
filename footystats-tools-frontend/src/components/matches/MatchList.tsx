@@ -18,13 +18,11 @@ import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
 import {
-	BetPredictionQualityBetEnum,
-	InfluencerResultPrecheckResultEnum,
 	PredictionResult,
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
-import { uniqueId } from "lodash";
+import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
@@ -62,9 +60,9 @@ function createBetPredictionColumns(
 									<Popover.Body>
 										<BetDetailInfoOverlay
 											betPrediction={betPrediction}
-											statisticalOutcome={
-												row.statisticalResultOutcome.find(sro => sro.bet === bet)
-											}
+											statisticalOutcome={row.statisticalResultOutcome.find(
+												(sro) => sro?.bet === bet,
+											)}
 										/>
 									</Popover.Body>
 								</Popover>

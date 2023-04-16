@@ -1,5 +1,5 @@
 import React from "react";
-import { union, uniqueId } from "lodash";
+import { union, uniqueId, keys } from "lodash";
 import { Alert } from "react-bootstrap";
 import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
@@ -8,7 +8,6 @@ import translate from "../../i18n/translate";
 import { PercentDistribution } from "../../app/services/prediction/PredictionQualityService.types";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 import { BetPredictionQualityInfluencerAggregate } from "../../footystats-frontendapi";
-import { keys } from "mobx";
 
 const InfluencerPredictionGraph = ({
 	i1Distribution,

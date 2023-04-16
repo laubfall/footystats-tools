@@ -12,10 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -64,7 +61,8 @@ public class PredictionQualityViewService {
 	public List<BetPredictionQualityAllBetsAggregate> matchPredictionQualityMeasurementCounts() {
 		List<BetPredictionQualityAllBetsAggregate> result = new ArrayList<>();
 
-		for (Bet bet : Bet.values()) {
+		final EnumSet<Bet> betsWithPrediction = EnumSet.of(Bet.OVER_ZERO_FIVE, Bet.BTTS_YES);
+		for (Bet bet : betsWithPrediction) {
 			MatchOperation betOnThisMatch = match(
 				new Criteria("predictionPercent").gt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet));
 			GroupOperation betCount = group("bet").sum("betSucceeded").as("betSucceeded").sum("betFailed").as("betFailed");

@@ -89,16 +89,20 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	@Transactional
 	public void recomputeQuality() {
 		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-		Page<Match> result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
+		Page<Match> result = matchRepository.findMatchesByState(MatchStatus.complete, pageRequest);
 		var pageCnt = 1;
 		while (result.hasContent()) {
 			result.forEach((match) -> {
 				var msm = this.measure(match);
 				this.merge(msm);
+
+				// update match with revision number
+				match.setRevision(PredictionQualityRevision.NO_REVISION);
+				matchService.upsert(match);
 			});
 
 			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-			result = matchRepository.findMatchesByStateAndRevision(MatchStatus.complete, PredictionQualityRevision.NO_REVISION, pageRequest);
+			result = matchRepository.findMatchesByState(MatchStatus.complete, pageRequest);
 			pageCnt += 1;
 		}
 	}

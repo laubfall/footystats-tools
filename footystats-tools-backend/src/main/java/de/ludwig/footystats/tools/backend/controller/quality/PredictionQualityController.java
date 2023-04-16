@@ -23,12 +23,9 @@ public class PredictionQualityController {
 
 	private PredictionQualityViewService predictionQualityViewService;
 
-	private BetPredictionQualityRepository betPredictionQualityRepository;
-
-	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService, BetPredictionQualityRepository betPredictionQualityRepository) {
+	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService) {
 		this.predictionQualityService = predictionQualityService;
 		this.predictionQualityViewService = predictionQualityViewService;
-		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
 	@GetMapping("/compute")
@@ -51,7 +48,7 @@ public class PredictionQualityController {
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult, dontBetPercentDistributionResult, influencerPredictionsAggregated, dontBetInfluencerPredictionsAggregated);
 	}
 
-	@PostMapping(name = "/recompute", consumes = {"application/json"}, path = {"/recompute"})
+	@PostMapping(name = "/recompute", path = {"/recompute"})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void recomputeQuality() {
 		predictionQualityService.recomputeQuality();

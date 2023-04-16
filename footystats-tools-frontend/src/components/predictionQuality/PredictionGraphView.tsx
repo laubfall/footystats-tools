@@ -7,11 +7,14 @@ import { BetPredictionQualityBetAggregate } from "../../footystats-frontendapi";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 export const PredictionGraphView = ({
-	measurement,
-	measurementDontBet,
+	betPredictionPercentDistribution,
+	dontBetPredictionPercentDistribution,
 	bet,
 }: PredictionGraphViewProps) => {
-	if (!measurement) {
+	if (
+		betPredictionPercentDistribution?.length == 0 &&
+		dontBetPredictionPercentDistribution?.length == 0
+	) {
 		return null;
 	}
 	return (
@@ -25,7 +28,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet",
 							)}`,
-							data: measurement,
+							data: betPredictionPercentDistribution,
 							color: colord("rgb(40,200,0)").toRgb(),
 						},
 						{
@@ -34,7 +37,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet.failed",
 							)}`,
-							data: measurementDontBet,
+							data: dontBetPredictionPercentDistribution,
 						},
 					]}
 				/>
@@ -48,7 +51,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet",
 							)}`,
-							data: measurement,
+							data: betPredictionPercentDistribution,
 							color: colord("rgb(40,200,0)").toRgb(),
 						},
 						{
@@ -57,7 +60,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet.failed",
 							)}`,
-							data: measurementDontBet,
+							data: dontBetPredictionPercentDistribution,
 						},
 					]}
 				/>
@@ -67,7 +70,7 @@ export const PredictionGraphView = ({
 };
 
 export type PredictionGraphViewProps = {
-	measurement?: Array<BetPredictionQualityBetAggregate>;
-	measurementDontBet?: Array<BetPredictionQualityBetAggregate>;
+	betPredictionPercentDistribution?: Array<BetPredictionQualityBetAggregate>;
+	dontBetPredictionPercentDistribution?: Array<BetPredictionQualityBetAggregate>;
 	bet: BetPredictionQualityBetEnum;
 };

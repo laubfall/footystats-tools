@@ -1,13 +1,13 @@
 import React from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import {
-	BetPredictionQuality,
-	PredictionQualityReport,
-} from "../../footystats-frontendapi";
 import translate from "../../i18n/translate";
+import {
+	BetPredictionQualityAllBetsAggregate,
+	Report,
+} from "../../footystats-frontendapi";
 
 export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
-	const columns: TableColumn<BetPredictionQuality>[] = [
+	const columns: TableColumn<BetPredictionQualityAllBetsAggregate>[] = [
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.one"),
 			selector: (bpq) =>
@@ -17,23 +17,23 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.two"),
-			selector: (bpq) => bpq.countAssessed,
+			selector: (bpq) => bpq.assessed,
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.three"),
-			selector: (bpq) => bpq.countSuccess,
+			selector: (bpq) => bpq.betSuccess,
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.four"),
-			selector: (bpq) => bpq.countFailed,
+			selector: (bpq) => bpq.betFailed,
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.five"),
-			selector: (bpq) => bpq.countSuccessDontBet,
+			selector: (bpq) => bpq.dontBetSuccess,
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.six"),
-			selector: (bpq) => bpq.countFailedDontBet,
+			selector: (bpq) => bpq.dontBetFailed,
 		},
 	];
 
@@ -41,7 +41,7 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 		<>
 			<DataTable
 				columns={columns}
-				data={report?.measurements || []}
+				data={report?.betPredictionResults || []}
 				onRowClicked={onRowClicked}
 			/>
 		</>
@@ -49,8 +49,8 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 };
 
 export type ReportListProps = {
-	report?: PredictionQualityReport;
-	onRowClicked?: (row: BetPredictionQuality) => void;
+	report?: Report;
+	onRowClicked?: (row: BetPredictionQualityAllBetsAggregate) => void;
 };
 
 export default { ReportList };

@@ -6,9 +6,7 @@ import translate from "../../i18n/translate";
 import IpcPredictionQualityService from "../../app/services/prediction/IpcPredictionQualityService";
 import { ReportList } from "./ReportList";
 import { PredictionGraphView } from "./PredictionGraphView";
-import { InfluencerDistributionScatterChartView } from "./InfluencerDistributionScatterChart";
 import { InfluencerPredictionGraphView } from "./InfluencerPredictionGraphView";
-import { NO_REVISION_SO_FAR } from "../../app/services/prediction/PredictionQualityService.types";
 import { apiCatchReasonHandler } from "../functions";
 import AlertMessageStore from "../../mobx/AlertMessages";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
@@ -27,8 +25,9 @@ export const PredictionQualityView = () => {
 	const [currentDontBetAggregate, setCurrentDontBetAggregate] =
 		useState<Array<BetPredictionQualityBetAggregate>>();
 
-	const [selectedBet, setSelectedBet] =
-		useState<BetPredictionQualityBetEnum>();
+	const [selectedBet, setSelectedBet] = useState<BetPredictionQualityBetEnum>(
+		BetPredictionQualityBetEnum.OverZeroFive,
+	);
 
 	const [recalculateAvailable, setRecalculateAvailable] = useState(false);
 
@@ -54,8 +53,8 @@ export const PredictionQualityView = () => {
 	}, []);
 
 	useEffect(() => {
-		setCurrentDontBetAggregate(report.dontBetPredictionDistributions);
-		setCurrentBetAggregate(report.betPredictionDistributions);
+		setCurrentDontBetAggregate(report?.dontBetPredictionDistributions);
+		setCurrentBetAggregate(report?.betPredictionDistributions);
 	}, [report]);
 
 	useEffect(() => {
@@ -150,8 +149,8 @@ export const PredictionQualityView = () => {
 				onRowClicked={(row) => setSelectedBet(row.bet)}
 			/>
 			<PredictionGraphView
-				measurement={currentBetAggregate}
-				measurementDontBet={currentDontBetAggregate}
+				betPredictionPercentDistribution={currentBetAggregate}
+				dontBetPredictionPercentDistribution={currentDontBetAggregate}
 				bet={selectedBet}
 			/>
 
@@ -167,13 +166,13 @@ export const PredictionQualityView = () => {
 						)}
 					</AccordionHeader>
 					<AccordionBody>
-						{currentDontBetAggregate && (
+						{currentBetAggregate && (
 							<InfluencerPredictionGraphView
 								measurementBetInfluencerAggregate={
-									report.betInfluencerPercentDistributions
+									report?.betInfluencerPercentDistributions
 								}
 								measurementDontBetInfluencerAggregate={
-									report.dontBetInfluencerPercentDistributions
+									report?.dontBetInfluencerPercentDistributions
 								}
 								bet={selectedBet}
 							/>
@@ -200,10 +199,7 @@ export const PredictionQualityView = () => {
 					</Button>
 				</div>
 				<div>
-					<Button
-						disabled={recalculateAvailable === false}
-						onClick={handleOnClickRecomputeQuality}
-					>
+					<Button onClick={handleOnClickRecomputeQuality}>
 						{translate(
 							"renderer.predictionqualityview.button.recalculate",
 						)}
