@@ -1,17 +1,14 @@
 import {
 	Precast,
-	PredictionQualityReport,
 	PredictionQualityRevision,
+	Report,
 } from "../../../footystats-frontendapi";
 import { RestAPI } from "../../constants";
+import { BetPredictionQualityBetEnum } from "../../../footystats-frontendapi/models/BetPredictionQuality";
 
 class IpcPredictionQualityService {
-	computeQuality(): Promise<PredictionQualityReport> {
+	computeQuality(): Promise<void> {
 		return RestAPI.predictionQuality.computeQuality();
-	}
-
-	latestRevision(): Promise<PredictionQualityRevision> {
-		return RestAPI.predictionQuality.latestRevision();
 	}
 
 	precast(revision?: PredictionQualityRevision): Promise<Precast> {
@@ -20,16 +17,16 @@ class IpcPredictionQualityService {
 		});
 	}
 
-	latestReport(): Promise<PredictionQualityReport> {
-		return RestAPI.predictionQuality.latestReport();
+	latestReport(
+		moreQualityDetailsForThisBetType: BetPredictionQualityBetEnum,
+	): Promise<Report> {
+		return RestAPI.predictionQuality.latestReport({
+			moreQualityDetailsForThisBetType,
+		});
 	}
 
-	recomputeQuality(
-		revision: PredictionQualityRevision,
-	): Promise<PredictionQualityReport> {
-		return RestAPI.predictionQuality.recomputeQuality({
-			predictionQualityRevision: revision,
-		});
+	recomputeQuality() {
+		return RestAPI.predictionQuality.recomputeQuality();
 	}
 }
 

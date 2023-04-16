@@ -3,16 +3,12 @@ import { union, uniqueId } from "lodash";
 import { Alert } from "react-bootstrap";
 import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";
-import { collectInfluencerNames } from "./functions";
 import { InfluencerName } from "../../app/services/prediction/PredictionService.types";
 import translate from "../../i18n/translate";
-import {
-	BetPredictionDistribution,
-	BetPredictionQuality,
-	BetPredictionQualityBetEnum,
-	InfluencerPercentDistributionPrecheckResultEnum,
-} from "../../footystats-frontendapi";
 import { PercentDistribution } from "../../app/services/prediction/PredictionQualityService.types";
+import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import { BetPredictionQualityInfluencerAggregate } from "../../footystats-frontendapi";
+import { keys } from "mobx";
 
 const InfluencerPredictionGraph = ({
 	i1Distribution,
@@ -60,69 +56,50 @@ const InfluencerPredictionGraph = ({
 };
 
 function influencerPercentDistributions(
-	name: InfluencerName,
-	distribution: BetPredictionDistribution[],
+	distribution: Array<BetPredictionQualityInfluencerAggregate>,
 ): PercentDistribution[] {
 	const aggregatePredictionPercentAndCount: Map<number, PercentDistribution> =
 		new Map();
 
-	distribution
-		.map((ppd) => ppd.influencerDistribution)
-		.forEach((influencerDistributions) => {
-			influencerDistributions
-				.filter((infDist) => infDist.influencerName === name)
-				.filter(
-					(infDist) =>
-						infDist.precheckResult ===
-						InfluencerPercentDistributionPrecheckResultEnum.Ok,
-				)
-				.forEach((infDist) => {
-					const existing = aggregatePredictionPercentAndCount.get(
-						infDist.predictionPercent,
-					);
-					if (existing) {
-						existing.count += infDist.count;
-					} else {
-						aggregatePredictionPercentAndCount.set(
-							infDist.predictionPercent,
-							{
-								count: infDist.count,
-								predictionPercent: infDist.predictionPercent,
-							},
-						);
-					}
-				});
-		});
+	distribution.forEach((influencerDistributions) => {
+		aggregatePredictionPercentAndCount.set(
+			influencerDistributions.predictionPercent,
+			{
+				count: influencerDistributions.count,
+				predictionPercent: influencerDistributions.predictionPercent,
+			},
+		);
+	});
 
 	return [...aggregatePredictionPercentAndCount.values()];
 }
 
 export const InfluencerPredictionGraphView = ({
-	measurement,
+	measurementBetInfluencerAggregate,
+	measurementDontBetInfluencerAggregate,
+	bet,
 }: InfluencerPredictionGraphViewProps) => {
-	const n1 = collectInfluencerNames(measurement.distributionBetOnThis);
-	const n2 = collectInfluencerNames(measurement.distributionBetOnThisFailed);
+	const n1 = keys(measurementBetInfluencerAggregate);
+	const n2 = keys(measurementDontBetInfluencerAggregate);
 	const relevantInfluencerNames = union(n1, n2);
 
 	return (
 		<>
 			{relevantInfluencerNames.map((name, idx) => {
 				const g1Data = influencerPercentDistributions(
-					name,
-					measurement.distributionBetOnThis || [],
+					measurementBetInfluencerAggregate[name.toString()],
 				);
 
 				const g2Data = influencerPercentDistributions(
-					name,
-					measurement.distributionBetOnThisFailed || [],
+					measurementDontBetInfluencerAggregate[name.toString()],
 				);
 
 				const Graph = (
 					<InfluencerPredictionGraph
 						i1Distribution={g1Data}
 						i2Distribution={g2Data}
-						name={name}
-						bet={measurement.bet}
+						name={name.toString()}
+						bet={bet}
 						key={uniqueId()}
 					/>
 				);
@@ -141,7 +118,13 @@ export type InfluencerPredictionGraphProps = {
 };
 
 export type InfluencerPredictionGraphViewProps = {
-	measurement: BetPredictionQuality;
+	measurementBetInfluencerAggregate: {
+		[key: string]: Array<BetPredictionQualityInfluencerAggregate>;
+	};
+	measurementDontBetInfluencerAggregate: {
+		[key: string]: Array<BetPredictionQualityInfluencerAggregate>;
+	};
+	bet: BetPredictionQualityBetEnum;
 };
 
 export default { InfluencerPredictionGraphView };

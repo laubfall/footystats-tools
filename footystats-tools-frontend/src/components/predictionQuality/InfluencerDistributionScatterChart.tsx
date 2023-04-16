@@ -13,7 +13,7 @@ import { union, uniqueId } from "lodash";
 import { InfluencerName } from "../../app/services/prediction/PredictionService.types";
 import translate from "../../i18n/translate";
 import { collectInfluencerNames } from "./functions";
-import { BetPredictionDistribution, InfluencerPercentDistributionPrecheckResultEnum } from "../../footystats-frontendapi";
+import { BetPredictionQualityInfluencerAggregate } from "../../footystats-frontendapi";
 
 type GraphData = {
 	predictionTotal: number;
@@ -23,8 +23,8 @@ type GraphData = {
 };
 
 type InfluencerDistributionGraphViewProps = {
-	distributionBetSuccess: BetPredictionDistribution[]; // e.g. prediction for bet on this bet o05 or don't bet on o05
-	distributionBetFailed: BetPredictionDistribution[]; // e.g. prediction for bet on this (failed) bet o05 or don't bet on o05 (failed)
+	distributionBetSuccess: Array<BetPredictionQualityInfluencerAggregate>; // e.g. prediction for bet on this bet o05 or don't bet on o05
+	distributionBetFailed: Array<BetPredictionQualityInfluencerAggregate>; // e.g. prediction for bet on this (failed) bet o05 or don't bet on o05 (failed)
 };
 
 type InfluencerDistributionGraphProps = {
@@ -32,16 +32,18 @@ type InfluencerDistributionGraphProps = {
 } & InfluencerDistributionGraphViewProps;
 
 function createGraphData(
-	measurement: BetPredictionDistribution[],
+	measurement: Array<BetPredictionQualityInfluencerAggregate>,
 	influencer: InfluencerName,
 ): GraphData[] {
 	let result: GraphData[] = [];
+	/*
 	measurement.forEach((predictionDisribution) => {
 		predictionDisribution.influencerDistribution
 			.filter(
 				(influencerDistribution) =>
 					influencerDistribution.influencerName === influencer &&
-					influencerDistribution.precheckResult === InfluencerPercentDistributionPrecheckResultEnum.Ok,
+					influencerDistribution.precheckResult ===
+						InfluencerPercentDistributionPrecheckResultEnum.Ok,
 			)
 			.forEach((influencerDistribution) => {
 				result.push({
@@ -54,7 +56,7 @@ function createGraphData(
 				});
 			});
 	});
-
+*/
 	result = result.sort((a, b) => {
 		return a.predictionTotal - b.predictionTotal;
 	});
@@ -145,4 +147,6 @@ export const InfluencerDistributionScatterChartView = ({
 	);
 };
 
-export default { InfluencerDistributionGraph: InfluencerDistributionScatterChart };
+export default {
+	InfluencerDistributionGraph: InfluencerDistributionScatterChart,
+};

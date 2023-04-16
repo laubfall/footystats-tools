@@ -16,23 +16,23 @@
 import * as runtime from '../runtime';
 import type {
   Precast,
-  PredictionQualityReport,
   PredictionQualityRevision,
+  Report,
 } from '../models';
 import {
     PrecastFromJSON,
     PrecastToJSON,
-    PredictionQualityReportFromJSON,
-    PredictionQualityReportToJSON,
     PredictionQualityRevisionFromJSON,
     PredictionQualityRevisionToJSON,
+    ReportFromJSON,
+    ReportToJSON,
 } from '../models';
 
-export interface PrecastRequest {
-    predictionQualityRevision: PredictionQualityRevision;
+export interface LatestReportRequest {
+    moreQualityDetailsForThisBetType: LatestReportMoreQualityDetailsForThisBetTypeEnum;
 }
 
-export interface RecomputeQualityRequest {
+export interface PrecastRequest {
     predictionQualityRevision: PredictionQualityRevision;
 }
 
@@ -43,7 +43,7 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async computeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PredictionQualityReport>> {
+    async computeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -55,61 +55,40 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PredictionQualityReportFromJSON(jsonValue));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      */
-    async computeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PredictionQualityReport> {
-        const response = await this.computeQualityRaw(initOverrides);
-        return await response.value();
+    async computeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.computeQualityRaw(initOverrides);
     }
 
     /**
      */
-    async latestReportRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PredictionQualityReport>> {
+    async latestReportRaw(requestParameters: LatestReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Report>> {
+        if (requestParameters.moreQualityDetailsForThisBetType === null || requestParameters.moreQualityDetailsForThisBetType === undefined) {
+            throw new runtime.RequiredError('moreQualityDetailsForThisBetType','Required parameter requestParameters.moreQualityDetailsForThisBetType was null or undefined when calling latestReport.');
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/predictionquality/latest/report`,
+            path: `/predictionquality/latest/report/{moreQualityDetailsForThisBetType}`.replace(`{${"moreQualityDetailsForThisBetType"}}`, encodeURIComponent(String(requestParameters.moreQualityDetailsForThisBetType))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PredictionQualityReportFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ReportFromJSON(jsonValue));
     }
 
     /**
      */
-    async latestReport(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PredictionQualityReport> {
-        const response = await this.latestReportRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async latestRevisionRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PredictionQualityRevision>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/predictionquality/latest/revision`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => PredictionQualityRevisionFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async latestRevision(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PredictionQualityRevision> {
-        const response = await this.latestRevisionRaw(initOverrides);
+    async latestReport(requestParameters: LatestReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Report> {
+        const response = await this.latestReportRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -146,33 +125,36 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async recomputeQualityRaw(requestParameters: RecomputeQualityRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PredictionQualityReport>> {
-        if (requestParameters.predictionQualityRevision === null || requestParameters.predictionQualityRevision === undefined) {
-            throw new runtime.RequiredError('predictionQualityRevision','Required parameter requestParameters.predictionQualityRevision was null or undefined when calling recomputeQuality.');
-        }
-
+    async recomputeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/predictionquality/recompute`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: PredictionQualityRevisionToJSON(requestParameters.predictionQualityRevision),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PredictionQualityReportFromJSON(jsonValue));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      */
-    async recomputeQuality(requestParameters: RecomputeQualityRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PredictionQualityReport> {
-        const response = await this.recomputeQualityRaw(requestParameters, initOverrides);
-        return await response.value();
+    async recomputeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.recomputeQualityRaw(initOverrides);
     }
 
 }
+
+/**
+ * @export
+ */
+export const LatestReportMoreQualityDetailsForThisBetTypeEnum = {
+    OverZeroFive: 'OVER_ZERO_FIVE',
+    OverOneFive: 'OVER_ONE_FIVE',
+    BttsYes: 'BTTS_YES',
+    BttsNo: 'BTTS_NO'
+} as const;
+export type LatestReportMoreQualityDetailsForThisBetTypeEnum = typeof LatestReportMoreQualityDetailsForThisBetTypeEnum[keyof typeof LatestReportMoreQualityDetailsForThisBetTypeEnum];

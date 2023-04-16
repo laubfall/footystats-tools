@@ -5,9 +5,9 @@ apis/PredictionQualityControllerApi.ts
 apis/SettingsControllerApi.ts
 apis/index.ts
 index.ts
-models/BetPredictionDistribution.ts
-models/BetPredictionQuality.ts
-models/InfluencerPercentDistribution.ts
+models/BetPredictionQualityAllBetsAggregate.ts
+models/BetPredictionQualityBetAggregate.ts
+models/BetPredictionQualityInfluencerAggregate.ts
 models/InfluencerResult.ts
 models/InfluencerStatisticalResultOutcome.ts
 models/ListMatchRequest.ts
@@ -17,9 +17,9 @@ models/Paging.ts
 models/PagingResponseMatchListElement.ts
 models/Password.ts
 models/Precast.ts
-models/PredictionQualityReport.ts
 models/PredictionQualityRevision.ts
 models/PredictionResult.ts
+models/Report.ts
 models/Settings.ts
 models/StatisticalResultOutcome.ts
 models/UploadFileResponse.ts

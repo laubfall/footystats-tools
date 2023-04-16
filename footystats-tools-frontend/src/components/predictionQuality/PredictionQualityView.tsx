@@ -8,21 +8,27 @@ import { ReportList } from "./ReportList";
 import { PredictionGraphView } from "./PredictionGraphView";
 import { InfluencerDistributionScatterChartView } from "./InfluencerDistributionScatterChart";
 import { InfluencerPredictionGraphView } from "./InfluencerPredictionGraphView";
-import {
-	BetPredictionQuality,
-	BetPredictionQualityBetEnum,
-	PredictionQualityReport,
-} from "../../footystats-frontendapi";
 import { NO_REVISION_SO_FAR } from "../../app/services/prediction/PredictionQualityService.types";
 import { apiCatchReasonHandler } from "../functions";
 import AlertMessageStore from "../../mobx/AlertMessages";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
+import {
+	BetPredictionQualityBetAggregate,
+	Report,
+} from "../../footystats-frontendapi";
+import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 export const PredictionQualityView = () => {
-	const [report, setReport] = useState<PredictionQualityReport>();
+	const [report, setReport] = useState<Report>();
 
-	const [currentMeasurement, setCurrentMeasurement] =
-		useState<BetPredictionQuality>();
+	const [currentBetAggregate, setCurrentBetAggregate] =
+		useState<Array<BetPredictionQualityBetAggregate>>();
+
+	const [currentDontBetAggregate, setCurrentDontBetAggregate] =
+		useState<Array<BetPredictionQualityBetAggregate>>();
+
+	const [selectedBet, setSelectedBet] =
+		useState<BetPredictionQualityBetEnum>();
 
 	const [recalculateAvailable, setRecalculateAvailable] = useState(false);
 
@@ -31,8 +37,8 @@ export const PredictionQualityView = () => {
 	useEffect(() => {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
-			.latestReport()
-			.then((rep) => setReport(rep))
+			.latestReport(BetPredictionQualityBetEnum.BttsYes)
+			.then(setReport)
 			.catch((reason) => {
 				if (reason.response?.status === 404) {
 					AlertMessageStore.addMessage(
@@ -43,31 +49,31 @@ export const PredictionQualityView = () => {
 					return reason;
 				}
 				apiCatchReasonHandler(reason);
-			});
-
-		predictionQualityService
-			.latestRevision()
-			.then((rev) =>
-				setRecalculateAvailable(rev.revision !== NO_REVISION_SO_FAR),
-			)
-			.catch(apiCatchReasonHandler)
-			.finally(() => {
-				LoadingOverlayStore.notLoadingNow();
-			});
+			})
+			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}, []);
 
 	useEffect(() => {
-		const measurement = report?.measurements.find(
-			(bpc) => bpc.bet === BetPredictionQualityBetEnum.BttsYes,
-		);
-		setCurrentMeasurement(measurement);
+		setCurrentDontBetAggregate(report.dontBetPredictionDistributions);
+		setCurrentBetAggregate(report.betPredictionDistributions);
 	}, [report]);
+
+	useEffect(() => {
+		LoadingOverlayStore.loadingNow();
+		predictionQualityService
+			.latestReport(selectedBet)
+			.then(setReport)
+			.catch(apiCatchReasonHandler)
+			.finally(() => LoadingOverlayStore.notLoadingNow());
+	}, [selectedBet]);
 
 	const InfluencerDistributions = () => {
 		const { activeEventKey } = useContext(AccordionContext);
 		return (
 			<>
-				{activeEventKey === "0" && (
+				{activeEventKey === "0" &&
+					{
+						/*
 					<Row>
 						<Col>
 							<h3>
@@ -77,11 +83,11 @@ export const PredictionQualityView = () => {
 							</h3>
 							<InfluencerDistributionScatterChartView
 								distributionBetSuccess={
-									currentMeasurement?.distributionBetOnThis ||
+									currentDontBetAggregate?.distributionBetOnThis ||
 									[]
 								}
 								distributionBetFailed={
-									currentMeasurement?.distributionBetOnThisFailed ||
+									currentDontBetAggregate?.distributionBetOnThisFailed ||
 									[]
 								}
 							/>
@@ -95,17 +101,18 @@ export const PredictionQualityView = () => {
 							</h3>
 							<InfluencerDistributionScatterChartView
 								distributionBetFailed={
-									currentMeasurement?.distributionDontBetOnThisFailed ||
+									currentDontBetAggregate?.distributionDontBetOnThisFailed ||
 									[]
 								}
 								distributionBetSuccess={
-									currentMeasurement?.distributionDontBetOnThis ||
+									currentDontBetAggregate?.distributionDontBetOnThis ||
 									[]
 								}
 							/>
 						</Col>
 					</Row>
-				)}
+					*/
+					}}
 			</>
 		);
 	};
@@ -114,7 +121,11 @@ export const PredictionQualityView = () => {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
 			.computeQuality()
-			.then(setReport)
+			.then(() =>
+				predictionQualityService
+					.latestReport(selectedBet)
+					.then(setReport),
+			)
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}
@@ -122,12 +133,11 @@ export const PredictionQualityView = () => {
 	function handleOnClickRecomputeQuality() {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
-			.latestRevision()
-			.then((revision) =>
+			.recomputeQuality()
+			.then(() =>
 				predictionQualityService
-					.recomputeQuality(revision)
-					.then(setReport)
-					.catch(apiCatchReasonHandler),
+					.latestReport(selectedBet)
+					.then(setReport),
 			)
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
@@ -137,14 +147,13 @@ export const PredictionQualityView = () => {
 		<>
 			<ReportList
 				report={report}
-				onRowClicked={(row) => {
-					const measurement = report?.measurements.find(
-						(bpq) => bpq.bet === row.bet,
-					);
-					setCurrentMeasurement(measurement);
-				}}
+				onRowClicked={(row) => setSelectedBet(row.bet)}
 			/>
-			<PredictionGraphView measurement={currentMeasurement} />
+			<PredictionGraphView
+				measurement={currentBetAggregate}
+				measurementDontBet={currentDontBetAggregate}
+				bet={selectedBet}
+			/>
 
 			<Accordion
 				title={translate(
@@ -158,9 +167,15 @@ export const PredictionQualityView = () => {
 						)}
 					</AccordionHeader>
 					<AccordionBody>
-						{currentMeasurement && (
+						{currentDontBetAggregate && (
 							<InfluencerPredictionGraphView
-								measurement={currentMeasurement}
+								measurementBetInfluencerAggregate={
+									report.betInfluencerPercentDistributions
+								}
+								measurementDontBetInfluencerAggregate={
+									report.dontBetInfluencerPercentDistributions
+								}
+								bet={selectedBet}
 							/>
 						)}
 					</AccordionBody>

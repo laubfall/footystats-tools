@@ -8,7 +8,6 @@ import { FilterSettings, MatchFilterHoc } from "./MatchFilter";
 import { MatchList, MatchListEntry, SortHandler } from "./MatchList";
 import IpcMatchService from "../../app/services/match/IpcMatchService";
 import {
-	BetPredictionQualityBetEnum,
 	FootyStatsCsvUploadControllerApi,
 	MatchControllerApi,
 	MatchListElement,
@@ -19,6 +18,7 @@ import translate from "../../i18n/translate";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 import { apiCatchReasonHandler } from "../functions";
 import { utcToZonedTime } from "date-fns-tz";
+import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 function matchListEntries(n: MatchListElement[]) {
 	const r = n.map(async (ms) => {

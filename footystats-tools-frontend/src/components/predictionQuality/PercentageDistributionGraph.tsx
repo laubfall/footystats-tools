@@ -10,14 +10,14 @@ import {
 } from "recharts";
 import { uniqueId } from "lodash";
 import { colord, RgbColor } from "colord";
-import { BetPredictionDistribution } from "../../footystats-frontendapi";
+import { BetPredictionQualityBetAggregate } from "../../footystats-frontendapi";
 
 export type PercentageDistributionGraphProps = {
 	graphs: PercentageDistributionGraphData[];
 };
 
 export type PercentageDistributionGraphData = {
-	data?: BetPredictionDistribution[];
+	data?: BetPredictionQualityBetAggregate[];
 	name: string;
 	color?: RgbColor;
 };
@@ -49,19 +49,19 @@ function createData(graphs: PercentageDistributionGraphData[]): Data[] {
 			}
 
 			if (idx === 0) {
-				d.y0 = graphData.count;
+				d.y0 = graphData.betFailed + graphData.betSucceeded;
 			}
 
 			if (idx === 1) {
-				d.y1 = graphData.count;
+				d.y1 = graphData.betFailed + graphData.betSucceeded;
 			}
 
 			if (idx === 2) {
-				d.y2 = graphData.count;
+				d.y2 = graphData.betFailed + graphData.betSucceeded;
 			}
 
 			if (idx === 3) {
-				d.y3 = graphData.count;
+				d.y3 = graphData.betFailed + graphData.betSucceeded;
 			}
 		});
 	});
