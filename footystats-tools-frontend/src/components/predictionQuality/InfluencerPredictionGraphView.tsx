@@ -37,7 +37,11 @@ const InfluencerPredictionGraph = ({
 						name: `${translate(
 							`renderer.matchesview.bet.${bet}`,
 						)} ${translate("renderer.predictiongraphview.bet")}`,
-						data: i1Distribution,
+						data: i1Distribution?.map((influencerDist) => ({
+							xPredictionPercent:
+								influencerDist.predictionPercent,
+							yCount: influencerDist.count,
+						})),
 						color: colord("rgb(40,200,0)").toRgb(),
 					},
 					{
@@ -46,7 +50,11 @@ const InfluencerPredictionGraph = ({
 						)} ${translate(
 							"renderer.predictiongraphview.bet.failed",
 						)}`,
-						data: i2Distribution,
+						data: i2Distribution?.map((influencerDist) => ({
+							xPredictionPercent:
+								influencerDist.predictionPercent,
+							yCount: influencerDist.count,
+						})),
 					},
 				]}
 			/>

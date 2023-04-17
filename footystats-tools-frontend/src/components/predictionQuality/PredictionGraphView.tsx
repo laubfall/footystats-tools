@@ -28,7 +28,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet",
 							)}`,
-							data: betPredictionPercentDistribution.map(
+							data: betPredictionPercentDistribution?.map(
 								(bppa) => ({
 									xPredictionPercent: bppa.predictionPercent,
 									yCount: bppa.betSucceeded,
@@ -42,7 +42,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet.failed",
 							)}`,
-							data: betPredictionPercentDistribution.map(
+							data: betPredictionPercentDistribution?.map(
 								(bppa) => ({
 									xPredictionPercent: bppa.predictionPercent,
 									yCount: bppa.betFailed,
@@ -61,7 +61,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet",
 							)}`,
-							data: dontBetPredictionPercentDistribution.map(
+							data: dontBetPredictionPercentDistribution?.map(
 								(bppa) => ({
 									xPredictionPercent: bppa.predictionPercent,
 									yCount: bppa.betSucceeded,
@@ -75,7 +75,7 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet.failed",
 							)}`,
-							data: dontBetPredictionPercentDistribution.map(
+							data: dontBetPredictionPercentDistribution?.map(
 								(bppa) => ({
 									xPredictionPercent: bppa.predictionPercent,
 									yCount: bppa.betFailed,

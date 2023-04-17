@@ -34,9 +34,14 @@ export const PredictionQualityView = () => {
 	const predictionQualityService = new IpcPredictionQualityService();
 
 	useEffect(() => {
+		setCurrentDontBetAggregate(report?.dontBetPredictionDistributions);
+		setCurrentBetAggregate(report?.betPredictionDistributions);
+	}, [report]);
+
+	useEffect(() => {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
-			.latestReport(BetPredictionQualityBetEnum.BttsYes)
+			.latestReport(selectedBet)
 			.then(setReport)
 			.catch((reason) => {
 				if (reason.response?.status === 404) {
@@ -49,20 +54,6 @@ export const PredictionQualityView = () => {
 				}
 				apiCatchReasonHandler(reason);
 			})
-			.finally(() => LoadingOverlayStore.notLoadingNow());
-	}, []);
-
-	useEffect(() => {
-		setCurrentDontBetAggregate(report?.dontBetPredictionDistributions);
-		setCurrentBetAggregate(report?.betPredictionDistributions);
-	}, [report]);
-
-	useEffect(() => {
-		LoadingOverlayStore.loadingNow();
-		predictionQualityService
-			.latestReport(selectedBet)
-			.then(setReport)
-			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}, [selectedBet]);
 
