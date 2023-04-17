@@ -5,8 +5,13 @@ import {
 	BetPredictionQualityAllBetsAggregate,
 	Report,
 } from "../../footystats-frontendapi";
+import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
-export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
+export const ReportList = ({
+	report,
+	onRowClicked,
+	selectedBet,
+}: ReportListProps) => {
 	const columns: TableColumn<BetPredictionQualityAllBetsAggregate>[] = [
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.one"),
@@ -43,6 +48,15 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 				columns={columns}
 				data={report?.betPredictionResults || []}
 				onRowClicked={onRowClicked}
+				conditionalRowStyles={[
+					{
+						when: (row) => row.bet === selectedBet,
+						style: {
+							backgroundColor: "green",
+							color: "white",
+						},
+					},
+				]}
 			/>
 		</>
 	);
@@ -51,6 +65,7 @@ export const ReportList = ({ report, onRowClicked }: ReportListProps) => {
 export type ReportListProps = {
 	report?: Report;
 	onRowClicked?: (row: BetPredictionQualityAllBetsAggregate) => void;
+	selectedBet?: BetPredictionQualityBetEnum;
 };
 
 export default { ReportList };

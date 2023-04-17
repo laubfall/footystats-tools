@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Accordion, AccordionContext, Button, Col, Row } from "react-bootstrap";
+import { Accordion, AccordionContext, Button } from "react-bootstrap";
 import AccordionBody from "react-bootstrap/AccordionBody";
 import AccordionHeader from "react-bootstrap/AccordionHeader";
 import translate from "../../i18n/translate";
@@ -138,7 +138,15 @@ export const PredictionQualityView = () => {
 			<ReportList
 				report={report}
 				onRowClicked={(row) => setSelectedBet(row.bet)}
+				selectedBet={selectedBet}
 			/>
+			<hr />
+			<h3>
+				{translate(
+					"renderer.predictionqualitiyview.header.betprediction",
+				)}
+			</h3>
+
 			<PredictionGraphView
 				betPredictionPercentDistribution={currentBetAggregate}
 				dontBetPredictionPercentDistribution={currentDontBetAggregate}
