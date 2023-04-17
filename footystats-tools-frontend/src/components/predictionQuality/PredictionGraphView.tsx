@@ -28,7 +28,12 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet",
 							)}`,
-							data: betPredictionPercentDistribution,
+							data: betPredictionPercentDistribution.map(
+								(bppa) => ({
+									xPredictionPercent: bppa.predictionPercent,
+									yCount: bppa.betSucceeded,
+								}),
+							),
 							color: colord("rgb(40,200,0)").toRgb(),
 						},
 						{
@@ -37,7 +42,12 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.bet.failed",
 							)}`,
-							data: dontBetPredictionPercentDistribution,
+							data: betPredictionPercentDistribution.map(
+								(bppa) => ({
+									xPredictionPercent: bppa.predictionPercent,
+									yCount: bppa.betFailed,
+								}),
+							),
 						},
 					]}
 				/>
@@ -51,7 +61,12 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet",
 							)}`,
-							data: betPredictionPercentDistribution,
+							data: dontBetPredictionPercentDistribution.map(
+								(bppa) => ({
+									xPredictionPercent: bppa.predictionPercent,
+									yCount: bppa.betSucceeded,
+								}),
+							),
 							color: colord("rgb(40,200,0)").toRgb(),
 						},
 						{
@@ -60,7 +75,12 @@ export const PredictionGraphView = ({
 							)} ${translate(
 								"renderer.predictiongraphview.dontbet.failed",
 							)}`,
-							data: dontBetPredictionPercentDistribution,
+							data: dontBetPredictionPercentDistribution.map(
+								(bppa) => ({
+									xPredictionPercent: bppa.predictionPercent,
+									yCount: bppa.betFailed,
+								}),
+							),
 						},
 					]}
 				/>

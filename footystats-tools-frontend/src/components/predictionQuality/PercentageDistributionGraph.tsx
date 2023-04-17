@@ -3,43 +3,24 @@ import {
 	CartesianGrid,
 	Legend,
 	Line,
-	XAxis,
-	YAxis,
 	LineChart,
 	Tooltip,
+	XAxis,
+	YAxis,
 } from "recharts";
 import { uniqueId } from "lodash";
 import { colord, RgbColor } from "colord";
-import { BetPredictionQualityBetAggregate } from "../../footystats-frontendapi";
-
-export type PercentageDistributionGraphProps = {
-	graphs: PercentageDistributionGraphData[];
-};
-
-export type PercentageDistributionGraphData = {
-	data?: BetPredictionQualityBetAggregate[];
-	name: string;
-	color?: RgbColor;
-};
-
-type Data = {
-	predictionPercent: number;
-	y0: number;
-	y1: number;
-	y2: number;
-	y3: number;
-};
 
 function createData(graphs: PercentageDistributionGraphData[]): Data[] {
 	const data: Data[] = [];
 	graphs.forEach((value, idx) => {
 		value.data?.forEach((graphData) => {
 			let d = data.find(
-				(v) => v.predictionPercent === graphData.predictionPercent,
+				(v) => v.predictionPercent === graphData.xPredictionPercent,
 			);
 			if (d === undefined) {
 				d = {
-					predictionPercent: graphData.predictionPercent,
+					predictionPercent: graphData.xPredictionPercent,
 					y0: 0,
 					y1: 0,
 					y2: 0,
@@ -49,19 +30,19 @@ function createData(graphs: PercentageDistributionGraphData[]): Data[] {
 			}
 
 			if (idx === 0) {
-				d.y0 = graphData.betFailed + graphData.betSucceeded;
+				d.y0 = graphData.yCount;
 			}
 
 			if (idx === 1) {
-				d.y1 = graphData.betFailed + graphData.betSucceeded;
+				d.y1 = graphData.yCount;
 			}
 
 			if (idx === 2) {
-				d.y2 = graphData.betFailed + graphData.betSucceeded;
+				d.y2 = graphData.yCount;
 			}
 
 			if (idx === 3) {
-				d.y3 = graphData.betFailed + graphData.betSucceeded;
+				d.y3 = graphData.yCount;
 			}
 		});
 	});
@@ -113,4 +94,27 @@ export const PercentageDistributionGraph = ({
 			})}
 		</LineChart>
 	);
+};
+
+export type PercentageDistributionGraphProps = {
+	graphs: PercentageDistributionGraphData[];
+};
+
+export type PercentageDistributionGraphData = {
+	data?: PercentCountCoordinate[];
+	name: string;
+	color?: RgbColor;
+};
+
+export type PercentCountCoordinate = {
+	xPredictionPercent: number;
+	yCount: number;
+};
+
+type Data = {
+	predictionPercent: number;
+	y0: number;
+	y1: number;
+	y2: number;
+	y3: number;
 };
