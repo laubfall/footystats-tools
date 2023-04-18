@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("footystats")
 public class FootystatsProperties {
 
-    @Getter
-    @Setter
-    private String allowedOrigins;
+	@Getter
+	@Setter
+	private String allowedOrigins;
 
 	@Getter
 	@Setter
@@ -32,6 +32,10 @@ public class FootystatsProperties {
 	@Getter
 	@Setter
 	private PredictionQualityProperties predictionQuality;
+
+	@Getter
+	@Setter
+	private CsvFileDownloadProperties csvFileDownloadProperties;
 
 	public static class FootystatsWebpageProperties {
 		@Getter
@@ -67,11 +71,26 @@ public class FootystatsProperties {
 		private String matchStatsLeagueRessource;
 	}
 
-	public static class PredictionQualityProperties
-	{
+	public static class PredictionQualityProperties {
 		// Count of matches to retrieve when finding matches for calculating prediction quality
 		@Getter
 		@Setter
 		private int pageSizeFindingRevisionMatches;
+	}
+
+	public static class CsvFileDownloadProperties {
+		/**
+		 * Path were to store downloaded csv files. Only used if keepCsvFiles is true.
+		 */
+		@Getter
+		@Setter
+		private String pathForKeepingCsvFiles;
+
+		/**
+		 * True if downloaded csv files should be saved. In this case provide a valid path in pathForKeepingCsvFiles.
+		 */
+		@Getter
+		@Setter
+		private boolean keepCsvFiles;
 	}
 }

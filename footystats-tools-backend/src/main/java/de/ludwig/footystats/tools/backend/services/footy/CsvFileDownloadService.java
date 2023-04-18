@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -152,15 +153,37 @@ public class CsvFileDownloadService {
 			tmpFile = File.createTempFile(tmpFilePrefix, "csv");
 			FileUtils.writeLines(tmpFile, rawCsvData);
 			fis = new FileInputStream(tmpFile);
+			saveCsvFileIfWanted(tmpFile, tmpFilePrefix);
 			consumer.accept(fis);
 		} catch (IOException e) {
 			log.error("An exception occured while processing csv tmp file", e);
 		} finally {
 			IOUtils.closeQuietly(fis);
-
 			if (tmpFile != null && tmpFile.exists()) {
 				FileUtils.deleteQuietly(tmpFile);
 			}
+		}
+	}
+
+	private void saveCsvFileIfWanted(File downloadedCsvFile, String prefix) {
+		if (!properties.getCsvFileDownloadProperties().isKeepCsvFiles()){
+			return;
+		}
+
+		var path = properties.getCsvFileDownloadProperties().getPathForKeepingCsvFiles();
+		var storePath = new File(path);
+		if(!storePath.exists()){
+			log.warn("Saving csv file wanted but path does not seem to exist: " + path);
+			return;
+		}
+
+		try {
+			String pointInTimeOfSave = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss"));
+			File fileToSave = new File(path, prefix + "_" + pointInTimeOfSave + ".csv");
+			FileUtils.copyFile(downloadedCsvFile, fileToSave);
+			log.info("Saved csv file: " + fileToSave.getAbsolutePath());
+		} catch (IOException e) {
+			log.error("Failed copying temp csv file to wanted destination.", e);
 		}
 	}
 
