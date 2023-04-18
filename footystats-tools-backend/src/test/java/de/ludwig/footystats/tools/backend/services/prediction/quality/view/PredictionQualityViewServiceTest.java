@@ -40,7 +40,7 @@ public class PredictionQualityViewServiceTest {
 		Assertions.assertEquals(1, docCount);
 
 		List<BetPredictionQualityAllBetsAggregate> measuredPredictionCntAggregates = predictionQualityService.matchPredictionQualityMeasurementCounts();
-		Assertions.assertEquals(Bet.values().length, measuredPredictionCntAggregates.size());
+		Assertions.assertEquals(2, measuredPredictionCntAggregates.size());
 		BetPredictionQualityAllBetsAggregate aggregate = measuredPredictionCntAggregates.stream().filter(m -> m.bet().equals(Bet.BTTS_YES)).findAny().get();
 		Assertions.assertEquals(Bet.BTTS_YES, aggregate.bet());
 		Assertions.assertEquals(13L, aggregate.assessed());

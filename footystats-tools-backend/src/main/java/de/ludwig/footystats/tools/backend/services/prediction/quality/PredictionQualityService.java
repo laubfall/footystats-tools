@@ -5,26 +5,27 @@ import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
-import de.ludwig.footystats.tools.backend.services.prediction.*;
+import de.ludwig.footystats.tools.backend.services.prediction.Bet;
+import de.ludwig.footystats.tools.backend.services.prediction.InfluencerPercentDistribution;
+import de.ludwig.footystats.tools.backend.services.prediction.PredictionAnalyze;
+import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Slf4j
 @Service
@@ -161,38 +162,36 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	private void merge(Collection<BetPredictionQuality> measurements) {
-		measurements.forEach((betPredictionAggregate) -> {
+		measurements.forEach((betPredictionQuality) -> {
 
-			var existingAggregate = betPredictionAggregateRepository.findByBetAndPredictionPercent(betPredictionAggregate.getBet(),
-				betPredictionAggregate.getPredictionPercent());
-			if (existingAggregate == null) {
-				betPredictionAggregateRepository.insert(betPredictionAggregate);
+			var existingBetPredictionQuality = betPredictionAggregateRepository.findByBetAndPredictionPercent(betPredictionQuality.getBet(),
+				betPredictionQuality.getPredictionPercent());
+			if (existingBetPredictionQuality == null) {
+				betPredictionAggregateRepository.insert(betPredictionQuality);
 			} else {
-				existingAggregate.setCount(existingAggregate.getCount() + 1);
-				existingAggregate.setBetSucceeded(existingAggregate.getBetSucceeded() + betPredictionAggregate.getBetSucceeded());
-				existingAggregate.setBetFailed(existingAggregate.getBetFailed() + betPredictionAggregate.getBetFailed());
-				mergeInfluencerDistribution(existingAggregate, betPredictionAggregate);
-				betPredictionAggregateRepository.save(existingAggregate);
+				existingBetPredictionQuality.setCount(existingBetPredictionQuality.getCount() + 1);
+				existingBetPredictionQuality.setBetSucceeded(existingBetPredictionQuality.getBetSucceeded() + betPredictionQuality.getBetSucceeded());
+				existingBetPredictionQuality.setBetFailed(existingBetPredictionQuality.getBetFailed() + betPredictionQuality.getBetFailed());
+				mergeInfluencerDistribution(existingBetPredictionQuality, betPredictionQuality);
+				betPredictionAggregateRepository.save(existingBetPredictionQuality);
 			}
 		});
 	}
 
 
-	private void mergeInfluencerDistribution(
-		BetPredictionQuality target,
-		BetPredictionQuality source) {
+	private void mergeInfluencerDistribution(BetPredictionQuality target, BetPredictionQuality source) {
+		if (target.getInfluencerDistribution() == null) {
+			target.setInfluencerDistribution(new ArrayList<>());
+		}
 		source.getInfluencerDistribution().forEach((sId) -> {
-			if (target.getInfluencerDistribution() == null) {
-				target.setInfluencerDistribution(new ArrayList<>());
-			}
-			var idx = target.getInfluencerDistribution().stream().filter(
-					(InfluencerPercentDistribution tId) -> tId.getInfluencerName() == sId.getInfluencerName() &&
-						tId.getPredictionPercent() == sId.getPredictionPercent() &&
+			var optTId = target.getInfluencerDistribution().stream().filter(
+					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(sId.getInfluencerName()) &&
+						tId.getPredictionPercent().equals(sId.getPredictionPercent()) &&
 						tId.getPrecheckResult() == sId.getPrecheckResult())
 				.findAny();
 
-			if (idx.isPresent()) {
-				var ipd = idx.get();
+			if (optTId.isPresent()) {
+				var ipd = optTId.get();
 				ipd.setCount(ipd.getCount() + sId.getCount());
 			} else {
 				target.getInfluencerDistribution().add(sId);
