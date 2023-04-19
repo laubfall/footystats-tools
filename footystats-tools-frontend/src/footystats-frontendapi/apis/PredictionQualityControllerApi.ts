@@ -42,6 +42,8 @@ export interface PrecastRequest {
 export class PredictionQualityControllerApi extends runtime.BaseAPI {
 
     /**
+     * bar
+     * foo
      */
     async computeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
@@ -59,6 +61,8 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
     }
 
     /**
+     * bar
+     * foo
      */
     async computeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.computeQualityRaw(initOverrides);

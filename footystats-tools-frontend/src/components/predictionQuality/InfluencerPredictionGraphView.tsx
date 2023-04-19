@@ -83,22 +83,31 @@ function influencerPercentDistributions(
 
 export const InfluencerPredictionGraphView = ({
 	measurementBetInfluencerAggregate,
-	measurementDontBetInfluencerAggregate,
 	bet,
 }: InfluencerPredictionGraphViewProps) => {
-	const n1 = keys(measurementBetInfluencerAggregate);
-	const n2 = keys(measurementDontBetInfluencerAggregate);
-	const relevantInfluencerNames = union(n1, n2);
+	const influencerNames = keys(measurementBetInfluencerAggregate);
 
 	return (
 		<>
-			{relevantInfluencerNames.map((name, idx) => {
-				const g1Data = influencerPercentDistributions(
-					measurementBetInfluencerAggregate[name.toString()],
+			{influencerNames.map((name, idx) => {
+				const g1Data = measurementBetInfluencerAggregate[
+					name.toString()
+				].map(
+					(agg) =>
+						({
+							count: agg.betSucceeded,
+							predictionPercent: agg.predictionPercent,
+						} as PercentDistribution),
 				);
 
-				const g2Data = influencerPercentDistributions(
-					measurementDontBetInfluencerAggregate[name.toString()],
+				const g2Data = measurementBetInfluencerAggregate[
+					name.toString()
+				].map(
+					(agg) =>
+						({
+							count: agg.betFailed,
+							predictionPercent: agg.predictionPercent,
+						} as PercentDistribution),
 				);
 
 				const Graph = (
@@ -126,9 +135,6 @@ export type InfluencerPredictionGraphProps = {
 
 export type InfluencerPredictionGraphViewProps = {
 	measurementBetInfluencerAggregate: {
-		[key: string]: Array<BetPredictionQualityInfluencerAggregate>;
-	};
-	measurementDontBetInfluencerAggregate: {
 		[key: string]: Array<BetPredictionQualityInfluencerAggregate>;
 	};
 	bet: BetPredictionQualityBetEnum;

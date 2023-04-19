@@ -1,11 +1,20 @@
-= Getting Started With Spring REST Docs
+= Footystats-Tools REST Docs
+:toc:
 
-This is an example output for a service running at http://localhost:8080:
+== Match Endpoint
+
+=== /match/list
+
+.Response Schema
+include::{snippets}/matchController/response-fields.adoc[]
 
 .request
-include::{snippets}/home/http-request.adoc[]
+[%collapsible]
+====
+include::{snippets}/matchController/http-request.adoc[]
+====
 
 .response
-include::{snippets}/home/http-response.adoc[]
+include::{snippets}/matchController/http-response.adoc[]
 
 As you can see the format is very simple, and in fact you always get the same message.

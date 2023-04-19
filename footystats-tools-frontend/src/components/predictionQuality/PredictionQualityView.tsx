@@ -170,9 +170,6 @@ export const PredictionQualityView = () => {
 								measurementBetInfluencerAggregate={
 									report?.betInfluencerPercentDistributions
 								}
-								measurementDontBetInfluencerAggregate={
-									report?.dontBetInfluencerPercentDistributions
-								}
 								bet={selectedBet}
 							/>
 						)}

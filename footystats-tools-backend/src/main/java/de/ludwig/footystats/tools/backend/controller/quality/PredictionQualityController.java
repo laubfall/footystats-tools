@@ -9,6 +9,7 @@ import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPr
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityBetAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.PredictionQualityViewService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class PredictionQualityController {
 		this.predictionQualityViewService = predictionQualityViewService;
 	}
 
+	@Operation(summary = "foo", description = "bar")
 	@GetMapping("/compute")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void computeQuality() {

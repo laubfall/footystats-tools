@@ -32,14 +32,11 @@ public class MatchController {
 
 	private MatchStatsService matchStatsService;
 
-	private PredictionQualityReportRepository predictionQualityReportRepository;
-
 	private StatisticalResultOutcomeService statisticalResultOutcomeService;
 
-	public MatchController(MatchService matchService, MatchStatsService matchStatsService, PredictionQualityReportRepository predictionQualityReportRepository, StatisticalResultOutcomeService statisticalResultOutcomeService) {
+	public MatchController(MatchService matchService, MatchStatsService matchStatsService, StatisticalResultOutcomeService statisticalResultOutcomeService) {
 		this.matchService = matchService;
 		this.matchStatsService = matchStatsService;
-		this.predictionQualityReportRepository = predictionQualityReportRepository;
 		this.statisticalResultOutcomeService = statisticalResultOutcomeService;
 	}
 
@@ -72,23 +69,6 @@ public class MatchController {
 		}
 
 		return listMatches(request);
-	}
-
-	private List<ListMatchElement> convert(Page<Match> matches) {
-		PredictionQualityReport report = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
-
-		var result = matches.getContent().stream().map(m -> ListMatchElement.builder().match(m).build()).toList();
-
-		if (report != null) {
-			var betPredictionMeasurements = new HashMap<Bet, BetPredictionQuality>();
-			report.getMeasurements().forEach(measurement -> betPredictionMeasurements.put(measurement.getBet(), measurement));
-			result.forEach(listMatchElement -> {
-				BetPredictionQuality qualityBttsYes = betPredictionMeasurements.get(Bet.BTTS_YES);
-				//listMatchElement.setPredictionSuccessChance(qualityBttsYes.);
-			});
-		}
-
-		return result;
 	}
 
 	@JsonComponent

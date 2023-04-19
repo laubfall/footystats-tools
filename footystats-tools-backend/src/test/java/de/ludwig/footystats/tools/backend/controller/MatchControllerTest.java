@@ -24,6 +24,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -65,9 +67,9 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void doc() throws Exception {
+    public void match_list_invalid_request() throws Exception {
         mockMvc.perform(RestDocumentationRequestBuilders
-                .post("/match/list")).andExpect(status().is(415)).andDo(document("home"));
+                .post("/match/list")).andExpect(status().is(415)).andDo(document("matchController/invalidrequest"));
     }
 
     @Test
@@ -93,7 +95,7 @@ public class MatchControllerTest {
         var json = objectMapper.writeValueAsString(request);
         mockMvc.perform(RestDocumentationRequestBuilders
                         .post("/match/list").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andDo(rh -> rh.getResponse())
+                .andDo(document("matchController", relaxedResponseFields(fieldWithPath("elements[].footyStatsUrl").type(String.class).description("League of the match"))))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("elements", Is.is(Matchers.hasSize(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath("totalElements", Is.is(1)));
