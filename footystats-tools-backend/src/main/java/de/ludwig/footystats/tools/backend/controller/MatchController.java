@@ -1,26 +1,20 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchSearch;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
-import de.ludwig.footystats.tools.backend.services.prediction.BetPredictionQuality;
 import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcome;
 import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcomeService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReport;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,17 +48,17 @@ public class MatchController {
 		}).stream().collect(Collectors.toList());
 
 
-		if(matches != null){
+		if (matches != null) {
 			return new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), result);
 		}
 		return new PagingResponse<>(0, 0, List.of());
 	}
 
 	@PatchMapping(value = "/stats", consumes = {"application/json"}, produces = {"application/json"})
-	public PagingResponse<MatchListElement> reimportMatchStats(@RequestBody ListMatchRequest request){
+	public PagingResponse<MatchListElement> reimportMatchStats(@RequestBody ListMatchRequest request) {
 		matchStatsService.reimportMatchStats();
 
-		if(request == null) {
+		if (request == null) {
 			return new PagingResponse<>(0, 0, List.of());
 		}
 

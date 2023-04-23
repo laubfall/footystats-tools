@@ -4,6 +4,7 @@ import translate from "../../i18n/translate";
 import { uniqueId } from "lodash";
 import {
 	InfluencerResultPrecheckResultEnum,
+	InfluencerStatisticalResultOutcome,
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetPrediction } from "./MatchList";
@@ -14,26 +15,56 @@ export const BetDetailInfoOverlay = ({
 }: BetDetailInfoOverlayProps) => {
 	const relevantDetails =
 		betPrediction?.prediction.influencerDetailedResult.filter(
-			(d) => d.precheckResult === InfluencerResultPrecheckResultEnum.Ok,
+			(influencerResult) =>
+				influencerResult.precheckResult ===
+				InfluencerResultPrecheckResultEnum.Ok,
 		);
+
+	function influencerStatisticalOutcome(
+		influencerName: string,
+	): InfluencerStatisticalResultOutcome {
+		const result =
+			statisticalOutcome.influencerStatisticalResultOutcomes.filter(
+				(iso) => iso.influencerName === influencerName,
+			);
+
+		return result.length === 1 ? result[0] : undefined;
+	}
+
+	function humanReadablePercent(statisticalOutcome?: number) {
+		if (!statisticalOutcome) {
+			return 0;
+		}
+
+		return (statisticalOutcome * 100).toFixed(2);
+	}
 
 	return (
 		<>
-			<span>
-				{translate(
-					"renderer.matchlist.influencer.popup.statistical.outcome",
-				)}
-				<br />
-				{betPrediction.prediction.betSuccessInPercent} /{" "}
-				{(statisticalOutcome?.betStatisticalSuccess * 100).toFixed(2)}
-			</span>
-			<br />
-			{translate("renderer.matchlist.influencer.popup.influencer.title")}
-			<ListGroup>
+			{translate("renderer.matchlist.influencer.popup.help")}
+			<ListGroup variant={"flush"}>
+				<ListGroupItem>
+					<b>
+						{translate(
+							"renderer.matchlist.influencer.popup.statistical.outcome",
+						)}
+					</b>
+					{betPrediction.prediction.betSuccessInPercent} /{" "}
+					{humanReadablePercent(
+						statisticalOutcome?.betStatisticalSuccess,
+					)}
+				</ListGroupItem>
 				{relevantDetails &&
-					relevantDetails.map((d) => (
+					relevantDetails.map((influencerResult) => (
 						<ListGroupItem key={uniqueId()}>
-							{d.influencerName}: {d.influencerPredictionValue}
+							{influencerResult.influencerName}:{" "}
+							{influencerResult.influencerPredictionValue}
+							{" / "}
+							{humanReadablePercent(
+								influencerStatisticalOutcome(
+									influencerResult.influencerName,
+								)?.statisticalOutcomeBetSuccess,
+							)}
 						</ListGroupItem>
 					))}
 			</ListGroup>
