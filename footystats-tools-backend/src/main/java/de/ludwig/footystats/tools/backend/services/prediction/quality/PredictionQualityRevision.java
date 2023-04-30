@@ -4,8 +4,6 @@ import lombok.*;
 import org.springframework.boot.jackson.JsonComponent;
 
 @AllArgsConstructor
-@NoArgsConstructor
-@JsonComponent
 public class PredictionQualityRevision {
 	public static final int NO_REVISION_SO_FAR = -1;
 	@Getter

@@ -15,11 +15,14 @@
 
 import * as runtime from '../runtime';
 import type {
+  JobInformation,
   Precast,
   PredictionQualityRevision,
   Report,
 } from '../models';
 import {
+    JobInformationFromJSON,
+    JobInformationToJSON,
     PrecastFromJSON,
     PrecastToJSON,
     PredictionQualityRevisionFromJSON,
@@ -129,7 +132,7 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async recomputeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async recomputeQualityRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobInformation>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -141,13 +144,14 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => JobInformationFromJSON(jsonValue));
     }
 
     /**
      */
-    async recomputeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.recomputeQualityRaw(initOverrides);
+    async recomputeQuality(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobInformation> {
+        const response = await this.recomputeQualityRaw(initOverrides);
+        return await response.value();
     }
 
 }

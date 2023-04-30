@@ -11,6 +11,12 @@ import de.ludwig.footystats.tools.backend.services.prediction.PredictionAnalyze;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,6 +69,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return precast;
 	}
 
+	@Transactional
 	public void computeQuality() {
 		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
 		Page<Match> matchesPage;
@@ -74,10 +81,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			for (Match match : matchesByRevision) {
 				var predictionAggregates = measure(match);
 				merge(predictionAggregates);
-
-				// update match with revision number
-				match.setRevision(PredictionQualityRevision.NO_REVISION);
-				matchService.upsert(match);
+				markWithLatestRevision(match);
 			}
 
 			log.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
@@ -87,25 +91,15 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		}
 	}
 
+	public void markWithLatestRevision(Match match){
+		// update match with revision number
+		match.setRevision(PredictionQualityRevision.NO_REVISION);
+		matchService.upsert(match);
+	}
+
 	@Transactional
 	public void recomputeQuality() {
-		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-		Page<Match> result = matchRepository.findMatchesByState(MatchStatus.complete, pageRequest);
-		var pageCnt = 1;
-		while (result.hasContent()) {
-			result.forEach((match) -> {
-				var msm = this.measure(match);
-				this.merge(msm);
-
-				// update match with revision number
-				match.setRevision(PredictionQualityRevision.NO_REVISION);
-				matchService.upsert(match);
-			});
-
-			pageRequest = PageRequest.of(pageCnt, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-			result = matchRepository.findMatchesByState(MatchStatus.complete, pageRequest);
-			pageCnt += 1;
-		}
+		betPredictionAggregateRepository.deleteAll();
 	}
 
 	PredictionQualityRevision nextRevision(PredictionQualityRevision revision) {
@@ -122,7 +116,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return new PredictionQualityRevision(nextRevision);
 	}
 
-	Collection<BetPredictionQuality> measure(Match match) {
+	public Collection<BetPredictionQuality> measure(Match match) {
 
 		Collection<BetPredictionQuality> measurements = new ArrayList<>();
 		Function<PredictionResult, Boolean> relevantPredictionResult = (
@@ -161,9 +155,8 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			.collect(Collectors.toList());
 	}
 
-	private void merge(Collection<BetPredictionQuality> measurements) {
+	public void merge(Collection<BetPredictionQuality> measurements) {
 		measurements.forEach((betPredictionQuality) -> {
-
 			var existingBetPredictionQuality = betPredictionAggregateRepository.findByBetAndPredictionPercent(betPredictionQuality.getBet(),
 				betPredictionQuality.getPredictionPercent());
 			if (existingBetPredictionQuality == null) {

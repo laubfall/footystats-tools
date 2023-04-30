@@ -6,14 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 public interface MatchRepository extends MongoRepository<Match, String> {
 
 	Page<Match> findMatchesByStateAndRevision(MatchStatus state, PredictionQualityRevision revision, PageRequest pageRequest);
 
 	Page<Match> findMatchesByStateAndRevision_RevisionIsNull(MatchStatus state, PageRequest pageRequest);
+
 	Page<Match> findMatchesByState(MatchStatus state, PageRequest pageRequest);
 
 }

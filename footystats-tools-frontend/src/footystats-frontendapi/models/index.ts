@@ -5,6 +5,7 @@ export * from './BetPredictionQualityBetAggregate';
 export * from './BetPredictionQualityInfluencerAggregate';
 export * from './InfluencerResult';
 export * from './InfluencerStatisticalResultOutcome';
+export * from './JobInformation';
 export * from './ListMatchRequest';
 export * from './MatchListElement';
 export * from './MatchStats';
