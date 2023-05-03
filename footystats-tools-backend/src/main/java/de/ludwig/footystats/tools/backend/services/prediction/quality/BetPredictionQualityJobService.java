@@ -18,11 +18,11 @@ import java.util.Set;
 @Service
 public class BetPredictionQualityJobService {
 
-	private JobLauncher jobLauncher;
+	private final JobLauncher jobLauncher;
 
-	private JobExplorer jobExplorer;
+	private final JobExplorer jobExplorer;
 
-	private Job migratedToNewBetPredictionQualityJob;
+	private final Job migratedToNewBetPredictionQualityJob;
 
 	public BetPredictionQualityJobService(JobLauncher jobLauncher, JobExplorer jobExplorer, Job migratedToNewBetPredictionQualityJob) {
 		this.jobLauncher = jobLauncher;

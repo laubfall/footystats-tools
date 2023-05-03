@@ -23,6 +23,7 @@ public class JobInformationController {
 		}
 
 		var ji = new JobInformation();
+
 		ji.setJobId(jobExecution.getJobInstance().getInstanceId());
 		return ji;
 	}

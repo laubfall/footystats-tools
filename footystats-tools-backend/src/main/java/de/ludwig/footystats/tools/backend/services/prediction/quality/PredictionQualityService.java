@@ -1,5 +1,6 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
+import com.mongodb.client.result.UpdateResult;
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
@@ -11,12 +12,6 @@ import de.ludwig.footystats.tools.backend.services.prediction.PredictionAnalyze;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,13 +71,14 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		Page<Match> matchesPage;
 		var pageCnt = 1;
 		matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
+		final PredictionQualityRevision latest = latestRevision();
 		while (matchesPage.hasContent()) {
 			log.info("Start computing prediction quality.");
 			var matchesByRevision = matchesPage.getContent();
 			for (Match match : matchesByRevision) {
-				var predictionAggregates = measure(match);
-				merge(predictionAggregates);
-				markWithLatestRevision(match);
+				var predictionAggregates = measure(match, latest);
+				merge(predictionAggregates, latest);
+				markWithRevision(match, latest);
 			}
 
 			log.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
@@ -91,15 +88,40 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		}
 	}
 
-	public void markWithLatestRevision(Match match){
+	public PredictionQualityRevision latestRevision() {
+		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(PredictionQualityRevision.IN_RECOMPUTATION);
+		if (latest == null) {
+			return new PredictionQualityRevision(0);
+		}
+
+		return latest.getRevision();
+	}
+
+	private void markWithRevision(Match match, PredictionQualityRevision revision) {
 		// update match with revision number
-		match.setRevision(PredictionQualityRevision.NO_REVISION);
+		match.setRevision(revision);
 		matchService.upsert(match);
 	}
 
-	@Transactional
-	public void recomputeQuality() {
-		betPredictionAggregateRepository.deleteAll();
+	public void markWithRecomputationRevision(Match match) {
+		if (match.getRevision() == null) {
+			match.setRevision(PredictionQualityRevision.IN_RECOMPUTATION);
+		}
+	}
+
+	public PredictionQualityRevision nextRevision() {
+		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(PredictionQualityRevision.IN_RECOMPUTATION);
+		if (latest == null) {
+			return new PredictionQualityRevision(0);
+		}
+
+		return new PredictionQualityRevision(latest.getRevision().getRevision() + 1);
+	}
+
+	public void recomputeRevisionToLatest() {
+		PredictionQualityRevision predictionQualityRevision = nextRevision();
+		UpdateResult updateResult = mongoTemplate.updateMulti(Query.query(Criteria.where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION)), Update.update("revision", predictionQualityRevision), BetPredictionQuality.class);
+		log.info("Updated " + updateResult.getMatchedCount() + " recomputated bet predictions.");
 	}
 
 	PredictionQualityRevision nextRevision(PredictionQualityRevision revision) {
@@ -116,7 +138,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return new PredictionQualityRevision(nextRevision);
 	}
 
-	public Collection<BetPredictionQuality> measure(Match match) {
+	public Collection<BetPredictionQuality> measure(Match match, PredictionQualityRevision revision) {
 
 		Collection<BetPredictionQuality> measurements = new ArrayList<>();
 		Function<PredictionResult, Boolean> relevantPredictionResult = (
@@ -126,7 +148,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getO05() != null && relevantPredictionResult.apply(match.getO05())) {
 			var predictionResult = match.getO05();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(PredictionQualityRevision.NO_REVISION)
+				.revision(revision)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.OVER_ZERO_FIVE)
@@ -137,7 +159,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (match.getBttsYes() != null && relevantPredictionResult.apply(match.getBttsYes())) {
 			var predictionResult = match.getBttsYes();
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(PredictionQualityRevision.NO_REVISION)
+				.revision(revision)
 				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.betFailed(PredictionAnalyze.FAILED.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
 				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.BTTS_YES)
@@ -155,10 +177,10 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			.collect(Collectors.toList());
 	}
 
-	public void merge(Collection<BetPredictionQuality> measurements) {
+	public void merge(Collection<BetPredictionQuality> measurements, PredictionQualityRevision revision) {
 		measurements.forEach((betPredictionQuality) -> {
-			var existingBetPredictionQuality = betPredictionAggregateRepository.findByBetAndPredictionPercent(betPredictionQuality.getBet(),
-				betPredictionQuality.getPredictionPercent());
+			var existingBetPredictionQuality = betPredictionAggregateRepository.findByBetAndPredictionPercentAndRevision(betPredictionQuality.getBet(),
+				betPredictionQuality.getPredictionPercent(), revision);
 			if (existingBetPredictionQuality == null) {
 				betPredictionAggregateRepository.insert(betPredictionQuality);
 			} else {

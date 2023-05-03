@@ -6,6 +6,8 @@ import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.PredictionQualityViewService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +23,20 @@ public class StatisticalResultOutcomeService {
 
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
 
+	private final PredictionQualityService predictionQualityService;
+
 	private final PredictionQualityViewService predictionQualityViewService;
 
-	private Map<InfluencerPredictionCacheKey, Map<String, List<BetPredictionQualityInfluencerAggregate>>> influencerPredictionCache = new HashMap<>();
+	private final Map<InfluencerPredictionCacheKey, Map<String, List<BetPredictionQualityInfluencerAggregate>>> influencerPredictionCache = new HashMap<>();
 
-	public StatisticalResultOutcomeService(BetPredictionQualityRepository betPredictionAggregateRepository, PredictionQualityViewService predictionQualityViewService) {
+	public StatisticalResultOutcomeService(BetPredictionQualityRepository betPredictionAggregateRepository, PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService) {
 		this.betPredictionAggregateRepository = betPredictionAggregateRepository;
+		this.predictionQualityService = predictionQualityService;
 		this.predictionQualityViewService = predictionQualityViewService;
 	}
 
 	public StatisticalResultOutcome compute(final PredictionResult result, Bet bet) {
+
 		final Double matchStatisticalOutcome = calcMatchPredictionStatisticalOutcome(result, bet);
 		if (matchStatisticalOutcome == null) return null;
 
@@ -59,7 +65,7 @@ public class StatisticalResultOutcomeService {
 		if (influencerPredictionCache.containsKey(cacheKey)) {
 			matching = influencerPredictionCache.get(cacheKey);
 		} else {
-			matching = predictionQualityViewService.influencerPredictionsAggregated(bet, result.betOnThis());
+			matching = predictionQualityViewService.influencerPredictionsAggregated(bet, result.betOnThis(), predictionQualityService.latestRevision());
 			influencerPredictionCache.put(cacheKey, matching);
 		}
 
@@ -67,7 +73,8 @@ public class StatisticalResultOutcomeService {
 	}
 
 	private Double calcMatchPredictionStatisticalOutcome(PredictionResult result, Bet bet) {
-		BetPredictionQuality aggregate = betPredictionAggregateRepository.findByBetAndPredictionPercent(bet, result.betSuccessInPercent());
+		PredictionQualityRevision latest = predictionQualityService.latestRevision();
+		BetPredictionQuality aggregate = betPredictionAggregateRepository.findByBetAndPredictionPercentAndRevision(bet, result.betSuccessInPercent(), latest);
 		if (aggregate == null) {
 			// may happen if the predicted result does not exist cause there was no completed match with the same prediction value before.
 			return null;

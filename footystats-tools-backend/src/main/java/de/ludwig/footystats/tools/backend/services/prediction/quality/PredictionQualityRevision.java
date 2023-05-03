@@ -12,4 +12,5 @@ public class PredictionQualityRevision {
 
 	public static final PredictionQualityRevision NO_REVISION = new PredictionQualityRevision(NO_REVISION_SO_FAR);
 
+	public static final PredictionQualityRevision IN_RECOMPUTATION = new PredictionQualityRevision(-2);
 }

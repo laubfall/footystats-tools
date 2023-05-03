@@ -1,6 +1,5 @@
 package de.ludwig.footystats.tools.backend.services.match;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
@@ -10,11 +9,9 @@ import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +23,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Service
 public class MatchService extends MongoService<Match> {
 
-	private PredictionService predictionService;
+	private final PredictionService predictionService;
 
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService) {
 		super(mongoTemplate, mappingMongoConverter);
@@ -34,26 +31,26 @@ public class MatchService extends MongoService<Match> {
 		this.predictionService = predictionService;
 	}
 
-	public Page<Match> find(final MatchSearch search){
+	public Page<Match> find(final MatchSearch search) {
 		List<Criteria> searchCriterias = new ArrayList<>();
-		if(CollectionUtils.isEmpty(search.getCountries()) == false) {
+		if (CollectionUtils.isEmpty(search.getCountries()) == false) {
 			searchCriterias.add(Criteria.where("country").in(search.getCountries()));
 		}
 
-		if(CollectionUtils.isEmpty(search.getLeagues()) == false){
+		if (CollectionUtils.isEmpty(search.getLeagues()) == false) {
 			searchCriterias.add(Criteria.where("league").in(search.getLeagues()));
 		}
 
-		if(search.getStart() != null){
+		if (search.getStart() != null) {
 			searchCriterias.add(Criteria.where("dateGMT").gte(search.getStart()));
 		}
 
-		if(search.getEnd() != null){
+		if (search.getEnd() != null) {
 			searchCriterias.add(Criteria.where("dateGMT").lte(search.getEnd()));
 		}
 
 		var c = new Criteria();
-		if(searchCriterias.isEmpty() == false){
+		if (searchCriterias.isEmpty() == false) {
 			c = c.andOperator(searchCriterias);
 		}
 		Query countQuery = query(c);
@@ -67,19 +64,19 @@ public class MatchService extends MongoService<Match> {
 
 	public void writeMatch(MatchStats matchStats) {
 		var match = Match.builder()
-				.country(matchStats.getCountry())
-				.league(matchStats.getLeague())
-				.dateUnix(matchStats.getDateUnix())
-				.dateGMT(matchStats.getDateGmt())
-				.footyStatsUrl(matchStats.getMatchFootyStatsURL())
-				.state(matchStats.getMatchStatus())
-				.awayTeam(matchStats.getAwayTeam())
-				.homeTeam(matchStats.getHomeTeam())
-				.goalsAwayTeam(matchStats.getResultAwayTeamGoals())
-				.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
-				.bttsYes(calculatePrediction(Bet.BTTS_YES, matchStats))
-				.o05(calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats))
-				.build();
+			.country(matchStats.getCountry())
+			.league(matchStats.getLeague())
+			.dateUnix(matchStats.getDateUnix())
+			.dateGMT(matchStats.getDateGmt())
+			.footyStatsUrl(matchStats.getMatchFootyStatsURL())
+			.state(matchStats.getMatchStatus())
+			.awayTeam(matchStats.getAwayTeam())
+			.homeTeam(matchStats.getHomeTeam())
+			.goalsAwayTeam(matchStats.getResultAwayTeamGoals())
+			.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
+			.bttsYes(calculatePrediction(Bet.BTTS_YES, matchStats))
+			.o05(calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats))
+			.build();
 
 		upsert(match);
 	}
@@ -87,7 +84,7 @@ public class MatchService extends MongoService<Match> {
 	@Override
 	public Query upsertQuery(Match example) {
 		return query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague())
-				.and("dateUnix").is(example.getDateUnix()).and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
+			.and("dateUnix").is(example.getDateUnix()).and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
 	}
 
 	@Override
@@ -96,8 +93,8 @@ public class MatchService extends MongoService<Match> {
 	}
 
 	private PredictionResult calculatePrediction(
-			Bet bet,
-			MatchStats ms) {
+		Bet bet,
+		MatchStats ms) {
 		/*
 		 * const teamStats = await this.teamStatsService.latestThree(
 		 * ms['Home Team'],

@@ -1,17 +1,11 @@
 package de.ludwig.footystats.tools.backend.services.prediction;
 
 import lombok.*;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.boot.jackson.JsonComponent;
 
 import java.beans.Transient;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -57,7 +51,7 @@ public class BetPredictionQuality {
 	private List<BetPredictionDistribution> distributionBetSuccessful = new ArrayList<>();
 
 	@Transient
-	public List<InfluencerPercentDistribution> allDistributions(){
+	public List<InfluencerPercentDistribution> allDistributions() {
 		var result = new ArrayList<InfluencerPercentDistribution>();
 		Supplier<List<InfluencerPercentDistribution>> resultSupplier = () -> result;
 		distributionBetOnThis.stream().map(BetPredictionDistribution::getInfluencerDistribution).collect(resultSupplier, List::addAll, List::addAll);

@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public class PredictionService {
-
 	public static final int LOWER_EXCLUSIVE_BORDER_BET_ON_THIS = 50;
 
 	private final BetResultInfluencer[] betResultInfluencer = {
