@@ -2,10 +2,7 @@ package de.ludwig.footystats.tools.backend.controller.quality;
 
 import de.ludwig.footystats.tools.backend.controller.jobs.JobInformation;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityJobService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.Precast;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.*;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityAllBetsAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityBetAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
@@ -28,15 +25,14 @@ public class PredictionQualityController {
 
 	private final PredictionQualityViewService predictionQualityViewService;
 
-	private final BetPredictionQualityJobService betPredictionQualityJobService;
+	private final IBetPredictionQualityJobService betPredictionQualityJobService;
 
-	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService, BetPredictionQualityJobService betPredictionQualityJobService) {
+	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService, IBetPredictionQualityJobService betPredictionQualityJobService) {
 		this.predictionQualityService = predictionQualityService;
 		this.predictionQualityViewService = predictionQualityViewService;
 		this.betPredictionQualityJobService = betPredictionQualityJobService;
 	}
 
-	@Operation(summary = "foo", description = "bar")
 	@GetMapping("/compute")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void computeQuality() {

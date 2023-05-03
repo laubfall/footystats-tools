@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableScheduling
-@EnableBatchProcessing
+//@EnableBatchProcessing
 public class BackendApplication implements CommandLineRunner {
 
     @Autowired

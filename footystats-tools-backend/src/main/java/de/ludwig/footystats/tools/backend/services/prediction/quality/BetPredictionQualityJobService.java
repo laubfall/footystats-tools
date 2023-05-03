@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class BetPredictionQualityJobService {
+public class BetPredictionQualityJobService implements IBetPredictionQualityJobService {
 
 	private final JobLauncher jobLauncher;
 
@@ -30,6 +30,7 @@ public class BetPredictionQualityJobService {
 		this.migratedToNewBetPredictionQualityJob = migratedToNewBetPredictionQualityJob;
 	}
 
+	@Override
 	public JobExecution startJob(){
 		var jobExecution = running();
 		if(jobExecution != null){
@@ -51,6 +52,7 @@ public class BetPredictionQualityJobService {
 		return null;
 	}
 
+	@Override
 	public JobExecution running(){
 		Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions("migratedToNewBetPredictionQualityJob");
 		if(runningJobExecutions.isEmpty()){
