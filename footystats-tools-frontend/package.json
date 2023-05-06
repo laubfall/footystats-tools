@@ -1,7 +1,7 @@
 {
   "name": "react-webpack-typescript-starter",
-  "version": "0.1.0",
-  "description": "Starter kit for React, Webpack (with Hot Module Replacement), Typescript and Babel.",
+  "version": "1.0.0",
+  "description": "Footystats-Tools Frontend",
   "keywords": [
     "react",
     "webpack",
@@ -12,7 +12,7 @@
     "starter",
     "boilerplate"
   ],
-  "author": "Viktor Persson",
+  "author": "Daniel Ludwig",
   "license": "MIT",
   "repository": {
     "type": "git",
