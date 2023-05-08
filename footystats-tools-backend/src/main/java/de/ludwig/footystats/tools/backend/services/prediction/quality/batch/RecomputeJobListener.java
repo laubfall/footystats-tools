@@ -27,6 +27,6 @@ public class RecomputeJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		predictionQualityService.recomputeRevisionToLatest();
+		predictionQualityService.revisionForRecompute();
 	}
 }

@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +27,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Slf4j
 @Service
@@ -118,9 +121,13 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return new PredictionQualityRevision(latest.getRevision().getRevision() + 1);
 	}
 
-	public void recomputeRevisionToLatest() {
+	/**
+	 * Method is intended for use when recomputing all bet prediction qualities.
+	 * It updates the revision of matches that don't have a revision or have the IN_RECOMPUTATION revision to the next revision.
+	 */
+	public void revisionForRecompute() {
 		PredictionQualityRevision predictionQualityRevision = nextRevision();
-		UpdateResult updateResult = mongoTemplate.updateMulti(Query.query(Criteria.where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION)), Update.update("revision", predictionQualityRevision), BetPredictionQuality.class);
+		UpdateResult updateResult = mongoTemplate.updateMulti(query(new Criteria().orOperator(where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION), where("revision").exists(false))), update("revision", predictionQualityRevision), BetPredictionQuality.class);
 		log.info("Updated " + updateResult.getMatchedCount() + " recomputated bet predictions.");
 	}
 
@@ -216,7 +223,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 	@Override
 	public Query upsertQuery(BetPredictionQuality example) {
-		return Query.query(Criteria.where("revision").is(example.getRevision()));
+		return query(where("revision").is(example.getRevision()));
 	}
 
 	@Override
