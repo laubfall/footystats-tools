@@ -52,7 +52,7 @@ export const PredictionQualityView = () => {
 					);
 					return reason;
 				}
-				apiCatchReasonHandler(reason);
+				return apiCatchReasonHandler(reason);
 			})
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}, [selectedBet]);

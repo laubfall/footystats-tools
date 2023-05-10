@@ -3,14 +3,13 @@ package de.ludwig.footystats.tools.backend.controller.quality;
 import de.ludwig.footystats.tools.backend.controller.jobs.JobInformation;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.*;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.batch.IBetPredictionQualityJobService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityAllBetsAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityBetAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.PredictionQualityViewService;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +33,9 @@ public class PredictionQualityController {
 	}
 
 	@GetMapping("/compute")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void computeQuality() {
-		predictionQualityService.computeQuality();
+	public JobInformation asyncComputeQuality() {
+		JobExecution jobExecution = betPredictionQualityJobService.startComputeJob();
+		return convert(jobExecution);
 	}
 
 	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
@@ -54,9 +53,13 @@ public class PredictionQualityController {
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult, dontBetPercentDistributionResult, influencerPredictionsAggregated, dontBetInfluencerPredictionsAggregated);
 	}
 
-	@PostMapping(name = "/recompute", path = {"/recompute"}, produces = {"application/json"})
-	public JobInformation recomputeQuality() {
-		JobExecution jobExecution = betPredictionQualityJobService.startJob();
+	@GetMapping(name = "/recompute", path = {"/recompute"}, produces = {"application/json"})
+	public JobInformation asyncRecomputeQuality() {
+		JobExecution jobExecution = betPredictionQualityJobService.startRecomputeJob();
+		return convert(jobExecution);
+	}
+
+	private static JobInformation convert(JobExecution jobExecution) {
 		if(jobExecution == null){
 			return null;
 		}

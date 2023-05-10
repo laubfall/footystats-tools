@@ -1,22 +1,18 @@
 package de.ludwig.footystats.tools.backend.controller;
 
-import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.mongo.converter.ConverterRegistry;
 import de.ludwig.footystats.tools.backend.mongo.converter.MappingMongoConverterConfiguration;
 import de.ludwig.footystats.tools.backend.services.EncryptionService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigService;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionServiceConfiguration;
-import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcome;
 import de.ludwig.footystats.tools.backend.services.prediction.outcome.StatisticalResultOutcomeService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityJobService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.IBetPredictionQualityJobService;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.batch.IBetPredictionQualityJobService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.view.PredictionQualityViewService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsServiceConfiguration;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStatsServiceConfiguration;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -33,12 +29,22 @@ public class Configuration {
 	public IBetPredictionQualityJobService betPredictionQualityJobService(){
 		 return new IBetPredictionQualityJobService() {
 			 @Override
-			 public JobExecution startJob() {
+			 public JobExecution startRecomputeJob() {
 				 return null;
 			 }
 
 			 @Override
-			 public JobExecution running() {
+			 public JobExecution recomputeJobExecution() {
+				 return null;
+			 }
+
+			 @Override
+			 public JobExecution startComputeJob() {
+				 return null;
+			 }
+
+			 @Override
+			 public JobExecution computeJobExecution() {
 				 return null;
 			 }
 		 };

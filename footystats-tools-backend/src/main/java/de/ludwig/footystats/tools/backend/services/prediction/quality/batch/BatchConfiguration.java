@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Configuration
 public class BatchConfiguration extends DefaultBatchConfiguration {
-	@Bean
+	@Bean(name = "recomputeItemReader")
 	public RepositoryItemReader<Match> matchItemReader(MatchRepository repository) {
 		return new RepositoryItemReaderBuilder<Match>().repository(repository)
 			.name("matchItemReader")
@@ -38,35 +38,49 @@ public class BatchConfiguration extends DefaultBatchConfiguration {
 			.build();
 	}
 
-	@Bean
-	public MatchItemProcessor processor(PredictionQualityService predictionQualityService) {
-		return new MatchItemProcessor(predictionQualityService);
-	}
-
-	@Bean
-	public BetPredictionQualityWriter writer(PredictionQualityService predictionQualityService) {
-		return new BetPredictionQualityWriter(predictionQualityService);
+	@Bean(name = "computeItemReader")
+	public RepositoryItemReader<Match> computeMatchItemReader(MatchRepository repository){
+		return new RepositoryItemReaderBuilder<Match>().repository(repository)
+			.name("computeMatchItemReader")
+			.methodName("findMatchesByStateAndRevision_RevisionIsNull")
+			.arguments(MatchStatus.complete)
+			.pageSize(100)
+			.sorts(Map.of("dateUnix", Sort.Direction.DESC))
+			.build();
 	}
 
 	@Bean(name = "migrateToNewBetPredictionQualityStep")
-	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> itemReader, MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter) {
+	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> recomputeItemReader, MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter) {
 		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("measurePredictionQuality", jobRepository)
 			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
-			.reader(itemReader)
-			.allowStartIfComplete(true)
+			.reader(recomputeItemReader)
+			.processor(itemProcessor)
 			.writer(itemWriter)
+			.allowStartIfComplete(true)
 			.transactionManager(transactionManager)
-			.processor(itemProcessor).build();
+			.build();
 	}
 
-	@Bean("migrateToNewBetPredictionQualityJob")
+	@Bean(name = "computeBetPredictionQualityStep")
+	public Step computeStep(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> computeItemReader, ComputeMatchItemProcessor itemProcessor, ComputeBetPredictionQualityWriter itemWriter) {
+		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("computeMeasurePredictionQuality", jobRepository)
+			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
+			.reader(computeItemReader)
+			.processor(itemProcessor)
+			.writer(itemWriter)
+			.allowStartIfComplete(true)
+			.transactionManager(transactionManager)
+			.build();
+	}
+
+	@Bean(name = "migratedToNewBetPredictionQualityJob")
 	public Job migrationJob(JobRepository jobRepository, Step migrateToNewBetPredictionQualityStep, RecomputeJobListener jobListener) {
-		return new JobBuilder("migrationJob", jobRepository).listener(jobListener).start(migrateToNewBetPredictionQualityStep).build();
+		return new JobBuilder(BetPredictionQualityJobService.MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener).start(migrateToNewBetPredictionQualityStep).build();
 	}
 
-	@Bean
-	public RecomputeJobListener jobListener(PredictionQualityService predictionQualityService, BetPredictionQualityRepository betPredictionQualityRepository){
-		return new RecomputeJobListener(predictionQualityService, betPredictionQualityRepository);
+	@Bean(name = "computeBetPredictionQualityJob")
+	public Job computeJob(JobRepository jobRepository, Step computeBetPredictionQualityStep, ComputeJobListener jobListener) {
+		return new JobBuilder("computeBetPredictionQualityJob", jobRepository).listener(jobListener).start(computeBetPredictionQualityStep).build();
 	}
 
 	@Override

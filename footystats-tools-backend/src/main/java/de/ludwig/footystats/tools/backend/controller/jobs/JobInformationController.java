@@ -1,6 +1,6 @@
 package de.ludwig.footystats.tools.backend.controller.jobs;
 
-import de.ludwig.footystats.tools.backend.services.prediction.quality.IBetPredictionQualityJobService;
+import de.ludwig.footystats.tools.backend.services.prediction.quality.batch.IBetPredictionQualityJobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ public class JobInformationController {
 	@GetMapping("/running")
 	public JobInformation running(@PathVariable String jobName) {
 		// TODO replace with a generic service.
-		final JobExecution jobExecution = betPredictionQualityJobService.running();
+		final JobExecution jobExecution = betPredictionQualityJobService.recomputeJobExecution();
 		if (jobExecution == null) {
 			return null;
 		}

@@ -10,17 +10,18 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-public class BetPredictionQualityWriter implements ItemWriter<Collection<BetPredictionQuality>> {
+public class ComputeBetPredictionQualityWriter implements ItemWriter<Collection<BetPredictionQuality>> {
 	private final PredictionQualityService predictionQualityService;
 
-	public BetPredictionQualityWriter(PredictionQualityService predictionQualityService) {
+	public ComputeBetPredictionQualityWriter(PredictionQualityService predictionQualityService) {
 		this.predictionQualityService = predictionQualityService;
 	}
 
 	@Override
 	public void write(Chunk<? extends Collection<BetPredictionQuality>> chunk) throws Exception {
+		PredictionQualityRevision latestRevision = predictionQualityService.latestRevision();
 		for (Collection<BetPredictionQuality> item : chunk.getItems()) {
-			predictionQualityService.merge(item, PredictionQualityRevision.IN_RECOMPUTATION);
+			predictionQualityService.merge(item, latestRevision);
 		}
 	}
 }

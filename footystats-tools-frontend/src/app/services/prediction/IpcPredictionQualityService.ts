@@ -1,4 +1,5 @@
 import {
+	JobInformation,
 	Precast,
 	PredictionQualityRevision,
 	Report,
@@ -7,8 +8,8 @@ import { RestAPI } from "../../constants";
 import { BetPredictionQualityBetEnum } from "../../../footystats-frontendapi/models/BetPredictionQuality";
 
 class IpcPredictionQualityService {
-	computeQuality(): Promise<void> {
-		return RestAPI.predictionQuality.computeQuality();
+	computeQuality(): Promise<JobInformation> {
+		return RestAPI.predictionQuality.asyncComputeQuality();
 	}
 
 	precast(revision?: PredictionQualityRevision): Promise<Precast> {
@@ -25,8 +26,8 @@ class IpcPredictionQualityService {
 		});
 	}
 
-	recomputeQuality() {
-		return RestAPI.predictionQuality.recomputeQuality();
+	recomputeQuality(): Promise<JobInformation> {
+		return RestAPI.predictionQuality.asyncRecomputeQuality();
 	}
 }
 

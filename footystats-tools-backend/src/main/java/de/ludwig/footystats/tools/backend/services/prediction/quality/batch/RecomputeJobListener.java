@@ -3,6 +3,7 @@ package de.ludwig.footystats.tools.backend.services.prediction.quality.batch;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,8 @@ public class RecomputeJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		predictionQualityService.revisionForRecompute();
+		if(BatchStatus.COMPLETED.equals(jobExecution.getStatus())){
+			predictionQualityService.revisionUpdateOnRecompute();
+		}
 	}
 }

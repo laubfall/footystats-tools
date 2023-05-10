@@ -3,7 +3,6 @@ package de.ludwig.footystats.tools.backend.services.prediction;
 import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.match.MatchService;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityJobService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;

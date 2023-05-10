@@ -1,4 +1,4 @@
-package de.ludwig.footystats.tools.backend.services.prediction.quality;
+package de.ludwig.footystats.tools.backend.services.prediction.quality.batch;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -13,32 +13,61 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 @Slf4j
 @Service
 public class BetPredictionQualityJobService implements IBetPredictionQualityJobService {
 
+	public static final String MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB = "migratedToNewBetPredictionQualityJob";
 	private final JobLauncher jobLauncher;
 
 	private final JobExplorer jobExplorer;
 
 	private final Job migratedToNewBetPredictionQualityJob;
 
-	public BetPredictionQualityJobService(JobLauncher jobLauncher, JobExplorer jobExplorer, Job migratedToNewBetPredictionQualityJob) {
+	private final Job computeBetPredictionQualityJob;
+
+	public BetPredictionQualityJobService(JobLauncher jobLauncher, JobExplorer jobExplorer, Job migratedToNewBetPredictionQualityJob, Job computeBetPredictionQualityJob) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.migratedToNewBetPredictionQualityJob = migratedToNewBetPredictionQualityJob;
+		this.computeBetPredictionQualityJob = computeBetPredictionQualityJob;
 	}
 
 	@Override
-	public JobExecution startJob(){
-		var jobExecution = running();
+	public JobExecution startRecomputeJob(){
+		return executeJob(migratedToNewBetPredictionQualityJob, this::recomputeJobExecution);
+	}
+
+	@Override
+	public JobExecution recomputeJobExecution(){
+		Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB);
+		if(runningJobExecutions.isEmpty()){
+			return null;
+		}
+
+		return runningJobExecutions.stream().findFirst().get();
+	}
+
+	@Override
+	public JobExecution startComputeJob() {
+		return executeJob(computeBetPredictionQualityJob, this::computeJobExecution);
+	}
+
+	@Override
+	public JobExecution computeJobExecution() {
+		return null;
+	}
+
+	private JobExecution executeJob(Job jobToExecute, Supplier<JobExecution> currentExecution){
+		var jobExecution = currentExecution.get();
 		if(jobExecution != null){
 			log.info("BetPredictionQuality migrating job is already running.");
 			return jobExecution;
 		}
 		try {
-			return jobLauncher.run(migratedToNewBetPredictionQualityJob, new JobParameters());
+			return jobLauncher.run(jobToExecute, new JobParameters());
 		} catch (JobExecutionAlreadyRunningException e) {
 			log.error("Job is already running.", e);
 		} catch (JobRestartException e) {
@@ -50,15 +79,5 @@ public class BetPredictionQualityJobService implements IBetPredictionQualityJobS
 		}
 
 		return null;
-	}
-
-	@Override
-	public JobExecution running(){
-		Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions("migratedToNewBetPredictionQualityJob");
-		if(runningJobExecutions.isEmpty()){
-			return null;
-		}
-
-		return runningJobExecutions.stream().findFirst().get();
 	}
 }

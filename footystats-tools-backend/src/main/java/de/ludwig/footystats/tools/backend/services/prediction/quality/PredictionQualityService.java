@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,11 +105,13 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		matchService.upsert(match);
 	}
 
+	/*
 	public void markWithRecomputationRevision(Match match) {
 		if (match.getRevision() == null) {
 			match.setRevision(PredictionQualityRevision.IN_RECOMPUTATION);
 		}
 	}
+	 */
 
 	public PredictionQualityRevision nextRevision() {
 		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(PredictionQualityRevision.IN_RECOMPUTATION);
@@ -123,12 +124,28 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 	/**
 	 * Method is intended for use when recomputing all bet prediction qualities.
-	 * It updates the revision of matches that don't have a revision or have the IN_RECOMPUTATION revision to the next revision.
+	 * It updates the revision of matches that don't have a revision
+	 * and the revision of bet prediction qualities that have the IN_RECOMPUTATION revision to the next revision.
 	 */
-	public void revisionForRecompute() {
-		PredictionQualityRevision predictionQualityRevision = nextRevision();
-		UpdateResult updateResult = mongoTemplate.updateMulti(query(new Criteria().orOperator(where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION), where("revision").exists(false))), update("revision", predictionQualityRevision), BetPredictionQuality.class);
-		log.info("Updated " + updateResult.getMatchedCount() + " recomputated bet predictions.");
+	@Transactional
+	public void revisionUpdateOnRecompute() {
+		final PredictionQualityRevision predictionQualityRevision = nextRevision();
+		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION)), update("revision", predictionQualityRevision), BetPredictionQuality.class);
+		log.info("Updated " + updateResult.getMatchedCount() + " revision of bet prediction qualities due to recomputated bet predictions.");
+
+		final UpdateResult updateResultMatches = mongoTemplate.updateMulti(query(where("revision").exists(false)), update("revision", predictionQualityRevision), Match.class);
+		log.info("Updated " + updateResultMatches.getMatchedCount() + " revision of matches due to recomputated bet predictions.");
+	}
+
+	/**
+	 * Method is intended for use when computing bet prediction qualities for matches without a revision.
+	 * It updates the revision of matches with no revision with the latest revision.
+	 */
+	@Transactional
+	public void markMatchesWithRevisionOnCompute() {
+		final PredictionQualityRevision latestRevision = latestRevision();
+		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").exists(false)), update("revision", latestRevision), Match.class);
+		log.info("Updated " + updateResult.getMatchedCount() + " matches revision due to computed bet predictions.");
 	}
 
 	PredictionQualityRevision nextRevision(PredictionQualityRevision revision) {
@@ -146,8 +163,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	public Collection<BetPredictionQuality> measure(Match match, PredictionQualityRevision revision) {
-
-		Collection<BetPredictionQuality> measurements = new ArrayList<>();
+		final Collection<BetPredictionQuality> measurements = new ArrayList<>();
 		Function<PredictionResult, Boolean> relevantPredictionResult = (
 			PredictionResult prediction) -> prediction != null &&
 			(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
