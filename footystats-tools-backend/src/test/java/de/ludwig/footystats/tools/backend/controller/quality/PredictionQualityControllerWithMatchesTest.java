@@ -15,6 +15,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
@@ -35,6 +36,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled("Disabled cause endpoints under test now starts a job and don't start a synchronous computation. Maybe replace this with a service test.")
 @ActiveProfiles("test")
 @WebMvcTest
 @ContextConfiguration(classes = { Configuration.class })
