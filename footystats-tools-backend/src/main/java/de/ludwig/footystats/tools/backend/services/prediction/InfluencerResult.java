@@ -1,5 +1,11 @@
 package de.ludwig.footystats.tools.backend.services.prediction;
 
+/**
+ * Stores the result of an influencer that did some computation for one match.
+ * @param influencerName Name of the influencer.
+ * @param influencerPredictionValue The computed value.
+ * @param precheckResult The precheck result.
+ */
 public record InfluencerResult(String influencerName,
 		Integer influencerPredictionValue,
 		PrecheckResult precheckResult) {

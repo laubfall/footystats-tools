@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Stores Information about the distribution of one influencer and its calculated value.
+ * One calculated value can exist for multiple predictions.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 public class InfluencerPercentDistribution

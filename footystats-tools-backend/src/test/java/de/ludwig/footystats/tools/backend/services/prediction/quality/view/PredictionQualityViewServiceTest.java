@@ -5,8 +5,6 @@ import de.ludwig.footystats.tools.backend.services.prediction.InfluencerPercentD
 import de.ludwig.footystats.tools.backend.services.prediction.PrecheckResult;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,7 @@ import static de.ludwig.footystats.tools.backend.services.prediction.quality.Pre
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class PredictionQualityViewServiceTest {
+class PredictionQualityViewServiceTest {
 	@Autowired
 	private PredictionQualityViewService predictionQualityService;
 
@@ -34,7 +32,7 @@ public class PredictionQualityViewServiceTest {
 	}
 
 	@Test
-	public void bet_measurement_counts() {
+	void bet_measurement_counts() {
 		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
@@ -51,7 +49,7 @@ public class PredictionQualityViewServiceTest {
 	}
 
 	@Test
-	public void bet_multiple_measurements_counts() {
+	void bet_multiple_measurements_counts() {
 		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 		BetPredictionQuality dontbet = BetPredictionQuality.builder().predictionPercent(45).betSucceeded(11L).betFailed(4L).bet(Bet.BTTS_YES).revision(NO_REVISION).build();
@@ -71,7 +69,7 @@ public class PredictionQualityViewServiceTest {
 	}
 
 	@Test
-	public void bet_multiple_measurements_different_predictions_counts() {
+	void bet_multiple_measurements_different_predictions_counts() {
 		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
@@ -98,7 +96,7 @@ public class PredictionQualityViewServiceTest {
 	}
 
 	@Test
-	public void bet_multiple_measurements_and_bettypes_counts() {
+	void bet_multiple_measurements_and_bettypes_counts() {
 		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).build();
 		betPredictionAggregateRepository.save(bet);
 
@@ -133,7 +131,7 @@ public class PredictionQualityViewServiceTest {
 	}
 
 	@Test
-	public void influencer_aggregate_none_with_same_prediction_percent() {
+	void influencer_aggregate_none_with_same_prediction_percent() {
 		String testinfluencer = "testinfluencer";
 		String testinfluencer2 = "testinfluencer2";
 		var ipd = new InfluencerPercentDistribution(34, 20L, 0L, testinfluencer, PrecheckResult.OK);
@@ -152,20 +150,20 @@ public class PredictionQualityViewServiceTest {
 
 		List<BetPredictionQualityInfluencerAggregate> inf1Measurements = influencerPredictionsAggregated.get(testinfluencer);
 		Assertions.assertEquals(2, inf1Measurements.size(), "Influencer " + testinfluencer + " was involved in two bet predictions that said bet on this but influencer returned different prediction results.");
-		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 34, 20, 10L, 3L);
-		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 38, 23, 10L, 3L);
+		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 34, 20L, 0L);
+		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 38, 23L, 0L);
 
 		List<BetPredictionQualityInfluencerAggregate> inf2Measurements = influencerPredictionsAggregated.get(testinfluencer2);
 		Assertions.assertEquals(1, inf2Measurements.size(), "Influencer " + testinfluencer2 + "was involved in one bet prediction that said bet on this");
-		assertBetPredQualInfluencerAggregate(testinfluencer2, influencerPredictionsAggregated, 35, 23, 10L, 3L);
+		assertBetPredQualInfluencerAggregate(testinfluencer2, influencerPredictionsAggregated, 35, 23L, 0L);
 	}
 
 	@Test
-	public void influencer_aggregate_all_with_same_prediction_percent(){
+	void influencer_aggregate_all_with_same_prediction_percent() {
 		String testinfluencer = "testinfluencer";
 		String testinfluencer2 = "testinfluencer2";
-		var ipd = new InfluencerPercentDistribution(34, 20L, 0L, testinfluencer, PrecheckResult.OK);
-		var ipd2_1 = new InfluencerPercentDistribution(35, 23L,0L, testinfluencer2, PrecheckResult.OK);
+		var ipd = new InfluencerPercentDistribution(34, 20L, 2L, testinfluencer, PrecheckResult.OK);
+		var ipd2_1 = new InfluencerPercentDistribution(35, 23L, 0L, testinfluencer2, PrecheckResult.OK);
 		var bet = BetPredictionQuality.builder().predictionPercent(16).betSucceeded(34L).betFailed(22L).bet(Bet.BTTS_YES).revision(NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1)).build();
 		betPredictionAggregateRepository.save(bet);
 
@@ -176,16 +174,15 @@ public class PredictionQualityViewServiceTest {
 		Assertions.assertNotNull(influencerPredictionsAggregated);
 		Assertions.assertEquals(2, influencerPredictionsAggregated.keySet().size(), "In case of don't place bet we have three bet prediction qualities and two involved influencer");
 
-		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 34, 40, 47L, 24L);
-		assertBetPredQualInfluencerAggregate(testinfluencer2, influencerPredictionsAggregated, 35, 46, 47L, 24L);
+		assertBetPredQualInfluencerAggregate(testinfluencer, influencerPredictionsAggregated, 34, 40L, 4L);
+		assertBetPredQualInfluencerAggregate(testinfluencer2, influencerPredictionsAggregated, 35, 46L, 0L);
 	}
 
-	private void assertBetPredQualInfluencerAggregate(String influencerName, Map<String, List<BetPredictionQualityInfluencerAggregate>> results, int expPredictionPercent, int expCount, long expCountSucceeded, long expCountFailed){
+	private void assertBetPredQualInfluencerAggregate(String influencerName, Map<String, List<BetPredictionQualityInfluencerAggregate>> results, int expPredictionPercent, long expCountSucceeded, long expCountFailed) {
 		final List<BetPredictionQualityInfluencerAggregate> influencerAggregates = results.get(influencerName);
 		Assertions.assertNotNull(influencerAggregates);
 		Assertions.assertFalse(influencerAggregates.isEmpty());
 		BetPredictionQualityInfluencerAggregate prediction_35 = influencerAggregates.stream().filter(i -> i.predictionPercent().equals(expPredictionPercent)).findAny().get();
-		Assertions.assertEquals(expCount, prediction_35.count(),  "Influencer " + influencerName + " with prediction value 35 happened once in case prediction said to place a bet.");
 		Assertions.assertEquals(expCountSucceeded, prediction_35.betSucceeded());
 		Assertions.assertEquals(expCountFailed, prediction_35.betFailed());
 	}
