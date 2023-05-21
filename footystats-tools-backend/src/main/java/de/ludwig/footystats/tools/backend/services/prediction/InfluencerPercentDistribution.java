@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.jackson.JsonComponent;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +14,10 @@ public class InfluencerPercentDistribution
 	private Integer predictionPercent;
 	@Getter
 	@Setter
-	private Long count;
+	private Long betSucceeded;
+	@Getter
+	@Setter
+	private Long betFailed;
 	@Getter
 	@Setter
 	private String influencerName;

@@ -136,12 +136,12 @@ public class PredictionQualityViewServiceTest {
 	public void influencer_aggregate_none_with_same_prediction_percent() {
 		String testinfluencer = "testinfluencer";
 		String testinfluencer2 = "testinfluencer2";
-		var ipd = new InfluencerPercentDistribution(34, 20L, testinfluencer, PrecheckResult.OK);
-		var ipd2_1 = new InfluencerPercentDistribution(35, 23L, testinfluencer2, PrecheckResult.OK);
+		var ipd = new InfluencerPercentDistribution(34, 20L, 0L, testinfluencer, PrecheckResult.OK);
+		var ipd2_1 = new InfluencerPercentDistribution(35, 23L, 0L, testinfluencer2, PrecheckResult.OK);
 		BetPredictionQuality bet = BetPredictionQuality.builder().predictionPercent(53).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1)).build();
 		betPredictionAggregateRepository.save(bet);
 
-		ipd = new InfluencerPercentDistribution(38, 23L, testinfluencer, PrecheckResult.OK);
+		ipd = new InfluencerPercentDistribution(38, 23L, 0L, testinfluencer, PrecheckResult.OK);
 		bet = BetPredictionQuality.builder().predictionPercent(78).betSucceeded(10L).betFailed(3L).bet(Bet.BTTS_YES).revision(NO_REVISION).influencerDistribution(List.of(ipd)).build();
 		betPredictionAggregateRepository.save(bet);
 
@@ -164,8 +164,8 @@ public class PredictionQualityViewServiceTest {
 	public void influencer_aggregate_all_with_same_prediction_percent(){
 		String testinfluencer = "testinfluencer";
 		String testinfluencer2 = "testinfluencer2";
-		var ipd = new InfluencerPercentDistribution(34, 20L, testinfluencer, PrecheckResult.OK);
-		var ipd2_1 = new InfluencerPercentDistribution(35, 23L, testinfluencer2, PrecheckResult.OK);
+		var ipd = new InfluencerPercentDistribution(34, 20L, 0L, testinfluencer, PrecheckResult.OK);
+		var ipd2_1 = new InfluencerPercentDistribution(35, 23L,0L, testinfluencer2, PrecheckResult.OK);
 		var bet = BetPredictionQuality.builder().predictionPercent(16).betSucceeded(34L).betFailed(22L).bet(Bet.BTTS_YES).revision(NO_REVISION).influencerDistribution(List.of(ipd, ipd2_1)).build();
 		betPredictionAggregateRepository.save(bet);
 

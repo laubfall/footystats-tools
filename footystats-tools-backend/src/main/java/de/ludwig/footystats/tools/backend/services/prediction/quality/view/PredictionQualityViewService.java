@@ -5,7 +5,6 @@ import de.ludwig.footystats.tools.backend.services.prediction.PredictionService;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityRevision;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -16,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
@@ -31,25 +29,23 @@ public class PredictionQualityViewService {
 	}
 
 	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis, PredictionQualityRevision revision) {
-		final MatchOperation matchOperation = match(new Criteria("bet").is(bet));
-		MatchOperation revisionMatch = match(where("revision").is(revision));
+		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
 		MatchOperation predictionPercentMatch;
-		if(betOnThis){
+		if (betOnThis) {
 			predictionPercentMatch = match(where("predictionPercent").gte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
-		} else{
+		} else {
 			predictionPercentMatch = match(where("predictionPercent").lt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
 		}
 		final UnwindOperation unwind = unwind("influencerDistribution");
 		final GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent")
-			.sum("betSucceeded").as("betSucceeded")
-			.sum("betFailed").as("betFailed")
-			.sum("influencerDistribution.count").as("count");
+			.sum("influencerDistribution.betSucceeded").as("betSucceeded")
+			.sum("influencerDistribution.betFailed").as("betFailed");
 		final ProjectionOperation projectionOperation = project(Fields.from(
 			Fields.field("influencerName", "$_id.influencerName"),
 			Fields.field("predictionPercent", "$_id.predictionPercent")))
-				.andExclude("$_id")
-				.andInclude("betSucceeded", "betFailed", "count");
-		final Aggregation aggregation = newAggregation(revisionMatch, matchOperation, predictionPercentMatch, unwind, groupOperation, projectionOperation);
+			.andExclude("$_id")
+			.andInclude("betSucceeded", "betFailed");
+		final Aggregation aggregation = newAggregation(revisionMatch, predictionPercentMatch, unwind, groupOperation, projectionOperation);
 		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
 		return aggregationResults.getMappedResults().stream().collect(Collectors.groupingBy(BetPredictionQualityInfluencerAggregate::influencerName, HashMap::new, Collectors.toCollection(ArrayList::new)));
 	}

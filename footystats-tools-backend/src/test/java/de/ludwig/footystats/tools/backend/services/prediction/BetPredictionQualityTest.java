@@ -9,8 +9,8 @@ class BetPredictionQualityTest {
 	@Test
 	void all_influencer_distributions() {
 		var bpq = new BetPredictionQuality();
-		bpq.getDistributionBetOnThis().add(new BetPredictionDistribution(10, 2L, List.of(new InfluencerPercentDistribution(20, 1L, "test_influencer", PrecheckResult.OK), new InfluencerPercentDistribution(41, 1L, "another_testinfluencer", PrecheckResult.OK))));
-		bpq.getDistributionBetOnThis().add(new BetPredictionDistribution(11, 2L, List.of(new InfluencerPercentDistribution(22, 1L, "test_influencer", PrecheckResult.OK), new InfluencerPercentDistribution(44, 1L, "another_testinfluencer", PrecheckResult.OK))));
+		bpq.getDistributionBetOnThis().add(new BetPredictionDistribution(10, 2L, List.of(new InfluencerPercentDistribution(20, 1L, 0L, "test_influencer", PrecheckResult.OK), new InfluencerPercentDistribution(41, 1L, 0L, "another_testinfluencer", PrecheckResult.OK))));
+		bpq.getDistributionBetOnThis().add(new BetPredictionDistribution(11, 2L, List.of(new InfluencerPercentDistribution(22, 1L, 0L, "test_influencer", PrecheckResult.OK), new InfluencerPercentDistribution(44, 1L, 0L, "another_testinfluencer", PrecheckResult.OK))));
 
 		var result = bpq.allDistributions();
 		Assertions.assertNotNull(result);

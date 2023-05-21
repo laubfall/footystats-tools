@@ -10,11 +10,8 @@ import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.InfluencerPercentDistribution;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionAnalyze;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
-import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
@@ -67,29 +64,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return precast;
 	}
 
-	@Transactional
-	public void computeQuality() {
-		PageRequest pageRequest = PageRequest.of(0, properties.getPredictionQuality().getPageSizeFindingRevisionMatches());
-		Page<Match> matchesPage;
-		var pageCnt = 1;
-		matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
-		final PredictionQualityRevision latest = latestRevision();
-		while (matchesPage.hasContent()) {
-			log.info("Start computing prediction quality.");
-			var matchesByRevision = matchesPage.getContent();
-			for (Match match : matchesByRevision) {
-				var predictionAggregates = measure(match, latest);
-				merge(predictionAggregates, latest);
-				markWithRevision(match, latest);
-			}
-
-			log.info("Quality computed for page " + pageCnt + " of a total of " + matchesPage.getTotalPages());
-			// we don't increment the page for pageRequest because the result entities are modified in that way that the query won't match them anymore.
-			matchesPage = matchRepository.findMatchesByStateAndRevision_RevisionIsNull(MatchStatus.complete, pageRequest);
-			pageCnt += 1;
-		}
-	}
-
 	public PredictionQualityRevision latestRevision() {
 		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(PredictionQualityRevision.IN_RECOMPUTATION);
 		if (latest == null) {
@@ -98,20 +72,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 		return latest.getRevision();
 	}
-
-	private void markWithRevision(Match match, PredictionQualityRevision revision) {
-		// update match with revision number
-		match.setRevision(revision);
-		matchService.upsert(match);
-	}
-
-	/*
-	public void markWithRecomputationRevision(Match match) {
-		if (match.getRevision() == null) {
-			match.setRevision(PredictionQualityRevision.IN_RECOMPUTATION);
-		}
-	}
-	 */
 
 	public PredictionQualityRevision nextRevision() {
 		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(PredictionQualityRevision.IN_RECOMPUTATION);
@@ -194,9 +154,10 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	private List<InfluencerPercentDistribution> addInfluencerDistribution(PredictionResult prediction) {
+
 		return prediction.influencerDetailedResult().stream()
 			.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
-				1L, influencerResult.influencerName(), influencerResult.precheckResult()))
+				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ? 1L : 0L, PredictionAnalyze.FAILED.equals(prediction.analyzeResult()) ? 1L : 0L, influencerResult.influencerName(), influencerResult.precheckResult()))
 			.collect(Collectors.toList());
 	}
 
@@ -221,18 +182,19 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		if (target.getInfluencerDistribution() == null) {
 			target.setInfluencerDistribution(new ArrayList<>());
 		}
-		source.getInfluencerDistribution().forEach((sId) -> {
+		source.getInfluencerDistribution().forEach((sourceInfluencerDistribution) -> {
 			var optTId = target.getInfluencerDistribution().stream().filter(
-					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(sId.getInfluencerName()) &&
-						tId.getPredictionPercent().equals(sId.getPredictionPercent()) &&
-						tId.getPrecheckResult() == sId.getPrecheckResult())
+					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(sourceInfluencerDistribution.getInfluencerName()) &&
+						tId.getPredictionPercent().equals(sourceInfluencerDistribution.getPredictionPercent()) &&
+						tId.getPrecheckResult() == sourceInfluencerDistribution.getPrecheckResult())
 				.findAny();
 
 			if (optTId.isPresent()) {
-				var ipd = optTId.get();
-				ipd.setCount(ipd.getCount() + sId.getCount());
+				var tIpd = optTId.get();
+				tIpd.setBetSucceeded(tIpd.getBetSucceeded() + sourceInfluencerDistribution.getBetSucceeded());
+				tIpd.setBetFailed(tIpd.getBetFailed() + sourceInfluencerDistribution.getBetFailed());
 			} else {
-				target.getInfluencerDistribution().add(sId);
+				target.getInfluencerDistribution().add(sourceInfluencerDistribution);
 			}
 		});
 	}
