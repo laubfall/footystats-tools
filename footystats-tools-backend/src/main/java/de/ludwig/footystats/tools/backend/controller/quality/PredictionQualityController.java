@@ -68,9 +68,4 @@ public class PredictionQualityController {
 		ji.setJobId(jobExecution.getJobInstance().getInstanceId());
 		return ji;
 	}
-
-	@PostMapping(name = "/precast", consumes = {"application/json"}, produces = {"application/json"}, path = {"/precast"})
-	public Precast precast(@RequestBody PredictionQualityRevision revision) {
-		return predictionQualityService.precast(revision);
-	}
 }

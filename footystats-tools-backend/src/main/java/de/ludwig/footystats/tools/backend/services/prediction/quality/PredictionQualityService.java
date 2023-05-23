@@ -36,32 +36,18 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 	private final MatchService matchService;
 
-	private final PredictionQualityReportRepository predictionQualityReportRepository;
-
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
 
 	private final FootystatsProperties properties;
 
 	public PredictionQualityService(MatchRepository matchRepository, MatchService matchService,
-									PredictionQualityReportRepository predictionQualityReportRepository, MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
+									MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
 									BetPredictionQualityRepository betPredictionAggregateRepository, FootystatsProperties properties) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.matchRepository = matchRepository;
-		this.predictionQualityReportRepository = predictionQualityReportRepository;
 		this.matchService = matchService;
 		this.betPredictionAggregateRepository = betPredictionAggregateRepository;
 		this.properties = properties;
-	}
-
-	public Precast precast(PredictionQualityRevision revision) {
-		var probe = new Match();
-		probe.setRevision(revision);
-		var matchCount = matchRepository.count(Example.of(probe));
-		var nextRevision = nextRevision(revision);
-		var precast = new Precast();
-		precast.setRevision(nextRevision);
-		precast.setPredictionsToAssess(matchCount);
-		return precast;
 	}
 
 	public PredictionQualityRevision latestRevision() {
@@ -106,20 +92,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		final PredictionQualityRevision latestRevision = latestRevision();
 		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").exists(false)), update("revision", latestRevision), Match.class);
 		log.info("Updated " + updateResult.getMatchedCount() + " matches revision due to computed bet predictions.");
-	}
-
-	PredictionQualityRevision nextRevision(PredictionQualityRevision revision) {
-		var nextRevision = -1;
-		if (revision != null) {
-			nextRevision = revision.getRevision() + 1;
-		} else {
-			var report = predictionQualityReportRepository.findTopByOrderByRevisionDesc();
-			if (report == null) {
-				nextRevision = 0;
-			}
-		}
-
-		return new PredictionQualityRevision(nextRevision);
 	}
 
 	public Collection<BetPredictionQuality> measure(Match match, PredictionQualityRevision revision) {

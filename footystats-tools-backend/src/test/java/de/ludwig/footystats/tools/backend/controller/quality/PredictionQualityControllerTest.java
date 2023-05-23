@@ -28,10 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {Configuration.class})
 @AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
-public class PredictionQualityControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
+class PredictionQualityControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -49,7 +46,7 @@ public class PredictionQualityControllerTest {
 	}
 
 	@Test
-	public void compute() throws Exception {
+	void compute() throws Exception {
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -62,16 +59,5 @@ public class PredictionQualityControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(2)));
-	}
-
-	@Test
-	public void precast() throws Exception {
-		var revision = new PredictionQualityRevision(0);
-		var requestBody = objectMapper.writeValueAsString(revision);
-		mockMvc.perform(post("/predictionquality/precast")
-				.content(requestBody)
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.predictionsToAssess", Matchers.equalTo(0)))
-			.andExpect(status().isOk());
 	}
 }

@@ -1,18 +1,13 @@
 package de.ludwig.footystats.tools.backend.controller.quality;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ludwig.footystats.tools.backend.controller.Configuration;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityReportRepository;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -22,12 +17,10 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Example;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled("Disabled cause endpoints under test now starts a job and don't start a synchronous computation. Maybe replace this with a service test.")
 @ActiveProfiles("test")
 @WebMvcTest
-@ContextConfiguration(classes = { Configuration.class })
+@ContextConfiguration(classes = {Configuration.class})
 @AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class PredictionQualityControllerWithMatchesTest {
