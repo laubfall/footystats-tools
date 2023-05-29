@@ -3,12 +3,9 @@ package de.ludwig.footystats.tools.backend.services.prediction.quality.batch;
 import de.ludwig.footystats.tools.backend.services.match.Match;
 import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQuality;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.BetPredictionQualityRepository;
-import de.ludwig.footystats.tools.backend.services.prediction.quality.PredictionQualityService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
@@ -17,8 +14,6 @@ import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -26,7 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Configuration
-public class BatchConfiguration extends DefaultBatchConfiguration {
+public class BatchConfiguration {
 	@Bean(name = "recomputeItemReader")
 	public RepositoryItemReader<Match> matchItemReader(MatchRepository repository) {
 		return new RepositoryItemReaderBuilder<Match>().repository(repository)
@@ -39,7 +34,7 @@ public class BatchConfiguration extends DefaultBatchConfiguration {
 	}
 
 	@Bean(name = "computeItemReader")
-	public RepositoryItemReader<Match> computeMatchItemReader(MatchRepository repository){
+	public RepositoryItemReader<Match> computeMatchItemReader(MatchRepository repository) {
 		return new RepositoryItemReaderBuilder<Match>().repository(repository)
 			.name("computeMatchItemReader")
 			.methodName("findMatchesByStateAndRevision_RevisionIsNull")
@@ -81,10 +76,5 @@ public class BatchConfiguration extends DefaultBatchConfiguration {
 	@Bean(name = "computeBetPredictionQualityJob")
 	public Job computeJob(JobRepository jobRepository, Step computeBetPredictionQualityStep, ComputeJobListener jobListener) {
 		return new JobBuilder("computeBetPredictionQualityJob", jobRepository).listener(jobListener).start(computeBetPredictionQualityStep).build();
-	}
-
-	@Override
-	protected TaskExecutor getTaskExecutor() {
-		return new SimpleAsyncTaskExecutor();
 	}
 }

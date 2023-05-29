@@ -2,7 +2,6 @@ package de.ludwig.footystats.tools.backend.controller;
 
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigRepository;
 import de.ludwig.footystats.tools.backend.services.stats.*;
-import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,24 +12,16 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
-@WebMvcTest
-@ContextConfiguration(classes = {Configuration.class})
-@AutoConfigureDataMongo
-class FootyStatsCsvUploadControllerTest {
+class FootyStatsCsvUploadControllerTest extends BaseControllerTest{
 
-    @Autowired
-    private MatchStatsRepository matchStatsRepository;
-
-    @Autowired
-    private MatchRepository matchRepository;
+	@Autowired
+	private MatchStatsRepository matchStatsRepository;
 
 	@Autowired
 	private LeagueStatsRepository leagueStatsRepository;
@@ -44,19 +35,19 @@ class FootyStatsCsvUploadControllerTest {
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
 
-    @Autowired
-    private MockMvc mvc;
+	@Autowired
+	private MockMvc mvc;
 
-    @BeforeEach
-    public void cleanup(){
-        matchStatsRepository.deleteAll();
+	@BeforeEach
+	public void cleanup() {
+		matchStatsRepository.deleteAll();
 		leagueStatsRepository.deleteAll();
 		teamStatsRepository.deleteAll();
 		downloadConfigRepository.deleteAll();
-    }
+	}
 
 	@Test
-	void uploadDownloadConfig(){
+	void uploadDownloadConfig() {
 		var originalFileName = "download_config-footy-stats-152153323.csv";
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
@@ -70,22 +61,22 @@ class FootyStatsCsvUploadControllerTest {
 		}
 	}
 
-    @Test
-    void uploadMatchStats() throws Exception {
-        var originalFileName = "matches_expanded-1630235153-expectRenamed.csv";
-        try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
-            var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
-            mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+	@Test
+	void uploadMatchStats() throws Exception {
+		var originalFileName = "matches_expanded-1630235153-expectRenamed.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
 
-            List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry("Germany");
-            Assertions.assertFalse(matchStatsImported.isEmpty());
-        } catch (Exception e) {
-            Assertions.fail(e);
-        }
-    }
+			List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry("Germany");
+			Assertions.assertFalse(matchStatsImported.isEmpty());
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
+	}
 
 	@Test
-	void uploadLeagueStats(){
+	void uploadLeagueStats() {
 		var originalFileName = "some-country-league-2020-to-2021-stats.csv";
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
@@ -101,7 +92,7 @@ class FootyStatsCsvUploadControllerTest {
 	}
 
 	@Test
-	void uploadTeamStats(){
+	void uploadTeamStats() {
 		var originalFileName = "some-country-teams-2020-to-2021-stats.csv";
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
@@ -117,7 +108,7 @@ class FootyStatsCsvUploadControllerTest {
 	}
 
 	@Test
-	void uploadTeam2Stats(){
+	void uploadTeam2Stats() {
 		var originalFileName = "some-country-teams2-2020-to-2021-stats.csv";
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);

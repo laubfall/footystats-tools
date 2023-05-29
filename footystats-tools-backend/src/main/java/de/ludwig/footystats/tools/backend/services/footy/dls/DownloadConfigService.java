@@ -21,8 +21,8 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 	public static final String FIELD_LAST_TEAMS_DOWNLOAD = "lastTeamsDownload";
 	public static final String FIELD_LAST_TEAMS_2_DOWNLOAD = "lastTeams2Download";
 	public static final String FIELD_LAST_MATCH_DOWNLOAD = "lastMatchDownload";
-	private CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService;
-	public static final long LAST_DOWNLOAD_MINUS_TIME_MILLIS = 1000l * 60l * 60l * 24l * 30l;
+	private final CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService;
+	public static final long LAST_DOWNLOAD_MINUS_TIME_MILLIS = 1000L * 60L * 60L * 24L * 30L;
 
 	public DownloadConfigService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService) {
 		super(mongoTemplate, mappingMongoConverter);

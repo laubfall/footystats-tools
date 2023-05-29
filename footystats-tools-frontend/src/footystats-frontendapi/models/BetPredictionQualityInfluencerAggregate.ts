@@ -43,12 +43,6 @@ export interface BetPredictionQualityInfluencerAggregate {
      * @memberof BetPredictionQualityInfluencerAggregate
      */
     betFailed?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof BetPredictionQualityInfluencerAggregate
-     */
-    count?: number;
 }
 
 /**
@@ -74,7 +68,6 @@ export function BetPredictionQualityInfluencerAggregateFromJSONTyped(json: any, 
         'predictionPercent': !exists(json, 'predictionPercent') ? undefined : json['predictionPercent'],
         'betSucceeded': !exists(json, 'betSucceeded') ? undefined : json['betSucceeded'],
         'betFailed': !exists(json, 'betFailed') ? undefined : json['betFailed'],
-        'count': !exists(json, 'count') ? undefined : json['count'],
     };
 }
 
@@ -91,7 +84,6 @@ export function BetPredictionQualityInfluencerAggregateToJSON(value?: BetPredict
         'predictionPercent': value.predictionPercent,
         'betSucceeded': value.betSucceeded,
         'betFailed': value.betFailed,
-        'count': value.count,
     };
 }
 

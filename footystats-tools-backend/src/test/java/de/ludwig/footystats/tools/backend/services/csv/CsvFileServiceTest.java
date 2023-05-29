@@ -11,12 +11,12 @@ import org.springframework.test.context.ContextConfiguration;
 import java.io.IOException;
 
 @SpringBootTest
-@ContextConfiguration(classes = {Configuration.class})
 @ActiveProfiles("test")
-public class CsvFileServiceTest {
+@ContextConfiguration(classes = {Configuration.class})
+class CsvFileServiceTest {
 
-    @Autowired
-    private CsvFileService<MatchStats> csvFileService;
+	@Autowired
+	private CsvFileService<MatchStats> csvFileService;
 
 	@Autowired
 	private CsvFileService<LeagueStats> leagueStatsCsvFileService;
@@ -30,27 +30,27 @@ public class CsvFileServiceTest {
 	@Autowired
 	private CsvFileService<PlayerStats> playerStatsCsvFileService;
 
-    @Test
-    public void importMatchStats(){
-        try(var inputStream = getClass().getResourceAsStream("matches_expanded-1630235153-expectRenamed.csv");) {
-            var entries = csvFileService.importFile(inputStream, MatchStats.class);
-            Assertions.assertNotNull(entries);
-            Assertions.assertEquals(1, entries.size());
+	@Test
+	void importMatchStats() {
+		try (var inputStream = getClass().getResourceAsStream("matches_expanded-1630235153-expectRenamed.csv");) {
+			var entries = csvFileService.importFile(inputStream, MatchStats.class);
+			Assertions.assertNotNull(entries);
+			Assertions.assertEquals(1, entries.size());
 
-            var onlyMatchStats = entries.get(0);
-            Assertions.assertEquals("Germany", onlyMatchStats.getCountry());
-            Assertions.assertEquals("Bundesliga", onlyMatchStats.getLeague());
-            Assertions.assertNotNull(onlyMatchStats.getDateGmt());
-            Assertions.assertNotNull(onlyMatchStats.getDateUnix());
-        } catch (IOException e) {
-            Assertions.fail();
-        }
+			var onlyMatchStats = entries.get(0);
+			Assertions.assertEquals("Germany", onlyMatchStats.getCountry());
+			Assertions.assertEquals("Bundesliga", onlyMatchStats.getLeague());
+			Assertions.assertNotNull(onlyMatchStats.getDateGmt());
+			Assertions.assertNotNull(onlyMatchStats.getDateUnix());
+		} catch (IOException e) {
+			Assertions.fail();
+		}
 
-    }
+	}
 
 	@Test
-	public void importLeagueStats(){
-		try(var inputStream = getClass().getResourceAsStream("some-country-league-2020-to-2021-stats.csv");) {
+	void importLeagueStats() {
+		try (var inputStream = getClass().getResourceAsStream("some-country-league-2020-to-2021-stats.csv");) {
 			var entries = leagueStatsCsvFileService.importFile(inputStream, LeagueStats.class);
 			Assertions.assertNotNull(entries);
 			Assertions.assertEquals(1, entries.size());
@@ -63,8 +63,8 @@ public class CsvFileServiceTest {
 	}
 
 	@Test
-	public void importTeamStats(){
-		try(var inputStream = getClass().getResourceAsStream("some-country-teams-2020-to-2021-stats.csv");) {
+	void importTeamStats() {
+		try (var inputStream = getClass().getResourceAsStream("some-country-teams-2020-to-2021-stats.csv");) {
 			var entries = teamStatsCsvFileService.importFile(inputStream, TeamStats.class);
 			Assertions.assertNotNull(entries);
 			Assertions.assertEquals(2, entries.size());
@@ -79,8 +79,8 @@ public class CsvFileServiceTest {
 	}
 
 	@Test
-	public void importTeam2Stats(){
-		try(var inputStream = getClass().getResourceAsStream("some-country-teams2-stats.csv");) {
+	void importTeam2Stats() {
+		try (var inputStream = getClass().getResourceAsStream("some-country-teams2-stats.csv");) {
 			var entries = team2StatsCsvFileService.importFile(inputStream, Team2Stats.class);
 			Assertions.assertNotNull(entries);
 			Assertions.assertEquals(1, entries.size());
@@ -95,8 +95,8 @@ public class CsvFileServiceTest {
 	}
 
 	@Test
-	public void playerStats(){
-		try(var inputStream = getClass().getResourceAsStream("some-player-stats.csv");) {
+	void playerStats() {
+		try (var inputStream = getClass().getResourceAsStream("some-player-stats.csv");) {
 			var entries = playerStatsCsvFileService.importFile(inputStream, PlayerStats.class);
 			Assertions.assertNotNull(entries);
 			Assertions.assertEquals(1, entries.size());

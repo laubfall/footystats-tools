@@ -37,12 +37,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
-@WebMvcTest
-@ContextConfiguration(classes = {Configuration.class})
-@AutoConfigureDataMongo
 @AutoConfigureRestDocs(outputDir = "target/snippets")
-public class MatchControllerTest {
+class MatchControllerTest extends BaseControllerTest {
 
     @Autowired
     private MatchRepository matchRepository;

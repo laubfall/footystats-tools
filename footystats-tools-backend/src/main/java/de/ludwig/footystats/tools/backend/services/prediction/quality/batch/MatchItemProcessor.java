@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+/**
+ * This does the prediction quality measurement for one match.
+ */
 @Component
 public class MatchItemProcessor implements ItemProcessor<Match, Collection<BetPredictionQuality>> {
 

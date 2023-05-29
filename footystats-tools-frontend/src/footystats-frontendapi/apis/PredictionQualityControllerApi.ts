@@ -16,27 +16,17 @@
 import * as runtime from '../runtime';
 import type {
   JobInformation,
-  Precast,
-  PredictionQualityRevision,
   Report,
 } from '../models';
 import {
     JobInformationFromJSON,
     JobInformationToJSON,
-    PrecastFromJSON,
-    PrecastToJSON,
-    PredictionQualityRevisionFromJSON,
-    PredictionQualityRevisionToJSON,
     ReportFromJSON,
     ReportToJSON,
 } from '../models';
 
 export interface LatestReportRequest {
     moreQualityDetailsForThisBetType: LatestReportMoreQualityDetailsForThisBetTypeEnum;
-}
-
-export interface PrecastRequest {
-    predictionQualityRevision: PredictionQualityRevision;
 }
 
 /**
@@ -117,37 +107,6 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
      */
     async latestReport(requestParameters: LatestReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Report> {
         const response = await this.latestReportRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async precastRaw(requestParameters: PrecastRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Precast>> {
-        if (requestParameters.predictionQualityRevision === null || requestParameters.predictionQualityRevision === undefined) {
-            throw new runtime.RequiredError('predictionQualityRevision','Required parameter requestParameters.predictionQualityRevision was null or undefined when calling precast.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/predictionquality/precast`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: PredictionQualityRevisionToJSON(requestParameters.predictionQualityRevision),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => PrecastFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async precast(requestParameters: PrecastRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Precast> {
-        const response = await this.precastRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

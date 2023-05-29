@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @TestConfiguration
-@org.springframework.context.annotation.Configuration
 @Import({FootystatsProperties.class,EncryptionService.class})
 public class Configuration {
 

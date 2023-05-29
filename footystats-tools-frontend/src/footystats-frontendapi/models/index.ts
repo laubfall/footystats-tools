@@ -12,7 +12,6 @@ export * from './MatchStats';
 export * from './Paging';
 export * from './PagingResponseMatchListElement';
 export * from './Password';
-export * from './Precast';
 export * from './PredictionQualityRevision';
 export * from './PredictionResult';
 export * from './Report';

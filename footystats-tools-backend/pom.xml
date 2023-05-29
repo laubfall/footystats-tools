@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>de.ludwig.footystats.tools</groupId>
 	<artifactId>backend</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>backend</name>
 	<description>footystats tools backend server</description>
 	<properties>
@@ -94,6 +94,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.batch/spring-batch-test -->
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-test</artifactId>
+			<version>5.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

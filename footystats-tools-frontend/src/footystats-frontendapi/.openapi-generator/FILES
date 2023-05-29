@@ -18,7 +18,6 @@ models/MatchStats.ts
 models/Paging.ts
 models/PagingResponseMatchListElement.ts
 models/Password.ts
-models/Precast.ts
 models/PredictionQualityRevision.ts
 models/PredictionResult.ts
 models/Report.ts

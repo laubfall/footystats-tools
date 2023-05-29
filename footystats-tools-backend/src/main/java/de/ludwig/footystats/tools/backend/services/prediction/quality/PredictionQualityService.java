@@ -1,17 +1,13 @@
 package de.ludwig.footystats.tools.backend.services.prediction.quality;
 
 import com.mongodb.client.result.UpdateResult;
-import de.ludwig.footystats.tools.backend.FootystatsProperties;
 import de.ludwig.footystats.tools.backend.services.MongoService;
 import de.ludwig.footystats.tools.backend.services.match.Match;
-import de.ludwig.footystats.tools.backend.services.match.MatchRepository;
-import de.ludwig.footystats.tools.backend.services.match.MatchService;
 import de.ludwig.footystats.tools.backend.services.prediction.Bet;
 import de.ludwig.footystats.tools.backend.services.prediction.InfluencerPercentDistribution;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionAnalyze;
 import de.ludwig.footystats.tools.backend.services.prediction.PredictionResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,32 +18,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 
+/**
+ * This class computes the quality of done predictions for a match. This mainly means it checks if a prediction was
+ * right or wrong and write the result to the mongo repo as documents per prediction in percent. Every document
+ * get a revision number, you can think of that as a bracket around all documents. Computing quality of new matches
+ * does not change the revision number, but recomputing does.
+ */
 @Slf4j
 @Service
 public class PredictionQualityService extends MongoService<BetPredictionQuality> {
 
-	private final MatchRepository matchRepository;
-
-	private final MatchService matchService;
-
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
 
-	private final FootystatsProperties properties;
-
-	public PredictionQualityService(MatchRepository matchRepository, MatchService matchService,
-									MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
-									BetPredictionQualityRepository betPredictionAggregateRepository, FootystatsProperties properties) {
+	public PredictionQualityService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
+									BetPredictionQualityRepository betPredictionAggregateRepository) {
 		super(mongoTemplate, mappingMongoConverter);
-		this.matchRepository = matchRepository;
-		this.matchService = matchService;
 		this.betPredictionAggregateRepository = betPredictionAggregateRepository;
-		this.properties = properties;
 	}
 
 	public PredictionQualityRevision latestRevision() {
@@ -130,7 +121,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return prediction.influencerDetailedResult().stream()
 			.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
 				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ? 1L : 0L, PredictionAnalyze.FAILED.equals(prediction.analyzeResult()) ? 1L : 0L, influencerResult.influencerName(), influencerResult.precheckResult()))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	public void merge(Collection<BetPredictionQuality> measurements, PredictionQualityRevision revision) {
@@ -148,7 +139,6 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			}
 		});
 	}
-
 
 	private void mergeInfluencerDistribution(BetPredictionQuality target, BetPredictionQuality source) {
 		if (target.getInfluencerDistribution() == null) {
