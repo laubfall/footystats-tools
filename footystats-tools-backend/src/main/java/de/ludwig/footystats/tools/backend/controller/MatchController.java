@@ -16,17 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/match")
 public class MatchController {
 
-	private MatchService matchService;
+	private final MatchService matchService;
 
-	private MatchStatsService matchStatsService;
+	private final MatchStatsService matchStatsService;
 
-	private StatisticalResultOutcomeService statisticalResultOutcomeService;
+	private final StatisticalResultOutcomeService statisticalResultOutcomeService;
 
 	public MatchController(MatchService matchService, MatchStatsService matchStatsService, StatisticalResultOutcomeService statisticalResultOutcomeService) {
 		this.matchService = matchService;
@@ -45,8 +44,7 @@ public class MatchController {
 			statisticalOutcomes.add(statisticalResultOutcomeService.compute(m.getBttsYes(), Bet.BTTS_YES));
 			m.setStatisticalResultOutcome(statisticalOutcomes);
 			return m;
-		}).stream().collect(Collectors.toList());
-
+		}).stream().toList();
 
 		if (matches != null) {
 			return new PagingResponse<>(matches.getTotalPages(), matches.getTotalElements(), result);

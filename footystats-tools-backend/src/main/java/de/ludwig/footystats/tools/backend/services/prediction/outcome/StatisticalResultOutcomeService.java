@@ -18,7 +18,8 @@ import java.util.*;
 
 @Slf4j
 @Service
-@Scope("prototype") // Service holds a cache that depends on data that can change during runtime. So create it every time the service is injected.
+@Scope("prototype")
+// Service holds a cache that depends on data that can change during runtime. So create it every time the service is injected.
 public class StatisticalResultOutcomeService {
 
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
@@ -36,7 +37,6 @@ public class StatisticalResultOutcomeService {
 	}
 
 	public StatisticalResultOutcome compute(final PredictionResult result, Bet bet) {
-
 		final Double matchStatisticalOutcome = calcMatchPredictionStatisticalOutcome(result, bet);
 		if (matchStatisticalOutcome == null) return null;
 
@@ -47,7 +47,7 @@ public class StatisticalResultOutcomeService {
 		List<InfluencerStatisticalResultOutcome> influencerOutcomes = new ArrayList<>();
 		for (InfluencerResult influencerResult : result.influencerDetailedResult()) {
 			final List<BetPredictionQualityInfluencerAggregate> aggregates = influencerDistributionByCache(bet, result, influencerResult.influencerName());
-			Optional<BetPredictionQualityInfluencerAggregate> measured = aggregates.stream().filter(a -> a.predictionPercent().equals(influencerResult.influencerPredictionValue())).findFirst();
+			final Optional<BetPredictionQualityInfluencerAggregate> measured = aggregates.stream().filter(a -> a.predictionPercent().equals(influencerResult.influencerPredictionValue())).findFirst();
 			if (measured.isPresent()) {
 				BetPredictionQualityInfluencerAggregate influencerAggregate = measured.get();
 				var succeeded = influencerAggregate.betSucceeded().doubleValue();
