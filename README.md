@@ -24,8 +24,14 @@ Changing the Rest Controller means that these changes need to be made inside the
 
 If maven executed without errors a swagger openapi file was generated an all the frontend code is generated. 
 ## Usage-Manual
-### Setup a standalone server
-### Generating the Download-CSV
+
+### Automatic Footystats CSV File Download
+Footystats provides besides the MatchStats CSV Files a lot ofher files with useful soccer stats. For example League, Team and Player CSV Files. The MatchStats CSV can easily downloaded by Footystats-Tools cause the URL is build upon a unix timestamp, sadly that is not the case for the other files, these have URLs with a non-predictable identifier, we have to do some manual work so automatic download is possible. If you only want the MatchStats just save your footystats credentials in footystats-tools via web-gui.
+
+#### Download Times
+MatchStats CSV Files are downloaded at 00.00 and 12.00. All other files are downloaded every 30 days (cause of their more static nature and the sheer quantity) if relevant for the current season. Files for older seasons are only downloaded once.
+
+#### Generating the Download-CSV-Config for non-MatchStats-Csv-Files
 For some bet predictions footystats-tools use Team-/League- and Player-Stats csv-files from footystats.org. Cause there are a lot of them footystats-tools has a mechanism to automatically download these files. That this is possible you have to provide a special csv file that you must create. This file contains the download-ids given by footystats.org so footystats-tools can create the download-link and download the file. This section describes the steps to create the download csv file.
 
 Use this little JQuery script to print the downloadlinks and country and league to console:
@@ -58,4 +64,13 @@ Then add the following header:
 
 Now fill the fifth column with the desired bitmask. If you don't have excel you can do this again with regex search and replacement:
 ```(\d{4})$```
-This regex matches the download id, replace it with the first regex group (the download id) and the download bitmask.
+This regex matches the download id, replace it with the first regex group (the download id) and the download bitmask. Bitmask is defined as:
+
+* 1: League CSV
+* 2: Team CSV
+* 4: Team 2 CSV
+* 8: Player CSV
+* 16: Match CSV
+
+
+## Setup a standalone server

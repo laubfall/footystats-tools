@@ -211,7 +211,6 @@ public class CsvFileDownloadService {
 
 	private List<String> downloadConfiguredStats(SessionCookie sessionCookie, String resource, int footyStatsDlId) {
 		try {
-			LocalDateTime now = LocalDateTime.now();
 			final URL url = new URL(properties.getWebpage().getBaseUrl() + resource + footyStatsDlId);
 			return connectToFootystatsAndRetrieveFileContent(sessionCookie, url);
 		} catch (IOException e) {
@@ -221,7 +220,6 @@ public class CsvFileDownloadService {
 
 	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
 		try {
-			LocalDateTime now = LocalDateTime.now();
 			final URL url = new URL(
 				properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
 					+ matchStatsForDay.toEpochSecond(LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));

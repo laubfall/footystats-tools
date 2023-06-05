@@ -22,7 +22,7 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 	public static final String FIELD_LAST_TEAMS_2_DOWNLOAD = "lastTeams2Download";
 	public static final String FIELD_LAST_MATCH_DOWNLOAD = "lastMatchDownload";
 	private final CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService;
-	public static final long LAST_DOWNLOAD_MINUS_TIME_MILLIS = 1000L * 60L * 60L * 24L * 30L;
+	public static final long LAST_DOWNLOAD_MINUS_TIME_MILLIS = 1000L * 60L * 60L * 24L * 30L; // thirty days.
 
 	public DownloadConfigService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService) {
 		super(mongoTemplate, mappingMongoConverter);
@@ -37,7 +37,7 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 
 	/**
 	 * All configs for the current year who want a download and there was no dl before or the last dl is longer
-	 * then 30 days ago.
+	 * then {@link #LAST_DOWNLOAD_MINUS_TIME_MILLIS} days ago.
 	 * @return configs as described inside the method description.
 	 */
 	public List<DownloadCountryLeagueStatsConfig> configsWhoWantADownloadForCurrentYear() {

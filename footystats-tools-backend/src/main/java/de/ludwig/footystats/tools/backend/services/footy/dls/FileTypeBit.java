@@ -1,5 +1,8 @@
 package de.ludwig.footystats.tools.backend.services.footy.dls;
 
+/**
+ * Bits that enable the download of a specific csv file.
+ */
 public enum FileTypeBit {
 	LEAGUE(1),
 	TEAM(2),

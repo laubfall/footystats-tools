@@ -4,19 +4,25 @@ import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigService;
-import de.ludwig.footystats.tools.backend.services.stats.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
+import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
+import de.ludwig.footystats.tools.backend.services.stats.Team2StatsService;
+import de.ludwig.footystats.tools.backend.services.stats.TeamStatsService;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class FootyStatsCsvUploadController {
@@ -32,7 +38,8 @@ public class FootyStatsCsvUploadController {
 	private final DownloadConfigService downloadConfigService;
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-										 CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
+		CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService,
+		TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 		this.matchStatsService = matchStatsService;
@@ -60,7 +67,7 @@ public class FootyStatsCsvUploadController {
 		return Arrays.asList(files)
 			.stream()
 			.map(file -> uploadFile(file))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -80,27 +87,17 @@ public class FootyStatsCsvUploadController {
 
 		logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
 		switch (csvFileInformation.type()) {
-			case LEAGUE_STATS:
-				this.leagueStatsService.readLeagueStats(file.getInputStream());
-				break;
-			case MATCH_STATS:
+			case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(file.getInputStream());
+			case MATCH_STATS -> {
 				List<MatchStats> matchStats = this.csvFileService.importFile(file.getInputStream(), MatchStats.class);
 				matchStats.forEach(this.matchStatsService::importMatchStats);
-				break;
-			case TEAM_STATS:
-				this.teamStatsService.readTeamStats(file.getInputStream());
-				break;
-			case TEAM_2_STATS:
-				this.team2StatsService.readTeamStats(file.getInputStream());
-				break;
-			case DOWNLOAD_CONFIG:
-				this.downloadConfigService.readDownloadConfigs(file.getInputStream());
-				break;
-			default:
-				logger.warn(
-					MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",
-						file.getOriginalFilename(), csvFileInformation.type()));
-				break;
+			}
+			case TEAM_STATS -> this.teamStatsService.readTeamStats(file.getInputStream());
+			case TEAM_2_STATS -> this.team2StatsService.readTeamStats(file.getInputStream());
+			case DOWNLOAD_CONFIG -> this.downloadConfigService.readDownloadConfigs(file.getInputStream());
+			default -> logger.warn(
+				MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",
+					file.getOriginalFilename(), csvFileInformation.type()));
 		}
 	}
 

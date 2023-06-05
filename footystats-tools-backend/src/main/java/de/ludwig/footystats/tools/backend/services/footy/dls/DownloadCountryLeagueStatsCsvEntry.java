@@ -16,7 +16,7 @@ public class DownloadCountryLeagueStatsCsvEntry {
 	private String league;
 
 	/**
-	 * The id provided by footystats that identifies the downloas for a specific country and season.
+	 * The id provided by footystats that identifies the downloads for a specific country and season.
 	 */
 	@Getter
 	@Setter

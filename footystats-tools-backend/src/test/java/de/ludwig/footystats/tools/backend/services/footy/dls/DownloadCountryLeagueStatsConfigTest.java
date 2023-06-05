@@ -3,16 +3,17 @@ package de.ludwig.footystats.tools.backend.services.footy.dls;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DownloadCountryLeagueStatsConfigTest {
+class DownloadCountryLeagueStatsConfigTest {
+
 	@Test
-	public void list_file_type_bits_never_downloaded_before() {
+	void list_file_type_bits_never_downloaded_before() {
 		var config = new DownloadCountryLeagueStatsConfig("", "", 0, "", 31, null, null, null, null, null);
 		var result = config.typesWithWantedDownload();
 		Assertions.assertEquals(5, result.size());
 	}
 
 	@Test
-	public void list_file_type_bits_with_old_dls() {
+	void list_file_type_bits_with_old_dls() {
 		var toOld = System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS - 1000;
 		var config = new DownloadCountryLeagueStatsConfig("", "", 0, "", 1, toOld, null, null, null, null);
 		var result = config.typesWithWantedDownload();
@@ -20,7 +21,7 @@ public class DownloadCountryLeagueStatsConfigTest {
 	}
 
 	@Test
-	public void list_file_type_bits_with_old_and_young_dls(){
+	void list_file_type_bits_with_old_and_young_dls() {
 		var toOld = System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS - 1000;
 		var toYoung = System.currentTimeMillis();
 		var config = new DownloadCountryLeagueStatsConfig("", "", 0, "", 11, toOld, toYoung, null, toOld, null);
@@ -29,7 +30,7 @@ public class DownloadCountryLeagueStatsConfigTest {
 	}
 
 	@Test
-	public void to_old_but_not_configured_via_bitmask(){
+	void to_old_but_not_configured_via_bitmask() {
 		var toOld = System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS - 1000;
 		var config = new DownloadCountryLeagueStatsConfig("", "", 0, "", 8, toOld, null, null, toOld, null);
 		var result = config.typesWithWantedDownload();
