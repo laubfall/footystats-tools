@@ -5,16 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
 public class MatchStatsDownloadTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(MatchStatsDownloadTask.class);
 
-	private CsvFileDownloadService matchStatsFileDownloadService;
+	private MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
 
-	public MatchStatsDownloadTask(CsvFileDownloadService matchStatsFileDownloadService) {
+	public MatchStatsDownloadTask(MatchStatsCsvFileDownloadService matchStatsFileDownloadService) {
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 	}
 

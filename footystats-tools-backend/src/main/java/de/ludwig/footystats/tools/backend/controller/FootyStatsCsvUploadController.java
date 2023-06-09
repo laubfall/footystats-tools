@@ -2,7 +2,7 @@ package de.ludwig.footystats.tools.backend.controller;
 
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
-import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
+import de.ludwig.footystats.tools.backend.services.footy.MatchStatsCsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
@@ -30,7 +30,7 @@ public class FootyStatsCsvUploadController {
 	private static final Logger logger = LoggerFactory.getLogger(FootyStatsCsvUploadController.class);
 
 	private final CsvFileService<MatchStats> csvFileService;
-	private final CsvFileDownloadService matchStatsFileDownloadService;
+	private final MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
 	private final MatchStatsService matchStatsService;
 	private final LeagueStatsService leagueStatsService;
 	private final TeamStatsService teamStatsService;
@@ -38,7 +38,7 @@ public class FootyStatsCsvUploadController {
 	private final DownloadConfigService downloadConfigService;
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
-		CsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService,
+		MatchStatsCsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService,
 		TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;

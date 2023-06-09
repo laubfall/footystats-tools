@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
  * Does the communication via http with footystats.org.
  */
 @Service
-class CsvHttpClient {
+public class CsvHttpClient {
 
 	public static final String UTF_8 = "UTF-8";
 	private final FootystatsProperties properties;
@@ -34,7 +34,7 @@ class CsvHttpClient {
 		this.settingsRepository = settingsRepository;
 	}
 
-	List<String> connectToFootystatsAndRetrieveFileContent(SessionCookie sessionCookie, URL url) throws IOException {
+	public List<String> connectToFootystatsAndRetrieveFileContent(SessionCookie sessionCookie, URL url) throws IOException {
 		URLConnection con = url.openConnection();
 		HttpURLConnection http = (HttpURLConnection) con;
 		http.setRequestMethod("GET");
@@ -45,7 +45,7 @@ class CsvHttpClient {
 		return IOUtils.readLines(http.getInputStream(), StandardCharsets.UTF_8);
 	}
 
-	SessionCookie login() {
+	public SessionCookie login() {
 		Optional<Settings> optSettings = settingsRepository.findAll().stream().findAny();
 		if (optSettings.isEmpty()) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_SETTINGS_MISSING);
