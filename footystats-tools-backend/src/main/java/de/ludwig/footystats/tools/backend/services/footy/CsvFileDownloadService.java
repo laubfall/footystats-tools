@@ -31,8 +31,6 @@ public class CsvFileDownloadService {
 
 	private final FootystatsProperties properties;
 
-	private final SettingsRepository settingsRepository;
-
 	private final CsvFileService<MatchStats> csvFileService;
 
 	private final CsvFileService<TeamStats> teamStatsCsvFileService;
@@ -47,10 +45,9 @@ public class CsvFileDownloadService {
 
 	private final CsvHttpClient csvHttpClient;
 
-	public CsvFileDownloadService(FootystatsProperties properties, SettingsRepository settingsRepository, CsvFileService<MatchStats> csvFileService, CsvFileService<TeamStats> teamStatsCsvFileService, CsvFileService<Team2Stats> team2StatsCsvFileService, CsvFileService<LeagueStats> leagueStatsCsvFileService, MatchStatsService matchStatsService, DownloadConfigService downloadConfigService,
+	public CsvFileDownloadService(FootystatsProperties properties, CsvFileService<MatchStats> csvFileService, CsvFileService<TeamStats> teamStatsCsvFileService, CsvFileService<Team2Stats> team2StatsCsvFileService, CsvFileService<LeagueStats> leagueStatsCsvFileService, MatchStatsService matchStatsService, DownloadConfigService downloadConfigService,
 		CsvHttpClient csvHttpClient) {
 		this.properties = properties;
-		this.settingsRepository = settingsRepository;
 		this.csvFileService = csvFileService;
 		this.teamStatsCsvFileService = teamStatsCsvFileService;
 		this.team2StatsCsvFileService = team2StatsCsvFileService;
