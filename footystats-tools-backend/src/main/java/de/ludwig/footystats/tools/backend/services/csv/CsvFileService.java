@@ -1,46 +1,42 @@
 package de.ludwig.footystats.tools.backend.services.csv;
 
-import com.opencsv.bean.CsvToBeanBuilder;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
+import static org.apache.commons.lang3.StringUtils.split;
 
+import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
-import static org.apache.commons.lang3.StringUtils.split;
-
+@Slf4j
 @Service
 public class CsvFileService<T> {
-	public List<T> importFile(InputStream data, Class<T> clazz) {
+
+	public List<T> 	importFile(InputStream data, Class<T> clazz) {
 		try (var isr = new InputStreamReader(data)) {
 			return new CsvToBeanBuilder<T>(isr).withType(clazz).build().parse();
 		} catch (IOException e) {
+			log.error("Failed importing csv file.", e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static CsvFileType csvFileTypeByName(String name) {
-		switch (name) {
-			case "matches":
-				return CsvFileType.MATCH_STATS;
-			case "league":
-				return CsvFileType.LEAGUE_STATS;
-			case "teams":
-				return CsvFileType.TEAM_STATS;
-			case "teams2":
-				return CsvFileType.TEAM_2_STATS;
-			case "matches_expanded":
-				return CsvFileType.LEAGUE_MATCH_STATS;
-			case "download_onfig":
-				return CsvFileType.DOWNLOAD_CONFIG;
-			default:
-				return null;
-		}
+		return switch (name) {
+			case "league" -> CsvFileType.LEAGUE_STATS;
+			case "teams" -> CsvFileType.TEAM_STATS;
+			case "teams2" -> CsvFileType.TEAM_2_STATS;
+			case "matches" -> CsvFileType.LEAGUE_MATCH_STATS;
+			case "players" -> CsvFileType.PLAYER_STATS;
+			case "download_config" -> CsvFileType.DOWNLOAD_CONFIG;
+			default -> null;
+		};
 	}
 
-	public static CsvFileInformation csvFileInformationByFileName(String fileName) {
+	public static ICsvFileInformation csvFileInformationByFileName(String fileName) {
 		if (StringUtils.startsWith(fileName, "matches_expanded")) {
 			return new CsvFileInformation(CsvFileType.MATCH_STATS, null);
 		}
@@ -53,8 +49,8 @@ public class CsvFileService<T> {
 		var splittedFileName = split(fileNameWithoutExt, '-');
 		var length = splittedFileName.length;
 
-		CsvFileInformation cfi = new CsvFileInformation(csvFileTypeByName(splittedFileName[length - 5]),
-				splittedFileName[0]);
-		return cfi;
+		CsvFileType type = csvFileTypeByName(splittedFileName[length - 5]);
+		return new CsvFileInformation(type, splittedFileName[0]);
 	}
 }
+

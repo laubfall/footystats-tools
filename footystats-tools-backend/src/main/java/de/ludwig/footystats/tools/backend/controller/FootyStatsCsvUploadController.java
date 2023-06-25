@@ -2,8 +2,10 @@ package de.ludwig.footystats.tools.backend.controller;
 
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
+import de.ludwig.footystats.tools.backend.services.csv.ICsvFileInformation;
 import de.ludwig.footystats.tools.backend.services.footy.MatchStatsCsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.dls.DownloadConfigService;
+import de.ludwig.footystats.tools.backend.services.stats.LeagueMatchStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStatsService;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.MatchStatsService;
@@ -33,17 +35,19 @@ public class FootyStatsCsvUploadController {
 	private final MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
 	private final MatchStatsService matchStatsService;
 	private final LeagueStatsService leagueStatsService;
+	private final LeagueMatchStatsService leagueMatchStatsService;
 	private final TeamStatsService teamStatsService;
 	private final Team2StatsService team2StatsService;
 	private final DownloadConfigService downloadConfigService;
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
 		MatchStatsCsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService,
-		TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
+		LeagueMatchStatsService leagueMatchStatsService, TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 		this.matchStatsService = matchStatsService;
 		this.leagueStatsService = leagueStatsService;
+		this.leagueMatchStatsService = leagueMatchStatsService;
 		this.teamStatsService = teamStatsService;
 		this.team2StatsService = team2StatsService;
 		this.downloadConfigService = downloadConfigService;
@@ -64,9 +68,8 @@ public class FootyStatsCsvUploadController {
 
 	@PostMapping(path = "/uploadMultipleFiles", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public List<UploadFileResponse> uploadMultipleFiles(@RequestPart MultipartFile[] files) {
-		return Arrays.asList(files)
-			.stream()
-			.map(file -> uploadFile(file))
+		return Arrays.stream(files)
+			.map(this::uploadFile)
 			.toList();
 	}
 
@@ -78,12 +81,12 @@ public class FootyStatsCsvUploadController {
 
 	private void store(MultipartFile file) throws IOException {
 
-		if (file.getOriginalFilename().endsWith(".csv") == false) {
+		if (!file.getOriginalFilename().endsWith(".csv")) {
 			logger.info(MessageFormat.format("File does not have csv extension: {0}", file.getOriginalFilename()));
 			return;
 		}
 
-		CsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(file.getOriginalFilename());
+		final ICsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(file.getOriginalFilename());
 
 		logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
 		switch (csvFileInformation.type()) {
@@ -94,6 +97,7 @@ public class FootyStatsCsvUploadController {
 			}
 			case TEAM_STATS -> this.teamStatsService.readTeamStats(file.getInputStream());
 			case TEAM_2_STATS -> this.team2StatsService.readTeamStats(file.getInputStream());
+			case LEAGUE_MATCH_STATS -> this.leagueMatchStatsService.readTeamStats(file.getInputStream());
 			case DOWNLOAD_CONFIG -> this.downloadConfigService.readDownloadConfigs(file.getInputStream());
 			default -> logger.warn(
 				MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",

@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
-@JsonComponent
 public class Settings {
 
 	@Getter

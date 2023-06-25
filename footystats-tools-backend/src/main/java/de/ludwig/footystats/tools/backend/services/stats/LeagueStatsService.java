@@ -16,7 +16,7 @@ import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 @Service
 public class LeagueStatsService extends MongoService<LeagueStats> {
 
-	private CsvFileService<LeagueStats> csvFileService;
+	private final CsvFileService<LeagueStats> csvFileService;
 
 	public LeagueStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
 			CsvFileService<LeagueStats> csvFileService) {
@@ -27,7 +27,7 @@ public class LeagueStatsService extends MongoService<LeagueStats> {
 	public Collection<LeagueStats> readLeagueStats(InputStream data) {
 		List<LeagueStats> stats = csvFileService.importFile(data, LeagueStats.class);
 
-		stats.forEach(ls -> upsert(ls));
+		stats.forEach(this::upsert);
 
 		return stats;
 	}

@@ -63,13 +63,13 @@ class MatchControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void match_list_invalid_request() throws Exception {
+    void match_list_invalid_request() throws Exception {
         mockMvc.perform(RestDocumentationRequestBuilders
                 .post("/match/list")).andExpect(status().is(415)).andDo(document("matchController/invalidrequest"));
     }
 
     @Test
-    public void listMatchesForCountryAndLeague() throws Exception {
+    void listMatchesForCountryAndLeague() throws Exception {
         var date = LocalDateTime.of(2022, 8, 1, 13, 0);
         var match = new Match();
         match.setCountry("Germany");
@@ -98,7 +98,7 @@ class MatchControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void listMatchesForAllCountries(@Autowired MockMvc mvc) throws Exception {
+    void listMatchesForAllCountries(@Autowired MockMvc mvc) throws Exception {
         var date = LocalDateTime.of(2022, 8, 1, 13, 0);
         var match = new Match();
         match.setCountry("Germany");

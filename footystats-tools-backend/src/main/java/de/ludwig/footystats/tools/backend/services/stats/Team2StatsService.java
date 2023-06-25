@@ -23,7 +23,7 @@ public class Team2StatsService extends MongoService<Team2Stats> {
 
 	public Collection<Team2Stats> readTeamStats(InputStream data) {
 		List<Team2Stats> stats = teamStatsCsvFileService.importFile(data, Team2Stats.class);
-		stats.forEach(ls -> upsert(ls));
+		stats.forEach(this::upsert);
 		return stats;
 	}
 

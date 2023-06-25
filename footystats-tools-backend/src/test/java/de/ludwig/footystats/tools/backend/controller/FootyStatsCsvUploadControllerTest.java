@@ -33,6 +33,9 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest{
 	private Team2StatsRepository team2StatsRepository;
 
 	@Autowired
+	private LeagueMatchStatsRepository leagueMatchStatsRepository;
+
+	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
 
 	@Autowired
@@ -44,6 +47,21 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest{
 		leagueStatsRepository.deleteAll();
 		teamStatsRepository.deleteAll();
 		downloadConfigRepository.deleteAll();
+		leagueMatchStatsRepository.deleteAll();
+	}
+
+	@Test
+	void uploadLeagueMatchStats(){
+		var originalFileName = "some-country-league-matches-2020-to-2021-stats.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+
+			List<LeagueMatchStats> matchStatsImported = leagueMatchStatsRepository.findLeagueMatchStatsByHomeTeamNameAndAwayTeamName("St. Jakob","Wolfsberg");
+			Assertions.assertFalse(matchStatsImported.isEmpty());
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
 	}
 
 	@Test

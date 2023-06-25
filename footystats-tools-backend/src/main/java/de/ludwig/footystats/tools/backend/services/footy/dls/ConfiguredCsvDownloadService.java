@@ -6,6 +6,7 @@ import de.ludwig.footystats.tools.backend.services.csv.CsvFileService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvFileDownloadService;
 import de.ludwig.footystats.tools.backend.services.footy.CsvHttpClient;
 import de.ludwig.footystats.tools.backend.services.footy.SessionCookie;
+import de.ludwig.footystats.tools.backend.services.stats.LeagueMatchStats;
 import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
 import de.ludwig.footystats.tools.backend.services.stats.Team2Stats;
 import de.ludwig.footystats.tools.backend.services.stats.TeamStats;
@@ -28,15 +29,18 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 	private final CsvFileService<LeagueStats> leagueStatsCsvFileService;
 	private final CsvFileService<TeamStats> teamStatsCsvFileService;
 	private final CsvFileService<Team2Stats> team2StatsCsvFileService;
+	private final CsvFileService<LeagueMatchStats> leagueMatchStats;
 
 	protected ConfiguredCsvDownloadService(FootystatsProperties properties,
 		CsvHttpClient csvHttpClient, DownloadConfigService downloadConfigService, CsvFileService<LeagueStats> leagueStatsCsvFileService,
-		CsvFileService<TeamStats> teamStatsCsvFileService, CsvFileService<Team2Stats> team2StatsCsvFileService) {
+		CsvFileService<TeamStats> teamStatsCsvFileService, CsvFileService<Team2Stats> team2StatsCsvFileService,
+		CsvFileService<LeagueMatchStats> leagueMatchStats) {
 		super(properties, csvHttpClient);
 		this.downloadConfigService = downloadConfigService;
 		this.leagueStatsCsvFileService = leagueStatsCsvFileService;
 		this.teamStatsCsvFileService = teamStatsCsvFileService;
 		this.team2StatsCsvFileService = team2StatsCsvFileService;
+		this.leagueMatchStats = leagueMatchStats;
 	}
 
 	public void downloadConfiguredStats() {
@@ -107,12 +111,12 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 
 			}
 			case MATCH -> {
-				/*
 				Consumer<FileInputStream> leagueConsumer = (fis) -> {
-					this.csvFileService.importFile(fis, MatchStats.class);
+					this.leagueMatchStats.importFile(fis, LeagueMatchStats.class);
+					config.setLastTeams2Download(System.currentTimeMillis());
+					downloadConfigService.upsert(config);
 				};
-				workingWithTempFile(leagueConsumer, lines, "matchStats");
-				*/
+				workingWithTempFile(leagueConsumer, lines, "leagueMatchStats");
 			}
 		}
 	}

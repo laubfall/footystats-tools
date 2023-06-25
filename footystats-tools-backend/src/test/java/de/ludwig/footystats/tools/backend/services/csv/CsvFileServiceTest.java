@@ -1,14 +1,23 @@
 package de.ludwig.footystats.tools.backend.services.csv;
 
-import de.ludwig.footystats.tools.backend.services.stats.*;
+import de.ludwig.footystats.tools.backend.services.stats.LeagueMatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.LeagueStats;
+import de.ludwig.footystats.tools.backend.services.stats.MatchStats;
+import de.ludwig.footystats.tools.backend.services.stats.PlayerStats;
+import de.ludwig.footystats.tools.backend.services.stats.Team2Stats;
+import de.ludwig.footystats.tools.backend.services.stats.TeamStats;
+import java.io.IOException;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.io.IOException;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -108,5 +117,28 @@ class CsvFileServiceTest {
 		} catch (IOException e) {
 			Assertions.fail();
 		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("determineCsvTypeParams")
+	void determineCsvType(String filename, CsvFileType expectedType) {
+		ICsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(filename);
+		Assertions.assertNotNull(csvFileInformation);
+		Assertions.assertEquals(expectedType, csvFileInformation.type());
+	}
+
+	private static Stream<Arguments> determineCsvTypeParams(){
+		return Stream.of(
+			Arguments.of("austria-landesliga-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
+			Arguments.of("austrial-landesliga-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
+			Arguments.of("austrial-landesliga-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
+			Arguments.of("austrial-landesliga-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
+			Arguments.of("austrial-landesliga-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS),
+			Arguments.of("australia-northern-nsw-npl-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
+			Arguments.of("australia-northern-nsw-npl-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
+			Arguments.of("australia-northern-nsw-npl-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
+			Arguments.of("australia-northern-nsw-npl-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
+			Arguments.of("australia-northern-nsw-npl-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS)
+		);
 	}
 }
