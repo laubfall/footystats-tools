@@ -1,7 +1,7 @@
 package support;
 
-import de.ludwig.footystats.tools.backend.FootystatsProperties;
-import de.ludwig.footystats.tools.backend.services.EncryptionService;
+import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.EncryptionService;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
  */
 @TestConfiguration
 @ComponentScans({
-	@ComponentScan(value = {"de.ludwig.footystats.tools.backend.mongo.converter"})
+	@ComponentScan(value = {"de.footystats.tools.mongo.converter"})
 })
 @Import({FootystatsProperties.class, EncryptionService.class})
 public class MongoMappingConverterConfiguration {
