@@ -42,6 +42,10 @@ function matchListEntries(n: MatchListElement[]) {
 					prediction: ms.o05,
 				},
 				{
+					bet: BetPredictionQualityBetEnum.OverOneFive,
+					prediction: ms.o15,
+				},
+				{
 					bet: BetPredictionQualityBetEnum.BttsYes,
 					prediction: ms.bttsYes,
 				},
@@ -242,6 +246,7 @@ export const MatchesView = () => {
 				pageSizeChange={changePageSizeHandler}
 				predictionForBets={[
 					BetPredictionQualityBetEnum.OverZeroFive,
+					BetPredictionQualityBetEnum.OverOneFive,
 					BetPredictionQualityBetEnum.BttsYes,
 				]}
 			/>

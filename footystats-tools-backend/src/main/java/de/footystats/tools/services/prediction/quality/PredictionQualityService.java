@@ -33,6 +33,11 @@ import static org.springframework.data.mongodb.core.query.Update.update;
 @Service
 public class PredictionQualityService extends MongoService<BetPredictionQuality> {
 
+	private static final Function<PredictionResult, Boolean> relevantPredictionResult = (
+		PredictionResult prediction) -> prediction != null &&
+		(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
+			PredictionAnalyze.FAILED.equals(prediction.analyzeResult()));
+
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
 
 	public PredictionQualityService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
@@ -87,33 +92,24 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 
 	public Collection<BetPredictionQuality> measure(Match match, PredictionQualityRevision revision) {
 		final Collection<BetPredictionQuality> measurements = new ArrayList<>();
-		Function<PredictionResult, Boolean> relevantPredictionResult = (
-			PredictionResult prediction) -> prediction != null &&
-			(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
-				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()));
-		if (match.getO05() != null && relevantPredictionResult.apply(match.getO05())) {
-			var predictionResult = match.getO05();
-			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(revision)
-				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getO05().analyzeResult()) ? 1L : 0L)
-				.betFailed(PredictionAnalyze.FAILED.equals(match.getO05().analyzeResult()) ? 1L : 0L)
-				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.OVER_ZERO_FIVE)
-				.influencerDistribution(addInfluencerDistribution(predictionResult)).build();
-			measurements.add(aggregate);
-		}
 
-		if (match.getBttsYes() != null && relevantPredictionResult.apply(match.getBttsYes())) {
-			var predictionResult = match.getBttsYes();
-			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
-				.revision(revision)
-				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
-				.betFailed(PredictionAnalyze.FAILED.equals(match.getBttsYes().analyzeResult()) ? 1L : 0L)
-				.predictionPercent(predictionResult.betSuccessInPercent()).bet(Bet.BTTS_YES)
-				.influencerDistribution(addInfluencerDistribution(predictionResult)).build();
-			measurements.add(aggregate);
+		for (Bet activeBet : Bet.activeBets()) {
+			measureBet(match.forBet(activeBet), revision, activeBet, measurements);
 		}
 
 		return measurements;
+	}
+
+	private void measureBet(PredictionResult match, PredictionQualityRevision revision, Bet bet, Collection<BetPredictionQuality> measurements) {
+		if (match != null && relevantPredictionResult.apply(match)) {
+			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
+				.revision(revision)
+				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.analyzeResult()) ? 1L : 0L)
+				.betFailed(PredictionAnalyze.FAILED.equals(match.analyzeResult()) ? 1L : 0L)
+				.predictionPercent(match.betSuccessInPercent()).bet(bet)
+				.influencerDistribution(addInfluencerDistribution(match)).build();
+			measurements.add(aggregate);
+		}
 	}
 
 	private List<InfluencerPercentDistribution> addInfluencerDistribution(PredictionResult prediction) {

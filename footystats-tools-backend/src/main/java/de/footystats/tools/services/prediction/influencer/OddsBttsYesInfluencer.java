@@ -39,7 +39,7 @@ public class OddsBttsYesInfluencer implements BetResultInfluencer {
 		// with 1 - ... odds with value of 3 result in 0% while odds with value of 1
 		// result in 100 %
 		float calculation = (1 - ((ctx.match().getOddsBTTS_Yes() - LOWER_ODDS_BOUND) / VALUE_RANGE));
-		return (int)(calculation * 100);
+		return (int) (calculation * 100);
 	}
 
 	// eslint-disable-next-line class-methods-use-this

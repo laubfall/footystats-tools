@@ -9,8 +9,6 @@ import {
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
 import {
-	ListGroup,
-	ListGroupItem,
 	OverlayTrigger,
 	Popover,
 } from "react-bootstrap";
@@ -27,10 +25,6 @@ import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
 ) {
-	type ForwarRefType = {
-		row: MatchListEntry;
-		betPrediction: BetPrediction;
-	};
 	return (
 		predictionForBets?.map((bet) => {
 			const tr: TableColumn<MatchListEntry> = {

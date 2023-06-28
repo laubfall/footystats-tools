@@ -1,6 +1,7 @@
 package de.footystats.tools.services.match;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.stats.MatchStatus;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.prediction.PredictionResult;
@@ -55,10 +56,33 @@ public class Match {
     @Getter
     @Setter
     private PredictionResult o05;
+	@Getter
+	@Setter
+	private PredictionResult o15;
     @Getter
     @Setter
     private PredictionResult bttsYes;
     @Getter
     @Setter
     private PredictionQualityRevision revision;
+
+	public final PredictionResult forBet(Bet bet){
+		switch (bet) {
+			case OVER_ZERO_FIVE -> {
+				return o05;
+			}
+			case OVER_ONE_FIVE -> {
+				return o15;
+			}
+			case BTTS_YES -> {
+				return bttsYes;
+			}
+			case BTTS_NO -> {
+				return null;
+			}
+			default -> {
+				return null;
+			}
+		}
+	}
 }

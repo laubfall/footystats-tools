@@ -59,7 +59,7 @@ public class PredictionQualityViewService {
 	public List<BetPredictionQualityAllBetsAggregate> matchPredictionQualityMeasurementCounts(PredictionQualityRevision revision) {
 		List<BetPredictionQualityAllBetsAggregate> result = new ArrayList<>();
 
-		final EnumSet<Bet> betsWithPrediction = EnumSet.of(Bet.OVER_ZERO_FIVE, Bet.BTTS_YES);
+		final EnumSet<Bet> betsWithPrediction = Bet.activeBets();
 		for (Bet bet : betsWithPrediction) {
 			MatchOperation betOnThisMatch = match(
 				new Criteria("predictionPercent").gt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet).and("revision").is(revision));

@@ -76,6 +76,7 @@ public class MatchService extends MongoService<Match> {
 			.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
 			.bttsYes(calculatePrediction(Bet.BTTS_YES, matchStats))
 			.o05(calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats))
+			.o15(calculatePrediction(Bet.OVER_ONE_FIVE, matchStats))
 			.build();
 
 		upsert(match);
