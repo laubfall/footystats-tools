@@ -16,7 +16,8 @@ public class PredictionService {
 		new OddsGoalOverInfluencer(),
 		new FootyStatsBttsYesPredictionInfluencer(),
 		new FootyStatsOverFTPredictionInfluencer(),
-		new XgOverZeroFiveInfluencer()
+		new XgOverZeroFiveInfluencer(),
+		new XgOverOneFiveInfluencer()
 	};
 
 	public PredictionAnalyze analyze(
