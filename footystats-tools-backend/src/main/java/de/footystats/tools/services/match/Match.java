@@ -66,6 +66,11 @@ public class Match {
     @Setter
     private PredictionQualityRevision revision;
 
+	/**
+	 * Access to prediction results via a given bet type.
+	 * @param bet Mandatory. The type of bet you want to get the prediction results for.
+	 * @return null if there are no prediction results otherwise prediction results for the given bet type.
+	 */
 	public final PredictionResult forBet(Bet bet){
 		switch (bet) {
 			case OVER_ZERO_FIVE -> {

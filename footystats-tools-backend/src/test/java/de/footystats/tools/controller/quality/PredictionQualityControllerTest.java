@@ -40,13 +40,13 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(2)));
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 			.andExpect(status().isOk());
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(2)));
+			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 	}
 }

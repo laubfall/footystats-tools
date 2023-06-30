@@ -59,15 +59,15 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.jobId", equalTo(1)));
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.betPredictionResults", hasSize(2))) // "Actually we do predictions for two bet types"
+			.andExpect(jsonPath("$.betPredictionResults", hasSize(3))) // "Actually we do predictions for two bet types"
 			.andExpect(jsonPath("$.betPredictionResults[0].bet", equalTo("OVER_ZERO_FIVE")))
 			.andExpect(jsonPath("$.betPredictionResults[0].assessed", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[0].betSuccess", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[0].betFailed", equalTo(0)))
-			.andExpect(jsonPath("$.betPredictionResults[1].bet", equalTo("BTTS_YES")))
-			.andExpect(jsonPath("$.betPredictionResults[1].assessed", equalTo(4)))
-			.andExpect(jsonPath("$.betPredictionResults[1].betSuccess", equalTo(3)))
-			.andExpect(jsonPath("$.betPredictionResults[1].betFailed", equalTo(1)))
+			.andExpect(jsonPath("$.betPredictionResults[2].bet", equalTo("BTTS_YES")))
+			.andExpect(jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
+			.andExpect(jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
+			.andExpect(jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(2)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['FootyStatsOverFTPredictionInfluencer']", hasSize(2)))
@@ -88,9 +88,9 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.betPredictionResults", hasSize(2)));
+			.andExpect(jsonPath("$.betPredictionResults", hasSize(3)));
 
-		Assertions.assertEquals(2, betPredictionQualityRepository.count(), "Two, cause one for btts_yes and one for over_zero_five.");
+		Assertions.assertEquals(3, betPredictionQualityRepository.count(), "Two, cause one for btts_yes and one for over_zero_five.");
 		var overZeroFiveQuality = new BetPredictionQuality();
 		overZeroFiveQuality.setBet(Bet.OVER_ZERO_FIVE);
 		Optional<BetPredictionQuality> optOverZeroFive = betPredictionQualityRepository.findOne(Example.of(overZeroFiveQuality));
