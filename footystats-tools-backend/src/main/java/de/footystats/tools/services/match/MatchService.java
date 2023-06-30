@@ -33,11 +33,11 @@ public class MatchService extends MongoService<Match> {
 
 	public Page<Match> find(final MatchSearch search) {
 		List<Criteria> searchCriterias = new ArrayList<>();
-		if (CollectionUtils.isEmpty(search.getCountries()) == false) {
+		if (!CollectionUtils.isEmpty(search.getCountries())) {
 			searchCriterias.add(Criteria.where("country").in(search.getCountries()));
 		}
 
-		if (CollectionUtils.isEmpty(search.getLeagues()) == false) {
+		if (!CollectionUtils.isEmpty(search.getLeagues())) {
 			searchCriterias.add(Criteria.where("league").in(search.getLeagues()));
 		}
 
@@ -50,7 +50,7 @@ public class MatchService extends MongoService<Match> {
 		}
 
 		var c = new Criteria();
-		if (searchCriterias.isEmpty() == false) {
+		if (!searchCriterias.isEmpty()) {
 			c = c.andOperator(searchCriterias);
 		}
 		Query countQuery = query(c);

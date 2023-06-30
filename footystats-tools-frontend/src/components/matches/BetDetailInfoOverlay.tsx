@@ -24,11 +24,11 @@ export const BetDetailInfoOverlay = ({
 		influencerName: string,
 	): InfluencerStatisticalResultOutcome {
 		const result =
-			statisticalOutcome.influencerStatisticalResultOutcomes.filter(
+			statisticalOutcome?.influencerStatisticalResultOutcomes.filter(
 				(iso) => iso.influencerName === influencerName,
 			);
 
-		return result.length === 1 ? result[0] : undefined;
+		return result?.length === 1 ? result[0] : undefined;
 	}
 
 	function humanReadablePercent(statisticalOutcome?: number) {

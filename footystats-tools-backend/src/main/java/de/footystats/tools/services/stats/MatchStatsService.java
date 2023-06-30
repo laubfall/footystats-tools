@@ -3,6 +3,7 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.match.MatchService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +15,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class MatchStatsService extends MongoService<MatchStats> {
-	private static final Logger logger = LoggerFactory.getLogger(MatchStatsService.class);
-
 	public static final String COUNTRY_ESPORTS = "Esports";
 
 	private FootystatsProperties fsProperties;
@@ -39,7 +39,7 @@ public class MatchStatsService extends MongoService<MatchStats> {
 			return;
 		}
 
-		if (COUNTRY_ESPORTS.equals(matchStats.getCountry()) && fsProperties.isImportEsports() == false) {
+		if (COUNTRY_ESPORTS.equals(matchStats.getCountry()) && !fsProperties.isImportEsports()) {
 			return;
 		}
 
@@ -53,14 +53,14 @@ public class MatchStatsService extends MongoService<MatchStats> {
 		Pageable pageable = PageRequest.of(0, pageSize);
 
 		do {
-			logger.info("Doing reimport for page " + pageable.getPageNumber());
+			log.info("Doing reimport for page " + pageable.getPageNumber());
 			var page = matchStatsRepository.findAll(pageable);
-			if(page.hasNext() == false){
+			if(!page.hasNext()){
 				break;
 			}
 			pageable = page.nextPageable();
 
-			page.getContent().forEach(ms -> matchService.writeMatch(ms));
+			page.getContent().forEach(matchService::writeMatch);
 		} while (true);
 	}
 

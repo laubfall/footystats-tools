@@ -59,6 +59,14 @@ public class StatisticalResultOutcomeService {
 		return influencerOutcomes;
 	}
 
+	/**
+	 * Checks the cache for influencer calculations for one specific prediction result and one type of bet.
+	 * @param bet Mandatory. The type of bet we are looking for a specific prediction result.
+	 * @param result Mandatory. The result we are looking for.
+	 * @param influencerName Mandatory. The name of the influencer we are looking for.
+	 * @return List of prediction values the influencer calculated. Empty list if for the chosen bet and prediction
+	 * result the influencer did not made any predictions.
+	 */
 	private List<BetPredictionQualityInfluencerAggregate> influencerDistributionByCache(Bet bet, PredictionResult result, String influencerName) {
 		var cacheKey = new InfluencerPredictionCacheKey(bet, result.betOnThis());
 		Map<String, List<BetPredictionQualityInfluencerAggregate>> matching;
@@ -69,7 +77,12 @@ public class StatisticalResultOutcomeService {
 			influencerPredictionCache.put(cacheKey, matching);
 		}
 
-		return matching.get(influencerName);
+		var influencerPredicitons = matching.get(influencerName);
+		if(influencerPredicitons == null){
+			return Collections.emptyList();
+		}
+
+		return influencerPredicitons;
 	}
 
 	private Double calcMatchPredictionStatisticalOutcome(PredictionResult result, Bet bet) {

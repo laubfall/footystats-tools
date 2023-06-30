@@ -44,16 +44,16 @@ public class PredictionQualityController {
 
 	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
 	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
-		final PredictionQualityRevision latestRevision = predictionQualityService.latestRevision();
-		final List<BetPredictionQualityAllBetsAggregate> measuredPredictionCntAggregates = predictionQualityViewService.matchPredictionQualityMeasurementCounts(latestRevision);
+		final var latestRevision = predictionQualityService.latestRevision();
+		final var measuredPredictionCntAggregates = predictionQualityViewService.matchPredictionQualityMeasurementCounts(latestRevision);
 
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
-		final List<BetPredictionQualityBetAggregate> betPercentDistributionResult = predictionQualityViewService.betPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
-		final List<BetPredictionQualityBetAggregate> dontBetPercentDistributionResult = predictionQualityViewService.dontBetPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
+		final var betPercentDistributionResult = predictionQualityViewService.betPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
+		final var dontBetPercentDistributionResult = predictionQualityViewService.dontBetPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
 
 		// create prediction results for all bets
-		final Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType, true, latestRevision);
-		final Map<String, List<BetPredictionQualityInfluencerAggregate>> dontBetInfluencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType, false, latestRevision);
+		final var influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType, true, latestRevision);
+		final var dontBetInfluencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType, false, latestRevision);
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult, dontBetPercentDistributionResult, influencerPredictionsAggregated, dontBetInfluencerPredictionsAggregated);
 	}
 

@@ -27,4 +27,11 @@ public class PredictionQualityRevision {
 	 * also marked with this revision if they had no revision before.
 	 */
 	public static final PredictionQualityRevision IN_RECOMPUTATION = new PredictionQualityRevision(-2);
+
+	@Override
+	public String toString() {
+		return "PredictionQualityRevision{" +
+			"revision=" + revision +
+			'}';
+	}
 }

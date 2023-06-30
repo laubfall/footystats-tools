@@ -1,5 +1,5 @@
 import React from "react";
-import { union, uniqueId, keys } from "lodash";
+import { uniqueId, keys } from "lodash";
 import { Alert } from "react-bootstrap";
 import { colord } from "colord";
 import { PercentageDistributionGraph } from "./PercentageDistributionGraph";

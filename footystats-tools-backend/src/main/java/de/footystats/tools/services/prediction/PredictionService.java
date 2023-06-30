@@ -15,7 +15,8 @@ public class PredictionService {
 		new OddsBttsYesInfluencer(),
 		new OddsGoalOverInfluencer(),
 		new FootyStatsBttsYesPredictionInfluencer(),
-		new FootyStatsOverFTPredictionInfluencer()
+		new FootyStatsOverFTPredictionInfluencer(),
+		new XgOverZeroFiveInfluencer()
 	};
 
 	public PredictionAnalyze analyze(
@@ -87,7 +88,6 @@ public class PredictionService {
 				influencerDetailedResult.add(new InfluencerResult(influencer.influencerName(), 0, preCheckResult));
 			}
 		}
-		;
 
 		if (doneInfluencerCalculations > 0) {
 			result = result / doneInfluencerCalculations;
