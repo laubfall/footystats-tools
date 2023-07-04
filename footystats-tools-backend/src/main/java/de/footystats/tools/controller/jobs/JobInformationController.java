@@ -17,6 +17,8 @@ public class JobInformationController {
 	@GetMapping("/running")
 	public JobInformation running(@PathVariable String jobName) {
 		// TODO replace with a generic service.
+		/*
+
 		final JobExecution jobExecution = betPredictionQualityJobService.recomputeJobExecution();
 		if (jobExecution == null) {
 			return null;
@@ -26,5 +28,7 @@ public class JobInformationController {
 
 		ji.setJobId(jobExecution.getJobInstance().getInstanceId());
 		return ji;
+		 */
+		return null;
 	}
 }

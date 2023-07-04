@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
@@ -186,25 +186,7 @@ export const MatchesView = () => {
 		);
 
 		matchControllerApi
-			.reimportMatchStats({
-				listMatchRequest: {
-					country: filter.country,
-					league: filter.league,
-					start: filter.timeFrom,
-					end: filter.timeUntil,
-					paging: {
-						page: page,
-						size: perPage,
-						direction: sortOrder,
-						properties: [sortColumn],
-					},
-				},
-			})
-			.then(async (n) => {
-				setTotalRows(n.totalElements);
-				const r = await createMatchListEntries(n.elements);
-				setMatches(r);
-			})
+			.reimportMatchStats()
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	};

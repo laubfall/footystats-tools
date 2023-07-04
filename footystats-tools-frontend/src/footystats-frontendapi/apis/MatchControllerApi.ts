@@ -15,10 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
+  JobInformation,
   ListMatchRequest,
   PagingResponseMatchListElement,
 } from '../models';
 import {
+    JobInformationFromJSON,
+    JobInformationToJSON,
     ListMatchRequestFromJSON,
     ListMatchRequestToJSON,
     PagingResponseMatchListElementFromJSON,
@@ -26,10 +29,6 @@ import {
 } from '../models';
 
 export interface ListMatchesRequest {
-    listMatchRequest: ListMatchRequest;
-}
-
-export interface ReimportMatchStatsRequest {
     listMatchRequest: ListMatchRequest;
 }
 
@@ -71,32 +70,25 @@ export class MatchControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async reimportMatchStatsRaw(requestParameters: ReimportMatchStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagingResponseMatchListElement>> {
-        if (requestParameters.listMatchRequest === null || requestParameters.listMatchRequest === undefined) {
-            throw new runtime.RequiredError('listMatchRequest','Required parameter requestParameters.listMatchRequest was null or undefined when calling reimportMatchStats.');
-        }
-
+    async reimportMatchStatsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobInformation>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/match/stats`,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: ListMatchRequestToJSON(requestParameters.listMatchRequest),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PagingResponseMatchListElementFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => JobInformationFromJSON(jsonValue));
     }
 
     /**
      */
-    async reimportMatchStats(requestParameters: ReimportMatchStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagingResponseMatchListElement> {
-        const response = await this.reimportMatchStatsRaw(requestParameters, initOverrides);
+    async reimportMatchStats(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobInformation> {
+        const response = await this.reimportMatchStatsRaw(initOverrides);
         return await response.value();
     }
 

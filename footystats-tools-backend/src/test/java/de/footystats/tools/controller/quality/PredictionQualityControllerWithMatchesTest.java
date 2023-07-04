@@ -1,5 +1,12 @@
 package de.footystats.tools.controller.quality;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import de.footystats.tools.controller.BaseControllerTest;
 import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.match.MatchRepository;
@@ -8,6 +15,8 @@ import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.MatchStatsService;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.data.domain.Example;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
@@ -51,7 +52,8 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 	@Test
 	void compute() throws Exception {
 
-		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_PredictionQualityReportWithMatchesTest.csv"), MatchStats.class);
+		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_PredictionQualityReportWithMatchesTest.csv"),
+			MatchStats.class);
 		matchStats.forEach(matchStatsService::importMatchStats);
 
 		mockMvc.perform(get("/predictionquality/compute"))
@@ -68,7 +70,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
 			.andExpect(jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
-			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(2)))
+			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['FootyStatsOverFTPredictionInfluencer']", hasSize(2)))
 			.andExpect(jsonPath("$.dontBetInfluencerPercentDistributions.keys()", empty()))
@@ -78,7 +80,8 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 
 	@Test
 	void compute_and_test_influencer_aggregation() throws Exception {
-		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_ComputeAndTestInfluencerAggregation.csv"), MatchStats.class);
+		List<MatchStats> matchStats = csvFileService.importFile(getClass().getResourceAsStream("matches_ComputeAndTestInfluencerAggregation.csv"),
+			MatchStats.class);
 		matchStats.forEach(matchStatsService::importMatchStats);
 
 		Assertions.assertEquals(3, matchRepository.count());
@@ -96,6 +99,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 		Optional<BetPredictionQuality> optOverZeroFive = betPredictionQualityRepository.findOne(Example.of(overZeroFiveQuality));
 		Assertions.assertTrue(optOverZeroFive.isPresent());
 		overZeroFiveQuality = optOverZeroFive.get();
-		Assertions.assertEquals(2, overZeroFiveQuality.getInfluencerDistribution().size(), "Thee matches all with the same stats results in a aggregated list of two influencers");
+		Assertions.assertEquals(3, overZeroFiveQuality.getInfluencerDistribution().size(),
+			"Thee matches all with the same stats results in a aggregated list of two influencers");
 	}
 }

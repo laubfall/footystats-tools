@@ -63,7 +63,12 @@ public class MatchService extends MongoService<Match> {
 	}
 
 	public void writeMatch(MatchStats matchStats) {
-		var match = Match.builder()
+		Match match = convert(matchStats);
+		upsert(match);
+	}
+
+	public Match convert(MatchStats matchStats) {
+		return Match.builder()
 			.country(matchStats.getCountry())
 			.league(matchStats.getLeague())
 			.dateUnix(matchStats.getDateUnix())
@@ -78,8 +83,6 @@ public class MatchService extends MongoService<Match> {
 			.o05(calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats))
 			.o15(calculatePrediction(Bet.OVER_ONE_FIVE, matchStats))
 			.build();
-
-		upsert(match);
 	}
 
 	@Override

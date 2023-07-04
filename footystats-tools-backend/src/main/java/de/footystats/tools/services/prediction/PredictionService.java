@@ -1,14 +1,21 @@
 package de.footystats.tools.services.prediction;
 
-import de.footystats.tools.services.prediction.influencer.*;
+import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
+import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
+import de.footystats.tools.services.prediction.influencer.FootyStatsBttsYesPredictionInfluencer;
+import de.footystats.tools.services.prediction.influencer.FootyStatsOverFTPredictionInfluencer;
+import de.footystats.tools.services.prediction.influencer.OddsBttsYesInfluencer;
+import de.footystats.tools.services.prediction.influencer.OddsGoalOverInfluencer;
+import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
+import de.footystats.tools.services.prediction.influencer.XgOverZeroFiveInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PredictionService {
+
 	public static final int LOWER_EXCLUSIVE_BORDER_BET_ON_THIS = 50;
 
 	private final BetResultInfluencer[] betResultInfluencer = {

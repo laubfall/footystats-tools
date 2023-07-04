@@ -3,9 +3,9 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.match.MatchService;
+import de.footystats.tools.services.stats.batch.IMatchStatsJobService;
+import de.footystats.tools.services.stats.batch.MatchStatsJobService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,17 +20,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchStatsService extends MongoService<MatchStats> {
 	public static final String COUNTRY_ESPORTS = "Esports";
 
-	private FootystatsProperties fsProperties;
+	private final FootystatsProperties fsProperties;
 
 	private final MatchService matchService;
 
-	private MatchStatsRepository matchStatsRepository;
+	private final MatchStatsRepository matchStatsRepository;
 
-	public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties fsProperties, MatchService matchService, MatchStatsRepository matchStatsRepository) {
+	private final IMatchStatsJobService matchStatsJobService;
+
+	public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties fsProperties, MatchService matchService, MatchStatsRepository matchStatsRepository,
+		IMatchStatsJobService matchStatsJobService) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.fsProperties = fsProperties;
 		this.matchService = matchService;
 		this.matchStatsRepository = matchStatsRepository;
+		this.matchStatsJobService = matchStatsJobService;
 	}
 
 	@Transactional
@@ -47,6 +51,7 @@ public class MatchStatsService extends MongoService<MatchStats> {
 		matchService.writeMatch(matchStats);
 	}
 
+	@Deprecated // Commiting transaction fails in case of large sets of matchStats.
 	@Transactional
 	public void reimportMatchStats() {
 		var pageSize = 100;

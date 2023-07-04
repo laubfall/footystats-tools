@@ -22,6 +22,10 @@ import java.util.Map;
 
 @Configuration
 public class BatchConfiguration {
+
+	public static final String MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB = "migratedToNewBetPredictionQualityJob";
+	public static final String COMPUTE_BET_PREDICTION_QUALITY_JOB = "computeBetPredictionQualityJob";
+
 	@Bean(name = "recomputeItemReader")
 	public RepositoryItemReader<Match> matchItemReader(MatchRepository repository) {
 		return new RepositoryItemReaderBuilder<Match>().repository(repository)
@@ -68,13 +72,13 @@ public class BatchConfiguration {
 			.build();
 	}
 
-	@Bean(name = "migratedToNewBetPredictionQualityJob")
+	@Bean(name = MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB)
 	public Job migrationJob(JobRepository jobRepository, Step migrateToNewBetPredictionQualityStep, RecomputeJobListener jobListener) {
-		return new JobBuilder(BetPredictionQualityJobService.MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener).start(migrateToNewBetPredictionQualityStep).build();
+		return new JobBuilder(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener).start(migrateToNewBetPredictionQualityStep).build();
 	}
 
-	@Bean(name = "computeBetPredictionQualityJob")
+	@Bean(name = COMPUTE_BET_PREDICTION_QUALITY_JOB)
 	public Job computeJob(JobRepository jobRepository, Step computeBetPredictionQualityStep, ComputeJobListener jobListener) {
-		return new JobBuilder("computeBetPredictionQualityJob", jobRepository).listener(jobListener).start(computeBetPredictionQualityStep).build();
+		return new JobBuilder(COMPUTE_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener).start(computeBetPredictionQualityStep).build();
 	}
 }
