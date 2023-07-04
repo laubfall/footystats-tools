@@ -1,121 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>de.ludwig.footystats.tools</groupId>
 	<artifactId>backend</artifactId>
-	<version>1.0.2</version>
-	<name>backend</name>
-	<description>footystats tools backend server</description>
-	<properties>
-		<maven.compiler.target>17</maven.compiler.target>
-		<maven.compiler.source>17</maven.compiler.source>
-		<frontend.api.generator.backendurl>localhost</frontend.api.generator.backendurl>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-batch</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>8.0.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>5.7.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.14.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>3.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework.batch/spring-batch-test -->
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-test</artifactId>
-			<version>5.0.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
-			<version>4.3.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.restdocs</groupId>
-			<artifactId>spring-restdocs-mockmvc</artifactId>
-		</dependency>
-	</dependencies>
-
 	<build>
+		<plugins>
+			<plugin>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<artifactId>spring-restdocs-asciidoctor</artifactId>
+						<groupId>org.springframework.restdocs</groupId>
+						<version>${spring-restdocs.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<configuration>
+							<attributes>
+								<snippets>${project.build.directory}/snippets</snippets>
+							</attributes>
+							<backend>html</backend>
+							<doctype>book</doctype>
+							<sourceDocumentName>index.adoc</sourceDocumentName>
+						</configuration>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<id>generate-docs</id>
+						<phase>prepare-package</phase>
+					</execution>
+				</executions>
+				<groupId>org.asciidoctor</groupId>
+				<version>1.5.8</version>
+			</plugin>
+			<plugin>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<artifactId>lombok</artifactId>
+							<groupId>org.projectlombok</groupId>
+						</exclude>
+					</excludes>
+				</configuration>
+				<groupId>org.springframework.boot</groupId>
+			</plugin>
+		</plugins>
 		<testResources>
 			<testResource>
 				<directory>${project.basedir}/src/test/java</directory>
@@ -124,129 +54,199 @@
 				</excludes>
 			</testResource>
 		</testResources>
-		<plugins>
-			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.8</version>
-				<executions>
-					<execution>
-						<id>generate-docs</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-						<configuration>
-							<backend>html</backend>
-							<doctype>book</doctype>
-							<sourceDocumentName>index.adoc</sourceDocumentName>
-							<attributes>
-								<snippets>${project.build.directory}/snippets</snippets>
-							</attributes>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.restdocs</groupId>
-						<artifactId>spring-restdocs-asciidoctor</artifactId>
-						<version>${spring-restdocs.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
 
 	</build>
-
+	<dependencies>
+		<dependency>
+			<artifactId>spring-boot-starter-batch</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+		<dependency>
+			<artifactId>hibernate-validator</artifactId>
+			<groupId>org.hibernate.validator</groupId>
+			<version>8.0.0.Final</version>
+		</dependency>
+		<dependency>
+			<artifactId>h2</artifactId>
+			<groupId>com.h2database</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>commons-io</artifactId>
+			<groupId>commons-io</groupId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<artifactId>opencsv</artifactId>
+			<groupId>com.opencsv</groupId>
+			<version>5.7.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<version>2.14.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<groupId>org.springdoc</groupId>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-devtools</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<optional>true</optional>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<artifactId>lombok</artifactId>
+			<groupId>org.projectlombok</groupId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<artifactId>modelmapper</artifactId>
+			<groupId>org.modelmapper</groupId>
+			<version>3.1.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.batch/spring-batch-test -->
+		<dependency>
+			<artifactId>spring-batch-test</artifactId>
+			<groupId>org.springframework.batch</groupId>
+			<scope>test</scope>
+			<version>5.0.2</version>
+		</dependency>
+		<dependency>
+			<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
+			<groupId>de.flapdoodle.embed</groupId>
+			<scope>test</scope>
+			<version>4.3.2</version>
+		</dependency>
+		<dependency>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<groupId>org.springframework.restdocs</groupId>
+		</dependency>
+	</dependencies>
+	<description>footystats tools backend server</description>
+	<groupId>de.ludwig.footystats.tools</groupId>
+	<modelVersion>4.0.0</modelVersion>
+	<name>backend</name>
+	<parent>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<groupId>org.springframework.boot</groupId>
+		<relativePath/>
+		<version>3.1.1</version> <!-- lookup parent from repository -->
+	</parent>
 	<profiles>
 		<profile>
-			<id>openapi</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>pre-integration-test</id>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>post-integration-test</id>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
 						<configuration>
-							<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
 							<excludes>
 								<exclude>
-									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+									<groupId>org.projectlombok</groupId>
 								</exclude>
 							</excludes>
+							<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
 							<profiles>
 								<profile>openapi</profile>
 							</profiles>
 						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.springdoc</groupId>
-						<artifactId>springdoc-openapi-maven-plugin</artifactId>
-						<version>1.4</version>
 						<executions>
 							<execution>
-								<id>integration-test</id>
 								<goals>
-									<goal>generate</goal>
+									<goal>start</goal>
 								</goals>
+								<id>pre-integration-test</id>
+							</execution>
+							<execution>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+								<id>post-integration-test</id>
 							</execution>
 						</executions>
-						<configuration>
-							<outputFileName>openapi.json</outputFileName>
-							<outputDir>${project.basedir}/target/openapi</outputDir>
-						</configuration>
+						<groupId>org.springframework.boot</groupId>
 					</plugin>
 					<plugin>
-						<groupId>org.openapitools</groupId>
-						<artifactId>openapi-generator-maven-plugin</artifactId>
-						<!-- RELEASE_VERSION -->
-						<version>6.3.0</version>
-						<!-- /RELEASE_VERSION -->
+						<artifactId>springdoc-openapi-maven-plugin</artifactId>
+						<configuration>
+							<outputDir>${project.basedir}/target/openapi</outputDir>
+							<outputFileName>openapi.json</outputFileName>
+						</configuration>
 						<executions>
 							<execution>
-								<phase>install</phase>
 								<goals>
 									<goal>generate</goal>
 								</goals>
+								<id>integration-test</id>
+							</execution>
+						</executions>
+						<groupId>org.springdoc</groupId>
+						<version>1.4</version>
+					</plugin>
+					<plugin>
+						<artifactId>openapi-generator-maven-plugin</artifactId>
+						<executions>
+							<execution>
 								<configuration>
-									<inputSpec>${project.basedir}/target/openapi/openapi.json</inputSpec>
+									<additionalProperties>typescriptThreePlus=true</additionalProperties>
 									<generatorName>typescript-fetch</generatorName>
+									<inputSpec>${project.basedir}/target/openapi/openapi.json</inputSpec>
 									<output>${project.basedir}/../footystats-tools-frontend/src/footystats-frontendapi
 									</output>
 									<serverVariableOverrides>env=${frontend.api.generator.backendurl},port=8080</serverVariableOverrides>
-									<additionalProperties>typescriptThreePlus=true</additionalProperties>
 								</configuration>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<phase>install</phase>
 							</execution>
 						</executions>
+						<!-- RELEASE_VERSION -->
+						<groupId>org.openapitools</groupId>
+						<!-- /RELEASE_VERSION -->
+						<version>6.3.0</version>
 					</plugin>
 				</plugins>
 			</build>
+			<id>openapi</id>
 		</profile>
 	</profiles>
+
+	<properties>
+		<frontend.api.generator.backendurl>localhost</frontend.api.generator.backendurl>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
+
+	<version>1.0.2</version>
 </project>
