@@ -48,6 +48,7 @@ public class MatchController {
 		List<MatchListElement> result = matches.map(m -> modelMapper.map(m, MatchListElement.class)).map(m -> {
 			final List<StatisticalResultOutcome> statisticalOutcomes = new ArrayList<>();
 			statisticalOutcomes.add(statisticalResultOutcomeService.compute(m.getO05(), Bet.OVER_ZERO_FIVE));
+			statisticalOutcomes.add(statisticalResultOutcomeService.compute(m.getO15(), Bet.OVER_ONE_FIVE));
 			statisticalOutcomes.add(statisticalResultOutcomeService.compute(m.getBttsYes(), Bet.BTTS_YES));
 			m.setStatisticalResultOutcome(statisticalOutcomes);
 			return m;

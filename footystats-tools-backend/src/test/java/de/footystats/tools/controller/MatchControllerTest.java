@@ -63,6 +63,7 @@ class MatchControllerTest extends BaseControllerTest {
 	@BeforeEach
 	public void cleanup() {
 		matchRepository.deleteAll();
+		matchStatsRepository.deleteAll();
 	}
 
 	@Test
@@ -81,6 +82,7 @@ class MatchControllerTest extends BaseControllerTest {
 		match.setDateGMT(date);
 		match.setBttsYes(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
 		match.setO05(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
+		match.setO15(new PredictionResult(50, true, PredictionAnalyze.NOT_ANALYZED, Collections.emptyList()));
 		matchRepository.insert(match);
 
 		var request = new MatchController.ListMatchRequest();
@@ -138,7 +140,7 @@ class MatchControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void remimport(@Autowired MockMvc mvc) throws Exception {
+	void reimport(@Autowired MockMvc mvc) throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
 
 		MatchStats matchStats = MatchStats.builder().country("Austria").homeTeam("Auffach").awayTeam("Oberau").dateUnix(date.getLong(ChronoField.ERA))
@@ -148,7 +150,11 @@ class MatchControllerTest extends BaseControllerTest {
 
 		mvc.perform(patch("/match/stats"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("jobId", Is.is(1)))
+			.andExpect(jsonPath("job", Is.is("COMPLETED")))
+			.andExpect(jsonPath("progressInPercent", Is.is(100)))
+			.andExpect(jsonPath("currentReadCount", Is.is(1)))
+			.andExpect(jsonPath("itemsToProcess", Is.is(1)))
+			.andExpect(jsonPath("jobName", Is.is("reimportMatchStatsJob")))
 			.andDo(rh -> {
 				System.out.println(rh.getResponse().getContentAsString());
 			});

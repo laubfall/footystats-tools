@@ -57,5 +57,8 @@
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
 	"renderer.settings.input.footyusername": "Benutzername Footystats",
-	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
+	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld",
+	"renderer.progress.job.reimportMatchStatsJob": "Vorhersagen werden neu berechnet",
+	"renderer.progress.job.migratedToNewBetPredictionQualityJob": "Qualität der Vorhersagen wird neu berechnet",
+	"renderer.progress.job.title": "Laufende Prozesse"
 }

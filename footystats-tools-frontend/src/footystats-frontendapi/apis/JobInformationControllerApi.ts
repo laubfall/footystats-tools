@@ -33,6 +33,30 @@ export class JobInformationControllerApi extends runtime.BaseAPI {
 
     /**
      */
+    async allRunningRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<JobInformation>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/allrunning`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(JobInformationFromJSON));
+    }
+
+    /**
+     */
+    async allRunning(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<JobInformation>> {
+        const response = await this.allRunningRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async runningRaw(requestParameters: RunningRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobInformation>> {
         if (requestParameters.jobName === null || requestParameters.jobName === undefined) {
             throw new runtime.RequiredError('jobName','Required parameter requestParameters.jobName was null or undefined when calling running.');
@@ -43,7 +67,7 @@ export class JobInformationControllerApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/running`.replace(`{${"jobName"}}`, encodeURIComponent(String(requestParameters.jobName))),
+            path: `/running/{jobName}`.replace(`{${"jobName"}}`, encodeURIComponent(String(requestParameters.jobName))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

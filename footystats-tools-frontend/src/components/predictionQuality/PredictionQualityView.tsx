@@ -15,6 +15,7 @@ import {
 	Report,
 } from "../../footystats-frontendapi";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import JobProgressStore from "../../mobx/JobProgressStore";
 
 export const PredictionQualityView = () => {
 	const [report, setReport] = useState<Report>();
@@ -124,11 +125,12 @@ export const PredictionQualityView = () => {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
 			.recomputeQuality()
-			.then(() =>
+			.then((jobInformation) => {
+				JobProgressStore.addJob(jobInformation);
 				predictionQualityService
 					.latestReport(selectedBet)
-					.then(setReport),
-			)
+					.then(setReport);
+			})
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}

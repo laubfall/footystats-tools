@@ -1,7 +1,6 @@
 package de.footystats.tools.services.stats.batch;
 
 import de.footystats.tools.services.match.Match;
-import de.footystats.tools.services.prediction.quality.batch.ComputeJobListener;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.MatchStatsRepository;
 import java.util.Map;
@@ -21,6 +20,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration("matchStatsBatchConfiguration")
 public class BatchConfiguration {
 
+	/**
+	 * Job name for reimporting match stats.
+	 */
 	public static final String REIMPORT_MATCH_STATS_JOB = "reimportMatchStatsJob";
 
 	@Bean(name = "reimportMatchStatsItemReader")
@@ -47,7 +49,7 @@ public class BatchConfiguration {
 	}
 
 	@Bean(name = REIMPORT_MATCH_STATS_JOB)
-	public Job reimportMatchStatsJob(JobRepository jobRepository, Step reimportMatchStatsStep, ComputeJobListener jobListener) {
-		return new JobBuilder(REIMPORT_MATCH_STATS_JOB, jobRepository).listener(jobListener).start(reimportMatchStatsStep).build();
+	public Job reimportMatchStatsJob(JobRepository jobRepository, Step reimportMatchStatsStep, MatchStatsToProcessBeforeStart listener) {
+		return new JobBuilder(REIMPORT_MATCH_STATS_JOB, jobRepository).start(reimportMatchStatsStep).listener(listener).build();
 	}
 }

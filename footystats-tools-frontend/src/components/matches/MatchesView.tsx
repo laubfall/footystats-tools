@@ -19,6 +19,7 @@ import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 import { apiCatchReasonHandler } from "../functions";
 import { utcToZonedTime } from "date-fns-tz";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import JobProgressStore from "../../mobx/JobProgressStore";
 
 function matchListEntries(n: MatchListElement[]) {
 	const r = n.map(async (ms) => {
@@ -187,6 +188,7 @@ export const MatchesView = () => {
 
 		matchControllerApi
 			.reimportMatchStats()
+			.then((jobInformation) => JobProgressStore.addJob(jobInformation))
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	};

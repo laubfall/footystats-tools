@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
@@ -13,6 +12,7 @@ import { SettingsView } from "./settings/SettingsView";
 import LoadingOverlay from "react-loading-overlay";
 import LoadingOverlayStore from "../mobx/LoadingOverlayStore";
 import { SpinnerWithMessage } from "./spinner/SpinnerWithMessage";
+import { ObsJobProgressBar } from "./progress/JobProgressBar";
 
 const FootyStatsTools = () => {
 	const ObsMessages = observer(() => (
@@ -62,6 +62,8 @@ const FootyStatsTools = () => {
 					</Routes>
 				</>
 			</ObsLoadingOverlay>
+
+			<ObsJobProgressBar />
 		</>
 	);
 };

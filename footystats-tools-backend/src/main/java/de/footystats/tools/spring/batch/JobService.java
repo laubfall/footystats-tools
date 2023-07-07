@@ -1,7 +1,5 @@
 package de.footystats.tools.spring.batch;
 
-import static de.footystats.tools.services.prediction.quality.batch.BatchConfiguration.MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB;
-
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +25,9 @@ public abstract class JobService {
 		this.jobExplorer = jobExplorer;
 	}
 
-	protected JobExecution executeJob(Job jobToExecute, Supplier<JobExecution> currentExecution){
+	protected JobExecution executeJob(Job jobToExecute, Supplier<JobExecution> currentExecution) {
 		var jobExecution = currentExecution.get();
-		if(jobExecution != null){
+		if (jobExecution != null) {
 			log.info("BetPredictionQuality migrating job is already running.");
 			return jobExecution;
 		}
@@ -48,8 +46,8 @@ public abstract class JobService {
 		return null;
 	}
 
-	protected JobExecution byJobName(String jobName){
-		final Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB);
+	protected JobExecution byJobName(String jobName) {
+		final Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions(jobName);
 		if (runningJobExecutions.isEmpty()) {
 			return null;
 		}
