@@ -248,5 +248,5 @@
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 </project>
