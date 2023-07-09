@@ -8,10 +8,7 @@ import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
-import {
-	OverlayTrigger,
-	Popover,
-} from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
@@ -40,6 +37,11 @@ function createBetPredictionColumns(
 					const betPrediction = row.betPredictions.find(
 						(v) => v.bet === bet,
 					);
+
+					// In case of new bet prediction, we don't have a prediction yet.
+					if (betPrediction?.prediction === undefined) {
+						return null;
+					}
 
 					return (
 						<OverlayTrigger
