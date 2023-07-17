@@ -5,18 +5,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Downloads matchStats from footystats as background task.
+ * <p>
+ * Doing this at 00:00 and 12:00 every day.
+ */
 @Component
 public class MatchStatsDownloadTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(MatchStatsDownloadTask.class);
 
-	private MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
+	private final MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
 
 	public MatchStatsDownloadTask(MatchStatsCsvFileDownloadService matchStatsFileDownloadService) {
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 	}
 
-	@Scheduled(cron = "0 0 0,12 * * *")
+	@Scheduled(cron = "0 0 0 0,12 * * *")
 	public void runMatchStatsDownload() {
 		logger.info("Start downloading matchStats from footystats as background task.");
 		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
