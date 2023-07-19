@@ -21,7 +21,9 @@ public class MatchStatsDownloadTask {
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 	}
 
-	@Scheduled(cron = "0 0 0 0,12 * * *")
+	@Scheduled(cron = "0 0 0 ? * *")
+	@Scheduled(cron = "0 0 8 ? * *")
+	@Scheduled(cron = "0 0 16 ? * *")
 	public void runMatchStatsDownload() {
 		logger.info("Start downloading matchStats from footystats as background task.");
 		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
