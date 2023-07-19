@@ -37,6 +37,21 @@ class CsvFileServiceTest {
 	@Autowired
 	private CsvFileService<PlayerStats> playerStatsCsvFileService;
 
+	private static Stream<Arguments> determineCsvTypeParams() {
+		return Stream.of(
+			Arguments.of("austria-landesliga-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
+			Arguments.of("austrial-landesliga-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
+			Arguments.of("austrial-landesliga-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
+			Arguments.of("austrial-landesliga-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
+			Arguments.of("austrial-landesliga-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS),
+			Arguments.of("australia-northern-nsw-npl-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
+			Arguments.of("australia-northern-nsw-npl-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
+			Arguments.of("australia-northern-nsw-npl-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
+			Arguments.of("australia-northern-nsw-npl-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
+			Arguments.of("australia-northern-nsw-npl-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS)
+		);
+	}
+
 	@Test
 	void importMatchStats() {
 		try (var inputStream = getClass().getResourceAsStream("matches_expanded-1630235153-expectRenamed.csv");) {
@@ -52,7 +67,22 @@ class CsvFileServiceTest {
 		} catch (IOException e) {
 			Assertions.fail();
 		}
+	}
 
+	@Test
+	void importMatchStatsWithUtf8Chars() {
+		try (var inputStream = getClass().getResourceAsStream("matches_expanded-withspecialchars.csv");) {
+			var entries = csvFileService.importFile(inputStream, MatchStats.class);
+			Assertions.assertNotNull(entries);
+			Assertions.assertEquals(3, entries.size());
+
+			var onlyMatchStats = entries.get(2);
+			Assertions.assertEquals("Romania", onlyMatchStats.getCountry());
+			Assertions.assertEquals("CSO Boldeşti-Scăeni", onlyMatchStats.getHomeTeam());
+			Assertions.assertEquals("Ştefăneşti", onlyMatchStats.getAwayTeam());
+		} catch (IOException e) {
+			Assertions.fail();
+		}
 	}
 
 	@Test
@@ -123,20 +153,5 @@ class CsvFileServiceTest {
 		ICsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(filename);
 		Assertions.assertNotNull(csvFileInformation);
 		Assertions.assertEquals(expectedType, csvFileInformation.type());
-	}
-
-	private static Stream<Arguments> determineCsvTypeParams(){
-		return Stream.of(
-			Arguments.of("austria-landesliga-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
-			Arguments.of("austrial-landesliga-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
-			Arguments.of("austrial-landesliga-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
-			Arguments.of("austrial-landesliga-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
-			Arguments.of("austrial-landesliga-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS),
-			Arguments.of("australia-northern-nsw-npl-matches-2020-to-2021-stats.csv", CsvFileType.LEAGUE_MATCH_STATS),
-			Arguments.of("australia-northern-nsw-npl-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
-			Arguments.of("australia-northern-nsw-npl-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
-			Arguments.of("australia-northern-nsw-npl-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
-			Arguments.of("australia-northern-nsw-npl-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS)
-		);
 	}
 }
