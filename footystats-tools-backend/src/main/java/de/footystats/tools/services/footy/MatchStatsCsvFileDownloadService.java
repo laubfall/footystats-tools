@@ -1,11 +1,10 @@
 package de.footystats.tools.services.footy;
 
-import de.footystats.tools.services.stats.MatchStats;
-import de.footystats.tools.services.stats.MatchStatsService;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.csv.CsvFileService;
-
+import de.footystats.tools.services.stats.MatchStats;
+import de.footystats.tools.services.stats.MatchStatsService;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -31,17 +30,6 @@ public class MatchStatsCsvFileDownloadService extends CsvFileDownloadService {
 		this.matchStatsService = matchStatsService;
 	}
 
-	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
-		try {
-			final URL url = new URL(
-				properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource()
-					+ matchStatsForDay.toEpochSecond(LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
-			return csvHttpClient.connectToFootystatsAndRetrieveFileContent(sessionCookie, url);
-		} catch (IOException e) {
-			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_DL_FAILED, e);
-		}
-	}
-
 	public void downloadMatchStatsCsvFileAndImport() {
 		var rawMatches = downloadMatchStatsCsvFile(LocalDate.now());
 
@@ -51,6 +39,18 @@ public class MatchStatsCsvFileDownloadService extends CsvFileDownloadService {
 			matchStats.forEach(matchStatsService::importMatchStats);
 		}, rawMatches, "matchStats");
 	}
+
+	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
+		try {
+			final URL url = new URL(
+				properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource() + matchStatsForDay.toEpochSecond(
+					LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
+			return csvHttpClient.connectToFootystatsAndRetrieveFileContent(sessionCookie, url);
+		} catch (IOException e) {
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_DL_FAILED, e);
+		}
+	}
+
 
 	List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay) {
 		var sessionCookie = csvHttpClient.login();

@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,7 +62,6 @@ public class MatchController {
 		return JobInformation.convert(jobExecution);
 	}
 
-	@JsonComponent
 	public static class ListMatchRequest {
 
 		@Setter

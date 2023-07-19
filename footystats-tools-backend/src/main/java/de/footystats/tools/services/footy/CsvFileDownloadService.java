@@ -4,6 +4,7 @@ import de.footystats.tools.FootystatsProperties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Base functionality when working with downloaded footystats csv files.
- *
+ * <p>
  * Provides the http client and methods to store downloaded csv files to filesystem.
  */
 @Slf4j
@@ -34,7 +35,7 @@ public abstract class CsvFileDownloadService {
 		FileInputStream fis = null;
 		try {
 			tmpFile = File.createTempFile(tmpFilePrefix, "csv");
-			FileUtils.writeLines(tmpFile, rawCsvData);
+			FileUtils.writeLines(tmpFile, StandardCharsets.UTF_8.name(), rawCsvData);
 			fis = new FileInputStream(tmpFile);
 			saveCsvFileIfWanted(tmpFile, tmpFilePrefix);
 			consumer.accept(fis);
