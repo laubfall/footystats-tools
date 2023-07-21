@@ -66,8 +66,21 @@ public abstract class CsvFileDownloadService {
 			File fileToSave = new File(path, prefix + "_" + pointInTimeOfSave + ".csv");
 			FileUtils.copyFile(downloadedCsvFile, fileToSave);
 			log.info("Saved csv file: " + fileToSave.getAbsolutePath());
+			grantFullAccessOnWindows(fileToSave);
 		} catch (IOException e) {
 			log.error("Failed copying temp csv file to wanted destination.", e);
+		}
+	}
+
+	// Check if os is windows, if so, grant full access to the file.
+	private void grantFullAccessOnWindows(File file) {
+		if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+			var result = file.setWritable(true, false);
+			log.info("Set writable result: " + result + " for file: " + file.getAbsolutePath());
+			result = file.setReadable(true, false);
+			log.info("Set readable result: " + result + " for file: " + file.getAbsolutePath());
+			result = file.setExecutable(true, false);
+			log.info("Set executable result: " + result + " for file: " + file.getAbsolutePath());
 		}
 	}
 }
