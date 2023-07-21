@@ -1,13 +1,16 @@
 package de.footystats.tools.services.footy.dls;
 
-import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 @CompoundIndexes({
 	@CompoundIndex(name = "unique", def = "{'country': 1, 'league': 1, 'footyStatsDlId': 1, 'season': 1, 'downloadBitmask': 1, 'lastLeagueDownload': 1, 'lastTeamsDownload': 1, 'lastTeams2Download': 1, 'lastPlayerDownload': 1, 'lastMatchDownload': 1}")
@@ -17,6 +20,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @Builder
 public class DownloadCountryLeagueStatsConfig {
+
 	@Getter
 	@Setter
 	private String country;
@@ -40,11 +44,7 @@ public class DownloadCountryLeagueStatsConfig {
 	private String season;
 
 	/**
-	 * 1: League
-	 * 2: Teams
-	 * 4: Teams2
-	 * 8: Player
-	 * 16: Match
+	 * 1: League 2: Teams 4: Teams2 8: Player 16: Match
 	 */
 	@Getter
 	@Setter
@@ -70,31 +70,32 @@ public class DownloadCountryLeagueStatsConfig {
 	@Setter
 	private Long lastMatchDownload;
 
-	public List<FileTypeBit> typesWithWantedDownload(){
+	public List<FileTypeBit> typesWithWantedDownload() {
 		List<FileTypeBit> result = new ArrayList<>(5);
-		Function<Long, Boolean> dlTimeReached = (lastDownload) -> lastDownload == null || lastDownload < System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
+		Predicate<Long> dlTimeReached = (lastDownload) -> lastDownload == null
+			|| lastDownload < System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
 		var fileBitToCheck = FileTypeBit.LEAGUE;
-		if((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.apply(lastLeagueDownload)){
+		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastLeagueDownload)) {
 			result.add(fileBitToCheck);
 		}
 
 		fileBitToCheck = FileTypeBit.TEAM;
-		if((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.apply(lastTeamsDownload)){
+		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastTeamsDownload)) {
 			result.add(fileBitToCheck);
 		}
 
 		fileBitToCheck = FileTypeBit.TEAM2;
-		if((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.apply(lastTeams2Download)){
+		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastTeams2Download)) {
 			result.add(fileBitToCheck);
 		}
 
 		fileBitToCheck = FileTypeBit.PLAYER;
-		if((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.apply(lastPlayerDownload)){
+		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastPlayerDownload)) {
 			result.add(fileBitToCheck);
 		}
 
 		fileBitToCheck = FileTypeBit.MATCH;
-		if((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.apply(lastMatchDownload)){
+		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastMatchDownload)) {
 			result.add(fileBitToCheck);
 		}
 
