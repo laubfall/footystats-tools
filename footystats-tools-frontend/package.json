@@ -94,7 +94,7 @@
     "mobx-react-lite": "^3.4.0",
     "react-bootstrap": "^2.5.0",
     "react-data-table-component": "^7.5.3",
-    "react-datetime-picker": "^4.0.0",
+    "react-datetime-picker": "^5.2.2",
     "react-icons": "^4.4.0",
     "react-loading-overlay": "^1.0.1",
     "react-router": "^6.4.0",

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import DateTimePicker from "react-datetime-picker";
 import Select, { MultiValue, PropsValue } from "react-select";
 import { NString } from "../../app/types/General";
 import countriesAndLeagues from "../../app/countriesAndLeagues";
 import translate from "../../i18n/translate";
 import { subMinutes } from "date-fns";
+import { DateTimePicker } from "react-datetime-picker";
 
 export const MatchFilter = ({
 	selectedCountry,
