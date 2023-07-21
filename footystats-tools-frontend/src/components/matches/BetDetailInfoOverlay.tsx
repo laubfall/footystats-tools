@@ -39,6 +39,14 @@ export const BetDetailInfoOverlay = ({
 		return (statisticalOutcome * 100).toFixed(2);
 	}
 
+	function recommendedBetOdd(statisticalOutcome?: number) {
+		if (!statisticalOutcome) {
+			return 0;
+		}
+
+		return (1 / statisticalOutcome).toFixed(2);
+	}
+
 	return (
 		<>
 			{translate("renderer.matchlist.influencer.popup.help")}
@@ -51,6 +59,16 @@ export const BetDetailInfoOverlay = ({
 					</b>
 					{betPrediction.prediction.betSuccessInPercent} /{" "}
 					{humanReadablePercent(
+						statisticalOutcome?.betStatisticalSuccess,
+					)}
+				</ListGroupItem>
+				<ListGroupItem>
+					<b>
+						{translate(
+							"renderer.matchlist.influencer.popup.recommended.odd",
+						)}
+					</b>{" "}
+					{recommendedBetOdd(
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
 				</ListGroupItem>

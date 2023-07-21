@@ -7,8 +7,8 @@
 	"renderer.influencerdistributiongraph.scatterdiagram.betfailed": "Nicht erfolgreich bewertet",
 	"renderer.influencerdistributiongraph.scatterdiagram.betsuccess": "Erfolgreich bewertet",
 	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
-	"renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
 	"renderer.matchesview.bet.OVER_ONE_FIVE": "Ü1.5",
+	"renderer.matchesview.bet.OVER_ZERO_FIVE": "Ü0.5",
 	"renderer.matchesview.button.loadmatchstats": "Spieldaten von Footystats laden",
 	"renderer.matchesview.button.reimportmatchstats": "Vorhersagen neu berechnen",
 	"renderer.matchesview.overlay.loading.footystats": "Lade MatchStats.csv von footystats.org",
@@ -19,6 +19,7 @@
 	"renderer.matchfilter.label.start": "von",
 	"renderer.matchlist.influencer.popup.help": "Wetter (Influencer): berechnet / statistisch",
 	"renderer.matchlist.influencer.popup.influencer.title": "Berechnete zu statistischer Wahrscheinlichkeit",
+	"renderer.matchlist.influencer.popup.recommended.odd": "Empfohlene Quote:",
 	"renderer.matchlist.influencer.popup.statistical.outcome": "Wette gesamt: ",
 	"renderer.matchlist.influencer.popup.title": "Eintrittswahrscheinlichkeit",
 	"renderer.matchlist.table.col.five": "Ergebnis",
@@ -54,11 +55,11 @@
 	"renderer.predictionqualitiyview.table.col.two": "Bewertet (gesamt)",
 	"renderer.predictionqualityview.button.calculate": "Aktualisieren",
 	"renderer.predictionqualityview.button.recalculate": "Komplett neu berechnen",
+	"renderer.progress.job.migratedToNewBetPredictionQualityJob": "Qualität der Vorhersagen wird neu berechnet",
+	"renderer.progress.job.reimportMatchStatsJob": "Vorhersagen werden neu berechnet",
+	"renderer.progress.job.title": "Laufende Prozesse",
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
 	"renderer.settings.input.footyusername": "Benutzername Footystats",
-	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld",
-	"renderer.progress.job.reimportMatchStatsJob": "Vorhersagen werden neu berechnet",
-	"renderer.progress.job.migratedToNewBetPredictionQualityJob": "Qualität der Vorhersagen wird neu berechnet",
-	"renderer.progress.job.title": "Laufende Prozesse"
+	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
 }
