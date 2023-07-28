@@ -1,4 +1,4 @@
-import { NDate, NString } from "../../types/General";
+import { NDate } from "../../types/General";
 import { MatchControllerApi, Paging } from "../../../footystats-frontendapi";
 
 class IpcMatchService {

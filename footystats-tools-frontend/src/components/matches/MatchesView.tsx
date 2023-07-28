@@ -206,15 +206,8 @@ export const MatchesView = () => {
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	};
 
-	useEffect(() => {
-		loadMatches([], [], undefined, undefined, undefined, {
-			page: 0,
-			size: perPage,
-			direction: sortOrder,
-			properties: [sortColumn],
-		});
-	}, []);
-
+	// Note: this is a debounced effect, so it will only run once every 500ms
+	// but this affects the filter, so not only the change of search terms, but also the change of the other filter settings.
 	useDebouncedEffect(
 		() => {
 			loadMatches(
