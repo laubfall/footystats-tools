@@ -40,8 +40,13 @@ public class MatchController {
 
 	@PostMapping(value = "/list", consumes = {"application/json"}, produces = {"application/json"})
 	public PagingResponse<MatchListElement> listMatches(@RequestBody ListMatchRequest request) {
+		// If fullTextSearchterm is not empty we split it by space and add the resulting list to the fullTextSearchTerms list
+		final List<String> fullTextSearchTerms = new ArrayList<>();
+		if (request.fullTextSearchTerms != null && !request.fullTextSearchTerms.isEmpty()) {
+			fullTextSearchTerms.addAll(List.of(request.fullTextSearchTerms.split(" ")));
+		}
 		var matches = matchService.find(MatchSearch.builder().countries(request.country).leagues(request.league).start(request.start).end(request.end)
-			.pageable(request.paging.convert()).build());
+			.fullTextSearchTerms(fullTextSearchTerms).pageable(request.paging.convert()).build());
 
 		var modelMapper = new ModelMapper();
 		List<MatchListElement> result = matches.map(m -> modelMapper.map(m, MatchListElement.class)).map(m -> {
@@ -76,6 +81,10 @@ public class MatchController {
 		@Setter
 		@Getter
 		private List<String> league;
+
+		@Getter
+		@Setter
+		private String fullTextSearchTerms;
 
 		@Setter
 		@Getter

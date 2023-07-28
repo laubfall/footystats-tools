@@ -17,6 +17,7 @@
 	"renderer.matchfilter.label.end": "bis",
 	"renderer.matchfilter.label.league": "Liga",
 	"renderer.matchfilter.label.start": "von",
+	"renderer.matchfilter.label.teamsearch": "Suche nach Teamname",
 	"renderer.matchlist.influencer.popup.help": "Wetter (Influencer): berechnet / statistisch",
 	"renderer.matchlist.influencer.popup.influencer.title": "Berechnete zu statistischer Wahrscheinlichkeit",
 	"renderer.matchlist.influencer.popup.recommended.odd": "Empfohlene Quote:",

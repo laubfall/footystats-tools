@@ -46,6 +46,12 @@ export interface ListMatchRequest {
     league?: Array<string>;
     /**
      * 
+     * @type {string}
+     * @memberof ListMatchRequest
+     */
+    fullTextSearchTerms?: string;
+    /**
+     * 
      * @type {Date}
      * @memberof ListMatchRequest
      */
@@ -80,6 +86,7 @@ export function ListMatchRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
         'start': !exists(json, 'start') ? undefined : (new Date(json['start'])),
         'country': !exists(json, 'country') ? undefined : json['country'],
         'league': !exists(json, 'league') ? undefined : json['league'],
+        'fullTextSearchTerms': !exists(json, 'fullTextSearchTerms') ? undefined : json['fullTextSearchTerms'],
         'end': !exists(json, 'end') ? undefined : (new Date(json['end'])),
         'paging': !exists(json, 'paging') ? undefined : PagingFromJSON(json['paging']),
     };
@@ -97,6 +104,7 @@ export function ListMatchRequestToJSON(value?: ListMatchRequest | null): any {
         'start': value.start === undefined ? undefined : (value.start.toISOString()),
         'country': value.country,
         'league': value.league,
+        'fullTextSearchTerms': value.fullTextSearchTerms,
         'end': value.end === undefined ? undefined : (value.end.toISOString()),
         'paging': PagingToJSON(value.paging),
     };

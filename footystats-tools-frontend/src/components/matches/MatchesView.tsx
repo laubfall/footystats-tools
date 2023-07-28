@@ -20,6 +20,7 @@ import { apiCatchReasonHandler } from "../functions";
 import { utcToZonedTime } from "date-fns-tz";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 import JobProgressStore from "../../mobx/JobProgressStore";
+import { useDebouncedEffect } from "../../react/useDebounce-hook";
 
 function matchListEntries(n: MatchListElement[]) {
 	const r = n.map(async (ms) => {
@@ -85,11 +86,19 @@ export const MatchesView = () => {
 		league: string[],
 		from: Date,
 		until: Date,
+		teamSearchTerms?: string,
 		paging?: Paging,
 	) {
 		const mss = new IpcMatchService();
 		LoadingOverlayStore.loadingNow();
-		mss.matchesByFilter(paging, country, league, from, until)
+		mss.matchesByFilter(
+			paging,
+			country,
+			league,
+			from,
+			until,
+			teamSearchTerms,
+		)
 			.then(async (n) => {
 				setTotalRows(n.totalElements);
 				const r = await createMatchListEntries(n.elements);
@@ -111,6 +120,7 @@ export const MatchesView = () => {
 			filter.league,
 			filter.timeFrom,
 			filter.timeUntil,
+			filter.teamSearch,
 			{
 				page: page,
 				size: perPage,
@@ -128,6 +138,7 @@ export const MatchesView = () => {
 			filter.league,
 			filter.timeFrom,
 			filter.timeUntil,
+			filter.teamSearch,
 			{
 				page: newPageValue,
 				size: perPage,
@@ -146,6 +157,7 @@ export const MatchesView = () => {
 			filter.league,
 			filter.timeFrom,
 			filter.timeUntil,
+			filter.teamSearch,
 			{
 				page: currentPage - 1,
 				size: newPerPage,
@@ -168,6 +180,7 @@ export const MatchesView = () => {
 					filter.league,
 					filter.timeFrom,
 					filter.timeUntil,
+					filter.teamSearch,
 					{
 						page: page,
 						size: perPage,
@@ -194,7 +207,7 @@ export const MatchesView = () => {
 	};
 
 	useEffect(() => {
-		loadMatches([], [], undefined, undefined, {
+		loadMatches([], [], undefined, undefined, undefined, {
 			page: 0,
 			size: perPage,
 			direction: sortOrder,
@@ -202,25 +215,29 @@ export const MatchesView = () => {
 		});
 	}, []);
 
+	useDebouncedEffect(
+		() => {
+			loadMatches(
+				filter.country,
+				filter.league,
+				filter.timeFrom,
+				filter.timeUntil,
+				filter.teamSearch,
+				{
+					page: page,
+					size: perPage,
+					direction: sortOrder,
+					properties: [sortColumn],
+				},
+			);
+		},
+		[filter],
+		500,
+	);
+
 	return (
 		<>
-			<MatchFilterHoc
-				somethingChanged={(changedFilter) => {
-					loadMatches(
-						changedFilter.country,
-						changedFilter.league,
-						changedFilter.timeFrom,
-						changedFilter.timeUntil,
-						{
-							page: page,
-							size: perPage,
-							direction: sortOrder,
-							properties: [sortColumn],
-						},
-					);
-					setFilter(changedFilter);
-				}}
-			/>
+			<MatchFilterHoc somethingChanged={setFilter} />
 
 			<MatchList
 				entries={matches}

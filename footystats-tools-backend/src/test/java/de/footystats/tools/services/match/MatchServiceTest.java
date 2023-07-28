@@ -1,7 +1,16 @@
 package de.footystats.tools.services.match;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -11,15 +20,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
 @ContextConfiguration(classes = {MatchServiceConfiguration.class})
-public class MatchServiceTest {
+class MatchServiceTest {
 
 	@Autowired
 	private MatchService matchService;
@@ -27,12 +32,26 @@ public class MatchServiceTest {
 	@Autowired
 	private MatchRepository matchRepository;
 
+	static Stream<Pair<String, String>> multipleSearchTerms() {
+		return Stream.of(
+			Pair.of("Yolo", "Yala"),
+			Pair.of("yolo", "yala"),
+			Pair.of("YOLO", "YALA"),
+			Pair.of("yOlO", "yAlA")
+		);
+	}
+
+	@BeforeEach
+	void cleanUp() {
+		matchRepository.deleteAll();
+	}
 
 	@Test
-	public void upsertTwoDifferentMatches(){
+	void upsertTwoDifferentMatches() {
 		var country = "Fantasia";
 		var now = LocalDateTime.now();
-		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now).awayTeam("Team Away").homeTeam("Team Home");
+		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
+			.awayTeam("Team Away").homeTeam("Team Home");
 
 		matchService.upsert(matchBuilder.build());
 
@@ -45,10 +64,11 @@ public class MatchServiceTest {
 	}
 
 	@Test
-	public void findByCustomQuery() {
+	void findByCustomQuery() {
 		var country = "Heureka";
 		var now = LocalDateTime.now();
-		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now).awayTeam("Team Away").homeTeam("Team Home");
+		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
+			.awayTeam("Team Away").homeTeam("Team Home");
 
 		matchService.upsert(matchBuilder.build());
 
@@ -76,8 +96,46 @@ public class MatchServiceTest {
 	}
 
 	@Test
-	public void findAllByCustomQuery(){
+	void findAllByCustomQuery() {
 		var result = matchService.find(MatchSearch.builder().pageable(PageRequest.of(0, 10)).build());
 		Assertions.assertNotNull(result);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"Yala", "yala", "YALA", "yAlA", "Yolo", "yolo", "YOLO", "yOlO"})
+	void findByTeamNameFullTextQuery(String searchTerm) {
+
+		var country = "Heureka";
+		var now = LocalDateTime.now();
+		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
+			.awayTeam("Yolo").homeTeam("Yala");
+
+		matchService.upsert(matchBuilder.build());
+
+		var result = matchService.find(MatchSearch.builder().fullTextSearchTerms(List.of(searchTerm)).pageable(PageRequest.of(0, 10)).build());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.getTotalElements());
+	}
+
+	@ParameterizedTest
+	@MethodSource("multipleSearchTerms")
+	void findByTeamNameFullTextQueryMultipleSearchTerms(Pair<String, String> searchTerms) {
+
+		var country = "Heureka";
+		var now = LocalDateTime.now();
+		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
+			.awayTeam("Yolo").homeTeam("other");
+		matchService.upsert(matchBuilder.build());
+
+		// Create another match with home team "Yala" the way as before.
+		matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
+			.awayTeam("other").homeTeam("Yala");
+		matchService.upsert(matchBuilder.build());
+
+		var result = matchService.find(
+			MatchSearch.builder().fullTextSearchTerms(List.of(searchTerms.getLeft(), searchTerms.getRight())).pageable(PageRequest.of(0, 10))
+				.build());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.getTotalElements());
 	}
 }

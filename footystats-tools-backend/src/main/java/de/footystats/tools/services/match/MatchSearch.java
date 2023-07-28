@@ -1,15 +1,23 @@
 package de.footystats.tools.services.match;
 
-import lombok.*;
-import org.springframework.data.domain.Pageable;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.domain.Pageable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class MatchSearch {
+
+	@Getter
+	@Setter
+	private List<String> fullTextSearchTerms;
+
 	@Getter
 	@Setter
 	private List<String> countries;

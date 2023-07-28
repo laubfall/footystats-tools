@@ -1,11 +1,15 @@
 package de.footystats.tools.services.match;
 
-import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
-import de.footystats.tools.services.stats.MatchStats;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
+import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
+import de.footystats.tools.services.stats.MatchStats;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,11 +18,6 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Service
 public class MatchService extends MongoService<Match> {
@@ -53,11 +52,13 @@ public class MatchService extends MongoService<Match> {
 		if (!searchCriterias.isEmpty()) {
 			c = c.andOperator(searchCriterias);
 		}
+
 		Query countQuery = query(c);
+		applyFullTextCriteria(search, countQuery);
 		var matchCount = mongoTemplate.count(countQuery, Match.class);
 
 		Query matchSearchQuery = query(c).with(search.getPageable());
-
+		applyFullTextCriteria(search, matchSearchQuery);
 		var result = mongoTemplate.find(matchSearchQuery, Match.class);
 		return new PageImpl<>(result, search.getPageable(), matchCount);
 	}
@@ -117,5 +118,17 @@ public class MatchService extends MongoService<Match> {
 
 		var predictionNumber = predictionService.prediction(new BetPredictionContext(ms, null, null, bet));
 		return predictionNumber;
+	}
+
+	private void applyFullTextCriteria(MatchSearch search, Query query) {
+		if (!CollectionUtils.isEmpty(search.getFullTextSearchTerms())) {
+
+			List<Criteria> searchCritierias = new ArrayList<>();
+			for (String term : search.getFullTextSearchTerms()) {
+				searchCritierias.add(Criteria.where("homeTeam").regex(".*(?i)" + term + ".*"));
+				searchCritierias.add(Criteria.where("awayTeam").regex(".*(?i)" + term + ".*"));
+			}
+			query.addCriteria(Criteria.where("").orOperator(searchCritierias.toArray(new Criteria[0])));
+		}
 	}
 }

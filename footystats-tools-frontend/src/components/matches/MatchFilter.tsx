@@ -6,6 +6,7 @@ import countriesAndLeagues from "../../app/countriesAndLeagues";
 import translate from "../../i18n/translate";
 import { subMinutes } from "date-fns";
 import { DateTimePicker } from "react-datetime-picker";
+import { useDebouncedEffect } from "../../react/useDebounce-hook";
 
 export const MatchFilter = ({
 	selectedCountry,
@@ -19,6 +20,8 @@ export const MatchFilter = ({
 	countryChanged,
 	leagueChanged,
 	currentMatchesChanged,
+	teamSearchChanged,
+	teamSearch,
 }: MatchFilterProps) => (
 	<>
 		<Row className={"m-2"}>
@@ -61,6 +64,18 @@ export const MatchFilter = ({
 			</Form.Group>
 		</Row>
 		<Row className={"m-2"}>
+			<Form.Group as={Col} className={"col-3"}>
+				<Form.Label htmlFor={"teamFullTextSearch"}>
+					{translate("renderer.matchfilter.label.teamsearch")}
+				</Form.Label>
+				<Form.Control
+					id={"teamFullTextSearch"}
+					value={teamSearch}
+					onChange={(e) => teamSearchChanged(e.target.value)}
+				></Form.Control>
+			</Form.Group>
+		</Row>
+		<Row className={"m-2"}>
 			<Form.Group as={Col}>
 				<Form.Check
 					type="checkbox"
@@ -85,6 +100,8 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 
 	const [selectedLeagues, setSelectedLeagues] =
 		useState<MultiValue<SelectOption>>();
+
+	const [teamSearch, setTeamSearch] = useState<string>("");
 
 	const [timeFrom, setTimeFrom] = useState<Date>(undefined);
 	const [timeUntil, setTimeUntil] = useState<Date>(undefined);
@@ -199,6 +216,7 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 				league: [],
 				timeFrom,
 				timeUntil,
+				teamSearch,
 			});
 		}
 	}
@@ -211,12 +229,28 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 		return [timeFrom, timeUntil];
 	}
 
+	function onTeamSearchChanged(teamSearchNew: string) {
+		if (props.somethingChanged) {
+			props.somethingChanged({
+				country: selectedCountry?.map((mvc) => mvc.value),
+				league: [],
+				timeFrom,
+				timeUntil,
+				teamSearch: teamSearchNew,
+			});
+		}
+
+		setTeamSearch(teamSearchNew);
+	}
+
 	return (
 		<>
 			<MatchFilter
 				leagues={leagues}
 				countries={countries}
 				selectedCountry={selectedCountry}
+				teamSearch={teamSearch}
+				teamSearchChanged={onTeamSearchChanged}
 				countryChanged={onChangeCountry}
 				currentMatches={currentMatches}
 				currentMatchesChanged={onCurrentMatches}
@@ -240,6 +274,7 @@ export type FilterSettings = {
 	timeUntil: Date;
 	country: NString[];
 	league: NString[];
+	teamSearch?: string;
 };
 
 export type MatchFilterHocProps = {
@@ -249,6 +284,7 @@ export type MatchFilterHocProps = {
 	leagueChanged?: (newSelectedLeague: MultiValue<SelectOption>) => void;
 	somethingChanged?: (actualFilter: FilterSettings) => void;
 	currentMatchesChanged?: (checked: boolean) => void;
+	teamSearchChanged?: (teamSearch: string) => void;
 };
 
 export type MatchFilterProps = {
@@ -258,4 +294,5 @@ export type MatchFilterProps = {
 	timeFrom?: Date;
 	timeUntil?: Date;
 	currentMatches?: boolean;
+	teamSearch?: string;
 } & MatchFilterHocProps;

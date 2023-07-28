@@ -8,6 +8,7 @@ class IpcMatchService {
 		league?: string[],
 		from?: NDate,
 		until?: NDate,
+		teamSearchTerms?: string,
 	) {
 		const api = new MatchControllerApi();
 		return api.listMatches({
@@ -17,6 +18,7 @@ class IpcMatchService {
 				paging,
 				start: from,
 				end: until,
+				fullTextSearchTerms: teamSearchTerms,
 			},
 		});
 	}
