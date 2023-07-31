@@ -13,6 +13,7 @@ export async function apiCatchReasonHandler(reason) {
 	}
 
 	AlertMessagesStore.addMessage(translate("renderer.api.error.unknown"));
+	console.error("Unexpected error occured", reason);
 }
 
 export type ExceptionResponse = {

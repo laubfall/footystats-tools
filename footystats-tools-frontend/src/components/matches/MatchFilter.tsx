@@ -182,29 +182,31 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	function onTimeFromChanged(timeFromNew: Date) {
+		const ntf = timeFromNew === null ? undefined : timeFromNew;
 		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
-				timeFrom: timeFromNew === null ? undefined : timeFromNew,
+				timeFrom: ntf,
 				timeUntil,
 			});
 		}
 
-		setTimeFrom(timeFromNew);
+		setTimeFrom(ntf);
 	}
 
 	function onTimeUntilChanged(timeUntilNew: Date) {
+		const ntu = timeUntilNew === null ? undefined : timeUntilNew;
 		if (props.somethingChanged) {
 			props.somethingChanged({
 				country: selectedCountry?.map((mvc) => mvc.value),
 				league: [],
 				timeFrom,
-				timeUntil: timeUntilNew === null ? undefined : timeUntilNew,
+				timeUntil: ntu,
 			});
 		}
 
-		setTimeUntil(timeUntilNew);
+		setTimeUntil(ntu);
 	}
 
 	function onCurrentMatches(checked: boolean) {
