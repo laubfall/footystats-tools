@@ -13,20 +13,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class MatchStatsDownloadTask {
 
-	private static final Logger logger = LoggerFactory.getLogger(MatchStatsDownloadTask.class);
+  private static final Logger logger = LoggerFactory.getLogger(MatchStatsDownloadTask.class);
 
-	private final MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
+  private final MatchStatsCsvFileDownloadService matchStatsFileDownloadService;
 
-	public MatchStatsDownloadTask(MatchStatsCsvFileDownloadService matchStatsFileDownloadService) {
-		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
-	}
+  public MatchStatsDownloadTask(MatchStatsCsvFileDownloadService matchStatsFileDownloadService) {
+    this.matchStatsFileDownloadService = matchStatsFileDownloadService;
+  }
 
-	@Scheduled(cron = "0 0 0 ? * *")
-	@Scheduled(cron = "0 0 8 ? * *")
-	@Scheduled(cron = "0 0 16 ? * *")
-	public void runMatchStatsDownload() {
-		logger.info("Start downloading matchStats from footystats as background task.");
-		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
-		logger.info("Finished downloading matchStats from footystats as background task.");
-	}
+  @Scheduled(cron = "0 0 8 ? * *")
+  @Scheduled(cron = "0 0 14 ? * *")
+  @Scheduled(cron = "0 0 20 ? * *")
+  public void runMatchStatsDownload() {
+    logger.info("Start downloading matchStats from footystats as background task.");
+    matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
+    logger.info("Finished downloading matchStats from footystats as background task.");
+  }
 }
