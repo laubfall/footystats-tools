@@ -37,11 +37,13 @@ public class BatchConfiguration {
 
 	@Bean(name = "reimportMatchStatsStep")
 	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository,
-		RepositoryItemReader<MatchStats> reimportMatchStatsItemReader, MatchStatsItemProcessor itemProcessor, MatchWriter matchWriter) {
+		RepositoryItemReader<MatchStats> reimportMatchStatsItemReader, MatchStatsItemProcessor itemProcessor, MatchWriter matchWriter,
+		MatchStatsToProcessBeforeStart matchStatsListener) {
 		return new SimpleStepBuilder<MatchStats, Match>(new StepBuilder("measurePredictionQuality", jobRepository)
 			.chunk(100, transactionManager)) // first parameter is the count of elements processed in one transaction.
 			.reader(reimportMatchStatsItemReader)
 			.processor(itemProcessor)
+			.listener(matchStatsListener)
 			.writer(matchWriter)
 			.allowStartIfComplete(true)
 			.transactionManager(transactionManager)
@@ -49,7 +51,7 @@ public class BatchConfiguration {
 	}
 
 	@Bean(name = REIMPORT_MATCH_STATS_JOB)
-	public Job reimportMatchStatsJob(JobRepository jobRepository, Step reimportMatchStatsStep, MatchStatsToProcessBeforeStart listener) {
-		return new JobBuilder(REIMPORT_MATCH_STATS_JOB, jobRepository).start(reimportMatchStatsStep).listener(listener).build();
+	public Job reimportMatchStatsJob(JobRepository jobRepository, Step reimportMatchStatsStep) {
+		return new JobBuilder(REIMPORT_MATCH_STATS_JOB, jobRepository).start(reimportMatchStatsStep).build();
 	}
 }

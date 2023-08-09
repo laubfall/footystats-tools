@@ -12,7 +12,7 @@ import org.springframework.batch.item.ExecutionContext;
  * Typically, this is inherited by a class that implements {@link JobExecutionListener}. Keep in mind that the {@link #beforeJob(JobExecution)} method
  * has to be called by the inheriting class.
  */
-public abstract class TrackItemCountExecutionListener implements JobExecutionListener, StepExecutionListener {
+public abstract class TrackItemCountExecutionListener implements StepExecutionListener {
 
 	private static final String ECTX_COUNT_KEY = "countOfItemsToProcess";
 
@@ -37,12 +37,6 @@ public abstract class TrackItemCountExecutionListener implements JobExecutionLis
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
 		stepExecution.getExecutionContext().put(ECTX_COUNT_KEY, count());
-	}
-
-	@Override
-	public void beforeJob(JobExecution jobExecution) {
-		//final Long count = count();
-		//jobExecution.getExecutionContext().put(ECTX_COUNT_KEY, count);
 	}
 
 	public abstract Long count();
