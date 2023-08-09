@@ -28,7 +28,7 @@ public abstract class JobService {
 	protected JobExecution executeJob(Job jobToExecute, Supplier<JobExecution> currentExecution) {
 		var jobExecution = currentExecution.get();
 		if (jobExecution != null) {
-			log.info("BetPredictionQuality migrating job is already running.");
+			log.info("Spring batch job is already running: " + jobExecution.getJobInstance().getJobName());
 			return jobExecution;
 		}
 		try {

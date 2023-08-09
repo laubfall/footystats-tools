@@ -53,13 +53,12 @@ public class JobInformation {
 		var ji = new JobInformation();
 		ji.setJobId(jobExecution.getJobInstance().getInstanceId());
 		ji.itemsToProcess = TrackItemCountExecutionListener.countOfItemsToProcess(jobExecution);
+		ji.jobName = jobExecution.getJobInstance().getJobName();
 		if (ji.itemsToProcess == 0) {
 			ji.progressInPercent = 0;
 			ji.currentReadCount = 0L;
 			return ji;
 		}
-
-		ji.jobName = jobExecution.getJobInstance().getJobName();
 
 		Optional<StepExecution> first = jobExecution.getStepExecutions().stream().findFirst();
 		var currentReadCount = 0L;

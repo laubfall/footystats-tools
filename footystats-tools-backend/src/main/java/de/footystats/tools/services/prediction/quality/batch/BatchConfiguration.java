@@ -2,8 +2,10 @@ package de.footystats.tools.services.prediction.quality.batch;
 
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchRepository;
-import de.footystats.tools.services.stats.MatchStatus;
 import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
+import de.footystats.tools.services.stats.MatchStatus;
+import java.util.Collection;
+import java.util.Map;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -16,9 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import java.util.Collection;
-import java.util.Map;
 
 @Configuration
 public class BatchConfiguration {
@@ -48,8 +47,10 @@ public class BatchConfiguration {
 			.build();
 	}
 
+
 	@Bean(name = "migrateToNewBetPredictionQualityStep")
-	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> recomputeItemReader, MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter) {
+	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> recomputeItemReader,
+		MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter) {
 		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("measurePredictionQuality", jobRepository)
 			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
 			.reader(recomputeItemReader)
@@ -61,7 +62,8 @@ public class BatchConfiguration {
 	}
 
 	@Bean(name = "computeBetPredictionQualityStep")
-	public Step computeStep(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> computeItemReader, ComputeMatchItemProcessor itemProcessor, ComputeBetPredictionQualityWriter itemWriter) {
+	public Step computeStep(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> computeItemReader,
+		ComputeMatchItemProcessor itemProcessor, ComputeBetPredictionQualityWriter itemWriter) {
 		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("computeMeasurePredictionQuality", jobRepository)
 			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
 			.reader(computeItemReader)
@@ -74,7 +76,8 @@ public class BatchConfiguration {
 
 	@Bean(name = MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB)
 	public Job migrationJob(JobRepository jobRepository, Step migrateToNewBetPredictionQualityStep, RecomputeJobListener jobListener) {
-		return new JobBuilder(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener).start(migrateToNewBetPredictionQualityStep).build();
+		return new JobBuilder(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB, jobRepository).listener(jobListener)
+			.start(migrateToNewBetPredictionQualityStep).build();
 	}
 
 	@Bean(name = COMPUTE_BET_PREDICTION_QUALITY_JOB)

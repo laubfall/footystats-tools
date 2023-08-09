@@ -91,7 +91,8 @@ public abstract class CsvFileDownloadService {
       AclFileAttributeView aclAttr = Files.getFileAttributeView(filePath, AclFileAttributeView.class);
 
       UserPrincipalLookupService upls = filePath.getFileSystem().getUserPrincipalLookupService();
-      UserPrincipal user = null;
+      UserPrincipal user;
+      
       try {
         user = upls.lookupPrincipalByName(System.getProperty("user.name"));
         AclEntry.Builder builder = AclEntry.newBuilder();

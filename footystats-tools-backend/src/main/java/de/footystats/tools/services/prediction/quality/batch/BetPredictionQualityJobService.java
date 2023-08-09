@@ -4,7 +4,6 @@ import static de.footystats.tools.services.prediction.quality.batch.BatchConfigu
 import static de.footystats.tools.services.prediction.quality.batch.BatchConfiguration.MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB;
 
 import de.footystats.tools.spring.batch.JobService;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -29,11 +28,11 @@ public class BetPredictionQualityJobService extends JobService implements IBetPr
 
 	@Override
 	public JobExecution startRecomputeJob() {
-		return executeJob(migratedToNewBetPredictionQualityJob, ()->byJobName(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB));
+		return executeJob(migratedToNewBetPredictionQualityJob, () -> byJobName(MIGRATED_TO_NEW_BET_PREDICTION_QUALITY_JOB));
 	}
 
 	@Override
 	public JobExecution startComputeJob() {
-		return executeJob(computeBetPredictionQualityJob, ()->byJobName(COMPUTE_BET_PREDICTION_QUALITY_JOB));
+		return executeJob(computeBetPredictionQualityJob, () -> byJobName(COMPUTE_BET_PREDICTION_QUALITY_JOB));
 	}
 }
