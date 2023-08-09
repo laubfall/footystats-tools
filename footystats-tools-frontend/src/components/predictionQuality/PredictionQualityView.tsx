@@ -112,11 +112,12 @@ export const PredictionQualityView = () => {
 		LoadingOverlayStore.loadingNow();
 		predictionQualityService
 			.computeQuality()
-			.then(() =>
+			.then((jobInformation) => {
+				JobProgressStore.addJob(jobInformation);
 				predictionQualityService
 					.latestReport(selectedBet)
-					.then(setReport),
-			)
+					.then(setReport);
+			})
 			.catch(apiCatchReasonHandler)
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}
