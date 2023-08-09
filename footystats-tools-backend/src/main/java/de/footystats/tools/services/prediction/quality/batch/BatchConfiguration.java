@@ -50,12 +50,13 @@ public class BatchConfiguration {
 
 	@Bean(name = "migrateToNewBetPredictionQualityStep")
 	public Step step(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> recomputeItemReader,
-		MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter) {
+		MatchItemProcessor itemProcessor, BetPredictionQualityWriter itemWriter, RecomputeStepListener recomputeStepListener) {
 		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("measurePredictionQuality", jobRepository)
 			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
 			.reader(recomputeItemReader)
 			.processor(itemProcessor)
 			.writer(itemWriter)
+			.listener(recomputeStepListener)
 			.allowStartIfComplete(true)
 			.transactionManager(transactionManager)
 			.build();
@@ -63,12 +64,13 @@ public class BatchConfiguration {
 
 	@Bean(name = "computeBetPredictionQualityStep")
 	public Step computeStep(PlatformTransactionManager transactionManager, JobRepository jobRepository, RepositoryItemReader<Match> computeItemReader,
-		ComputeMatchItemProcessor itemProcessor, ComputeBetPredictionQualityWriter itemWriter) {
+		ComputeMatchItemProcessor itemProcessor, ComputeBetPredictionQualityWriter itemWriter, ComputeStepListener computeStepListener) {
 		return new SimpleStepBuilder<Match, Collection<BetPredictionQuality>>(new StepBuilder("computeMeasurePredictionQuality", jobRepository)
 			.chunk(5, transactionManager)) // first parameter is the count of elements processed in one transaction.
 			.reader(computeItemReader)
 			.processor(itemProcessor)
 			.writer(itemWriter)
+			.listener(computeStepListener)
 			.allowStartIfComplete(true)
 			.transactionManager(transactionManager)
 			.build();

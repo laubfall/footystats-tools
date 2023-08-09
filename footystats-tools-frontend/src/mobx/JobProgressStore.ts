@@ -40,15 +40,12 @@ export class JobProgressStore {
 	}
 
 	// private function that changes progressInPercent of a specific job
-	private changeProgress(
-		jobId: number,
-		progress: number,
-		currentReadCount: number,
-	): void {
+	private changeProgress(jobInfo: JobInformation): void {
 		for (const job of this.jobs) {
-			if (job.jobId === jobId) {
-				job.progressInPercent = progress;
-				job.currentReadCount = currentReadCount;
+			if (job.jobId === jobInfo.jobId) {
+				job.progressInPercent = jobInfo.progressInPercent;
+				job.currentReadCount = jobInfo.currentReadCount;
+				job.itemsToProcess = jobInfo.itemsToProcess;
 			}
 		}
 	}
@@ -74,11 +71,7 @@ export class JobProgressStore {
 						(job) => {
 							for (const j of this.jobs) {
 								if (j.jobId === job.jobId) {
-									this.changeProgress(
-										job.jobId,
-										job.progressInPercent,
-										job.currentReadCount,
-									);
+									this.changeProgress(job);
 								}
 							}
 						},
