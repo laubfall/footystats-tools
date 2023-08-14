@@ -15,7 +15,7 @@ export const JobProgressBar = ({
 	jobName,
 	status,
 }: JobProgressBarProps) => {
-	if (status === "COMPLETED") {
+	if (status === "COMPLETED" || status === null) {
 		return null;
 	}
 
