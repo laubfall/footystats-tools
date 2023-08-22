@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { SingleValue } from "react-select";
 import {
 	MatchFilter,
 	MatchFilterProps,
-	SelectOption,
 } from "../../components/matches/MatchFilter";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
