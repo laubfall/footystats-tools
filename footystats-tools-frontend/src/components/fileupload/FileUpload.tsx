@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { FootyStatsCsvUploadControllerApi } from "../../footystats-frontendapi";
 import { useFileUpload } from "../../react-use-file-upload/useFileUpload";
 import { Button, Card, Col, Row } from "react-bootstrap";
+import { Messages } from "../alert/Messages";
 
 export const FileUpload = () => {
 	const {
@@ -19,25 +20,32 @@ export const FileUpload = () => {
 
 	const inputRef = useRef<HTMLInputElement>();
 
+	const [messages, setMessages] = React.useState<string[]>([]); // ["jfdklsjf"
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		const formData = createFormData();
-		try {
-			const files: Blob[] = [];
+		const files: Blob[] = [];
 
-			formData.forEach((val) => files.push(val as File));
+		formData.forEach((val) => files.push(val as File));
 
-			await new FootyStatsCsvUploadControllerApi().uploadMultipleFiles({
+		new FootyStatsCsvUploadControllerApi()
+			.uploadMultipleFiles({
 				files,
+			})
+			.then((response) => {
+				setMessages(["Successfully submitted files."]);
+			})
+			.catch((error) => {
+				setMessages(["Failed to submit files."]);
+				console.error("Failed to submit files.", error);
 			});
-		} catch (error) {
-			console.error("Failed to submit files.");
-		}
 	};
 
 	return (
 		<>
+			<Messages messages={["jfdklsjf"]} />
 			<Row>
 				<h1>Upload Files</h1>
 
