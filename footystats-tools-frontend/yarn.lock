@@ -8840,6 +8840,11 @@ mobx@^6.7.0:
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.10.0.tgz#3537680fe98d45232cc19cc8f76280bd8bb6b0b7"
   integrity sha512-WMbVpCMFtolbB8swQ5E2YRrU+Yu8iLozCVx3CdGjbBKlP7dFiCSuiG06uea3JCFN5DnvtAX7+G5Bp82e2xu0ww==
 
+mock-xmlhttprequest@^8.1.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/mock-xmlhttprequest/-/mock-xmlhttprequest-8.2.0.tgz#d9ad9ca82265bcbe2eea5354f556448a2bc0133c"
+  integrity sha512-agEokniRxw/MhrmIl9Ytn5wuj6kK+pu4KaGPV2fGEKStHXH9HIzYPChth2Jb/MB3TMX0ER1F1QMsvMA3BBe3qA==
+
 mozjpeg@^7.0.0:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/mozjpeg/-/mozjpeg-7.1.1.tgz#dfb61953536e66fcabd4ae795e7a312d42a51f18"
@@ -9434,6 +9439,11 @@ path-to-regexp@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-3.2.0.tgz#fa7877ecbc495c601907562222453c43cc204a5f"
   integrity sha512-jczvQbCUS7XmS7o+y1aEO9OBVFeZBQ1MDSEqmO7xSoPgOPoowY/SxLpZ6Vh97/8qHZOteiCKb7gkG9gA2ZUxJA==
+
+path-to-regexp@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-6.2.1.tgz#d54934d6798eb9e5ef14e7af7962c945906918e5"
+  integrity sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==
 
 path-type@^4.0.0:
   version "4.0.0"
@@ -10967,6 +10977,15 @@ store2@^2.14.2:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.14.2.tgz#56138d200f9fe5f582ad63bc2704dbc0e4a45068"
   integrity sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==
+
+storybook-addon-mock@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/storybook-addon-mock/-/storybook-addon-mock-4.2.1.tgz#6f8cb16d2a545827f48d4485cd25f7420ad6a8fd"
+  integrity sha512-OWXneOefQZfZoviBw0jgLgUVcNmf3zd7Ia35FTcI8HBZ0zYmpsC093iHd3aoSm0wQJXDG0xGY1KnfHwKq4G8mg==
+  dependencies:
+    mock-xmlhttprequest "^8.1.0"
+    path-to-regexp "^6.2.1"
+    polished "^4.2.2"
 
 storybook@^7.0.6:
   version "7.1.0"

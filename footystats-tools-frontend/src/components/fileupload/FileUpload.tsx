@@ -45,7 +45,7 @@ export const FileUpload = () => {
 
 	return (
 		<>
-			<Messages messages={["jfdklsjf"]} />
+			<Messages messages={messages} />
 			<Row>
 				<h1>Upload Files</h1>
 
