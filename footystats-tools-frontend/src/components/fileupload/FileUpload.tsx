@@ -3,6 +3,7 @@ import { FootyStatsCsvUploadControllerApi } from "../../footystats-frontendapi";
 import { useFileUpload } from "../../react-use-file-upload/useFileUpload";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { Messages } from "../alert/Messages";
+import translate from "../../i18n/translate";
 
 export const FileUpload = () => {
 	const {
@@ -20,7 +21,7 @@ export const FileUpload = () => {
 
 	const inputRef = useRef<HTMLInputElement>();
 
-	const [messages, setMessages] = React.useState<string[]>([]); // ["jfdklsjf"
+	const [messages, setMessages] = React.useState<string[]>([]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -35,10 +36,10 @@ export const FileUpload = () => {
 				files,
 			})
 			.then((response) => {
-				setMessages(["Successfully submitted files."]);
+				setMessages([translate("renderer.fileupload.upload.success")]);
 			})
 			.catch((error) => {
-				setMessages(["Failed to submit files."]);
+				setMessages([translate("renderer.fileupload.upload.failed")]);
 				console.error("Failed to submit files.", error);
 			});
 	};
@@ -47,12 +48,9 @@ export const FileUpload = () => {
 		<>
 			<Messages messages={messages} />
 			<Row>
-				<h1>Upload Files</h1>
+				<h1>{translate("renderer.fileupload.title")}</h1>
 
-				<p>
-					Please use the form to your right to upload any file(s) of
-					your choosing.
-				</p>
+				<p>{translate("renderer.fileupload.info")}</p>
 
 				<div className="form-container">
 					{/* Display the files to be uploaded */}
@@ -96,10 +94,10 @@ export const FileUpload = () => {
 							setFiles(e, "a");
 						}}
 					>
-						<p>Drag and drop files here</p>
+						<p>{translate("renderer.fileupload.draghere")}</p>
 
 						<Button onClick={() => inputRef.current?.click()}>
-							Or select files to upload
+							{translate("renderer.fileupload.button.selectfile")}
 						</Button>
 
 						{/* Hide the crappy looking default HTML input */}
@@ -115,7 +113,7 @@ export const FileUpload = () => {
 						/>
 
 						<Button className={"m-lg-2"} onClick={handleSubmit}>
-							Submit
+							{translate("renderer.fileupload.button.upload")}
 						</Button>
 					</Card>
 				</div>
