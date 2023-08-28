@@ -2,19 +2,25 @@ package de.footystats.tools.services.footy.dls;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.LongPredicate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@CompoundIndexes({
-	@CompoundIndex(name = "unique", def = "{'country': 1, 'league': 1, 'footyStatsDlId': 1, 'season': 1, 'downloadBitmask': 1, 'lastLeagueDownload': 1, 'lastTeamsDownload': 1, 'lastTeams2Download': 1, 'lastPlayerDownload': 1, 'lastMatchDownload': 1}")
-})
+/**
+ * This class is used to store the configuration for the download of a specific country and league.
+ * <p>
+ * The configuration is used to determine which files should be downloaded and when the last download of a file was. The configuration is also used to
+ * determine if a file should be downloaded again.
+ * <p>
+ */
+@CompoundIndex(name = "unique", def = "{'country': 1, 'league': 1, 'footyStatsDlId': 1, 'season': 1, 'downloadBitmask': 1, 'lastLeagueDownload': 1, 'lastTeamsDownload': 1, 'lastTeams2Download': 1, 'lastPlayerDownload': 1, 'lastMatchDownload': 1}")
 @Document
 @AllArgsConstructor
 @NoArgsConstructor
@@ -71,9 +77,9 @@ public class DownloadCountryLeagueStatsConfig {
 	private Long lastMatchDownload;
 
 	public List<FileTypeBit> typesWithWantedDownload() {
-		List<FileTypeBit> result = new ArrayList<>(5);
-		Predicate<Long> dlTimeReached = (lastDownload) -> lastDownload == null
-			|| lastDownload < System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
+		final List<FileTypeBit> result = new ArrayList<>(5);
+		final LongPredicate dlTimeReached = (lastDownload) -> lastDownload
+			< System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
 		var fileBitToCheck = FileTypeBit.LEAGUE;
 		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastLeagueDownload)) {
 			result.add(fileBitToCheck);
@@ -104,17 +110,30 @@ public class DownloadCountryLeagueStatsConfig {
 
 	@Override
 	public String toString() {
-		return "DownloadCountryLeagueStatsConfig{" +
-			"country='" + country + '\'' +
-			", league='" + league + '\'' +
-			", footyStatsDlId=" + footyStatsDlId +
-			", season='" + season + '\'' +
-			", downloadBitmask=" + downloadBitmask +
-			", lastLeagueDownload=" + lastLeagueDownload +
-			", lastTeamsDownload=" + lastTeamsDownload +
-			", lastTeams2Download=" + lastTeams2Download +
-			", lastPlayerDownload=" + lastPlayerDownload +
-			", lastMatchDownload=" + lastMatchDownload +
-			'}';
+		return "DownloadCountryLeagueStatsConfig{" + "country='" + country + '\'' + ", league='" + league + '\'' + ", footyStatsDlId="
+			+ footyStatsDlId + ", season='" + season + '\'' + ", downloadBitmask=" + downloadBitmask + ", lastLeagueDownload=" + lastLeagueDownload
+			+ ", lastTeamsDownload=" + lastTeamsDownload + ", lastTeams2Download=" + lastTeams2Download + ", lastPlayerDownload=" + lastPlayerDownload
+			+ ", lastMatchDownload=" + lastMatchDownload + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		DownloadCountryLeagueStatsConfig that = (DownloadCountryLeagueStatsConfig) o;
+
+		return new EqualsBuilder().append(country, that.country).append(league, that.league).append(footyStatsDlId, that.footyStatsDlId)
+			.append(season, that.season).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(country).append(league).append(footyStatsDlId).append(season).toHashCode();
 	}
 }

@@ -1,8 +1,5 @@
 package de.footystats.tools.services.footy.dls;
 
-import de.footystats.tools.services.stats.LeagueStats;
-import de.footystats.tools.services.stats.Team2Stats;
-import de.footystats.tools.services.stats.TeamStats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.csv.CsvFileService;
@@ -10,7 +7,9 @@ import de.footystats.tools.services.footy.CsvFileDownloadService;
 import de.footystats.tools.services.footy.CsvHttpClient;
 import de.footystats.tools.services.footy.SessionCookie;
 import de.footystats.tools.services.stats.LeagueMatchStats;
-
+import de.footystats.tools.services.stats.LeagueStats;
+import de.footystats.tools.services.stats.Team2Stats;
+import de.footystats.tools.services.stats.TeamStats;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -61,6 +60,28 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 		if (!olderConfigs.isEmpty()) {
 			log.info("Start downloading configured stats csf files for older seasons.");
 			doDownloadingByConfig(olderConfigs, login);
+		}
+	}
+
+	public void downloadConfiguredStats(String country, String league) {
+		// Now download the stats csv as configured for the given country and league for the current year and the previous years.
+		DownloadCountryLeagueStatsConfig currentYearConfigs = downloadConfigService.configForCountryLeagueSeasonForCurrentYear(country, league);
+		DownloadCountryLeagueStatsConfig olderConfigs = downloadConfigService.configForCountryLeagueSeasonForPreviousYears(country, league);
+		if (currentYearConfigs == null && olderConfigs == null) {
+			log.info("Currently there are no configured downloads for country: " + country + " league: " + league
+				+ " so no stats are going to be downloaded from footystats.org.");
+			return;
+		}
+
+		SessionCookie login = csvHttpClient.login();
+		if (currentYearConfigs != null) {
+			log.info("Start downloading configured stats csv files for the current year for country: " + country + " league: " + league);
+			doDownloadingByConfig(List.of(currentYearConfigs), login);
+		}
+
+		if (olderConfigs != null) {
+			log.info("Start downloading configured stats csf files for older seasons for country: " + country + " league: " + league);
+			doDownloadingByConfig(List.of(olderConfigs), login);
 		}
 	}
 

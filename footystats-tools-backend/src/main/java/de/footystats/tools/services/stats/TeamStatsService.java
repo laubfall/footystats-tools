@@ -3,12 +3,6 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,6 +11,11 @@ import java.util.List;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TeamStatsService extends MongoService<TeamStats> {
@@ -27,7 +26,8 @@ public class TeamStatsService extends MongoService<TeamStats> {
 
 	private final FootystatsProperties footystatsProperties;
 
-	public TeamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository, FootystatsProperties footystatsProperties) {
+	public TeamStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
+		CsvFileService<TeamStats> teamStatsCsvFileService, TeamStatsRepository teamStatsRepository, FootystatsProperties footystatsProperties) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.teamStatsCsvFileService = teamStatsCsvFileService;
 		this.teamStatsRepository = teamStatsRepository;
@@ -36,22 +36,25 @@ public class TeamStatsService extends MongoService<TeamStats> {
 
 	public Collection<TeamStats> readTeamStats(InputStream data) {
 		List<TeamStats> stats = teamStatsCsvFileService.importFile(data, TeamStats.class);
-		stats.forEach(ls -> upsert(ls));
+		stats.forEach(this::upsert);
 		return stats;
 	}
 
 	public Collection<TeamStats> latestThree(String team, String country, Integer year) {
-		var seasons = new String[]{year -1 + "/" +year, year-2+"/"+(year-1),year+"/"+(year+1), year +"", year +1+"",year-1+""};
-		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons).orOperator(Criteria.where("teamName").is(team), Criteria.where("commonName").is(team)));
+		var seasons = new String[]{year - 1 + "/" + year, year - 2 + "/" + (year - 1), year + "/" + (year + 1), year + "", year + 1 + "",
+			year - 1 + ""};
+		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons)
+			.orOperator(Criteria.where("teamName").is(team), Criteria.where("commonName").is(team)));
 		return mongoTemplate.find(query, TeamStats.class);
 	}
 
-	public TeamStats aggregate(Collection<TeamStats> teamStats){
-		if(teamStats == null || teamStats.isEmpty()){
+	public TeamStats aggregate(Collection<TeamStats> teamStats) {
+		if (teamStats == null || teamStats.isEmpty()) {
 			return null;
 		}
-		var matchingTeamStats = teamStats.stream().filter(ts -> ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()).collect(Collectors.toList());
-		if(matchingTeamStats.isEmpty()){
+		var matchingTeamStats = teamStats.stream()
+			.filter(ts -> ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()).collect(Collectors.toList());
+		if (matchingTeamStats.isEmpty()) {
 			return null;
 		}
 
@@ -357,11 +360,11 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		return tsNew;
 	}
 
-	private int integerAverageRoundUp(Collection<TeamStats> stats, ToIntFunction<TeamStats> mapper){
-		return (int)Math.round(stats.stream().mapToInt(mapper).average().getAsDouble());
+	private int integerAverageRoundUp(Collection<TeamStats> stats, ToIntFunction<TeamStats> mapper) {
+		return (int) Math.round(stats.stream().mapToInt(mapper).average().getAsDouble());
 	}
 
-	private Double floatAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper){
+	private Double floatAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper) {
 		var bd = stats.stream().map(ts -> new BigDecimal(mapper.applyAsDouble(ts))).collect(Collectors.toList());
 		var res = BigDecimal.ZERO;
 		for (BigDecimal bigDecimal : bd) {
@@ -373,7 +376,8 @@ public class TeamStatsService extends MongoService<TeamStats> {
 
 	@Override
 	public Query upsertQuery(TeamStats example) {
-		return Query.query(Criteria.where("country").is(example.getCountry()).and("teamName").is(example.getTeamName()).and("season").is(example.getSeason()));
+		return Query.query(
+			Criteria.where("country").is(example.getCountry()).and("teamName").is(example.getTeamName()).and("season").is(example.getSeason()));
 	}
 
 	@Override

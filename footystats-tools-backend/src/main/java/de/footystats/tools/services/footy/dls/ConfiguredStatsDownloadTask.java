@@ -3,10 +3,10 @@ package de.footystats.tools.services.footy.dls;
 import de.footystats.tools.services.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
+@Deprecated // Stats are now download when doing the prediction.
 @Slf4j
-@Component
+//@Component
 public class ConfiguredStatsDownloadTask {
 
 	private final ConfiguredCsvDownloadService csvFileDownloadService;
