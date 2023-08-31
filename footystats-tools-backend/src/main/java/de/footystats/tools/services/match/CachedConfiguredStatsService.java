@@ -1,5 +1,6 @@
 package de.footystats.tools.services.match;
 
+import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.footy.dls.ConfiguredCsvDownloadService;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,24 +11,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class CachedConfiguredStatsService {
 
-	// Static field that holds the max static cache time of 10 minutes in millisecons as a long.
-	private static final long MAX_CACHE_TIME = 10L * 60L * 1000L;
-
 	private final ConfiguredCsvDownloadService configuredCsvDownloadService;
-
 	private final Map<CacheKey, CacheValue> cache = new HashMap<>();
+	private final FootystatsProperties properties;
 
-	public CachedConfiguredStatsService(ConfiguredCsvDownloadService configuredCsvDownloadService) {
+	public CachedConfiguredStatsService(ConfiguredCsvDownloadService configuredCsvDownloadService, FootystatsProperties properties) {
 		this.configuredCsvDownloadService = configuredCsvDownloadService;
+		this.properties = properties;
 	}
 
-	public void configuredStats(String country, String league) {
+	/**
+	 * This method is used to update the cache and trigger the download of the configured stats if necessary.
+	 *
+	 * @param country Mandatory. The country for which the stats should be downloaded.
+	 * @param league  Mandatory. The league for which the stats should be downloaded.
+	 */
+	public void updateConfiguredStats(String country, String league) {
 		synchronized (cache) {
 			var cacheKey = CacheKey.builder().country(country).league(league).build();
 			if (cache.containsKey(cacheKey)) {
 				var cacheValue = cache.get(cacheKey);
 				// If the cache value is less than the max cache time, return.
-				if (System.currentTimeMillis() - cacheValue.getLastAccessed() > MAX_CACHE_TIME) {
+				if (System.currentTimeMillis() - cacheValue.getLastAccessed() > properties.getMaxCacheTimeConfiguredStatsCache()) {
 					// Then trigger the download. The download service take care of the necessity of the download.
 					configuredCsvDownloadService.downloadConfiguredStats(country, league);
 					// Update the cache value.

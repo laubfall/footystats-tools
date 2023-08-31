@@ -5,92 +5,72 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class is used to store the properties of the application.
+ */
 @Component
 @ConfigurationProperties("footystats")
+@Getter
+@Setter
 public class FootystatsProperties {
 
-	@Getter
-	@Setter
 	private String allowedOrigins;
 
-	@Getter
-	@Setter
 	private boolean importEsports;
 
-	@Getter
-	@Setter
 	private int ignoreTeamStatsWithGamesPlayedLowerThan;
 
-	@Getter
-	@Setter
 	private String encryptionSecret;
 
-	@Getter
-	@Setter
+	private Long maxCacheTimeConfiguredStatsCache;
+
 	private FootystatsWebpageProperties webpage;
 
-	@Getter
-	@Setter
 	private PredictionQualityProperties predictionQuality;
 
-	@Getter
-	@Setter
 	private CsvFileDownloadProperties csvFileDownloadProperties;
 
+	@Getter
+	@Setter
 	public static class FootystatsWebpageProperties {
-		@Getter
-		@Setter
+
 		private String baseUrl;
 
-		@Getter
-		@Setter
 		private String matchStatsDownloadRessource;
 
-		@Getter
-		@Setter
 		private String loginRessource;
 
-		@Getter
-		@Setter
 		private String leagueStatsRessource;
 
-		@Getter
-		@Setter
 		private String teamStatsRessource;
 
-		@Getter
-		@Setter
 		private String team2StatsRessource;
 
-		@Getter
-		@Setter
 		private String playerStatsRessource;
 
-		@Getter
-		@Setter
 		private String matchStatsLeagueRessource;
 	}
 
+	@Getter
+	@Setter
 	public static class PredictionQualityProperties {
+
 		// Count of matches to retrieve when finding matches for calculating prediction quality
-		@Getter
-		@Setter
 		private int pageSizeFindingRevisionMatches;
 	}
 
+	@Getter
+	@Setter
 	public static class CsvFileDownloadProperties {
+
 		/**
 		 * Path were to store downloaded csv files. Only used if keepCsvFiles is true.
 		 */
-		@Getter
-		@Setter
 		private String pathForKeepingCsvFiles;
 
 		/**
 		 * True if downloaded csv files should be saved. In this case provide a valid path in pathForKeepingCsvFiles.
 		 */
-		@Getter
-		@Setter
 		private boolean keepCsvFiles;
 	}
 }

@@ -2,7 +2,7 @@ package de.footystats.tools.services.footy.dls;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +26,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Builder
 public class DownloadCountryLeagueStatsConfig {
+
+	public static final String FIELD_LAST_LEAGUE_DOWNLOAD = "lastLeagueDownload";
+	public static final String FIELD_LAST_PLAYER_DOWNLOAD = "lastPlayerDownload";
+	public static final String FIELD_LAST_TEAMS_DOWNLOAD = "lastTeamsDownload";
+	public static final String FIELD_LAST_TEAMS_2_DOWNLOAD = "lastTeams2Download";
+	public static final String FIELD_LAST_MATCH_DOWNLOAD = "lastMatchDownload";
+	public static final String FIELD_SEASON = "season";
+	public static final String FIELD_COUNTRY = "country";
+	public static final String FIELD_LEAGUE = "league";
 
 	@Getter
 	@Setter
@@ -76,9 +85,14 @@ public class DownloadCountryLeagueStatsConfig {
 	@Setter
 	private Long lastMatchDownload;
 
-	public List<FileTypeBit> typesWithWantedDownload() {
+	/**
+	 * Returns a list of {@link FileTypeBit} that should be downloaded.
+	 *
+	 * @return a list of {@link FileTypeBit} that should be downloaded.
+	 */
+	public final List<FileTypeBit> typesWithWantedDownload() {
 		final List<FileTypeBit> result = new ArrayList<>(5);
-		final LongPredicate dlTimeReached = (lastDownload) -> lastDownload
+		final Predicate<Long> dlTimeReached = (lastDownload) -> lastDownload == null || lastDownload
 			< System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
 		var fileBitToCheck = FileTypeBit.LEAGUE;
 		if ((downloadBitmask & fileBitToCheck.getBit()) == fileBitToCheck.getBit() && dlTimeReached.test(lastLeagueDownload)) {

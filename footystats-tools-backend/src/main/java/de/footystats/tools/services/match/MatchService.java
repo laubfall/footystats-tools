@@ -24,10 +24,14 @@ public class MatchService extends MongoService<Match> {
 
 	private final PredictionService predictionService;
 
-	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService) {
+	private final CachedConfiguredStatsService cachedConfiguredStatsService;
+
+	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
+		CachedConfiguredStatsService cachedConfiguredStatsService) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
+		this.cachedConfiguredStatsService = cachedConfiguredStatsService;
 	}
 
 	public Page<Match> find(final MatchSearch search) {
@@ -100,21 +104,11 @@ public class MatchService extends MongoService<Match> {
 	private PredictionResult calculatePrediction(
 		Bet bet,
 		MatchStats ms) {
-		/*
-		 * const teamStats = await this.teamStatsService.latestThree(
-		 * ms['Home Team'],
-		 * ms.Country,
-		 * getYear(new Date())
-		 * );
-		 *
-		 * teamStats.push(
-		 * ...(await this.teamStatsService.latestThree(
-		 * ms['Away Team'],
-		 * ms.Country,
-		 * getYear(new Date())
-		 * ))
-		 * );
-		 */
+
+		// Update stats like league-, team-stats etc. if necessary so we download the latest stats from footystats.org.
+		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
+
+		// Load Team and League stats and add them to the context (if they exist).
 
 		var predictionNumber = predictionService.prediction(new BetPredictionContext(ms, null, null, bet));
 		return predictionNumber;

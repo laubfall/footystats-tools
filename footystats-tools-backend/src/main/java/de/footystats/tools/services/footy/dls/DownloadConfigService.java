@@ -1,5 +1,13 @@
 package de.footystats.tools.services.footy.dls;
 
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_COUNTRY;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LAST_LEAGUE_DOWNLOAD;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LAST_MATCH_DOWNLOAD;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LAST_PLAYER_DOWNLOAD;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LAST_TEAMS_2_DOWNLOAD;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LAST_TEAMS_DOWNLOAD;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_LEAGUE;
+import static de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsConfig.FIELD_SEASON;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import de.footystats.tools.services.MongoService;
@@ -17,19 +25,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DownloadConfigService extends MongoService<DownloadCountryLeagueStatsConfig> {
 
-	public static final String FIELD_LAST_LEAGUE_DOWNLOAD = "lastLeagueDownload";
-	public static final String FIELD_LAST_PLAYER_DOWNLOAD = "lastPlayerDownload";
-	public static final String FIELD_LAST_TEAMS_DOWNLOAD = "lastTeamsDownload";
-	public static final String FIELD_LAST_TEAMS_2_DOWNLOAD = "lastTeams2Download";
-	public static final String FIELD_LAST_MATCH_DOWNLOAD = "lastMatchDownload";
-	public static final String FIELD_SEASON = "season";
 	/**
 	 * Bitmask for the download. See {@link FileTypeBit} for the bits.
 	 */
 	public static final String DOWNLOAD_BITMASK = "downloadBitmask";
 	public static final long LAST_DOWNLOAD_MINUS_TIME_MILLIS = 1000L * 60L * 60L * 24L * 30L; // thirty days.
-	public static final String FIELD_COUNTRY = "country";
-	public static final String FIELD_LEAGUE = "league";
 	private final CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService;
 
 	public DownloadConfigService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,

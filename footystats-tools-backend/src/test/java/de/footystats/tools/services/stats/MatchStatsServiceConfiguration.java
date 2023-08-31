@@ -2,6 +2,7 @@ package de.footystats.tools.services.stats;
 
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.jackson.JackonsConfiguration;
+import de.footystats.tools.services.match.CachedConfiguredStatsService;
 import de.footystats.tools.services.match.MatchService;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.stats.batch.IMatchStatsJobService;
@@ -22,6 +23,9 @@ public class MatchStatsServiceConfiguration {
 	@MockBean
 	IMatchStatsJobService matchStatsJobService;
 
+	@MockBean
+	CachedConfiguredStatsService cachedConfiguredStatsService;
+
 	@Bean
 	public PredictionService predictionService() {
 		return new PredictionService();
@@ -29,7 +33,7 @@ public class MatchStatsServiceConfiguration {
 
 	@Bean
 	public MatchService matchService(MongoTemplate mongoTemplate, PredictionService predictionService, MappingMongoConverter mappingMongoConverter) {
-		return new MatchService(mongoTemplate, mappingMongoConverter, predictionService);
+		return new MatchService(mongoTemplate, mappingMongoConverter, predictionService, cachedConfiguredStatsService);
 	}
 
 	@Bean
