@@ -26,6 +26,9 @@ public class MatchStatsServiceConfiguration {
 	@MockBean
 	CachedConfiguredStatsService cachedConfiguredStatsService;
 
+	@MockBean
+	LeagueStatsService leagueStatsService;
+
 	@Bean
 	public PredictionService predictionService() {
 		return new PredictionService();
@@ -33,7 +36,7 @@ public class MatchStatsServiceConfiguration {
 
 	@Bean
 	public MatchService matchService(MongoTemplate mongoTemplate, PredictionService predictionService, MappingMongoConverter mappingMongoConverter) {
-		return new MatchService(mongoTemplate, mappingMongoConverter, predictionService, cachedConfiguredStatsService);
+		return new MatchService(mongoTemplate, mappingMongoConverter, predictionService, cachedConfiguredStatsService, leagueStatsService);
 	}
 
 	@Bean

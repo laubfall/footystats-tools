@@ -1,7 +1,16 @@
 package de.footystats.tools.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import de.footystats.tools.services.footy.dls.DownloadConfigRepository;
-import de.footystats.tools.services.stats.*;
+import de.footystats.tools.services.stats.LeagueMatchStats;
+import de.footystats.tools.services.stats.LeagueMatchStatsRepository;
+import de.footystats.tools.services.stats.LeagueStatsRepository;
+import de.footystats.tools.services.stats.MatchStats;
+import de.footystats.tools.services.stats.MatchStatsRepository;
+import de.footystats.tools.services.stats.Team2StatsRepository;
+import de.footystats.tools.services.stats.TeamStatsRepository;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 
@@ -53,7 +58,8 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
 			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
 
-			List<LeagueMatchStats> matchStatsImported = leagueMatchStatsRepository.findLeagueMatchStatsByHomeTeamNameAndAwayTeamName("St. Jakob", "Wolfsberg");
+			List<LeagueMatchStats> matchStatsImported = leagueMatchStatsRepository.findLeagueMatchStatsByHomeTeamNameAndAwayTeamName("St. Jakob",
+				"Wolfsberg");
 			Assertions.assertFalse(matchStatsImported.isEmpty());
 		} catch (Exception e) {
 			Assertions.fail(e);
@@ -91,7 +97,7 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 
 	@Test
 	void uploadLeagueStats() {
-		var originalFileName = "some-country-league-2020-to-2021-stats.csv";
+		var originalFileName = "germany-division-league-2020-to-2021-stats.csv";
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
 			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
@@ -99,7 +105,7 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 			var allLeagueStats = leagueStatsRepository.findAll();
 			Assertions.assertNotNull(allLeagueStats);
 			Assertions.assertEquals(1, allLeagueStats.size());
-
+			Assertions.assertEquals("germany", allLeagueStats.get(0).getCountry().getCountryNameByFootystats());
 		} catch (Exception e) {
 			Assertions.fail(e);
 		}

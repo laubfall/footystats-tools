@@ -1,6 +1,7 @@
 package de.footystats.tools.services.stats;
 
 import de.footystats.tools.services.csv.Configuration;
+import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Collection;
-
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
 @Import({Configuration.class})
 @ContextConfiguration(classes = {TeamStatsServiceConfiguration.class})
-public class TeamStatsServiceTest {
+class TeamStatsServiceTest {
 
 	@Autowired
 	private TeamStatsRepository teamStatsRepository;
@@ -26,7 +25,7 @@ public class TeamStatsServiceTest {
 	private TeamStatsService teamStatsService;
 
 	@Test
-	public void latestThree() {
+	void latestThree() {
 		var teamStats = new TeamStats();
 		teamStats.setCountry("Somecountry");
 		teamStats.setSeason("2020/2021");
@@ -41,7 +40,7 @@ public class TeamStatsServiceTest {
 	}
 
 	@Test
-	public void aggregate(){
+	void aggregate() {
 		Collection<TeamStats> teamStats = teamStatsService.readTeamStats(getClass().getResourceAsStream("one-team-different-season-stats.csv"));
 		Assertions.assertFalse(teamStats.isEmpty());
 		Assertions.assertEquals(2, teamStats.size());

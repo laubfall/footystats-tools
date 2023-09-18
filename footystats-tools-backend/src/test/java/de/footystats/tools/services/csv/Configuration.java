@@ -2,6 +2,7 @@ package de.footystats.tools.services.csv;
 
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.EncryptionService;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.footy.dls.DownloadCountryLeagueStatsCsvEntry;
 import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.MatchStats;
@@ -16,27 +17,27 @@ import org.springframework.context.annotation.Import;
 public class Configuration {
 
 	@Bean
-	public CsvFileService<MatchStats> csvMatchStatsService() {
-		return new CsvFileService<>();
+	public CsvFileService<MatchStats> csvMatchStatsService(DomainDataService domainDataService) {
+		return new CsvFileService<>(domainDataService);
 	}
 
 	@Bean
-	public CsvFileService<LeagueStats> leagueStatsCsvFileService() {
-		return new CsvFileService<>();
+	public CsvFileService<LeagueStats> leagueStatsCsvFileService(DomainDataService domainDataService) {
+		return new CsvFileService<>(domainDataService);
 	}
 
 	@Bean
-	public CsvFileService<TeamStats> teamStatsCsvFileService() {
-		return new CsvFileService<>();
+	public CsvFileService<TeamStats> teamStatsCsvFileService(DomainDataService domainDataService) {
+		return new CsvFileService<>(domainDataService);
 	}
 
 	@Bean
-	public CsvFileService<Team2Stats> team2StatsCsvFileService() {
-		return new CsvFileService<>();
+	public CsvFileService<Team2Stats> team2StatsCsvFileService(DomainDataService domainDataService) {
+		return new CsvFileService<>(domainDataService);
 	}
 
 	@Bean
-	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> downloadConfigCsvFileService() {
-		return new CsvFileService<>();
+	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> downloadConfigCsvFileService(DomainDataService domainDataService) {
+		return new CsvFileService<>(domainDataService);
 	}
 }

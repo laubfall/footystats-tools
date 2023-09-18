@@ -41,7 +41,8 @@ public class FootyStatsCsvUploadController {
 
 	public FootyStatsCsvUploadController(CsvFileService<MatchStats> fileStorageService,
 		MatchStatsCsvFileDownloadService matchStatsFileDownloadService, MatchStatsService matchStatsService, LeagueStatsService leagueStatsService,
-		LeagueMatchStatsService leagueMatchStatsService, TeamStatsService teamStatsService, Team2StatsService team2StatsService, DownloadConfigService downloadConfigService) {
+		LeagueMatchStatsService leagueMatchStatsService, TeamStatsService teamStatsService, Team2StatsService team2StatsService,
+		DownloadConfigService downloadConfigService) {
 		this.csvFileService = fileStorageService;
 		this.matchStatsFileDownloadService = matchStatsFileDownloadService;
 		this.matchStatsService = matchStatsService;
@@ -85,11 +86,11 @@ public class FootyStatsCsvUploadController {
 			return;
 		}
 
-		final ICsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(file.getOriginalFilename());
+		final ICsvFileInformation csvFileInformation = csvFileService.csvFileInformationByFileName(file.getOriginalFilename());
 
 		logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
 		switch (csvFileInformation.type()) {
-			case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(file.getInputStream());
+			case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(csvFileInformation, file.getInputStream());
 			case MATCH_STATS -> {
 				List<MatchStats> matchStats = this.csvFileService.importFile(file.getInputStream(), MatchStats.class);
 				matchStats.forEach(this.matchStatsService::importMatchStats);

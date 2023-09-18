@@ -7,21 +7,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Stores user specific settings for the application.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
+@Getter
+@Setter
 public class Settings {
 
-	@Getter
-	@Setter
 	private String _id;
 
-	@Getter
-	@Setter
 	private String footyStatsUsername;
 
-	@Getter
-	@Setter
 	private Password footyStatsPassword;
 
 }

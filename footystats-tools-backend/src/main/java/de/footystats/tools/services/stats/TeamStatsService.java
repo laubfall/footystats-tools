@@ -5,12 +5,10 @@ import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -41,6 +39,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 	}
 
 	public Collection<TeamStats> latestThree(String team, String country, Integer year) {
+		// Holds the seasons for the last 3 years, the current year and the next year, e.g. year is 2022: 2021/2022, 2020/2021, 2022/2023, 2022, 2023
 		var seasons = new String[]{year - 1 + "/" + year, year - 2 + "/" + (year - 1), year + "/" + (year + 1), year + "", year + 1 + "",
 			year - 1 + ""};
 		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons)
@@ -53,7 +52,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 			return null;
 		}
 		var matchingTeamStats = teamStats.stream()
-			.filter(ts -> ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()).collect(Collectors.toList());
+			.filter(ts -> ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()).toList();
 		if (matchingTeamStats.isEmpty()) {
 			return null;
 		}
@@ -78,9 +77,9 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setLosses(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosses));
 		tsNew.setLossesHome(integerAverageRoundUp(matchingTeamStats, TeamStats::getLossesHome));
 		tsNew.setLossesAway(integerAverageRoundUp(matchingTeamStats, TeamStats::getLossesAway));
-		tsNew.setPointsPerGame(floatAverage(matchingTeamStats, TeamStats::getPointsPerGame));
-		tsNew.setPointsPerGameHome(floatAverage(matchingTeamStats, TeamStats::getPointsPerGameHome));
-		tsNew.setPointsPerGameAway(floatAverage(matchingTeamStats, TeamStats::getPointsPerGameAway));
+		tsNew.setPointsPerGame(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGame));
+		tsNew.setPointsPerGameHome(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGameHome));
+		tsNew.setPointsPerGameAway(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGameAway));
 		tsNew.setLeaguePosition(integerAverageRoundUp(matchingTeamStats, TeamStats::getLeaguePosition));
 		tsNew.setLeaguePositionHome(integerAverageRoundUp(matchingTeamStats, TeamStats::getLeaguePositionHome));
 		tsNew.setLeaguePositionAway(integerAverageRoundUp(matchingTeamStats, TeamStats::getLeaguePositionAway));
@@ -154,27 +153,27 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setLosingAtHalfTime(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosingAtHalfTime));
 		tsNew.setLosingAtHalfTimeHome(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosingAtHalfTimeHome));
 		tsNew.setLosingAtHalfTimeAway(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosingAtHalfTimeAway));
-		tsNew.setPointsPerGameHalfTime(floatAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTime));
-		tsNew.setPointsPerGameHalfTimeHome(floatAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTimeHome));
-		tsNew.setPointsPerGameHalfTimeAway(floatAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTimeAway));
-		tsNew.setAverageTotalGoalsPerMatch(floatAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatch));
-		tsNew.setAverageTotalGoalsPerMatchHome(floatAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatchHome));
-		tsNew.setAverageTotalGoalsPerMatchAway(floatAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatchAway));
-		tsNew.setGoalsScoredPerMatch(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatch));
-		tsNew.setGoalsScoredPerMatchHome(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHome));
-		tsNew.setGoalsScoredPerMatchAway(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchAway));
-		tsNew.setGoalsConcededPerMatch(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatch));
-		tsNew.setGoalsConcededPerMatchHome(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHome));
-		tsNew.setGoalsConcededPerMatchAway(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchAway));
-		tsNew.setTotalGoalsPerMatchHalfTime(floatAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTime));
-		tsNew.setTotalGoalsPerMatchHalfTimeHome(floatAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTimeHome));
-		tsNew.setTotalGoalsPerMatchHalfTimeAway(floatAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTimeAway));
-		tsNew.setGoalsScoredPerMatchHalfTime(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTime));
-		tsNew.setGoalsScoredPerMatchHalfTimeHome(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTimeHome));
-		tsNew.setGoalsScoredPerMatchHalfTimeAway(floatAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTimeAway));
-		tsNew.setGoalsConcededPerMatchHalfTime(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTime));
-		tsNew.setGoalsConcededPerMatchHalfTimeHome(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTimeHome));
-		tsNew.setGoalsConcededPerMatchHalfTimeAway(floatAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTimeAway));
+		tsNew.setPointsPerGameHalfTime(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTime));
+		tsNew.setPointsPerGameHalfTimeHome(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTimeHome));
+		tsNew.setPointsPerGameHalfTimeAway(doubleAverage(matchingTeamStats, TeamStats::getPointsPerGameHalfTimeAway));
+		tsNew.setAverageTotalGoalsPerMatch(doubleAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatch));
+		tsNew.setAverageTotalGoalsPerMatchHome(doubleAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatchHome));
+		tsNew.setAverageTotalGoalsPerMatchAway(doubleAverage(matchingTeamStats, TeamStats::getAverageTotalGoalsPerMatchAway));
+		tsNew.setGoalsScoredPerMatch(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatch));
+		tsNew.setGoalsScoredPerMatchHome(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHome));
+		tsNew.setGoalsScoredPerMatchAway(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchAway));
+		tsNew.setGoalsConcededPerMatch(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatch));
+		tsNew.setGoalsConcededPerMatchHome(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHome));
+		tsNew.setGoalsConcededPerMatchAway(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchAway));
+		tsNew.setTotalGoalsPerMatchHalfTime(doubleAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTime));
+		tsNew.setTotalGoalsPerMatchHalfTimeHome(doubleAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTimeHome));
+		tsNew.setTotalGoalsPerMatchHalfTimeAway(doubleAverage(matchingTeamStats, TeamStats::getTotalGoalsPerMatchHalfTimeAway));
+		tsNew.setGoalsScoredPerMatchHalfTime(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTime));
+		tsNew.setGoalsScoredPerMatchHalfTimeHome(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTimeHome));
+		tsNew.setGoalsScoredPerMatchHalfTimeAway(doubleAverage(matchingTeamStats, TeamStats::getGoalsScoredPerMatchHalfTimeAway));
+		tsNew.setGoalsConcededPerMatchHalfTime(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTime));
+		tsNew.setGoalsConcededPerMatchHalfTimeHome(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTimeHome));
+		tsNew.setGoalsConcededPerMatchHalfTimeAway(doubleAverage(matchingTeamStats, TeamStats::getGoalsConcededPerMatchHalfTimeAway));
 		tsNew.setOver05Count(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver05Count));
 		tsNew.setOver15Count(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver15Count));
 		tsNew.setOver25Count(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver25Count));
@@ -307,13 +306,13 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setDrawAtHalfTimePercentageAway(integerAverageRoundUp(matchingTeamStats, TeamStats::getDrawAtHalfTimePercentageAway));
 		tsNew.setLosingAtHalfTimePercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosingAtHalfTimePercentage));
 		tsNew.setLosingAtHalfTimePercentageHome(integerAverageRoundUp(matchingTeamStats, TeamStats::getLosingAtHalfTimePercentageHome));
-		tsNew.setLosingAtHalfTimePercentageAway(floatAverage(matchingTeamStats, TeamStats::getLosingAtHalfTimePercentageAway));
-		tsNew.setCornersPerMatch(floatAverage(matchingTeamStats, TeamStats::getCornersPerMatch));
-		tsNew.setCornersPerMatchHome(floatAverage(matchingTeamStats, TeamStats::getCornersPerMatchHome));
-		tsNew.setCornersPerMatchAway(floatAverage(matchingTeamStats, TeamStats::getCornersPerMatchAway));
-		tsNew.setCardsPerMatch(floatAverage(matchingTeamStats, TeamStats::getCardsPerMatch));
-		tsNew.setCardsPerMatchHome(floatAverage(matchingTeamStats, TeamStats::getCardsPerMatchHome));
-		tsNew.setCardsPerMatchAway(floatAverage(matchingTeamStats, TeamStats::getCardsPerMatchAway));
+		tsNew.setLosingAtHalfTimePercentageAway(doubleAverage(matchingTeamStats, TeamStats::getLosingAtHalfTimePercentageAway));
+		tsNew.setCornersPerMatch(doubleAverage(matchingTeamStats, TeamStats::getCornersPerMatch));
+		tsNew.setCornersPerMatchHome(doubleAverage(matchingTeamStats, TeamStats::getCornersPerMatchHome));
+		tsNew.setCornersPerMatchAway(doubleAverage(matchingTeamStats, TeamStats::getCornersPerMatchAway));
+		tsNew.setCardsPerMatch(doubleAverage(matchingTeamStats, TeamStats::getCardsPerMatch));
+		tsNew.setCardsPerMatchHome(doubleAverage(matchingTeamStats, TeamStats::getCardsPerMatchHome));
+		tsNew.setCardsPerMatchAway(doubleAverage(matchingTeamStats, TeamStats::getCardsPerMatchAway));
 		tsNew.setOver65CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver65CornersPercentage));
 		tsNew.setOver75CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver75CornersPercentage));
 		tsNew.setOver85CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver85CornersPercentage));
@@ -322,12 +321,12 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setOver115CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver115CornersPercentage));
 		tsNew.setOver125CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver125CornersPercentage));
 		tsNew.setOver135CornersPercentage(integerAverageRoundUp(matchingTeamStats, TeamStats::getOver135CornersPercentage));
-		tsNew.setXgForAvgOverall(floatAverage(matchingTeamStats, TeamStats::getXgForAvgOverall));
-		tsNew.setXgForAvgHome(floatAverage(matchingTeamStats, TeamStats::getXgForAvgHome));
-		tsNew.setXgForAvgAway(floatAverage(matchingTeamStats, TeamStats::getXgForAvgAway));
-		tsNew.setXgAgainstAvgOverall(floatAverage(matchingTeamStats, TeamStats::getXgAgainstAvgOverall));
-		tsNew.setXgAgainstAvgHome(floatAverage(matchingTeamStats, TeamStats::getXgAgainstAvgHome));
-		tsNew.setXgAgainstAvgAway(floatAverage(matchingTeamStats, TeamStats::getXgAgainstAvgAway));
+		tsNew.setXgForAvgOverall(doubleAverage(matchingTeamStats, TeamStats::getXgForAvgOverall));
+		tsNew.setXgForAvgHome(doubleAverage(matchingTeamStats, TeamStats::getXgForAvgHome));
+		tsNew.setXgForAvgAway(doubleAverage(matchingTeamStats, TeamStats::getXgForAvgAway));
+		tsNew.setXgAgainstAvgOverall(doubleAverage(matchingTeamStats, TeamStats::getXgAgainstAvgOverall));
+		tsNew.setXgAgainstAvgHome(doubleAverage(matchingTeamStats, TeamStats::getXgAgainstAvgHome));
+		tsNew.setXgAgainstAvgAway(doubleAverage(matchingTeamStats, TeamStats::getXgAgainstAvgAway));
 		tsNew.setPredictionRisk(integerAverageRoundUp(matchingTeamStats, TeamStats::getPredictionRisk));
 		tsNew.setGoalsScoredMin0To10(integerAverageRoundUp(matchingTeamStats, TeamStats::getGoalsScoredMin0To10));
 		tsNew.setGoalsScoredMin11To20(integerAverageRoundUp(matchingTeamStats, TeamStats::getGoalsScoredMin11To20));
@@ -364,14 +363,14 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		return (int) Math.round(stats.stream().mapToInt(mapper).average().getAsDouble());
 	}
 
-	private Double floatAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper) {
-		var bd = stats.stream().map(ts -> new BigDecimal(mapper.applyAsDouble(ts))).collect(Collectors.toList());
+	private Double doubleAverage(Collection<TeamStats> stats, ToDoubleFunction<TeamStats> mapper) {
+		var bd = stats.stream().map(ts -> BigDecimal.valueOf(mapper.applyAsDouble(ts))).toList();
 		var res = BigDecimal.ZERO;
 		for (BigDecimal bigDecimal : bd) {
 			res = res.add(bigDecimal);
 		}
 
-		return res.divide(new BigDecimal(bd.size()), RoundingMode.HALF_UP).doubleValue();
+		return res.divide(new BigDecimal(bd.size())).doubleValue();
 	}
 
 	@Override

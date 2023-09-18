@@ -48,7 +48,17 @@ class CsvFileServiceTest {
 			Arguments.of("australia-northern-nsw-npl-teams-2020-to-2021-stats.csv", CsvFileType.TEAM_STATS),
 			Arguments.of("australia-northern-nsw-npl-teams2-2020-to-2021-stats.csv", CsvFileType.TEAM_2_STATS),
 			Arguments.of("australia-northern-nsw-npl-league-2020-to-2021-stats.csv", CsvFileType.LEAGUE_STATS),
-			Arguments.of("australia-northern-nsw-npl-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS)
+			Arguments.of("australia-northern-nsw-npl-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS),
+			Arguments.of("artigua-and-barbuda-abfa-players-2020-to-2021-stats.csv", CsvFileType.PLAYER_STATS),
+			Arguments.of("argentina-primera-division-league-2023-to-2023-stats.csv", CsvFileType.LEAGUE_STATS)
+		);
+	}
+
+	private static Stream<Arguments> determineCountryParams() {
+		return Stream.of(
+			Arguments.of("austria-landesliga-matches-2020-to-2021-stats.csv", "austria"),
+			Arguments.of("australia-northern-nsw-npl-teams2-2020-to-2021-stats.csv", "australia"),
+			Arguments.of("antigua-and-barbuda-abfa-league-2020-to-2021-stats.csv", "antigua-and-barbuda")
 		);
 	}
 
@@ -150,8 +160,16 @@ class CsvFileServiceTest {
 	@ParameterizedTest
 	@MethodSource("determineCsvTypeParams")
 	void determineCsvType(String filename, CsvFileType expectedType) {
-		ICsvFileInformation csvFileInformation = CsvFileService.csvFileInformationByFileName(filename);
+		ICsvFileInformation csvFileInformation = csvFileService.csvFileInformationByFileName(filename);
 		Assertions.assertNotNull(csvFileInformation);
 		Assertions.assertEquals(expectedType, csvFileInformation.type());
+	}
+
+	@ParameterizedTest
+	@MethodSource("determineCountryParams")
+	void determineCountry(String filename, String country) {
+		ICsvFileInformation csvFileInformation = csvFileService.csvFileInformationByFileName(filename);
+		Assertions.assertNotNull(csvFileInformation);
+		Assertions.assertEquals(country, csvFileInformation.country().getCountryNameByFootystats());
 	}
 }

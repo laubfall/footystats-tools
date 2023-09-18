@@ -7,6 +7,7 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
+import de.footystats.tools.services.stats.LeagueStatsService;
 import de.footystats.tools.services.stats.MatchStats;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +27,15 @@ public class MatchService extends MongoService<Match> {
 
 	private final CachedConfiguredStatsService cachedConfiguredStatsService;
 
+	private final LeagueStatsService leagueStatsService;
+
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
-		CachedConfiguredStatsService cachedConfiguredStatsService) {
+		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
 		this.cachedConfiguredStatsService = cachedConfiguredStatsService;
+		this.leagueStatsService = leagueStatsService;
 	}
 
 	public Page<Match> find(final MatchSearch search) {
@@ -109,9 +113,8 @@ public class MatchService extends MongoService<Match> {
 		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
 
 		// Load Team and League stats and add them to the context (if they exist).
-
-		var predictionNumber = predictionService.prediction(new BetPredictionContext(ms, null, null, bet));
-		return predictionNumber;
+		
+		return predictionService.prediction(new BetPredictionContext(ms, null, null, bet));
 	}
 
 	private void applyFullTextCriteria(MatchSearch search, Query query) {
