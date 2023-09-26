@@ -7,6 +7,7 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
+import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.LeagueStatsService;
 import de.footystats.tools.services.stats.MatchStats;
 import java.util.ArrayList;
@@ -113,8 +114,8 @@ public class MatchService extends MongoService<Match> {
 		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
 
 		// Load Team and League stats and add them to the context (if they exist).
-		
-		return predictionService.prediction(new BetPredictionContext(ms, null, null, bet));
+		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getCountry(), ms.getLeague(), ms.getDateGmt().getYear());
+		return predictionService.prediction(new BetPredictionContext(ms, null, aggregatedLeagueStats, bet));
 	}
 
 	private void applyFullTextCriteria(MatchSearch search, Query query) {

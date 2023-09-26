@@ -1,10 +1,12 @@
 package de.footystats.tools.services.domain;
 
 import lombok.Getter;
+import lombok.Value;
 
 /**
  * Represents a country.
  */
+@Value
 public class Country {
 
 	/**
@@ -13,7 +15,7 @@ public class Country {
 	 * That's the normalized name, no capital letters, no spaces, no special characters.
 	 */
 	@Getter
-	private final String countryNameByFootystats;
+	String countryNameByFootystats;
 
 	Country(String countryNameByFootystats) {
 		this.countryNameByFootystats = countryNameByFootystats;

@@ -3,11 +3,12 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.csv.ICsvFileInformation;
-import de.footystats.tools.services.domain.DomainDataService;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +24,22 @@ public class LeagueStatsService extends MongoService<LeagueStats> {
 
 	private final CsvFileService<LeagueStats> csvFileService;
 
-	private final DomainDataService domainDataService;
-
 	public LeagueStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
-		CsvFileService<LeagueStats> csvFileService, DomainDataService domainDataService) {
+		CsvFileService<LeagueStats> csvFileService) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.csvFileService = csvFileService;
-		this.domainDataService = domainDataService;
 	}
 
 	public Collection<LeagueStats> readLeagueStats(ICsvFileInformation fileInformation, InputStream data) {
 		List<LeagueStats> stats = csvFileService.importFile(data, LeagueStats.class);
+		if (fileInformation.country() == null) {
+			log.error("Country is null for file {}", fileInformation.type());
+			return Collections.emptyList();
+		}
 		stats.forEach(ls -> {
-			// First get the country from domainDataService. Catch the exception and log it if the country is not found.
-			try {
-				ls.setCountry(fileInformation.country());
-				upsert(ls);
-			} catch (IllegalArgumentException e) {
-				log.error("Country {} not found in domain data. League stats {} not imported", ls.getCountry(), ls.getName());
-			}
+			ls.setCountry(fileInformation.country());
+			upsert(ls);
+
 		});
 		return stats;
 	}
@@ -54,11 +52,22 @@ public class LeagueStatsService extends MongoService<LeagueStats> {
 		return mongoTemplate.find(query, LeagueStats.class);
 	}
 
+	public LeagueStats aggregate(String league, String country, Integer year) {
+		Collection<LeagueStats> leagueStats = latestThree(league, country, year);
+		return aggregate(leagueStats);
+	}
+
 	public LeagueStats aggregate(Collection<LeagueStats> leagueStats) {
+		Optional<LeagueStats> leagueStatsSampler = leagueStats.stream().findFirst();
+		if (leagueStatsSampler.isEmpty()) {
+			return null;
+		}
+
+		var leagueStatsFirst = leagueStatsSampler.get();
 		var stats = new LeagueStats();
-		stats.setCountry(leagueStats.stream().findFirst().get().getCountry());
-		stats.setName(leagueStats.stream().findFirst().get().getName());
-		stats.setSeason(leagueStats.stream().findFirst().get().getSeason());
+		stats.setCountry(leagueStatsFirst.getCountry());
+		stats.setName(leagueStatsFirst.getName());
+		stats.setSeason(leagueStatsFirst.getSeason());
 		// Now do the aggregation for each field and set it in the stats object.
 
 		stats.setNumberOfClubs(integerAverageRoundUp(leagueStats, LeagueStats::getNumberOfClubs));

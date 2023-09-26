@@ -76,6 +76,7 @@ class MatchStatsServiceTest {
 	void importMatchStats() {
 		var time = System.currentTimeMillis();
 		var builder = MatchStats.builder().country("France").league("La Ligue").dateUnix(time).awayTeam("Team 1").homeTeam("Team 2")
+			.dateGmt(LocalDateTime.now())
 			.matchStatus(MatchStatus.incomplete);
 		var matchStats = builder.build();
 
@@ -87,9 +88,10 @@ class MatchStatsServiceTest {
 
 	@Deprecated // See MatchStatsService
 	@Test
-	public void reimportMatchStats() {
+	void reimportMatchStats() {
 		var time = System.currentTimeMillis();
 		var builder = MatchStats.builder().country("Denmark").league("La Ligue").dateUnix(time).awayTeam("Team 1").homeTeam("Team 2")
+			.dateGmt(LocalDateTime.now())
 			.resultAwayTeamGoals(1).resultHomeTeamGoals(1).matchStatus(MatchStatus.complete).bTTSAverage(50);
 		var matchStats = builder.build();
 

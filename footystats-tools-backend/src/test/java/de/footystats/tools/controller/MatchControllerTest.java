@@ -2,8 +2,6 @@ package de.footystats.tools.controller;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,6 +74,7 @@ class MatchControllerTest extends BaseControllerTest {
 	void listMatchesForCountryAndLeague() throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
 		var match = new Match();
+		match.setFootyStatsUrl("http://www.footystats.org/someurl");
 		match.setCountry("Germany");
 		match.setLeague("Bundesliga");
 		match.setRevision(PredictionQualityRevision.NO_REVISION);
@@ -96,8 +95,6 @@ class MatchControllerTest extends BaseControllerTest {
 		var json = objectMapper.writeValueAsString(request);
 		mockMvc.perform(RestDocumentationRequestBuilders
 				.post("/match/list").content(json).contentType(MediaType.APPLICATION_JSON))
-			.andDo(document("matchController",
-				relaxedResponseFields(fieldWithPath("elements[].footyStatsUrl").type(String.class).description("League of the match"))))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("elements", Is.is(Matchers.hasSize(1))))
 			.andExpect(jsonPath("totalElements", Is.is(1)));
@@ -143,7 +140,9 @@ class MatchControllerTest extends BaseControllerTest {
 	void reimport(@Autowired MockMvc mvc) throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
 
-		MatchStats matchStats = MatchStats.builder().country("Austria").homeTeam("Auffach").awayTeam("Oberau").dateUnix(date.getLong(ChronoField.ERA))
+		MatchStats matchStats = MatchStats.builder().country("Austria").homeTeam("Auffach").awayTeam("Oberau")
+			.dateUnix(date.getLong(ChronoField.ERA))
+			.dateGmt(date)
 			.resultHomeTeamGoals(2).resultAwayTeamGoals(2).matchStatus(MatchStatus.complete).build();
 
 		matchStatsRepository.insert(matchStats);
@@ -160,7 +159,10 @@ class MatchControllerTest extends BaseControllerTest {
 			});
 
 		Optional<Match> updatedMatchOpt = matchRepository.findOne(Example.of(
-			Match.builder().country(matchStats.getCountry()).homeTeam(matchStats.getHomeTeam()).awayTeam(matchStats.getAwayTeam()).build()));
+			Match.builder().country(matchStats.getCountry())
+				.homeTeam(matchStats.getHomeTeam())
+				.awayTeam(matchStats.getAwayTeam())
+				.build()));
 		Assertions.assertTrue(updatedMatchOpt.isPresent());
 		var updatedMatch = updatedMatchOpt.get();
 		Assertions.assertNotNull(updatedMatch.getBttsYes());

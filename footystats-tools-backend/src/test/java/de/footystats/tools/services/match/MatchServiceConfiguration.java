@@ -1,7 +1,7 @@
 package de.footystats.tools.services.match;
 
 import de.footystats.tools.FootystatsProperties;
-import de.footystats.tools.jackson.JackonsConfiguration;
+import de.footystats.tools.jackson.JunitJacksonConfiguration;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.stats.LeagueStatsService;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
-@Import({JackonsConfiguration.class, FootystatsProperties.class})
+@Import({JunitJacksonConfiguration.class, FootystatsProperties.class})
 @TestConfiguration
 public class MatchServiceConfiguration {
 

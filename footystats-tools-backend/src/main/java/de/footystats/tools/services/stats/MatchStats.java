@@ -11,16 +11,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @NoArgsConstructor // used for csv import
 @Builder
-@CompoundIndexes({
-	@CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
-})
+@CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
 @Document
 public class MatchStats {
 

@@ -6,7 +6,6 @@ import countriesAndLeagues from "../../app/countriesAndLeagues";
 import translate from "../../i18n/translate";
 import { subMinutes } from "date-fns";
 import { DateTimePicker } from "react-datetime-picker";
-import { useDebouncedEffect } from "../../react/useDebounce-hook";
 
 export const MatchFilter = ({
 	selectedCountry,

@@ -1,7 +1,7 @@
 package de.footystats.tools.services.stats;
 
 import de.footystats.tools.FootystatsProperties;
-import de.footystats.tools.jackson.JackonsConfiguration;
+import de.footystats.tools.jackson.JunitJacksonConfiguration;
 import de.footystats.tools.services.match.CachedConfiguredStatsService;
 import de.footystats.tools.services.match.MatchService;
 import de.footystats.tools.services.prediction.PredictionService;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 /**
  * Test configuration for JsonTests. Actually empty but required to avoid using the SpringBoot Config.
  */
-@Import({JackonsConfiguration.class, FootystatsProperties.class})
+@Import({JunitJacksonConfiguration.class, FootystatsProperties.class})
 @TestConfiguration
 public class MatchStatsServiceConfiguration {
 
