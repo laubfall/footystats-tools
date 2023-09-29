@@ -7,6 +7,7 @@ import lombok.Value;
  * Represents a country.
  */
 @Value
+@Getter
 public class Country {
 
 	/**
@@ -14,7 +15,6 @@ public class Country {
 	 * <p>
 	 * That's the normalized name, no capital letters, no spaces, no special characters.
 	 */
-	@Getter
 	String countryNameByFootystats;
 
 	Country(String countryNameByFootystats) {

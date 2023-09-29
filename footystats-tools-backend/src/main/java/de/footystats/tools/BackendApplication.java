@@ -1,7 +1,6 @@
 package de.footystats.tools;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableScheduling
-public class BackendApplication implements CommandLineRunner {
+public class BackendApplication {
 
 	@Autowired
 	private FootystatsProperties fsProperties;
@@ -30,10 +29,5 @@ public class BackendApplication implements CommandLineRunner {
 				registry.addMapping("/**").allowedOrigins(fsProperties.getAllowedOrigins()).allowedMethods("POST", "GET", "PUT", "PATCH", "DELETE");
 			}
 		};
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-
 	}
 }

@@ -1,6 +1,5 @@
 package de.footystats.tools.services.settings;
 
-import de.footystats.tools.mongo.converter.Password;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

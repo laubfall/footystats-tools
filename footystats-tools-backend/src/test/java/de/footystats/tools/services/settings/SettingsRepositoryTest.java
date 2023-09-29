@@ -1,6 +1,5 @@
 package de.footystats.tools.services.settings;
 
-import de.footystats.tools.mongo.converter.Password;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

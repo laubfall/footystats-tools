@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
-@CompoundIndex(name = "unique", def = "{'country': 1, 'name' : 1, 'season': 1}")
+@CompoundIndex(name = "leagueStatsUnique", def = "{'country': 1, 'name' : 1, 'season': 1}")
 @Getter
 @Setter
 public class LeagueStats {

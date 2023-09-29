@@ -1,11 +1,11 @@
 package de.footystats.tools.mongo.converter;
 
 import de.footystats.tools.services.EncryptionService;
+import de.footystats.tools.services.settings.Password;
+import java.util.Base64;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Component;
-
-import java.util.Base64;
 
 
 @WritingConverter
