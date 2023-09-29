@@ -1,4 +1,4 @@
-package de.footystats.tools.mongo.converter;
+package de.footystats.tools.services.settings.mongo;
 
 import de.footystats.tools.services.EncryptionService;
 import de.footystats.tools.services.settings.Password;
