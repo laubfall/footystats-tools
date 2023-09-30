@@ -8,8 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * Base class for controller tests that ramps up the necessary resources like
- * data sources, platformtransaction manager, mongodb, etc.
+ * Base class for controller tests that ramps up the necessary resources like data sources, platformtransaction manager, mongodb, etc.
  */
 @ActiveProfiles("test")
 @WebMvcTest
@@ -18,4 +17,5 @@ import org.springframework.test.context.ContextConfiguration;
 @AutoConfigureTestDatabase // Set up the datasource used by spring batch.
 @AutoConfigureDataMongo
 public abstract class BaseControllerTest {
+
 }

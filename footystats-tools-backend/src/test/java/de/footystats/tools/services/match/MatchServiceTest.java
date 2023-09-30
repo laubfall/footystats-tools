@@ -1,5 +1,6 @@
 package de.footystats.tools.services.match;
 
+import de.footystats.tools.services.domain.DomainDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -14,16 +15,19 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 @ActiveProfiles("test")
-@DataMongoTest
+@DataMongoTest(includeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {Converter.class})})
 @AutoConfigureDataMongo
-@ContextConfiguration(classes = {MatchServiceConfiguration.class})
+@Import({MatchServiceConfiguration.class})
 class MatchServiceTest {
 
 	@Autowired
@@ -31,6 +35,9 @@ class MatchServiceTest {
 
 	@Autowired
 	private MatchRepository matchRepository;
+
+	@Autowired
+	private DomainDataService domainDataService;
 
 	static Stream<Pair<String, String>> multipleSearchTerms() {
 		return Stream.of(
@@ -48,7 +55,7 @@ class MatchServiceTest {
 
 	@Test
 	void upsertTwoDifferentMatches() {
-		var country = "Fantasia";
+		var country = domainDataService.countryByName("germany");
 		var now = LocalDateTime.now();
 		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
 			.awayTeam("Team Away").homeTeam("Team Home");
@@ -65,7 +72,7 @@ class MatchServiceTest {
 
 	@Test
 	void findByCustomQuery() {
-		var country = "Heureka";
+		var country = domainDataService.countryByName("germany");
 		var now = LocalDateTime.now();
 		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
 			.awayTeam("Team Away").homeTeam("Team Home");
@@ -77,7 +84,8 @@ class MatchServiceTest {
 		matchService.upsert(matchBuilder.build());
 
 		var page = PageRequest.of(0, 10);
-		Page<Match> matches = matchService.find(MatchSearch.builder().countries(List.of(country)).pageable(page).build());
+		Page<Match> matches = matchService.find(
+			MatchSearch.builder().countries(List.of(country.getCountryNameByFootystats())).pageable(page).build());
 		Assertions.assertNotNull(matches);
 		Assertions.assertEquals(2, matches.getNumberOfElements());
 
@@ -105,7 +113,7 @@ class MatchServiceTest {
 	@ValueSource(strings = {"Yala", "yala", "YALA", "yAlA", "Yolo", "yolo", "YOLO", "yOlO"})
 	void findByTeamNameFullTextQuery(String searchTerm) {
 
-		var country = "Heureka";
+		var country = domainDataService.countryByName("germany");
 		var now = LocalDateTime.now();
 		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
 			.awayTeam("Yolo").homeTeam("Yala");
@@ -121,7 +129,7 @@ class MatchServiceTest {
 	@MethodSource("multipleSearchTerms")
 	void findByTeamNameFullTextQueryMultipleSearchTerms(Pair<String, String> searchTerms) {
 
-		var country = "Heureka";
+		var country = domainDataService.countryByName("germany");
 		var now = LocalDateTime.now();
 		var matchBuilder = Match.builder().country(country).dateUnix(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).dateGMT(now)
 			.awayTeam("Yolo").homeTeam("other");

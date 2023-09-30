@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,27 @@ public class DomainDataService {
 	/**
 	 * Returns the country with the given name. Throw an IllegalArgumentException if no country with the given name exists.
 	 *
-	 * @param name the name of the country
+	 * @param name the name of the country as defined in countries.txt
 	 * @return the country with the given name
 	 */
 	public Country countryByName(String name) {
 		return countries.stream().filter(c -> c.getCountryNameByFootystats().equals(name)).findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("No country with name " + name + " exists."));
+	}
+
+	/**
+	 * Returns the country with the given name. Throw an IllegalArgumentException if no country with the given name exists. The name is normalized
+	 * before the lookup that means it is converted to lowercase and whitespaces are replaced by dashes. The normalized name is the name used in
+	 * countries.txt.
+	 *
+	 * @param name the name of the country. Either the name as defined in countries.txt or more human-readable english name (e.g. "Germany", "New
+	 *             Zealand")
+	 * @return the country with the given name
+	 */
+	public Country countryByNormalizedName(String name) {
+		var normalized = name.toLowerCase().trim();
+		normalized = StringUtils.replace(normalized, " ", "-");
+		return countryByName(normalized);
 	}
 
 	@PostConstruct

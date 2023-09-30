@@ -3,6 +3,7 @@ package de.footystats.tools.services.match;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import de.footystats.tools.services.MongoService;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
@@ -30,13 +31,17 @@ public class MatchService extends MongoService<Match> {
 
 	private final LeagueStatsService leagueStatsService;
 
+	private final DomainDataService domainDataService;
+
+
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
-		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService) {
+		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, DomainDataService domainDataService) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
 		this.cachedConfiguredStatsService = cachedConfiguredStatsService;
 		this.leagueStatsService = leagueStatsService;
+		this.domainDataService = domainDataService;
 	}
 
 	public Page<Match> find(final MatchSearch search) {
@@ -79,7 +84,7 @@ public class MatchService extends MongoService<Match> {
 
 	public Match convert(MatchStats matchStats) {
 		return Match.builder()
-			.country(matchStats.getCountry())
+			.country(domainDataService.countryByNormalizedName(matchStats.getCountry()))
 			.league(matchStats.getLeague())
 			.dateUnix(matchStats.getDateUnix())
 			.dateGMT(matchStats.getDateGmt())
@@ -114,7 +119,7 @@ public class MatchService extends MongoService<Match> {
 		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
 
 		// Load Team and League stats and add them to the context (if they exist).
-		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getCountry(), ms.getLeague(), ms.getDateGmt().getYear());
+		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getLeague(), ms.getCountry(), ms.getDateGmt().getYear());
 		return predictionService.prediction(new BetPredictionContext(ms, null, aggregatedLeagueStats, bet));
 	}
 

@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.InfluencerResult;
@@ -33,7 +34,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 class MatchControllerTest extends BaseControllerTest {
@@ -48,10 +48,10 @@ class MatchControllerTest extends BaseControllerTest {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private WebApplicationContext context;
+	private MockMvc mockMvc;
 
 	@Autowired
-	private MockMvc mockMvc;
+	private DomainDataService domainDataService;
 
 	@AfterEach
 	public void cleanUp() {
@@ -73,9 +73,10 @@ class MatchControllerTest extends BaseControllerTest {
 	@Test
 	void listMatchesForCountryAndLeague() throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
+		var country = domainDataService.countryByName("germany");
 		var match = new Match();
 		match.setFootyStatsUrl("http://www.footystats.org/someurl");
-		match.setCountry("Germany");
+		match.setCountry(country);
 		match.setLeague("Bundesliga");
 		match.setRevision(PredictionQualityRevision.NO_REVISION);
 		match.setDateGMT(date);
@@ -85,7 +86,7 @@ class MatchControllerTest extends BaseControllerTest {
 		matchRepository.insert(match);
 
 		var request = new MatchController.ListMatchRequest();
-		request.setCountry(List.of("Germany"));
+		request.setCountry(List.of("germany"));
 		request.setLeague(List.of("Bundesliga"));
 		request.setStart(date.minusDays(1));
 		request.setEnd(date.plusDays(1));
@@ -104,7 +105,8 @@ class MatchControllerTest extends BaseControllerTest {
 	void listMatchesForAllCountries(@Autowired MockMvc mvc) throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
 		var match = new Match();
-		match.setCountry("Germany");
+		var country = domainDataService.countryByName("germany");
+		match.setCountry(country);
 		match.setLeague("Bundesliga");
 		match.setRevision(new PredictionQualityRevision(1));
 		match.setDateUnix(date.getLong(ChronoField.ERA));
@@ -158,8 +160,9 @@ class MatchControllerTest extends BaseControllerTest {
 				System.out.println(rh.getResponse().getContentAsString());
 			});
 
+		var country = domainDataService.countryByName("austria");
 		Optional<Match> updatedMatchOpt = matchRepository.findOne(Example.of(
-			Match.builder().country(matchStats.getCountry())
+			Match.builder().country(country)
 				.homeTeam(matchStats.getHomeTeam())
 				.awayTeam(matchStats.getAwayTeam())
 				.build()));

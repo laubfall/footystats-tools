@@ -42,7 +42,7 @@ class CachedConfiguredStatsServiceTest {
 	@ParameterizedTest
 	@MethodSource("downloadCacheLifetimeValues")
 	void downloadDependingOnCacheLifetime(Long waitForSecondCall, int expectedCalls) throws InterruptedException {
-		properties.setMaxCacheTimeConfiguredStatsCache(100L);
+		properties.setMaxCacheTimeConfiguredStatsCache(80L);
 		CachedConfiguredStatsService cachedConfiguredStatsService = new CachedConfiguredStatsService(configuredCsvDownloadService, properties);
 		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
 		Thread.sleep(waitForSecondCall);

@@ -1,6 +1,7 @@
 package de.footystats.tools.services.match;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
@@ -33,7 +34,7 @@ public class Match {
 	private LocalDateTime dateGMT;
 	@Getter
 	@Setter
-	private String country;
+	private Country country;
 	@Getter
 	@Setter
 	private String league;
