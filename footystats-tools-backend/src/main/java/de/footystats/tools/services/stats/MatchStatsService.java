@@ -3,8 +3,6 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.match.MatchService;
-import de.footystats.tools.services.stats.batch.IMatchStatsJobService;
-import de.footystats.tools.services.stats.batch.MatchStatsJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class MatchStatsService extends MongoService<MatchStats> {
+
 	public static final String COUNTRY_ESPORTS = "Esports";
 
 	private final FootystatsProperties fsProperties;
@@ -26,15 +25,12 @@ public class MatchStatsService extends MongoService<MatchStats> {
 
 	private final MatchStatsRepository matchStatsRepository;
 
-	private final IMatchStatsJobService matchStatsJobService;
-
-	public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties fsProperties, MatchService matchService, MatchStatsRepository matchStatsRepository,
-		IMatchStatsJobService matchStatsJobService) {
+	public MatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, FootystatsProperties fsProperties,
+		MatchService matchService, MatchStatsRepository matchStatsRepository) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.fsProperties = fsProperties;
 		this.matchService = matchService;
 		this.matchStatsRepository = matchStatsRepository;
-		this.matchStatsJobService = matchStatsJobService;
 	}
 
 	@Transactional
@@ -60,7 +56,7 @@ public class MatchStatsService extends MongoService<MatchStats> {
 		do {
 			log.info("Doing reimport for page " + pageable.getPageNumber());
 			var page = matchStatsRepository.findAll(pageable);
-			if(!page.hasNext()){
+			if (!page.hasNext()) {
 				break;
 			}
 			pageable = page.nextPageable();
@@ -71,7 +67,9 @@ public class MatchStatsService extends MongoService<MatchStats> {
 
 	@Override
 	public Query upsertQuery(MatchStats example) {
-		return Query.query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix()).and("homeTeam").is(example.getHomeTeam()).and("awayTeam").is(example.getAwayTeam()));
+		return Query.query(
+			Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix())
+				.and("homeTeam").is(example.getHomeTeam()).and("awayTeam").is(example.getAwayTeam()));
 	}
 
 	@Override
