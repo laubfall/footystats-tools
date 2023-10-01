@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 @Configuration
 public class MongoConfiguration {
 
-	@Profile("!test")
+	@Profile("!test") // TX with embedded mongodb as used in unit tests are not possible.
 	@Bean
 	public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
 		return new MongoTransactionManager(dbFactory);

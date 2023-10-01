@@ -115,7 +115,7 @@ public class MatchService extends MongoService<Match> {
 		Bet bet,
 		MatchStats ms) {
 
-		// Update stats like league-, team-stats etc. if necessary so we download the latest stats from footystats.org.
+		// Update stats like league-, team-stats etc. if necessary we download the latest stats from footystats.org.
 		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
 
 		// Load Team and League stats and add them to the context (if they exist).

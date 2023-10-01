@@ -1,5 +1,6 @@
 package de.footystats.tools.services.footy.dls;
 
+import de.footystats.tools.services.domain.DomainDataService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +24,9 @@ class DownloadConfigServiceTest {
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
 
+	@Autowired
+	private DomainDataService domainDataService;
+
 	@BeforeEach
 	public void cleanup() {
 		downloadConfigRepository.deleteAll();
@@ -31,14 +35,14 @@ class DownloadConfigServiceTest {
 	@Test
 	void match_dl_bitmask_and_last_download_is_null_or_older_thirty_days() {
 		var currentYear = LocalDate.now().getYear();
-
-		var bundesliga = new DownloadCountryLeagueStatsConfig("Germany", "Bundesliga", 4711, "2022/" + currentYear, 4, null, null, null, null, null);
+		var germany = domainDataService.countryByNormalizedName("Germany");
+		var bundesliga = new DownloadCountryLeagueStatsConfig(germany, "Bundesliga", 4711, "2022/" + currentYear, 4, null, null, null, null, null);
 		// Should not be inside the result set cause dl bitmask is null
-		var bundesliga2 = new DownloadCountryLeagueStatsConfig("Germany", "2. Bundesliga", 4711, "2022/" + currentYear, null, null, null, null, null,
+		var bundesliga2 = new DownloadCountryLeagueStatsConfig(germany, "2. Bundesliga", 4711, "2022/" + currentYear, null, null, null, null, null,
 			null);
 		// Should be inside the result set cause last download of player stats is older then thirty days.
 		var dlOldThenThirtyDays = System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
-		var bundesliga3 = new DownloadCountryLeagueStatsConfig("Germany", "3. Bundesliga", 4711, "2022/" + currentYear, 1, dlOldThenThirtyDays,
+		var bundesliga3 = new DownloadCountryLeagueStatsConfig(germany, "3. Bundesliga", 4711, "2022/" + currentYear, 1, dlOldThenThirtyDays,
 			dlOldThenThirtyDays, dlOldThenThirtyDays, dlOldThenThirtyDays, dlOldThenThirtyDays);
 
 		downloadConfigRepository.insert(List.of(bundesliga, bundesliga2, bundesliga3));
@@ -54,7 +58,8 @@ class DownloadConfigServiceTest {
 	@Test
 	void season_does_not_match() {
 		var currentYear = LocalDate.now().getYear() + 1;
-		var regionalliga = new DownloadCountryLeagueStatsConfig("Germany", "Regionalliga", 4711, currentYear + "/" + (currentYear + 1), null, null,
+		var germany = domainDataService.countryByNormalizedName("Germany");
+		var regionalliga = new DownloadCountryLeagueStatsConfig(germany, "Regionalliga", 4711, currentYear + "/" + (currentYear + 1), null, null,
 			null, null, null, null);
 		downloadConfigRepository.insert(regionalliga);
 
@@ -66,8 +71,9 @@ class DownloadConfigServiceTest {
 	@Test
 	void last_download_to_young_so_no_match() {
 		var currentYear = LocalDate.now().getYear();
+		var germany = domainDataService.countryByNormalizedName("Germany");
 		// Should be inside the result set cause last download of player stats is older then thirty days.
-		var bundesliga3 = new DownloadCountryLeagueStatsConfig("Germany", "3. Bundesliga", 4711, "2022/" + currentYear, 1,
+		var bundesliga3 = new DownloadCountryLeagueStatsConfig(germany, "3. Bundesliga", 4711, "2022/" + currentYear, 1,
 			System.currentTimeMillis() - 1000L, null, null, null, null);
 		downloadConfigRepository.insert(bundesliga3);
 		List<DownloadCountryLeagueStatsConfig> configs = downloadConfigService.configsWhoWantADownloadForCurrentYear();
@@ -78,18 +84,19 @@ class DownloadConfigServiceTest {
 	@Test
 	void configs_of_past_years_with_and_without_a_dl() {
 		var currentYear = LocalDate.now().getYear();
+		var germany = domainDataService.countryByNormalizedName("Germany");
 		// last year, wants all dls but no dl so far.
-		var bundesliga = new DownloadCountryLeagueStatsConfig("Germany", "Bundesliga", 4711, String.valueOf(currentYear - 1), 31, null, null, null,
+		var bundesliga = new DownloadCountryLeagueStatsConfig(germany, "Bundesliga", 4711, String.valueOf(currentYear - 1), 31, null, null, null,
 			null, null);
 		downloadConfigRepository.insert(bundesliga);
 
 		// last year, but already downloaded team stats
-		var bundesliga2 = new DownloadCountryLeagueStatsConfig("Germany", "2. Bundesliga", 4711, String.valueOf(currentYear - 1), 2, null,
+		var bundesliga2 = new DownloadCountryLeagueStatsConfig(germany, "2. Bundesliga", 4711, String.valueOf(currentYear - 1), 2, null,
 			System.currentTimeMillis(), null, null, null);
 		downloadConfigRepository.insert(bundesliga2);
 
 		// last year, wanted league dl but no dl so far.
-		var bundesliga3 = new DownloadCountryLeagueStatsConfig("Germany", "3. Bundesliga", 4711, String.valueOf(currentYear - 1), 1, null, null, null,
+		var bundesliga3 = new DownloadCountryLeagueStatsConfig(germany, "3. Bundesliga", 4711, String.valueOf(currentYear - 1), 1, null, null, null,
 			null, null);
 		downloadConfigRepository.insert(bundesliga3);
 
@@ -101,8 +108,9 @@ class DownloadConfigServiceTest {
 	@Test
 	void config_current_year_but_search_for_older_ones() {
 		var currentYear = LocalDate.now().getYear();
+		var germany = domainDataService.countryByNormalizedName("Germany");
 		// wants a download for team2stats but is for the current year
-		var bundesliga2 = new DownloadCountryLeagueStatsConfig("Germany", "2. Bundesliga", 4711, String.valueOf(currentYear), 8, null, null, null,
+		var bundesliga2 = new DownloadCountryLeagueStatsConfig(germany, "2. Bundesliga", 4711, String.valueOf(currentYear), 8, null, null, null,
 			null, null);
 		downloadConfigRepository.insert(bundesliga2);
 

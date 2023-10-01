@@ -6,8 +6,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import de.footystats.tools.services.csv.Configuration;
+import de.footystats.tools.services.domain.Country;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.footy.CsvHttpClient;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
@@ -33,8 +34,11 @@ class ConfiguredCsvDownloadServiceTest {
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
 
+	@Autowired
+	private DomainDataService domainDataService;
+
 	@BeforeEach
-	void setup(){
+	void setup() {
 		reset(csvHttpClient);
 		downloadConfigRepository.deleteAll();
 	}
@@ -42,7 +46,8 @@ class ConfiguredCsvDownloadServiceTest {
 	@Test
 	void download_configured_csv_and_mark_as_dld() throws IOException {
 		var currentYear = LocalDate.now().getYear();
-		downloadConfigRepository.insert(DownloadCountryLeagueStatsConfig.builder().footyStatsDlId(4711).downloadBitmask(31).country("Germany").season(
+		var germany = domainDataService.countryByNormalizedName("Germany");
+		downloadConfigRepository.insert(DownloadCountryLeagueStatsConfig.builder().footyStatsDlId(4711).downloadBitmask(31).country(germany).season(
 			String.valueOf(currentYear)).build());
 
 		fileDownloadService.downloadConfiguredStats();
@@ -66,7 +71,8 @@ class ConfiguredCsvDownloadServiceTest {
 
 	@Test
 	void download_configured_prev_season_csv_and_mark_as_dld() throws IOException {
-		downloadConfigRepository.insert(DownloadCountryLeagueStatsConfig.builder().footyStatsDlId(4711).downloadBitmask(31).country("Germany").season(
+		Country germany = domainDataService.countryByNormalizedName("Germany");
+		downloadConfigRepository.insert(DownloadCountryLeagueStatsConfig.builder().footyStatsDlId(4711).downloadBitmask(31).country(germany).season(
 			"2022").build());
 
 		fileDownloadService.downloadConfiguredStats();

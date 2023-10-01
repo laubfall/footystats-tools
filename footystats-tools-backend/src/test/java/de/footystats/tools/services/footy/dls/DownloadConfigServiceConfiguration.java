@@ -1,6 +1,7 @@
 package de.footystats.tools.services.footy.dls;
 
 import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.csv.AutowireCapableHeaderNameStrategy;
 import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.domain.DomainDataService;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
-@Import({FootystatsProperties.class, DomainDataService.class})
+@Import({FootystatsProperties.class, DomainDataService.class, AutowireCapableHeaderNameStrategy.class})
 @TestConfiguration
 public class DownloadConfigServiceConfiguration {
 
@@ -20,7 +21,9 @@ public class DownloadConfigServiceConfiguration {
 	}
 
 	@Bean
-	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> csvFileService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<DownloadCountryLeagueStatsCsvEntry> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
+
 }

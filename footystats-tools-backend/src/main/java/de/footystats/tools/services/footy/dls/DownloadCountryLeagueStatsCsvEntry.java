@@ -1,45 +1,45 @@
 package de.footystats.tools.services.footy.dls;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+import de.footystats.tools.services.domain.Country;
+import de.footystats.tools.services.domain.CountryCsvConverter;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This class is used to store the configuration for the download of a specific country and league.
+ * <p>
+ * The configuration is used to determine which files should be downloaded and when the last download of a file was. The configuration is also used to
+ * determine if a file should be downloaded again.
+ * <p>
+ */
+@Getter
+@Setter
 public class DownloadCountryLeagueStatsCsvEntry {
-	@Getter
-	@Setter
-	@CsvBindByName(required = true)
-	private String country;
 
-	@Getter
-	@Setter
+	@CsvCustomBindByName(required = true, converter = CountryCsvConverter.class)
+	@CsvBindByName(required = true)
+	private Country country;
+
 	@CsvBindByName(required = true)
 	private String league;
 
 	/**
 	 * The id provided by footystats that identifies the downloads for a specific country and season.
 	 */
-	@Getter
-	@Setter
 	@CsvBindByName(required = true)
 	private Integer footyStatsDlId;
 
 	/**
 	 * e.G.: 2022 or a range 2021/2022
 	 */
-	@Getter
-	@Setter
 	@CsvBindByName(required = true)
 	private String season;
 
 	/**
-	 * 1: League
-	 * 2: Teams
-	 * 4: Teams2
-	 * 8: Player
-	 * 16: Match
+	 * 1: League 2: Teams 4: Teams2 8: Player 16: Match
 	 */
-	@Getter
-	@Setter
 	@CsvBindByName(required = true, capture = "(\\d{1})")
 	private Integer downloadBitmask;
 }

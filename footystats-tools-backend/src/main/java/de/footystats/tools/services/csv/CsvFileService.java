@@ -27,8 +27,11 @@ public class CsvFileService<T> {
 	public static final char SEPARATOR_CHAR = '-';
 	private final DomainDataService domainDataService;
 
-	public CsvFileService(DomainDataService domainDataService) {
+	private final AutowireCapableHeaderNameStrategy<T> headerNameStrategy;
+
+	public CsvFileService(DomainDataService domainDataService, AutowireCapableHeaderNameStrategy<T> headerNameStrategy) {
 		this.domainDataService = domainDataService;
+		this.headerNameStrategy = headerNameStrategy;
 	}
 
 	/**
@@ -95,7 +98,9 @@ public class CsvFileService<T> {
 
 	public List<T> importFile(InputStream data, Class<T> clazz) {
 		try (var isr = new InputStreamReader(data, StandardCharsets.UTF_8)) {
-			return new CsvToBeanBuilder<T>(isr).withType(clazz).build().parse();
+			var csvReader = new CsvToBeanBuilder<T>(isr).withType(clazz).withMappingStrategy(headerNameStrategy).build();
+			headerNameStrategy.setType(clazz);
+			return csvReader.parse();
 		} catch (IOException e) {
 			log.error("Failed importing csv file.", e);
 			throw new RuntimeException(e);

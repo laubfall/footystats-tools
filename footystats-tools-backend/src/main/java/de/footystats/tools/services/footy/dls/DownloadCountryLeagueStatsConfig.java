@@ -1,5 +1,6 @@
 package de.footystats.tools.services.footy.dls;
 
+import de.footystats.tools.services.domain.Country;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -38,7 +39,7 @@ public class DownloadCountryLeagueStatsConfig {
 
 	@Getter
 	@Setter
-	private String country;
+	private Country country;
 
 	@Getter
 	@Setter

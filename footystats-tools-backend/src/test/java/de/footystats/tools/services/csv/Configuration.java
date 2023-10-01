@@ -13,31 +13,36 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @TestConfiguration
-@Import({FootystatsProperties.class, EncryptionService.class})
+@Import({FootystatsProperties.class, EncryptionService.class, AutowireCapableHeaderNameStrategy.class, DomainDataService.class})
 public class Configuration {
 
 	@Bean
-	public CsvFileService<MatchStats> csvMatchStatsService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<MatchStats> csvMatchStatsService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<MatchStats> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
 
 	@Bean
-	public CsvFileService<LeagueStats> leagueStatsCsvFileService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<LeagueStats> leagueStatsCsvFileService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<LeagueStats> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
 
 	@Bean
-	public CsvFileService<TeamStats> teamStatsCsvFileService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<TeamStats> teamStatsCsvFileService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<TeamStats> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
 
 	@Bean
-	public CsvFileService<Team2Stats> team2StatsCsvFileService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<Team2Stats> team2StatsCsvFileService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<Team2Stats> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
 
 	@Bean
-	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> downloadConfigCsvFileService(DomainDataService domainDataService) {
-		return new CsvFileService<>(domainDataService);
+	public CsvFileService<DownloadCountryLeagueStatsCsvEntry> downloadConfigCsvFileService(DomainDataService domainDataService,
+		AutowireCapableHeaderNameStrategy<DownloadCountryLeagueStatsCsvEntry> headerNameStrategy) {
+		return new CsvFileService<>(domainDataService, headerNameStrategy);
 	}
 }
