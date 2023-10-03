@@ -5,6 +5,9 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Converts a country name stored in mongodb into a country object.
+ */
 @ReadingConverter
 @Component
 public class CountryReadingConverter implements Converter<String, Country> {

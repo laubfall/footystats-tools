@@ -76,6 +76,9 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 			var config = downloadConfigRepository.findAllBySeasonEndsWithAndDownloadBitmaskGreaterThan("2023", 0);
 			Assertions.assertNotNull(config);
 			Assertions.assertEquals(2, config.size());
+			Assertions.assertEquals(2, config.stream().filter(dlconfig -> dlconfig.getCountry() != null).count());
+			Assertions.assertEquals(2,
+				config.stream().filter(dlconfig -> "africa".equals(dlconfig.getCountry().getCountryNameByFootystats())).count());
 		} catch (Exception e) {
 			Assertions.fail(e);
 		}
