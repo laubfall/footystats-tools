@@ -84,7 +84,7 @@ public class MatchService extends MongoService<Match> {
 
 	public Match convert(MatchStats matchStats) {
 		return Match.builder()
-			.country(domainDataService.countryByNormalizedName(matchStats.getCountry()))
+			.country(matchStats.getCountry())
 			.league(matchStats.getLeague())
 			.dateUnix(matchStats.getDateUnix())
 			.dateGMT(matchStats.getDateGmt())

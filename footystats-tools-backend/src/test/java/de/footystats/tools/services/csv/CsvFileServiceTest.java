@@ -70,7 +70,7 @@ class CsvFileServiceTest {
 			Assertions.assertEquals(1, entries.size());
 
 			var onlyMatchStats = entries.get(0);
-			Assertions.assertEquals("Germany", onlyMatchStats.getCountry());
+			Assertions.assertEquals("germany", onlyMatchStats.getCountry().getCountryNameByFootystats());
 			Assertions.assertEquals("Bundesliga", onlyMatchStats.getLeague());
 			Assertions.assertNotNull(onlyMatchStats.getDateGmt());
 			Assertions.assertNotNull(onlyMatchStats.getDateUnix());
@@ -87,7 +87,7 @@ class CsvFileServiceTest {
 			Assertions.assertEquals(3, entries.size());
 
 			var onlyMatchStats = entries.get(2);
-			Assertions.assertEquals("Romania", onlyMatchStats.getCountry());
+			Assertions.assertEquals("romania", onlyMatchStats.getCountry().getCountryNameByFootystats());
 			Assertions.assertEquals("CSO Boldeşti-Scăeni", onlyMatchStats.getHomeTeam());
 			Assertions.assertEquals("Ştefăneşti", onlyMatchStats.getAwayTeam());
 		} catch (IOException e) {

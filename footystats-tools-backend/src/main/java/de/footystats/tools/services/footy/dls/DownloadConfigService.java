@@ -12,6 +12,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
+import de.footystats.tools.services.domain.Country;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
@@ -70,14 +71,15 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 		return mongoTemplate.find(query, DownloadCountryLeagueStatsConfig.class);
 	}
 
-	DownloadCountryLeagueStatsConfig configForCountryLeagueSeasonForCurrentYear(String country, String league) {
+	DownloadCountryLeagueStatsConfig configForCountryLeagueSeasonForCurrentYear(Country country, String league) {
 		Criteria[] criterias = criteriasForConfigsWhoWantADownloadForCurrentYear();
+		// TODO maybe providing the country object may not work. Maybe we need to provide the country name.
 		var query = new Query(
 			criterias[0].and(FIELD_COUNTRY).is(country).and(FIELD_LEAGUE).is(league).orOperator(ArrayUtils.subarray(criterias, 1, criterias.length)));
 		return mongoTemplate.findOne(query, DownloadCountryLeagueStatsConfig.class);
 	}
 
-	DownloadCountryLeagueStatsConfig configForCountryLeagueSeasonForPreviousYears(String country, String league) {
+	DownloadCountryLeagueStatsConfig configForCountryLeagueSeasonForPreviousYears(Country country, String league) {
 		Criteria[] criterias = criteriasForConfigsWhoWantADownloadForPreviousYears();
 		var query = new Query(
 			criterias[0].and(FIELD_COUNTRY).is(country).and(FIELD_LEAGUE).is(league).orOperator(ArrayUtils.subarray(criterias, 1, criterias.length)));

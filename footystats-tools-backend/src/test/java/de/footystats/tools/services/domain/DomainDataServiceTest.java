@@ -50,4 +50,10 @@ class DomainDataServiceTest {
 		});
 	}
 
+	@Test
+	void countryNameWithDot() {
+		Country country = domainDataService.countryByNormalizedName("St. Kitts and Nevis");
+		Assertions.assertNotNull(country);
+		Assertions.assertEquals("st-kitts-and-nevis", country.getCountryNameByFootystats());
+	}
 }

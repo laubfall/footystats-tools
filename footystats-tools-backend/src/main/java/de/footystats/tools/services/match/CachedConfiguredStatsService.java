@@ -1,6 +1,7 @@
 package de.footystats.tools.services.match;
 
 import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.footy.dls.ConfiguredCsvDownloadService;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class CachedConfiguredStatsService {
 	 * @param country Mandatory. The country for which the stats should be downloaded.
 	 * @param league  Mandatory. The league for which the stats should be downloaded.
 	 */
-	public void updateConfiguredStats(String country, String league) {
+	public void updateConfiguredStats(Country country, String league) {
 		synchronized (cache) {
 			var cacheKey = CacheKey.builder().country(country).league(league).build();
 			if (cache.containsKey(cacheKey)) {
@@ -49,7 +50,7 @@ public class CachedConfiguredStatsService {
 	@Data
 	static class CacheKey {
 
-		private String country;
+		private Country country;
 		private String league;
 	}
 

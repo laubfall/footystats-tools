@@ -2,6 +2,7 @@ package de.footystats.tools.controller;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.footy.dls.DownloadConfigRepository;
 import de.footystats.tools.services.stats.LeagueMatchStats;
 import de.footystats.tools.services.stats.LeagueMatchStatsRepository;
@@ -38,6 +39,9 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 
 	@Autowired
 	private DownloadConfigRepository downloadConfigRepository;
+
+	@Autowired
+	private DomainDataService domainDataService;
 
 	@Autowired
 	private MockMvc mvc;
@@ -90,8 +94,8 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
 			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
 			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
-
-			List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry("Germany");
+			var germany = domainDataService.countryByNormalizedName("Germany");
+			List<MatchStats> matchStatsImported = matchStatsRepository.findByCountry(germany);
 			Assertions.assertFalse(matchStatsImported.isEmpty());
 		} catch (Exception e) {
 			Assertions.fail(e);

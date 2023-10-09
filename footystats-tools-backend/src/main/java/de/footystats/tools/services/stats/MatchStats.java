@@ -4,6 +4,8 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.CsvDate;
 import de.footystats.tools.services.csv.FloatConverter;
+import de.footystats.tools.services.domain.Country;
+import de.footystats.tools.services.domain.CountryCsvConverter;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,10 +35,10 @@ public class MatchStats {
 	@Setter
 	private LocalDateTime dateGmt;
 
-	@CsvBindByName(column = "Country")
+	@CsvCustomBindByName(column = "Country", required = true, converter = CountryCsvConverter.class)
 	@Getter
 	@Setter
-	private String country;
+	private Country country;
 
 	@CsvBindByName(column = "League")
 	@Getter

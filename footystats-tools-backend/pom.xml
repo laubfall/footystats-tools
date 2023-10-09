@@ -42,6 +42,7 @@
 							<groupId>org.projectlombok</groupId>
 						</exclude>
 					</excludes>
+					<mainClass>de.footystats.tools.BackendApplication</mainClass>
 				</configuration>
 				<groupId>org.springframework.boot</groupId>
 			</plugin>

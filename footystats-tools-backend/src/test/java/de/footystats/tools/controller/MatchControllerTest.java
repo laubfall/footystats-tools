@@ -141,8 +141,8 @@ class MatchControllerTest extends BaseControllerTest {
 	@Test
 	void reimport(@Autowired MockMvc mvc) throws Exception {
 		var date = LocalDateTime.of(2022, 8, 1, 13, 0);
-
-		MatchStats matchStats = MatchStats.builder().country("Austria").homeTeam("Auffach").awayTeam("Oberau")
+		var austria = domainDataService.countryByName("austria");
+		MatchStats matchStats = MatchStats.builder().country(austria).homeTeam("Auffach").awayTeam("Oberau")
 			.dateUnix(date.getLong(ChronoField.ERA))
 			.dateGmt(date)
 			.resultHomeTeamGoals(2).resultAwayTeamGoals(2).matchStatus(MatchStatus.complete).build();
@@ -160,9 +160,8 @@ class MatchControllerTest extends BaseControllerTest {
 				System.out.println(rh.getResponse().getContentAsString());
 			});
 
-		var country = domainDataService.countryByName("austria");
 		Optional<Match> updatedMatchOpt = matchRepository.findOne(Example.of(
-			Match.builder().country(country)
+			Match.builder().country(austria)
 				.homeTeam(matchStats.getHomeTeam())
 				.awayTeam(matchStats.getAwayTeam())
 				.build()));

@@ -54,6 +54,7 @@ public class DomainDataService {
 	public Country countryByNormalizedName(String name) {
 		var normalized = name.toLowerCase().trim();
 		normalized = StringUtils.replace(normalized, " ", "-");
+		normalized = StringUtils.remove(normalized, "."); // e.g. St. Kitts and Nevis -> st-kitts-and-nevis
 		return countryByName(normalized);
 	}
 

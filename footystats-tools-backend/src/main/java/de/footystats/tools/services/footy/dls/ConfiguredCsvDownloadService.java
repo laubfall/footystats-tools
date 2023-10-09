@@ -3,6 +3,7 @@ package de.footystats.tools.services.footy.dls;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.csv.CsvFileService;
+import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.footy.CsvFileDownloadService;
 import de.footystats.tools.services.footy.CsvHttpClient;
 import de.footystats.tools.services.footy.SessionCookie;
@@ -63,7 +64,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 		}
 	}
 
-	public void downloadConfiguredStats(String country, String league) {
+	public void downloadConfiguredStats(Country country, String league) {
 		// Now download the stats csv as configured for the given country and league for the current year and the previous years.
 		DownloadCountryLeagueStatsConfig currentYearConfigs = downloadConfigService.configForCountryLeagueSeasonForCurrentYear(country, league);
 		DownloadCountryLeagueStatsConfig olderConfigs = downloadConfigService.configForCountryLeagueSeasonForPreviousYears(country, league);

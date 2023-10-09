@@ -1,10 +1,13 @@
 package de.footystats.tools.services.match;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.domain.Country;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.footy.dls.ConfiguredCsvDownloadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,9 @@ class CachedConfiguredStatsServiceTest {
 	@MockBean
 	private ConfiguredCsvDownloadService configuredCsvDownloadService;
 
+	@Autowired
+	private DomainDataService domainDataService;
+
 	static Object[][] downloadCacheLifetimeValues() {
 		return new Object[][]{
 			{100L, 2},
@@ -42,29 +48,32 @@ class CachedConfiguredStatsServiceTest {
 	@ParameterizedTest
 	@MethodSource("downloadCacheLifetimeValues")
 	void downloadDependingOnCacheLifetime(Long waitForSecondCall, int expectedCalls) throws InterruptedException {
+		Country germany = domainDataService.countryByName("germany");
 		properties.setMaxCacheTimeConfiguredStatsCache(80L);
 		CachedConfiguredStatsService cachedConfiguredStatsService = new CachedConfiguredStatsService(configuredCsvDownloadService, properties);
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala");
 		Thread.sleep(waitForSecondCall);
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
-		verify(configuredCsvDownloadService, times(expectedCalls)).downloadConfiguredStats(anyString(), anyString());
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala");
+		verify(configuredCsvDownloadService, times(expectedCalls)).downloadConfiguredStats(any(Country.class), anyString());
 	}
 
 	@Test
 	void downloadIfCacheIsMissing() {
+		Country germany = domainDataService.countryByName("germany");
 		properties.setMaxCacheTimeConfiguredStatsCache(600000L);
 		CachedConfiguredStatsService cachedConfiguredStatsService = new CachedConfiguredStatsService(configuredCsvDownloadService, properties);
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
-		verify(configuredCsvDownloadService, times(1)).downloadConfiguredStats(anyString(), anyString());
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala");
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala");
+		verify(configuredCsvDownloadService, times(1)).downloadConfiguredStats(any(Country.class), anyString());
 	}
 
 	@Test
 	void downloadTriggeredTwoTimesInCaseOfDifferentMatches() {
+		Country germany = domainDataService.countryByName("germany");
 		properties.setMaxCacheTimeConfiguredStatsCache(600000L);
 		CachedConfiguredStatsService cachedConfiguredStatsService = new CachedConfiguredStatsService(configuredCsvDownloadService, properties);
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala");
-		cachedConfiguredStatsService.updateConfiguredStats("Yolo", "Yala 2");
-		verify(configuredCsvDownloadService, times(2)).downloadConfiguredStats(anyString(), anyString());
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala");
+		cachedConfiguredStatsService.updateConfiguredStats(germany, "Yala 2");
+		verify(configuredCsvDownloadService, times(2)).downloadConfiguredStats(any(Country.class), anyString());
 	}
 }
