@@ -42,7 +42,7 @@ public class MatchStats {
 	@Setter
 	private LocalDateTime dateGmt;
 
-	@CsvCustomBindByName(column = "Country", required = true, converter = CountryCsvConverter.class)
+	@CsvCustomBindByName(column = "country", required = true, converter = CountryCsvConverter.class)
 	@Getter
 	@Setter
 	private Country country;

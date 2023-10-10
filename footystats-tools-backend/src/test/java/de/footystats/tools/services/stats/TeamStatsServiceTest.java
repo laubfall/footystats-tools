@@ -1,6 +1,8 @@
 package de.footystats.tools.services.stats;
 
 import de.footystats.tools.services.csv.Configuration;
+import de.footystats.tools.services.domain.Country;
+import de.footystats.tools.services.domain.DomainDataService;
 import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,10 +26,14 @@ class TeamStatsServiceTest {
 	@Autowired
 	private TeamStatsService teamStatsService;
 
+	@Autowired
+	private DomainDataService domainDataService;
+
 	@Test
 	void latestThree() {
+		Country germany = domainDataService.countryByNormalizedName("Germany");
 		var teamStats = new TeamStats();
-		teamStats.setCountry("Somecountry");
+		teamStats.setCountry(germany);
 		teamStats.setSeason("2020/2021");
 		teamStats.setTeamName("Some Team");
 		teamStats.setCommonName("Someteam");
