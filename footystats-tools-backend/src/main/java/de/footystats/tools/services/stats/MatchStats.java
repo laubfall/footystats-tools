@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,6 +24,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1}")
 @Document
 public class MatchStats {
+
+	@Id
+	@Getter
+	@Setter
+	private ObjectId id;
 
 	@Indexed
 	@CsvBindByName(column = "date_unix")

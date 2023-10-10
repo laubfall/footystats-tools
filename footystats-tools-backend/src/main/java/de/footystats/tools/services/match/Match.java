@@ -12,7 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,6 +27,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1, 'state': 1}")
 public class Match {
 
+	@Id
+	@Getter
+	@Setter
+	private ObjectId id;
 	@Getter
 	@Setter
 	private Long dateUnix;

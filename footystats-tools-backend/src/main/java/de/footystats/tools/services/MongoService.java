@@ -7,22 +7,23 @@ import org.springframework.data.mongodb.core.query.BasicUpdate;
 import org.springframework.data.mongodb.core.query.Query;
 
 public abstract class MongoService<MONGO_DOC> {
-    protected MongoTemplate mongoTemplate;
 
-    protected MappingMongoConverter mappingMongoConverter;
+	protected MongoTemplate mongoTemplate;
 
-    public MongoService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter) {
-        this.mongoTemplate = mongoTemplate;
-        this.mappingMongoConverter = mappingMongoConverter;
-    }
+	protected MappingMongoConverter mappingMongoConverter;
 
-    public abstract Query upsertQuery(MONGO_DOC example);
+	protected MongoService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter) {
+		this.mongoTemplate = mongoTemplate;
+		this.mappingMongoConverter = mappingMongoConverter;
+	}
 
-    public abstract Class<MONGO_DOC> upsertType();
+	public abstract Query upsertQuery(MONGO_DOC example);
 
-    public final void upsert(MONGO_DOC somethingToPersist){
-        var doc = new Document();
-        mappingMongoConverter.write(somethingToPersist, doc);
-        mongoTemplate.upsert(upsertQuery(somethingToPersist), new BasicUpdate(doc), upsertType());
-    }
+	public abstract Class<MONGO_DOC> upsertType();
+
+	public void upsert(MONGO_DOC somethingToPersist) {
+		var doc = new Document();
+		mappingMongoConverter.write(somethingToPersist, doc);
+		mongoTemplate.upsert(upsertQuery(somethingToPersist), new BasicUpdate(doc), upsertType());
+	}
 }

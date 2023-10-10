@@ -27,7 +27,8 @@ public class MongoConfiguration {
 	}
 
 	@Bean
-	public MappingMongoConverter mongoConverter(MongoDatabaseFactory dbFactory, MongoMappingContext mongoMappingContext, ApplicationContext context) {
+	public MappingMongoConverter mappingMongoConverter(MongoDatabaseFactory dbFactory, MongoMappingContext mongoMappingContext,
+		ApplicationContext context) {
 		DbRefResolver dbRefResolver = new DefaultDbRefResolver(dbFactory);
 		MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
 		mongoConverter.setCustomConversions(customConversions(context));
