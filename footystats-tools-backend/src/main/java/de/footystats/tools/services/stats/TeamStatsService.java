@@ -3,6 +3,7 @@ package de.footystats.tools.services.stats;
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
+import de.footystats.tools.services.domain.Country;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -38,7 +39,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		return stats;
 	}
 
-	public Collection<TeamStats> latestThree(String team, String country, Integer year) {
+	public Collection<TeamStats> latestThree(String team, Country country, Integer year) {
 		// Holds the seasons for the last 3 years, the current year and the next year, e.g. year is 2022: 2021/2022, 2020/2021, 2022/2023, 2022, 2023
 		var seasons = new String[]{year - 1 + "/" + year, year - 2 + "/" + (year - 1), year + "/" + (year + 1), year + "", year + 1 + "",
 			year - 1 + ""};

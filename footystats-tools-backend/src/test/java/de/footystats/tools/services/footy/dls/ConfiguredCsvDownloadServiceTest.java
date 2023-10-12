@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import de.footystats.tools.services.csv.Configuration;
+import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.footy.CsvHttpClient;
@@ -28,6 +29,9 @@ class ConfiguredCsvDownloadServiceTest {
 	@MockBean
 	private CsvHttpClient csvHttpClient;
 
+	@MockBean
+	private CsvFileService csvFileService;
+
 	@Autowired
 	private ConfiguredCsvDownloadService fileDownloadService;
 
@@ -40,6 +44,7 @@ class ConfiguredCsvDownloadServiceTest {
 	@BeforeEach
 	void setup() {
 		reset(csvHttpClient);
+		reset(csvFileService);
 		downloadConfigRepository.deleteAll();
 	}
 
@@ -53,6 +58,8 @@ class ConfiguredCsvDownloadServiceTest {
 		fileDownloadService.downloadConfiguredStats();
 		// five calls to footystats.org cause we have five different csv files.
 		verify(csvHttpClient, times(5)).connectToFootystatsAndRetrieveFileContent(any(), any());
+		// Player import is not implemented yet, so we expect only 4 call to importFile method.
+		verify(csvFileService, times(4)).importFile(any(), any());
 
 		DownloadCountryLeagueStatsConfig downloadCountryLeagueStatsConfig = downloadConfigRepository.findAll().get(0);
 		Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastTeamsDownload());
@@ -60,10 +67,10 @@ class ConfiguredCsvDownloadServiceTest {
 		Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastLeagueDownload());
 
 		fileDownloadService.downloadConfiguredStats();
-		reset(csvHttpClient);
+		reset(csvHttpClient, csvFileService);
 		// No download cause last download is not more than 30 days ago.
 		verify(csvHttpClient, times(0)).connectToFootystatsAndRetrieveFileContent(any(), any());
-
+		verify(csvFileService, times(0)).importFile(any(), any());
 		// Actually not implemented yet
 		//Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastPlayerDownload());
 		//Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastMatchDownload());
@@ -78,6 +85,8 @@ class ConfiguredCsvDownloadServiceTest {
 		fileDownloadService.downloadConfiguredStats();
 		// five calls to footystats.org cause we have five different csv files.
 		verify(csvHttpClient, times(5)).connectToFootystatsAndRetrieveFileContent(any(), any());
+		// Player import is not implemented yet, so we expect only 4 call to importFile method.
+		verify(csvFileService, times(4)).importFile(any(), any());
 
 		DownloadCountryLeagueStatsConfig downloadCountryLeagueStatsConfig = downloadConfigRepository.findAll().get(0);
 		Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastTeamsDownload());
@@ -85,9 +94,10 @@ class ConfiguredCsvDownloadServiceTest {
 		Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastLeagueDownload());
 
 		fileDownloadService.downloadConfiguredStats();
-		reset(csvHttpClient);
+		reset(csvHttpClient, csvFileService);
 		// no download cause csv files of old seasons are only downloaded once
 		verify(csvHttpClient, times(0)).connectToFootystatsAndRetrieveFileContent(any(), any());
+		verify(csvFileService, times(0)).importFile(any(), any());
 
 		// Actually not implemented yet
 		//Assertions.assertNotNull(downloadCountryLeagueStatsConfig.getLastPlayerDownload());

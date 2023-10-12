@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 /**
  * Service for domain data like country and league names.
  */
-@Service
 @Slf4j
+@Service
 public class DomainDataService {
 
 	private final List<Country> countries = new ArrayList<>();

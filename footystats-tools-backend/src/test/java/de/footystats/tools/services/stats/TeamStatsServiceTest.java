@@ -1,6 +1,5 @@
 package de.footystats.tools.services.stats;
 
-import de.footystats.tools.services.csv.Configuration;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.DomainDataService;
 import java.util.Collection;
@@ -11,13 +10,11 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
-@Import({Configuration.class})
-@ContextConfiguration(classes = {TeamStatsServiceConfiguration.class})
+@Import({TeamStatsServiceConfiguration.class})
 class TeamStatsServiceTest {
 
 	@Autowired
@@ -40,7 +37,7 @@ class TeamStatsServiceTest {
 
 		teamStatsRepository.save(teamStats);
 
-		Collection<TeamStats> result = teamStatsService.latestThree("Some Team", "Somecountry", 2021);
+		Collection<TeamStats> result = teamStatsService.latestThree("Some Team", germany, 2021);
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.isEmpty());
 	}

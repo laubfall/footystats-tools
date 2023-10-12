@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @DataMongoTest
 @AutoConfigureDataMongo
-@Import({FootystatsProperties.class})
+@Import({FootystatsProperties.class, DomainDataService.class})
 class TeamStatsRepositoryTest {
 
 	@Autowired
