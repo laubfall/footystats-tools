@@ -93,6 +93,9 @@ public class DownloadCountryLeagueStatsConfig {
 	 */
 	public final List<FileTypeBit> typesWithWantedDownload() {
 		final List<FileTypeBit> result = new ArrayList<>(5);
+		if (downloadBitmask == null) {
+			return result;
+		}
 		final Predicate<Long> dlTimeReached = (lastDownload) -> lastDownload == null || lastDownload
 			< System.currentTimeMillis() - DownloadConfigService.LAST_DOWNLOAD_MINUS_TIME_MILLIS;
 		var fileBitToCheck = FileTypeBit.LEAGUE;

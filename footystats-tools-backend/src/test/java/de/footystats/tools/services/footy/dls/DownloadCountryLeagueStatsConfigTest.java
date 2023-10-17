@@ -50,4 +50,12 @@ class DownloadCountryLeagueStatsConfigTest {
 		Assertions.assertEquals(1, result.size());
 		Assertions.assertEquals(8, result.get(0).getBit());
 	}
+
+	@Test
+	void no_bitmask() {
+		var germany = domainDataService.countryByNormalizedName("Germany");
+		var config = new DownloadCountryLeagueStatsConfig(germany, "", 0, "", null, null, null, null, null, null);
+		var result = config.typesWithWantedDownload();
+		Assertions.assertEquals(0, result.size());
+	}
 }

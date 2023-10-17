@@ -1,17 +1,18 @@
 package de.footystats.tools.services;
 
 /**
- *
+ * This exception is thrown by services if something goes wrong. The exception contains a type that can be used to determine the cause of the
+ * exception.
  */
-public class ServiceException extends RuntimeException{
+public class ServiceException extends RuntimeException {
 
 	private final Type type;
 
-	public ServiceException(Type type){
+	public ServiceException(Type type) {
 		this.type = type;
 	}
 
-	public ServiceException(Type type, Throwable t){
+	public ServiceException(Type type, Throwable t) {
 		super(t);
 		this.type = type;
 	}
@@ -20,7 +21,7 @@ public class ServiceException extends RuntimeException{
 		return type;
 	}
 
-	public static enum Type {
+	public enum Type {
 		ENCRYPTION_SERVICE_CREATION_FAILED(1),
 		ENCRYPTION_SERVICE_ENCODING_FAILED(2),
 		ENCRYPTION_SERVICE_DECODING_FAILED(3),
@@ -30,8 +31,11 @@ public class ServiceException extends RuntimeException{
 		CSV_FILE_DOWNLOAD_SERVICE_SESSION_ID_MISSING(7),
 		CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED(8),
 		PREDICTION_QUALITY_SERVICE_RECOMPUTE_FAILED(9),
+		CSV_FILE_SERVICE_IO_EXCEPTION(10), // Some io exception while importing csv file,
+		CSV_FILE_SERVICE_LIB_EXCEPTION(11), // Excpetion produced by csv library while importing csv file.
+		CSV_FILE_SERVICE_UNEXPECTED_EXCEPTION(12), // Some unexpected exception while importing csv file.
 		;
-		int code;
+		final int code;
 
 		Type(int code) {
 			this.code = code;

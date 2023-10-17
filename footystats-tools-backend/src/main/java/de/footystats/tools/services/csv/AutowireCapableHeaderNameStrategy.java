@@ -5,11 +5,12 @@ import com.opencsv.bean.BeanField;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.opencsv.exceptions.CsvBadConverterException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * @param <CSVTYPE>
+ */
 @Component
-@Scope("prototype")
 public class AutowireCapableHeaderNameStrategy<CSVTYPE> extends HeaderColumnNameMappingStrategy<CSVTYPE> {
 
 	private final ApplicationContext context;

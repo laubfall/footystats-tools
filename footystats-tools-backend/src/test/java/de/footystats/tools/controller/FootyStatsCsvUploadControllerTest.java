@@ -82,7 +82,25 @@ class FootyStatsCsvUploadControllerTest extends BaseControllerTest {
 			Assertions.assertEquals(2, config.size());
 			Assertions.assertEquals(2, config.stream().filter(dlconfig -> dlconfig.getCountry() != null).count());
 			Assertions.assertEquals(2,
+				config.stream().filter(dlconfig -> dlconfig.getCountry().getCountryNameByFootystats().equals("africa")).count());
+			Assertions.assertEquals(2,
 				config.stream().filter(dlconfig -> "africa".equals(dlconfig.getCountry().getCountryNameByFootystats())).count());
+		} catch (Exception e) {
+			Assertions.fail(e);
+		}
+	}
+
+	@Test
+	void uploadDownloadConfig_realisticData() {
+		var originalFileName = "download_config-footy-stats-2324.csv";
+		try (var csvFileStream = getClass().getResourceAsStream(originalFileName);) {
+			var mmf = new MockMultipartFile("file", originalFileName, null, csvFileStream);
+			mvc.perform(RestDocumentationRequestBuilders.multipart("/uploadFile").file(mmf)).andExpect(status().isOk());
+
+			var config = downloadConfigRepository.findAllBySeasonEndsWithAndDownloadBitmaskGreaterThan("2024", 0);
+			Assertions.assertNotNull(config);
+			Assertions.assertEquals(107, config.size());
+			Assertions.assertEquals(107, config.stream().filter(dlconfig -> dlconfig.getCountry() != null).count());
 		} catch (Exception e) {
 			Assertions.fail(e);
 		}

@@ -51,8 +51,9 @@ just save your footystats credentials in footystats-tools via web-gui.
 
 #### Download Times
 
-MatchStats CSV Files are downloaded at 00.00 and 12.00. All other files are downloaded every 30 days (cause of their more static nature and the sheer
-quantity) if relevant for the current season. Files for older seasons are only downloaded once.
+MatchStats CSV Files are downloaded at 00.00 and 12.00. All other files are downloaded only if configured in the download csv file (s. next section)
+and if when footystats-tools does match prediction. E.g. match prediction is calculated for a german Bundesliga match, then footystats-tools checks if
+the german Bundesliga Team CSV Files are available and if not it downloads them.
 
 #### Generating the Download-CSV-Config for non-MatchStats-Csv-Files
 
@@ -61,7 +62,10 @@ footystats-tools has a mechanism to automatically download these files. That thi
 create. This file contains the download-ids given by footystats.org so footystats-tools can create the download-link and download the file. This
 section describes the steps to create the download csv file.
 
-Use this little JQuery script to print the downloadlinks and country and league to console:
+First go to the CSV download page of footystats.org (https://footystats.org/download-stats-csv) and select the desired season. Important: choose a
+season before exectuing the following steps. Doing these steps for 'current season' will result in a useless download config file.
+
+Now open the browsers developer tools and use this little JQuery script to print the downloadlinks and country and league to console:
 
 ```
 $('h5.semi-bold').each((iT, eT) => {
@@ -76,22 +80,29 @@ $('h5.semi-bold').each((iT, eT) => {
 	})
 ```
 
-Save the console output to a file. Then its time to fire a up any good text editor to do some search and replace.
+Save the console output to a file with utf-8. Make sure the file name starts with 'download_config', otherwise fileupload into footystats-tools is not
+possible. Then it is time to fire up any good text editor to do some search and replace.
 
 Regex for finding the season, we use this to get rid of the '-' between country and season. With any good text editor you can replace the '-' with
-second regex group (the season).
+second regex group (the season). Search with this regex....
 
 ```
 ( - )(\d*/?\d*)
 ```
 
-Regex to find and remove the dl URL part, we only want the download id:
+... and use this as replacement:
+
+```    ,$2```
+
+Now its time to get the download id. Use this Regex to find and remove the dl URL part:
 
 ```
 /c-dl.php\?type=\w*\&comp=
 ```
 
-Then add the following header:
+As replacement use simply a comma.
+
+Then add the following header to the file:
 ```country,season,league,footyStatsDlId,downloadBitmask```
 
 Now fill the fifth column with the desired bitmask. If you don't have excel you can do this again with regex search and replacement:
@@ -103,6 +114,10 @@ This regex matches the download id, replace it with the first regex group (the d
 * 4: Team 2 CSV
 * 8: Player CSV
 * 16: Match CSV
+
+Setting the bits as described will result in a download of the csv file configured for the chosen season. If you want to download all files set the
+bitmask to 31. If you want to download only the league csv file set the bitmask to 1. If you want to download the league and team csv file set the
+bitmask to 3 and so on. If you don't want to download any file set the bitmask to 0 or leave it empty.
 
 ## Setup a standalone server
 

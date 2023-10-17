@@ -1,14 +1,23 @@
 package de.footystats.tools.services.prediction.influencer;
 
+import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.TeamStats;
-import de.footystats.tools.services.prediction.Bet;
 
-import java.util.List;
-
+/**
+ * Context for a bet prediction.
+ *
+ * @param match
+ * @param homeTeamStats
+ * @param awayTeamStats
+ * @param leagueStats
+ * @param bet
+ */
 public record BetPredictionContext(MatchStats match,
-                                   List<TeamStats> teamStats,
-                                   LeagueStats leagueStats,
-                                   Bet bet) {
+								   TeamStats homeTeamStats,
+								   TeamStats awayTeamStats,
+								   LeagueStats leagueStats,
+								   Bet bet) {
+
 }

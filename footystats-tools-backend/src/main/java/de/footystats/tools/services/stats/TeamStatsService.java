@@ -10,12 +10,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class TeamStatsService extends MongoService<TeamStats> {
 
@@ -35,6 +37,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 
 	public Collection<TeamStats> readTeamStats(InputStream data) {
 		List<TeamStats> stats = teamStatsCsvFileService.importFile(data, TeamStats.class);
+		log.info("Read {} team stats and upsert them into the database.", stats.size());
 		stats.forEach(this::upsert);
 		return stats;
 	}
@@ -46,6 +49,10 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons)
 			.orOperator(Criteria.where("teamName").is(team), Criteria.where("commonName").is(team)));
 		return mongoTemplate.find(query, TeamStats.class);
+	}
+
+	public TeamStats aggregate(String team, Country country, Integer year) {
+		return aggregate(latestThree(team, country, year));
 	}
 
 	public TeamStats aggregate(Collection<TeamStats> teamStats) {

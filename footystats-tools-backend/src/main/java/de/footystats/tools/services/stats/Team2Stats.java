@@ -27,7 +27,7 @@ public class Team2Stats {
 	private String commonName;
 	@CsvBindByName(column = "season")
 	private String season;
-	@CsvCustomBindByName(column = "country", required = true, converter = CountryCsvConverter.class)
+	@CsvCustomBindByName(column = "country", converter = CountryCsvConverter.class)
 	private Country country;
 	@CsvBindByName(column = "average_attendance_overall")
 	private Integer averageAttendanceOverall;

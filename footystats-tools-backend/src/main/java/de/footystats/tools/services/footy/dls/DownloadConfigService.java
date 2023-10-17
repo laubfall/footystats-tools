@@ -73,7 +73,6 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 
 	DownloadCountryLeagueStatsConfig configForCountryLeagueSeasonForCurrentYear(Country country, String league) {
 		Criteria[] criterias = criteriasForConfigsWhoWantADownloadForCurrentYear();
-		// TODO maybe providing the country object may not work. Maybe we need to provide the country name.
 		var query = new Query(
 			criterias[0].and(FIELD_COUNTRY).is(country).and(FIELD_LEAGUE).is(league).orOperator(ArrayUtils.subarray(criterias, 1, criterias.length)));
 		return mongoTemplate.findOne(query, DownloadCountryLeagueStatsConfig.class);

@@ -27,7 +27,7 @@ public class PredictionService {
 		new XgOverOneFiveInfluencer()
 	};
 
-	public PredictionAnalyze analyze(
+	public final PredictionAnalyze analyze(
 		BetPredictionContext ctx,
 		boolean didPredictionCalculation,
 		boolean betOnThis) {

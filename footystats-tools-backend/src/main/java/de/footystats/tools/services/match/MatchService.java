@@ -3,7 +3,6 @@ package de.footystats.tools.services.match;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import de.footystats.tools.services.MongoService;
-import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
@@ -11,8 +10,11 @@ import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.LeagueStatsService;
 import de.footystats.tools.services.stats.MatchStats;
+import de.footystats.tools.services.stats.TeamStats;
+import de.footystats.tools.services.stats.TeamStatsService;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +24,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class MatchService extends MongoService<Match> {
 
@@ -31,17 +34,16 @@ public class MatchService extends MongoService<Match> {
 
 	private final LeagueStatsService leagueStatsService;
 
-	private final DomainDataService domainDataService;
-
+	private final TeamStatsService teamStatsService;
 
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
-		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, DomainDataService domainDataService) {
+		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
 		this.cachedConfiguredStatsService = cachedConfiguredStatsService;
 		this.leagueStatsService = leagueStatsService;
-		this.domainDataService = domainDataService;
+		this.teamStatsService = teamStatsService;
 	}
 
 	public Page<Match> find(final MatchSearch search) {
@@ -120,7 +122,9 @@ public class MatchService extends MongoService<Match> {
 
 		// Load Team and League stats and add them to the context (if they exist).
 		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getLeague(), ms.getCountry(), ms.getDateGmt().getYear());
-		return predictionService.prediction(new BetPredictionContext(ms, null, aggregatedLeagueStats, bet));
+		final TeamStats homeTeam = teamStatsService.aggregate(ms.getHomeTeam(), ms.getCountry(), ms.getDateGmt().getYear());
+		final TeamStats awayTeam = teamStatsService.aggregate(ms.getAwayTeam(), ms.getCountry(), ms.getDateGmt().getYear());
+		return predictionService.prediction(new BetPredictionContext(ms, homeTeam, awayTeam, aggregatedLeagueStats, bet));
 	}
 
 	private void applyFullTextCriteria(MatchSearch search, Query query) {

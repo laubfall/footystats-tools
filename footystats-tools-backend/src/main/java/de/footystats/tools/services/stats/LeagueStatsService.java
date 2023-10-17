@@ -9,8 +9,9 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.ToDoubleFunction;
+import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -33,6 +34,7 @@ public class LeagueStatsService extends MongoService<LeagueStats> {
 
 	public Collection<LeagueStats> readLeagueStats(ICsvFileInformation fileInformation, InputStream data) {
 		List<LeagueStats> stats = csvFileService.importFile(data, LeagueStats.class);
+		log.info("Read {} league stats from file", stats.size());
 		if (fileInformation.country() == null) {
 			log.error("Country is null for file {}", fileInformation.type());
 			return Collections.emptyList();
@@ -199,11 +201,22 @@ public class LeagueStatsService extends MongoService<LeagueStats> {
 		return (int) Math.round(stats.stream().mapToInt(mapper).average().getAsDouble());
 	}
 
-	private Double doubleAverage(Collection<LeagueStats> stats, ToDoubleFunction<LeagueStats> mapper) {
-		var bd = stats.stream().map(ts -> BigDecimal.valueOf(mapper.applyAsDouble(ts))).toList();
+	private Double doubleAverage(Collection<LeagueStats> stats, Function<LeagueStats, Double> supplier) {
+		var bd = stats.stream().map(ts -> {
+			Double v = supplier.apply(ts);
+			if (v == null) {
+				return null;
+			}
+			return BigDecimal.valueOf(v);
+		}).filter(Objects::nonNull).toList();
+
 		var res = BigDecimal.ZERO;
 		for (BigDecimal bigDecimal : bd) {
 			res = res.add(bigDecimal);
+		}
+
+		if (bd.isEmpty()) {
+			return 0D;
 		}
 
 		return res.divide(new BigDecimal(bd.size())).doubleValue();

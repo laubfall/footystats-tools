@@ -2,15 +2,16 @@ package de.footystats.tools.services.footy.dls;
 
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.ServiceException;
-import de.footystats.tools.services.csv.CsvFileService;
+import de.footystats.tools.services.csv.CsvFileInformation;
+import de.footystats.tools.services.csv.CsvFileType;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.footy.CsvFileDownloadService;
 import de.footystats.tools.services.footy.CsvHttpClient;
 import de.footystats.tools.services.footy.SessionCookie;
-import de.footystats.tools.services.stats.LeagueMatchStats;
-import de.footystats.tools.services.stats.LeagueStats;
-import de.footystats.tools.services.stats.Team2Stats;
-import de.footystats.tools.services.stats.TeamStats;
+import de.footystats.tools.services.stats.LeagueMatchStatsService;
+import de.footystats.tools.services.stats.LeagueStatsService;
+import de.footystats.tools.services.stats.Team2StatsService;
+import de.footystats.tools.services.stats.TeamStatsService;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -27,21 +28,21 @@ import org.springframework.stereotype.Service;
 public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 
 	private final DownloadConfigService downloadConfigService;
-	private final CsvFileService<LeagueStats> leagueStatsCsvFileService;
-	private final CsvFileService<TeamStats> teamStatsCsvFileService;
-	private final CsvFileService<Team2Stats> team2StatsCsvFileService;
-	private final CsvFileService<LeagueMatchStats> leagueMatchStats;
+	private final LeagueStatsService leagueStatsService;
+	private final TeamStatsService teamStatsService;
+	private final Team2StatsService team2StatsService;
+	private final LeagueMatchStatsService leagueMatchStatsService;
 
 	protected ConfiguredCsvDownloadService(FootystatsProperties properties,
-		CsvHttpClient csvHttpClient, DownloadConfigService downloadConfigService, CsvFileService<LeagueStats> leagueStatsCsvFileService,
-		CsvFileService<TeamStats> teamStatsCsvFileService, CsvFileService<Team2Stats> team2StatsCsvFileService,
-		CsvFileService<LeagueMatchStats> leagueMatchStats) {
+		CsvHttpClient csvHttpClient, DownloadConfigService downloadConfigService, LeagueStatsService leagueStatsService,
+		TeamStatsService teamStatsService, Team2StatsService team2StatsService,
+		LeagueMatchStatsService leagueMatchStatsService) {
 		super(properties, csvHttpClient);
 		this.downloadConfigService = downloadConfigService;
-		this.leagueStatsCsvFileService = leagueStatsCsvFileService;
-		this.teamStatsCsvFileService = teamStatsCsvFileService;
-		this.team2StatsCsvFileService = team2StatsCsvFileService;
-		this.leagueMatchStats = leagueMatchStats;
+		this.leagueStatsService = leagueStatsService;
+		this.teamStatsService = teamStatsService;
+		this.team2StatsService = team2StatsService;
+		this.leagueMatchStatsService = leagueMatchStatsService;
 	}
 
 	public void downloadConfiguredStats() {
@@ -108,7 +109,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 		switch (bit) {
 			case LEAGUE -> {
 				Consumer<FileInputStream> leagueConsumer = (fis) -> {
-					this.leagueStatsCsvFileService.importFile(fis, LeagueStats.class);
+					this.leagueStatsService.readLeagueStats(new CsvFileInformation(CsvFileType.LEAGUE_STATS, config.getCountry()), fis);
 					config.setLastLeagueDownload(System.currentTimeMillis());
 					downloadConfigService.upsert(config);
 				};
@@ -116,7 +117,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 			}
 			case TEAM -> {
 				Consumer<FileInputStream> leagueConsumer = (fis) -> {
-					this.teamStatsCsvFileService.importFile(fis, TeamStats.class);
+					this.teamStatsService.readTeamStats(fis);
 					config.setLastTeamsDownload(System.currentTimeMillis());
 					downloadConfigService.upsert(config);
 				};
@@ -124,7 +125,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 			}
 			case TEAM2 -> {
 				Consumer<FileInputStream> leagueConsumer = (fis) -> {
-					this.team2StatsCsvFileService.importFile(fis, Team2Stats.class);
+					this.team2StatsService.readTeamStats(fis);
 					config.setLastTeams2Download(System.currentTimeMillis());
 					downloadConfigService.upsert(config);
 				};
@@ -135,7 +136,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 			}
 			case MATCH -> {
 				Consumer<FileInputStream> leagueConsumer = (fis) -> {
-					this.leagueMatchStats.importFile(fis, LeagueMatchStats.class);
+					this.leagueMatchStatsService.readLeagueMatchStats(fis);
 					config.setLastTeams2Download(System.currentTimeMillis());
 					downloadConfigService.upsert(config);
 				};

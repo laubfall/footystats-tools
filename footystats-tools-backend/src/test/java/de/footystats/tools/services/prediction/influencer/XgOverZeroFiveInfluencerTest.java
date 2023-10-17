@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class XgOverZeroFiveInfluencerTest {
+
 	@Test
-	void prediction(){
+	void prediction() {
 		var influencer = new XgOverZeroFiveInfluencer();
 		MatchStats matchStats = MatchStats.builder().awayTeamPreMatchxG(1.3f).homeTeamPreMatchxG(1.6f).build();
-		var ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ZERO_FIVE);
+		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ZERO_FIVE);
 		PrecheckResult precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.OK, precheckResult);
 		Integer prediction = influencer.calculateInfluence(ctx);
@@ -19,10 +20,10 @@ class XgOverZeroFiveInfluencerTest {
 	}
 
 	@Test
-	void prediction_max(){
+	void prediction_max() {
 		var influencer = new XgOverZeroFiveInfluencer();
 		MatchStats matchStats = MatchStats.builder().awayTeamPreMatchxG(10.0f).homeTeamPreMatchxG(16.0f).build();
-		var ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ZERO_FIVE);
+		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ZERO_FIVE);
 		PrecheckResult precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.OK, precheckResult);
 		Integer prediction = influencer.calculateInfluence(ctx);
@@ -30,7 +31,7 @@ class XgOverZeroFiveInfluencerTest {
 		Assertions.assertEquals(100, prediction, "Far more xG than expected but we did not achieved 100 percent.");
 
 		matchStats = MatchStats.builder().awayTeamPreMatchxG(2.0f).homeTeamPreMatchxG(2.0f).build();
-		ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ZERO_FIVE);
+		ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ZERO_FIVE);
 		precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.OK, precheckResult);
 		prediction = influencer.calculateInfluence(ctx);
@@ -39,10 +40,10 @@ class XgOverZeroFiveInfluencerTest {
 	}
 
 	@Test
-	void prediction_min(){
+	void prediction_min() {
 		var influencer = new XgOverZeroFiveInfluencer();
 		MatchStats matchStats = MatchStats.builder().awayTeamPreMatchxG(0.0f).homeTeamPreMatchxG(0.0f).build();
-		var ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ZERO_FIVE);
+		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ZERO_FIVE);
 		PrecheckResult precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.OK, precheckResult);
 		Integer prediction = influencer.calculateInfluence(ctx);
@@ -51,19 +52,19 @@ class XgOverZeroFiveInfluencerTest {
 	}
 
 	@Test
-	void wrongbet(){
+	void wrongbet() {
 		var influencer = new XgOverZeroFiveInfluencer();
 		MatchStats matchStats = MatchStats.builder().awayTeamPreMatchxG(1.3f).homeTeamPreMatchxG(1.6f).build();
-		var ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ONE_FIVE);
+		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ONE_FIVE);
 		PrecheckResult precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET, precheckResult);
 	}
 
 	@Test
-	void xgForHomeAndAwayMissing(){
+	void xgForHomeAndAwayMissing() {
 		var influencer = new XgOverZeroFiveInfluencer();
 		MatchStats matchStats = MatchStats.builder().build();
-		var ctx = new BetPredictionContext(matchStats, null, null, Bet.OVER_ZERO_FIVE);
+		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ZERO_FIVE);
 		PrecheckResult precheckResult = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.NOT_ENOUGH_INFORMATION, precheckResult);
 	}

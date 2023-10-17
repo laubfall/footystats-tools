@@ -5,14 +5,17 @@ import de.footystats.tools.services.csv.CsvFileService;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LeagueMatchStatsService extends MongoService<LeagueMatchStats> {
+
 	private final CsvFileService<LeagueMatchStats> leagueMatchStats;
 
 	public LeagueMatchStatsService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
@@ -21,15 +24,18 @@ public class LeagueMatchStatsService extends MongoService<LeagueMatchStats> {
 		this.leagueMatchStats = leagueMatchStats;
 	}
 
-	public Collection<LeagueMatchStats> readTeamStats(InputStream data) {
+	public Collection<LeagueMatchStats> readLeagueMatchStats(InputStream data) {
 		List<LeagueMatchStats> stats = leagueMatchStats.importFile(data, LeagueMatchStats.class);
+		log.info("Read {} league match stats and upserted them.", stats.size());
 		stats.forEach(this::upsert);
 		return stats;
 	}
 
 	@Override
 	public Query upsertQuery(LeagueMatchStats example) {
-		return Query.query(Criteria.where("homeTeamName").is(example.getHomeTeamName()).and("awayTeamName").is(example.getAwayTeamName()).and("timestamp").is(example.getTimestamp()));
+		return Query.query(
+			Criteria.where("homeTeamName").is(example.getHomeTeamName()).and("awayTeamName").is(example.getAwayTeamName()).and("timestamp")
+				.is(example.getTimestamp()));
 	}
 
 	@Override

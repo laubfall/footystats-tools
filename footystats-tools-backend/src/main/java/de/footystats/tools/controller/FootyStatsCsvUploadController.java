@@ -1,5 +1,7 @@
 package de.footystats.tools.controller;
 
+import de.footystats.tools.services.ServiceException;
+import de.footystats.tools.services.ServiceException.Type;
 import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.csv.ICsvFileInformation;
 import de.footystats.tools.services.footy.MatchStatsCsvFileDownloadService;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -55,12 +58,7 @@ public class FootyStatsCsvUploadController {
 
 	@PostMapping(path = "/uploadFile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public UploadFileResponse uploadFile(@RequestPart MultipartFile file) {
-		try {
-			store(file);
-		} catch (IOException e) {
-			logger.error("Failed storing csv data", e);
-			throw new RuntimeException(e);
-		}
+		store(file);
 
 		return new UploadFileResponse(file.getName(),
 			file.getContentType(), file.getSize());
@@ -79,29 +77,35 @@ public class FootyStatsCsvUploadController {
 		matchStatsFileDownloadService.downloadMatchStatsCsvFileAndImport();
 	}
 
-	private void store(MultipartFile file) throws IOException {
+	private void store(MultipartFile file) {
 
-		if (!file.getOriginalFilename().endsWith(".csv")) {
+		if (!StringUtils.endsWith(file.getOriginalFilename(), ".csv")) {
 			logger.info(MessageFormat.format("File does not have csv extension: {0}", file.getOriginalFilename()));
 			return;
 		}
 
 		final ICsvFileInformation csvFileInformation = csvFileService.csvFileInformationByFileName(file.getOriginalFilename());
 
-		logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
-		switch (csvFileInformation.type()) {
-			case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(csvFileInformation, file.getInputStream());
-			case MATCH_STATS -> {
-				List<MatchStats> matchStats = this.csvFileService.importFile(file.getInputStream(), MatchStats.class);
-				matchStats.forEach(this.matchStatsService::importMatchStats);
+		try {
+
+			logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
+			switch (csvFileInformation.type()) {
+				case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(csvFileInformation, file.getInputStream());
+				case MATCH_STATS -> {
+					List<MatchStats> matchStats = this.csvFileService.importFile(file.getInputStream(), MatchStats.class);
+					matchStats.forEach(this.matchStatsService::importMatchStats);
+				}
+				case TEAM_STATS -> this.teamStatsService.readTeamStats(file.getInputStream());
+				case TEAM_2_STATS -> this.team2StatsService.readTeamStats(file.getInputStream());
+				case LEAGUE_MATCH_STATS -> this.leagueMatchStatsService.readLeagueMatchStats(file.getInputStream());
+				case DOWNLOAD_CONFIG -> this.downloadConfigService.readDownloadConfigs(file.getInputStream());
+				default -> logger.warn(
+					MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",
+						file.getOriginalFilename(), csvFileInformation.type()));
 			}
-			case TEAM_STATS -> this.teamStatsService.readTeamStats(file.getInputStream());
-			case TEAM_2_STATS -> this.team2StatsService.readTeamStats(file.getInputStream());
-			case LEAGUE_MATCH_STATS -> this.leagueMatchStatsService.readTeamStats(file.getInputStream());
-			case DOWNLOAD_CONFIG -> this.downloadConfigService.readDownloadConfigs(file.getInputStream());
-			default -> logger.warn(
-				MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",
-					file.getOriginalFilename(), csvFileInformation.type()));
+		} catch (IOException e) {
+			logger.error("Failed storing csv data", e);
+			throw new ServiceException(Type.CSV_FILE_SERVICE_IO_EXCEPTION, e);
 		}
 	}
 

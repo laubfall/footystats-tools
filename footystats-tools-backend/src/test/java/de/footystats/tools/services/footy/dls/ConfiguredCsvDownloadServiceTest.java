@@ -30,7 +30,7 @@ class ConfiguredCsvDownloadServiceTest {
 	private CsvHttpClient csvHttpClient;
 
 	@MockBean
-	private CsvFileService csvFileService;
+	private CsvFileService<?> csvFileService;
 
 	@Autowired
 	private ConfiguredCsvDownloadService fileDownloadService;
@@ -43,8 +43,7 @@ class ConfiguredCsvDownloadServiceTest {
 
 	@BeforeEach
 	void setup() {
-		reset(csvHttpClient);
-		reset(csvFileService);
+		reset(csvHttpClient, csvFileService);
 		downloadConfigRepository.deleteAll();
 	}
 

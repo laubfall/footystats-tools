@@ -3,6 +3,9 @@ package de.footystats.tools.services.csv;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.exceptions.CsvException;
+import de.footystats.tools.services.ServiceException;
+import de.footystats.tools.services.ServiceException.Type;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.DomainDataService;
 import java.io.IOException;
@@ -98,12 +101,23 @@ public class CsvFileService<T> {
 
 	public List<T> importFile(InputStream data, Class<T> clazz) {
 		try (var isr = new InputStreamReader(data, StandardCharsets.UTF_8)) {
-			var csvReader = new CsvToBeanBuilder<T>(isr).withType(clazz).withMappingStrategy(headerNameStrategy).build();
+			var csvReader = new CsvToBeanBuilder<T>(isr)
+				//.withExceptionHandler(new ExceptionHandlerQueue())
+				.withType(clazz)
+				.withMappingStrategy(headerNameStrategy)
+				.build();
 			headerNameStrategy.setType(clazz);
 			return csvReader.parse();
 		} catch (IOException e) {
 			log.error("Failed importing csv file.", e);
-			throw new RuntimeException(e);
+			throw new ServiceException(Type.CSV_FILE_SERVICE_IO_EXCEPTION, e);
+		} catch (RuntimeException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof CsvException) {
+				throw new ServiceException(Type.CSV_FILE_SERVICE_LIB_EXCEPTION, cause);
+			}
+
+			throw new ServiceException(Type.CSV_FILE_SERVICE_UNEXPECTED_EXCEPTION, e);
 		}
 	}
 }

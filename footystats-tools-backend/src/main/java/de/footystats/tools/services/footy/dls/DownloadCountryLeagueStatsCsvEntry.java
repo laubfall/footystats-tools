@@ -4,7 +4,9 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.CountryCsvConverter;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -14,11 +16,13 @@ import lombok.Setter;
  * determine if a file should be downloaded again.
  * <p>
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class DownloadCountryLeagueStatsCsvEntry {
 
-	@CsvCustomBindByName(required = true, converter = CountryCsvConverter.class)
+	@CsvCustomBindByName(column = "country", required = true, converter = CountryCsvConverter.class)
 	private Country country;
 
 	@CsvBindByName(required = true)
@@ -39,6 +43,6 @@ public class DownloadCountryLeagueStatsCsvEntry {
 	/**
 	 * 1: League 2: Teams 4: Teams2 8: Player 16: Match
 	 */
-	@CsvBindByName(required = true, capture = "(\\d{1})")
+	@CsvBindByName(capture = "(\\d{1})")
 	private Integer downloadBitmask;
 }

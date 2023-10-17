@@ -1,19 +1,19 @@
 package de.footystats.tools.services.prediction.influencer;
 
+import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.stats.MatchStats;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import de.footystats.tools.services.prediction.Bet;
-import de.footystats.tools.services.prediction.PrecheckResult;
+class OddsBttsYesInfluencerTest {
 
-public class OddsBttsYesInfluencerTest {
 	@Test
-	public void some_predictions() {
+	void some_predictions() {
 		var influencer = new OddsBttsYesInfluencer();
 		var ms = new MatchStats();
 		ms.setOddsBTTS_Yes(1f);
-		var ctx = new BetPredictionContext(ms, null, null, Bet.BTTS_YES);
+		var ctx = new BetPredictionContext(ms, null, null, null, Bet.BTTS_YES);
 		var result = influencer.calculateInfluence(ctx);
 		Assertions.assertEquals(100, result);
 
@@ -27,11 +27,11 @@ public class OddsBttsYesInfluencerTest {
 	}
 
 	@Test
-	public void precheck_not_enough_information() {
+	void precheck_not_enough_information() {
 		var influencer = new OddsBttsYesInfluencer();
 		var ms = new MatchStats();
 		ms.setOddsBTTS_Yes(0f);
-		var ctx = new BetPredictionContext(ms, null, null, Bet.BTTS_YES);
+		var ctx = new BetPredictionContext(ms, null, null, null, Bet.BTTS_YES);
 		var result = influencer.preCheck(ctx);
 		Assertions.assertEquals(PrecheckResult.NOT_ENOUGH_INFORMATION, result);
 
