@@ -34,6 +34,13 @@ public class CsvHttpClient {
 		this.settingsRepository = settingsRepository;
 	}
 
+	private static void checkLogin(HttpURLConnection http) throws IOException {
+		var content = IOUtils.toString(http.getInputStream(), UTF_8);
+		if (content.contains("Your Username, Email or Password is incorrect.")) {
+			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED);
+		}
+	}
+
 	public List<String> connectToFootystatsAndRetrieveFileContent(SessionCookie sessionCookie, URL url) throws IOException {
 		URLConnection con = url.openConnection();
 		HttpURLConnection http = (HttpURLConnection) con;
@@ -64,14 +71,17 @@ public class CsvHttpClient {
 			arguments.put("username", settings.getFootyStatsUsername());
 			arguments.put("password", settings.getFootyStatsPassword().getPassword());
 			StringJoiner sj = new StringJoiner("&");
-			for (Map.Entry<String, String> entry : arguments.entrySet())
+			for (Map.Entry<String, String> entry : arguments.entrySet()) {
 				sj.add(URLEncoder.encode(entry.getKey(), UTF_8) + "="
 					+ URLEncoder.encode(entry.getValue(), UTF_8));
+			}
 			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
 			int length = out.length;
 
 			http.setFixedLengthStreamingMode(length);
 			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			http.setRequestProperty("User-Agent",
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.46Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.46");
 			http.connect();
 			try (OutputStream os = http.getOutputStream()) {
 				os.write(out);
@@ -87,13 +97,6 @@ public class CsvHttpClient {
 			return new SessionCookie(phpsessid.get());
 		} catch (IOException e) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_RETRIEVING_SESSION_FAILED, e);
-		}
-	}
-
-	private static void checkLogin(HttpURLConnection http) throws IOException {
-		var content = IOUtils.toString(http.getInputStream(), UTF_8);
-		if (content.contains("Your Username, Email or Password is incorrect.")) {
-			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED);
 		}
 	}
 }
