@@ -5,12 +5,14 @@ import com.opencsv.bean.CsvCustomBindByName;
 import de.footystats.tools.services.csv.DoubleConverter;
 import de.footystats.tools.services.domain.Country;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Document

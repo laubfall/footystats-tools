@@ -9,7 +9,7 @@ public abstract class XgOverXGoalsInfluencer implements BetResultInfluencer {
 
 	private Bet validFor;
 
-	public XgOverXGoalsInfluencer(int xgBase, Bet validFor) {
+	protected XgOverXGoalsInfluencer(int xgBase, Bet validFor) {
 		this.xgBase = xgBase;
 		this.validFor = validFor;
 	}

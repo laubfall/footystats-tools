@@ -1,9 +1,11 @@
 package de.footystats.tools.services.prediction;
 
+import de.footystats.tools.services.prediction.influencer.AwayTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
 import de.footystats.tools.services.prediction.influencer.FootyStatsBttsYesPredictionInfluencer;
 import de.footystats.tools.services.prediction.influencer.FootyStatsOverFTPredictionInfluencer;
+import de.footystats.tools.services.prediction.influencer.HomeTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsBttsYesInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsGoalOverInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
@@ -24,7 +26,9 @@ public class PredictionService {
 		new FootyStatsBttsYesPredictionInfluencer(),
 		new FootyStatsOverFTPredictionInfluencer(),
 		new XgOverZeroFiveInfluencer(),
-		new XgOverOneFiveInfluencer()
+		new XgOverOneFiveInfluencer(),
+		new AwayTeamLeaguePosInfluencer(),
+		new HomeTeamLeaguePosInfluencer()
 	};
 
 	public final PredictionAnalyze analyze(

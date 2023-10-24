@@ -2,19 +2,39 @@ package de.footystats.tools.services.prediction.influencer;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
+import de.footystats.tools.services.stats.TeamStats;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class LeaguePositionInfluencer implements BetResultInfluencer {
+@Slf4j
+public abstract sealed class LeaguePositionInfluencer implements BetResultInfluencer permits AwayTeamLeaguePosInfluencer,
+	HomeTeamLeaguePosInfluencer {
+
+	/**
+	 * Home or away team stats.
+	 */
+	private final boolean homeTeam;
+
+	protected LeaguePositionInfluencer(boolean homeTeam) {
+		this.homeTeam = homeTeam;
+	}
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
 
-		if (ArrayUtils.contains(new Bet[]{Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE}, ctx.bet()) == false) {
+		if (!ArrayUtils.contains(new Bet[]{Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE}, ctx.bet())) {
 			return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
 		}
 
-//		if (ctx.teamStats() == null || ctx.leagueStats() == null) {
-//			return PrecheckResult.NOT_ENOUGH_INFORMATION;
-//		}
+		var teamStats = relevantTeamStats(ctx);
+
+		if (teamStats == null || ctx.leagueStats() == null || ctx.leagueStats().getNumberOfClubs() == null
+			|| teamStats.getLeaguePositionHome() == null || teamStats.getLeaguePositionAway() == null) {
+			return PrecheckResult.NOT_ENOUGH_INFORMATION;
+		}
+
+		if (teamStats.getMatchesPlayed() < 5) {
+			return PrecheckResult.NOT_ENOUGH_INFORMATION;
+		}
 
 		return PrecheckResult.OK;
 	}
@@ -23,7 +43,7 @@ public class LeaguePositionInfluencer implements BetResultInfluencer {
 	 * LeaguePositionInfluencer takes a look at the individual position of both teams in their current league.
 	 *
 	 * @param ctx Mandatory. bet ctx.
-	 * @returns Influencer result.
+	 * @return Influencer result.
 	 */
 	public Integer calculateInfluence(
 		BetPredictionContext ctx) {
@@ -31,22 +51,23 @@ public class LeaguePositionInfluencer implements BetResultInfluencer {
 	}
 
 	private Integer overBet(BetPredictionContext ctx) {
+		var teamStats = relevantTeamStats(ctx);
+		var leagueStats = ctx.leagueStats();
+		var awayPos = teamStats.getLeaguePositionAway();
+		var homePos = teamStats.getLeaguePositionHome();
+
 		/*
-			var teamStats = ctx.teamStats();
-		 * var leagueStats = {number_of_clubs:0, ...ctx.leagueStats() };
-		 * const awayPos = teamStats.league_position_away; // TODO teamStats ist aktull
-		 * ein Array (auch im alten Code). Das hier kann so also nicht stimmen.
-		 * const homePos = teamStats.league_position_home;
-		 *
-		 * const awayPosPerc = 100 - (100 * awayPos) / leagueStats.number_of_clubs;
-		 * const homePosPerc = 100 - (100 * homePos) / leagueStats.number_of_clubs;
-		 *
-		 * return (INFLUENCER_POINTS * ((awayPosPerc + homePosPerc) / 2)) / 100;
+		 * Position 1 is the best position, so the lower the position the better.
+		 * Or in other words: The higher the position the worse and equal to 0 percent
+		 * while the lowest position is 100 percent.
 		 */
-		return 0;
+		var awayPercent = 100 - ((awayPos - 1) * 100 / (leagueStats.getNumberOfClubs() - 1));
+		var homePercent = 100 - ((homePos - 1) * 100 / (leagueStats.getNumberOfClubs() - 1));
+
+		return (awayPercent + homePercent) / 2;
 	}
 
-	public String influencerName() {
-		return "LeaguePositionInfluencer";
+	private TeamStats relevantTeamStats(BetPredictionContext ctx) {
+		return homeTeam ? ctx.homeTeamStats() : ctx.awayTeamStats();
 	}
 }

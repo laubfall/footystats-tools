@@ -12,7 +12,6 @@ import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @Getter
 @Setter
 @Document

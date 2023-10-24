@@ -8,6 +8,13 @@ import de.footystats.tools.services.domain.Country;
 import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
+/**
+ * Custom serializer for {@link Country}.
+ * <p>
+ * This serializer is used to serialize {@link Country} objects to JSON because we only want the country name to be serialized.
+ * <p>
+ * Serializer is pickup up automatically via springs dependency injection mechanism.
+ */
 @JsonComponent
 public class CountrySerializer extends JsonSerializer<Country> {
 
