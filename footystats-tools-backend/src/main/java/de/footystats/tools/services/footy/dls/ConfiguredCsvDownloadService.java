@@ -70,7 +70,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 		DownloadCountryLeagueStatsConfig currentYearConfigs = downloadConfigService.configForCountryLeagueSeasonForCurrentYear(country, league);
 		DownloadCountryLeagueStatsConfig olderConfigs = downloadConfigService.configForCountryLeagueSeasonForPreviousYears(country, league);
 		if (currentYearConfigs == null && olderConfigs == null) {
-			log.info("Currently there are no configured downloads for country: " + country + " league: " + league
+			log.info("Currently there are no configured downloads for country: " + country.getCountryNameByFootystats() + " league: " + league
 				+ " so no stats are going to be downloaded from footystats.org.");
 			return;
 		}

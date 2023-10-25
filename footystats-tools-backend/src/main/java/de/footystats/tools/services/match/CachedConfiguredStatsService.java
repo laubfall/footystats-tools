@@ -43,12 +43,12 @@ public class CachedConfiguredStatsService {
 					configuredCsvDownloadService.downloadConfiguredStats(country, league);
 					// Update the cache value.
 					cacheValue.setLastAccessed(System.currentTimeMillis());
-					log.info("Updated cache for configured stats for country {} and league {}.", country, league);
+					log.debug("Updated cache for configured stats for country {} and league {}.", country, league);
 				}
 			} else { // No cache entry, so we have the build the key, trigger the download and add the cache entry.
 				configuredCsvDownloadService.downloadConfiguredStats(country, league);
 				cache.put(cacheKey, CacheValue.builder().lastAccessed(System.currentTimeMillis()).build());
-				log.info("Added cache for configured stats for country {} and league {}.", country, league);
+				log.debug("Added cache for configured stats for country {} and league {}.", country, league);
 			}
 		}
 	}

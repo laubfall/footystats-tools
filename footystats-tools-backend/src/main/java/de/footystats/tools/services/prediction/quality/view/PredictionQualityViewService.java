@@ -1,24 +1,38 @@
 package de.footystats.tools.services.prediction.quality.view;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwind;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.Fields;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
 @Service
 public class PredictionQualityViewService {
+
 	private final MongoTemplate mongoTemplate;
 
 	private final BetPredictionQualityRepository betPredictionQualityRepository;
@@ -28,7 +42,8 @@ public class PredictionQualityViewService {
 		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
-	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis, PredictionQualityRevision revision) {
+	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis,
+		PredictionQualityRevision revision) {
 		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
 		MatchOperation predictionPercentMatch;
 		if (betOnThis) {
@@ -46,8 +61,10 @@ public class PredictionQualityViewService {
 			.andExclude("$_id")
 			.andInclude("betSucceeded", "betFailed");
 		final Aggregation aggregation = newAggregation(revisionMatch, predictionPercentMatch, unwind, groupOperation, projectionOperation);
-		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
-		return aggregationResults.getMappedResults().stream().collect(Collectors.groupingBy(BetPredictionQualityInfluencerAggregate::influencerName, HashMap::new, Collectors.toCollection(ArrayList::new)));
+		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation,
+			BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
+		return aggregationResults.getMappedResults().stream().collect(
+			Collectors.groupingBy(BetPredictionQualityInfluencerAggregate::influencerName, HashMap::new, Collectors.toCollection(ArrayList::new)));
 	}
 
 	/**
@@ -62,7 +79,8 @@ public class PredictionQualityViewService {
 		final EnumSet<Bet> betsWithPrediction = Bet.activeBets();
 		for (Bet bet : betsWithPrediction) {
 			MatchOperation betOnThisMatch = match(
-				new Criteria("predictionPercent").gt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet).and("revision").is(revision));
+				new Criteria("predictionPercent").gt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet).and("revision")
+					.is(revision));
 			GroupOperation betCount = group("bet").sum("betSucceeded").as("betSucceeded").sum("betFailed").as("betFailed");
 			Aggregation aggregation = newAggregation(betOnThisMatch, betCount);
 			AggregationResults<Document> aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, Document.class);
@@ -75,7 +93,9 @@ public class PredictionQualityViewService {
 				betFailed = doc.get("betFailed", Long.class);
 			}
 
-			betOnThisMatch = match(new Criteria("predictionPercent").lte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet).and("revision").is(revision));
+			betOnThisMatch = match(
+				new Criteria("predictionPercent").lte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS).and("bet").is(bet).and("revision")
+					.is(revision));
 			aggregation = newAggregation(betOnThisMatch, betCount);
 			aggregationResults = mongoTemplate.aggregate(aggregation, BetPredictionQuality.class, Document.class);
 			doc = aggregationResults.getUniqueMappedResult();
@@ -95,10 +115,12 @@ public class PredictionQualityViewService {
 	}
 
 	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet, PredictionQualityRevision revision) {
-		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision, PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
+		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision,
+			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
 	}
 
 	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet, PredictionQualityRevision revision) {
-		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision, PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
+		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision,
+			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
 	}
 }

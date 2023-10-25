@@ -465,4 +465,7 @@ public class MatchStats {
 	@Setter
 	private String matchFootyStatsURL;
 
+	public String matchStatsShort() {
+		return getCountry().getCountryNameByFootystats() + "-" + getLeague() + "-" + getHomeTeam() + "-" + getAwayTeam();
+	}
 }

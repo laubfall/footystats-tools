@@ -9,6 +9,7 @@ import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.InfluencerPercentDistribution;
+import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.prediction.PredictionResult;
 import java.util.ArrayList;
@@ -117,6 +118,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	private List<InfluencerPercentDistribution> addInfluencerDistribution(PredictionResult prediction) {
 
 		return prediction.influencerDetailedResult().stream()
+			.filter(influencerResult -> influencerResult.precheckResult().equals(PrecheckResult.OK))
 			.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
 				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ? 1L : 0L,
 				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()) ? 1L : 0L, influencerResult.influencerName(),

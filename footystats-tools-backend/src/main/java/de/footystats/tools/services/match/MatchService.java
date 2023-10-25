@@ -3,6 +3,7 @@ package de.footystats.tools.services.match;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import de.footystats.tools.services.MongoService;
+import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
@@ -117,9 +118,14 @@ public class MatchService extends MongoService<Match> {
 		Bet bet,
 		MatchStats ms) {
 
-		// Update stats like league-, team-stats etc. if necessary we download the latest stats from footystats.org.
-		cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
-
+		try {
+			// Update stats like league-, team-stats etc. if necessary we download the latest stats from footystats.org.
+			cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
+		} catch (ServiceException serviceException) {
+			log.warn("Failed to update stats for match: {} because of: {}. Prediction calculation resumes without updated csv stats.",
+				ms.matchStatsShort(),
+				serviceException.getMessage());
+		}
 		// Load Team and League stats and add them to the context (if they exist).
 		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getLeague(), ms.getCountry(), ms.getDateGmt().getYear());
 		final TeamStats homeTeam = teamStatsService.aggregate(ms.getHomeTeam(), ms.getCountry(), ms.getDateGmt().getYear());
