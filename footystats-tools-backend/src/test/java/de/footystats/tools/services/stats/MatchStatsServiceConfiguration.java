@@ -1,6 +1,7 @@
 package de.footystats.tools.services.stats;
 
 import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.match.MatchService;
 import de.footystats.tools.services.match.MatchServiceConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -18,7 +19,7 @@ public class MatchStatsServiceConfiguration {
 
 	@Bean
 	public MatchStatsService matchStatsService(MongoTemplate template, MappingMongoConverter mappingMongoConverter, MatchService matchService,
-		FootystatsProperties fsProperties, MatchStatsRepository matchStatsRepository) {
-		return new MatchStatsService(template, mappingMongoConverter, fsProperties, matchService, matchStatsRepository);
+		FootystatsProperties fsProperties, MatchStatsRepository matchStatsRepository, DomainDataService domainDataService) {
+		return new MatchStatsService(template, mappingMongoConverter, fsProperties, matchService, matchStatsRepository, domainDataService);
 	}
 }

@@ -91,6 +91,20 @@ class MatchStatsServiceTest {
 		Assertions.assertEquals(1, persistedMatchStats.size());
 	}
 
+	@Test
+	void ignoreEsportsMatchIfConfigured() {
+		var time = System.currentTimeMillis();
+		var esports = domainDataService.countryByName("esports");
+		var builder = MatchStats.builder().country(esports).league("La Ligue").dateUnix(time).awayTeam("Team 1").homeTeam("Team 2")
+			.dateGmt(LocalDateTime.now())
+			.matchStatus(MatchStatus.incomplete);
+		var matchStats = builder.build();
+
+		matchStatsService.importMatchStats(matchStats);
+		List<MatchStats> persistedMatchStats = matchStatsRepository.findByCountry(esports);
+		Assertions.assertTrue(persistedMatchStats.isEmpty());
+	}
+
 	@Deprecated // See MatchStatsService
 	@Test
 	void reimportMatchStats() {
