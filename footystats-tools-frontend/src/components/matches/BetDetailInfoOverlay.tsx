@@ -1,5 +1,5 @@
 import React from "react";
-import { ListGroup, ListGroupItem, Popover } from "react-bootstrap";
+import { ListGroup, ListGroupItem } from "react-bootstrap";
 import translate from "../../i18n/translate";
 import { uniqueId } from "lodash";
 import {

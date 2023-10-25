@@ -170,6 +170,7 @@ public class ConfiguredCsvDownloadService extends CsvFileDownloadService {
 	private List<String> downloadConfiguredStats(SessionCookie sessionCookie, String resource, int footyStatsDlId) {
 		try {
 			final URL url = new URL(properties.getWebpage().getBaseUrl() + resource + footyStatsDlId);
+			log.info("Downloading csv file from footystats.org with url: " + url);
 			return csvHttpClient.connectToFootystatsAndRetrieveFileContent(sessionCookie, url);
 		} catch (IOException e) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_DL_FAILED, e);
