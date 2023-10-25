@@ -3,8 +3,10 @@ package de.footystats.tools.services.footy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SessionCookieCache {
 
@@ -13,6 +15,7 @@ public class SessionCookieCache {
 	public Optional<SessionCookie> validCookieFor(String username) {
 		synchronized (cookies) {
 			if (!cookies.containsKey(username)) {
+				log.info("No cookie for user {}", username);
 				return Optional.empty();
 			}
 
@@ -21,6 +24,7 @@ public class SessionCookieCache {
 				return Optional.of(sessionCookie);
 			}
 
+			log.info("Cookie for user {} is invalid, removing it", username);
 			cookies.remove(username);
 		}
 
@@ -30,6 +34,7 @@ public class SessionCookieCache {
 	public void addCookie(SessionCookie cookie, String username) {
 		synchronized (cookies) {
 			cookies.put(username, cookie);
+			log.info("Added cookie for user {}", username);
 		}
 	}
 
