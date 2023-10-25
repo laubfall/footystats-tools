@@ -26,10 +26,19 @@ public abstract sealed class LeaguePositionInfluencer implements BetResultInflue
 		}
 
 		var teamStats = relevantTeamStats(ctx);
-
-		if (teamStats == null || ctx.leagueStats() == null || ctx.leagueStats().getNumberOfClubs() == null
+		var leagueStats = ctx.leagueStats();
+		if (teamStats == null || leagueStats == null || leagueStats.getNumberOfClubs() == null
 			|| teamStats.getLeaguePositionHome() == null || teamStats.getLeaguePositionAway() == null) {
 			return PrecheckResult.NOT_ENOUGH_INFORMATION;
+		}
+
+		if (teamStats.getLeaguePositionHome() == 0 || teamStats.getLeaguePositionAway() == 0) {
+			return PrecheckResult.NOT_ENOUGH_INFORMATION;
+		}
+
+		if (teamStats.getLeaguePositionAway() > leagueStats.getNumberOfClubs()
+			|| teamStats.getLeaguePositionHome() > leagueStats.getNumberOfClubs()) {
+			return PrecheckResult.INVALID_STATS;
 		}
 
 		if (teamStats.getMatchesPlayed() < 5) {

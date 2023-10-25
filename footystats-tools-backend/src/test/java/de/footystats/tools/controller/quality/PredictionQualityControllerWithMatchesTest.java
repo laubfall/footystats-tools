@@ -70,11 +70,11 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
 			.andExpect(jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
-			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(5)))
+			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['FootyStatsOverFTPredictionInfluencer']", hasSize(2)))
-			.andExpect(jsonPath("$.betInfluencerPercentDistributions['HomeTeamLeaguePosInfluencer']", hasSize(1)))
-			.andExpect(jsonPath("$.betInfluencerPercentDistributions['AwayTeamLeaguePosInfluencer']", hasSize(1)))
+			.andExpect(jsonPath("$.betInfluencerPercentDistributions['HomeTeamLeaguePosInfluencer']").doesNotExist())
+			.andExpect(jsonPath("$.betInfluencerPercentDistributions['AwayTeamLeaguePosInfluencer']").doesNotExist())
 			.andExpect(jsonPath("$.dontBetInfluencerPercentDistributions.keys()", empty()))
 			.andExpect(jsonPath("$.betPredictionDistributions", hasSize(3)))
 		;
@@ -101,7 +101,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 		Optional<BetPredictionQuality> optOverZeroFive = betPredictionQualityRepository.findOne(Example.of(overZeroFiveQuality));
 		Assertions.assertTrue(optOverZeroFive.isPresent());
 		overZeroFiveQuality = optOverZeroFive.get();
-		Assertions.assertEquals(5, overZeroFiveQuality.getInfluencerDistribution().size(),
+		Assertions.assertEquals(3, overZeroFiveQuality.getInfluencerDistribution().size(),
 			"Thee matches all with the same stats results in a aggregated list of two influencers");
 	}
 }

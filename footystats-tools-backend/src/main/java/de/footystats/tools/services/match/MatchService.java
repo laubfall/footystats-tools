@@ -120,6 +120,9 @@ public class MatchService extends MongoService<Match> {
 
 		try {
 			// Update stats like league-, team-stats etc. if necessary we download the latest stats from footystats.org.
+			// This is done in a try-catch block because we do not want to fail the prediction calculation if the stats update fails.
+			// Updating the stats is not a critical part of the prediction calculation and may not have any effect on the
+			// prediction result. For example in case of old matches there is maybe no stats download config.
 			cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
 		} catch (ServiceException serviceException) {
 			log.warn("Failed to update stats for match: {} because of: {}. Prediction calculation resumes without updated csv stats.",

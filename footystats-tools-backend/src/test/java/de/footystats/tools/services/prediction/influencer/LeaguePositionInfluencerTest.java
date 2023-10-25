@@ -27,8 +27,6 @@ class LeaguePositionInfluencerTest {
 			{9, 9, 18, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), 53},
 			{1, 1, 18, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), 100},
 			{18, 18, 18, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), 0},
-			{1, 18, 18, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), 0},
-			{1, 2, 0, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), 0},
 		};
 	}
 
@@ -36,6 +34,8 @@ class LeaguePositionInfluencerTest {
 		return new Object[][]{
 			{10, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5, 10), null, PrecheckResult.OK},
 			{10, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(0, 0, 10), null, PrecheckResult.NOT_ENOUGH_INFORMATION},
+			{10, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 11, 10), null, PrecheckResult.INVALID_STATS},
+			{10, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(11, 2, 10), null, PrecheckResult.INVALID_STATS},
 			{10, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), null, teamStatsBuilder(2, 5, 10), PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{5, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5, 4), null, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{5, Bet.BTTS_YES, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5, 10), null,
