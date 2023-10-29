@@ -5,7 +5,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.prediction.Bet;
-import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.stats.LeagueStats;
@@ -86,54 +85,43 @@ public class MatchService extends MongoService<Match> {
 	}
 
 	public Match convert(MatchStats matchStats) {
-		return Match.builder()
-			.country(matchStats.getCountry())
-			.league(matchStats.getLeague())
-			.dateUnix(matchStats.getDateUnix())
-			.dateGMT(matchStats.getDateGmt())
-			.footyStatsUrl(matchStats.getMatchFootyStatsURL())
-			.state(matchStats.getMatchStatus())
-			.awayTeam(matchStats.getAwayTeam())
-			.homeTeam(matchStats.getHomeTeam())
-			.goalsAwayTeam(matchStats.getResultAwayTeamGoals())
-			.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
-			.bttsYes(calculatePrediction(Bet.BTTS_YES, matchStats))
-			.o05(calculatePrediction(Bet.OVER_ZERO_FIVE, matchStats))
-			.o15(calculatePrediction(Bet.OVER_ONE_FIVE, matchStats))
-			.build();
-	}
-
-	@Override
-	public Query upsertQuery(Match example) {
-		return query(Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague())
-			.and("dateUnix").is(example.getDateUnix()).and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
-	}
-
-	@Override
-	public Class<Match> upsertType() {
-		return Match.class;
-	}
-
-	private PredictionResult calculatePrediction(
-		Bet bet,
-		MatchStats ms) {
 
 		try {
 			// Update stats like league-, team-stats etc. if necessary we download the latest stats from footystats.org.
 			// This is done in a try-catch block because we do not want to fail the prediction calculation if the stats update fails.
 			// Updating the stats is not a critical part of the prediction calculation and may not have any effect on the
 			// prediction result. For example in case of old matches there is maybe no stats download config.
-			cachedConfiguredStatsService.updateConfiguredStats(ms.getCountry(), ms.getLeague());
+			cachedConfiguredStatsService.updateConfiguredStats(matchStats.getCountry(), matchStats.getLeague());
 		} catch (ServiceException serviceException) {
 			log.warn("Failed to update stats for match: {} because of: {}. Prediction calculation resumes without updated csv stats.",
-				ms.matchStatsShort(),
-				serviceException.getMessage());
+				matchStats.matchStatsShort(), serviceException.getMessage());
 		}
 		// Load Team and League stats and add them to the context (if they exist).
-		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(ms.getLeague(), ms.getCountry(), ms.getDateGmt().getYear());
-		final TeamStats homeTeam = teamStatsService.aggregate(ms.getHomeTeam(), ms.getCountry(), ms.getDateGmt().getYear());
-		final TeamStats awayTeam = teamStatsService.aggregate(ms.getAwayTeam(), ms.getCountry(), ms.getDateGmt().getYear());
-		return predictionService.prediction(new BetPredictionContext(ms, homeTeam, awayTeam, aggregatedLeagueStats, bet));
+		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(matchStats.getLeague(), matchStats.getCountry(),
+			matchStats.getDateGmt().getYear());
+		final TeamStats homeTeam = teamStatsService.aggregate(matchStats.getHomeTeam(), matchStats.getCountry(), matchStats.getDateGmt().getYear());
+		final TeamStats awayTeam = teamStatsService.aggregate(matchStats.getAwayTeam(), matchStats.getCountry(), matchStats.getDateGmt().getYear());
+
+		return Match.builder().country(matchStats.getCountry()).league(matchStats.getLeague()).dateUnix(matchStats.getDateUnix())
+			.dateGMT(matchStats.getDateGmt()).footyStatsUrl(matchStats.getMatchFootyStatsURL()).state(matchStats.getMatchStatus())
+			.awayTeam(matchStats.getAwayTeam()).homeTeam(matchStats.getHomeTeam()).goalsAwayTeam(matchStats.getResultAwayTeamGoals())
+			.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
+			.bttsYes(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.BTTS_YES)))
+			.o05(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ZERO_FIVE)))
+			.o15(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ONE_FIVE)))
+			.build();
+	}
+
+	@Override
+	public Query upsertQuery(Match example) {
+		return query(
+			Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix())
+				.and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
+	}
+
+	@Override
+	public Class<Match> upsertType() {
+		return Match.class;
 	}
 
 	private void applyFullTextCriteria(MatchSearch search, Query query) {
