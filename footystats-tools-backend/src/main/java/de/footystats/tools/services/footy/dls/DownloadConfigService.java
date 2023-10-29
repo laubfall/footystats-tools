@@ -89,7 +89,7 @@ public class DownloadConfigService extends MongoService<DownloadCountryLeagueSta
 		var year = LocalDate.now().getYear();
 		var currentTimeMillis = System.currentTimeMillis();
 		var seasonCrit = where(FIELD_SEASON).regex(year
-			+ "$"); // match the last year in cases when season is represented as a tuple: 2022/2023. This regeex also matches single years (e.g.: 2021)
+			+ "$"); // match the last year in cases when season is represented as a tuple: 2022/2023. This regex also matches single years (e.g.: 2021)
 		var leagueConfigCrit = where(DOWNLOAD_BITMASK).bits().anySet(FileTypeBit.LEAGUE.getBit())
 			.orOperator(where(FIELD_LAST_LEAGUE_DOWNLOAD).lt(currentTimeMillis - LAST_DOWNLOAD_MINUS_TIME_MILLIS),
 				where(FIELD_LAST_LEAGUE_DOWNLOAD).isNull());

@@ -73,6 +73,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['FootyStatsOverFTPredictionInfluencer']", hasSize(2)))
+			// Because we have no league stats
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['HomeTeamLeaguePosInfluencer']").doesNotExist())
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['AwayTeamLeaguePosInfluencer']").doesNotExist())
 			.andExpect(jsonPath("$.dontBetInfluencerPercentDistributions.keys()", empty()))

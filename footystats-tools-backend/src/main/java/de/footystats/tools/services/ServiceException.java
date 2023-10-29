@@ -34,6 +34,7 @@ public class ServiceException extends RuntimeException {
 		CSV_FILE_SERVICE_IO_EXCEPTION(10), // Some io exception while importing csv file,
 		CSV_FILE_SERVICE_LIB_EXCEPTION(11), // Excpetion produced by csv library while importing csv file.
 		CSV_FILE_SERVICE_UNEXPECTED_EXCEPTION(12), // Some unexpected exception while importing csv file.
+		CSV_FILE_SERVICE_NO_CSV_TYPE(13), // No csv type found for the given file name. Check the filename
 		;
 		final int code;
 

@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 /**
  * Does the download for configured downloads.
+ * <p>
+ * Configured downloads means that the user provided a csv file with the download configs and this service will download the stats csv files as
+ * configured in the csv file. See README.md for more details about the csv file.
  */
 @Slf4j
 @Service

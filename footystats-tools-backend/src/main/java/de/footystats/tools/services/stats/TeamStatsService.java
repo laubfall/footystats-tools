@@ -1,5 +1,7 @@
 package de.footystats.tools.services.stats;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import de.footystats.tools.FootystatsProperties;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.csv.CsvFileService;
@@ -13,7 +15,6 @@ import java.util.function.ToIntFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +47,8 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		// Holds the seasons for the last 3 years, the current year and the next year, e.g. year is 2022: 2021/2022, 2020/2021, 2022/2023, 2022, 2023
 		var seasons = new String[]{year - 1 + "/" + year, year - 2 + "/" + (year - 1), year + "/" + (year + 1), year + "", year + 1 + "",
 			year - 1 + ""};
-		Query query = Query.query(Criteria.where("country").is(country).and("season").in(seasons)
-			.orOperator(Criteria.where("teamName").is(team), Criteria.where("commonName").is(team)));
+		Query query = Query.query(where("country").is(country).and("season").in(seasons)
+			.orOperator(where("teamName").is(team), where("commonName").is(team)));
 		return mongoTemplate.find(query, TeamStats.class);
 	}
 
@@ -384,7 +385,7 @@ public class TeamStatsService extends MongoService<TeamStats> {
 	@Override
 	public Query upsertQuery(TeamStats example) {
 		return Query.query(
-			Criteria.where("country").is(example.getCountry()).and("teamName").is(example.getTeamName()).and("season").is(example.getSeason()));
+			where("country").is(example.getCountry()).and("teamName").is(example.getTeamName()).and("season").is(example.getSeason()));
 	}
 
 	@Override

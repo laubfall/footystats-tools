@@ -37,7 +37,7 @@ public class MatchStatsCsvFileDownloadService extends CsvFileDownloadService {
 			List<MatchStats> matchStats = csvFileService.importFile(fileStream, MatchStats.class);
 			log.info("MatchStatc csv ile contains " + matchStats.size() + " matches.");
 			matchStats.forEach(matchStatsService::importMatchStats);
-		}, rawMatches, "matchStats");
+		}, rawMatches, "match_expanded");
 	}
 
 	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {

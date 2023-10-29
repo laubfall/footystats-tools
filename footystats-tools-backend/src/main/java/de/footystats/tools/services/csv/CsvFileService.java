@@ -51,7 +51,7 @@ public class CsvFileService<T> {
 			case "matches" -> CsvFileType.LEAGUE_MATCH_STATS;
 			case "players" -> CsvFileType.PLAYER_STATS;
 			case "download_config" -> CsvFileType.DOWNLOAD_CONFIG;
-			default -> null;
+			default -> throw new ServiceException(Type.CSV_FILE_SERVICE_NO_CSV_TYPE);
 		};
 	}
 
