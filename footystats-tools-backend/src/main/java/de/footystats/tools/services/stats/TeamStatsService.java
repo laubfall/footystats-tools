@@ -60,9 +60,9 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		if (teamStats == null || teamStats.isEmpty()) {
 			return null;
 		}
-		var matchingTeamStats = teamStats.stream()
-			.filter(ts -> ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()).toList();
+		var matchingTeamStats = filterTeamStatsWithTooFewMatches(teamStats);
 		if (matchingTeamStats.isEmpty()) {
+			log.info("No matching team stats with enough matches played found.");
 			return null;
 		}
 
@@ -366,6 +366,19 @@ public class TeamStatsService extends MongoService<TeamStats> {
 		tsNew.setWinsHome(integerAverageRoundUp(matchingTeamStats, TeamStats::getWinsHome));
 		tsNew.setWinsAway(integerAverageRoundUp(matchingTeamStats, TeamStats::getWinsAway));
 		return tsNew;
+	}
+
+	private List<TeamStats> filterTeamStatsWithTooFewMatches(Collection<TeamStats> teamStats) {
+		var matchingTeamStats = teamStats.stream()
+			.filter(ts -> {
+				if (ts.getMatchesPlayed() >= footystatsProperties.getIgnoreTeamStatsWithGamesPlayedLowerThan()) {
+					return true;
+				} else {
+					log.info("Ignoring team stats for team {} with only {} matches played.", ts.getTeamName(), ts.getMatchesPlayed());
+					return false;
+				}
+			}).toList();
+		return matchingTeamStats;
 	}
 
 	private int integerAverageRoundUp(Collection<TeamStats> stats, ToIntFunction<TeamStats> mapper) {
