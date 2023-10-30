@@ -5,9 +5,9 @@ import de.footystats.tools.services.prediction.PrecheckResult;
 
 public abstract class XgOverXGoalsInfluencer implements BetResultInfluencer {
 
-	private int xgBase;
+	private final int xgBase;
 
-	private Bet validFor;
+	private final Bet validFor;
 
 	protected XgOverXGoalsInfluencer(int xgBase, Bet validFor) {
 		this.xgBase = xgBase;

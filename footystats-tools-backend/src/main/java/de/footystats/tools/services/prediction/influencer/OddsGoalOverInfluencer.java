@@ -24,19 +24,15 @@ public class OddsGoalOverInfluencer implements BetResultInfluencer {
 	public Integer calculateInfluence(
 		BetPredictionContext ctx
 	) {
-		var amount = 0;
-		// eslint-disable-next-line default-case
-		switch (ctx.bet()) {
-			case OVER_ZERO_FIVE, OVER_ONE_FIVE:
-				amount = calculateFor05And15(ctx);
-				break;
-		}
-
-		return amount;
+		return switch (ctx.bet()) {
+			case OVER_ZERO_FIVE, OVER_ONE_FIVE -> calculateFor05And15(ctx);
+			default -> 0;
+			// eslint-disable-next-line default-case
+		};
 	}
 
 	private Integer calculateFor05And15(BetPredictionContext ctx) {
-		var zeroFiveModifier = ctx.bet() == Bet.OVER_ZERO_FIVE ? 0.2 : 0;
+		var zeroFiveModifier = ctx.bet() == Bet.OVER_ZERO_FIVE ? 0.4 : 0.2;
 		var oddsOver15 = ctx.match().getOddsOver15(); // Odds Over05 info does not exist in csv
 		var diffOddToOdd2 = 2 - oddsOver15 - zeroFiveModifier; // e.g.: 2 - 1,3 = 0,7, the subtraction of 0.2 is cause of the stat
 		if (diffOddToOdd2 < 0) {
