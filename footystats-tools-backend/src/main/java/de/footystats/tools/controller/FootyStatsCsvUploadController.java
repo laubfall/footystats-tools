@@ -13,10 +13,8 @@ import de.footystats.tools.services.stats.MatchStatsService;
 import de.footystats.tools.services.stats.Team2StatsService;
 import de.footystats.tools.services.stats.TeamStatsService;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -65,7 +63,7 @@ public class FootyStatsCsvUploadController {
 	}
 
 	@PostMapping(path = "/uploadMultipleFiles", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public List<UploadFileResponse> uploadMultipleFiles(@RequestPart MultipartFile[] files) {
+	public List<UploadFileResponse> uploadMultipleFiles(@RequestPart MultipartFile[] files) throws ServiceException {
 		return Arrays.stream(files)
 			.map(this::uploadFile)
 			.toList();
@@ -78,17 +76,10 @@ public class FootyStatsCsvUploadController {
 	}
 
 	private void store(MultipartFile file) {
-
-		if (!StringUtils.endsWith(file.getOriginalFilename(), ".csv")) {
-			logger.info(MessageFormat.format("File does not have csv extension: {0}", file.getOriginalFilename()));
-			return;
-		}
-
 		final ICsvFileInformation csvFileInformation = csvFileService.csvFileInformationByFileName(file.getOriginalFilename());
 
 		try {
-
-			logger.debug(MessageFormat.format("Try to store csv data from file: {0}", file.getOriginalFilename()));
+			logger.debug("Try to store csv data from file: {}", file.getOriginalFilename());
 			switch (csvFileInformation.type()) {
 				case LEAGUE_STATS -> this.leagueStatsService.readLeagueStats(csvFileInformation, file.getInputStream());
 				case MATCH_STATS -> {
@@ -99,9 +90,8 @@ public class FootyStatsCsvUploadController {
 				case TEAM_2_STATS -> this.team2StatsService.readTeamStats(file.getInputStream());
 				case LEAGUE_MATCH_STATS -> this.leagueMatchStatsService.readLeagueMatchStats(file.getInputStream());
 				case DOWNLOAD_CONFIG -> this.downloadConfigService.readDownloadConfigs(file.getInputStream());
-				default -> logger.warn(
-					MessageFormat.format("Don't know how to store csv data for file type {0} of file ${1}",
-						file.getOriginalFilename(), csvFileInformation.type()));
+				default -> logger.warn("Don't know how to store csv data for file type {} of file {}",
+					file.getOriginalFilename(), csvFileInformation.type());
 			}
 		} catch (IOException e) {
 			logger.error("Failed storing csv data", e);

@@ -9,12 +9,15 @@ index.ts
 models/BetPredictionQualityAllBetsAggregate.ts
 models/BetPredictionQualityBetAggregate.ts
 models/BetPredictionQualityInfluencerAggregate.ts
+models/Country.ts
+models/ExceptionResponse.ts
 models/InfluencerResult.ts
 models/InfluencerStatisticalResultOutcome.ts
 models/JobInformation.ts
 models/ListMatchRequest.ts
 models/MatchListElement.ts
 models/MatchStats.ts
+models/ObjectId.ts
 models/Paging.ts
 models/PagingResponseMatchListElement.ts
 models/Password.ts

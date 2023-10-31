@@ -15,9 +15,12 @@
 
 import * as runtime from '../runtime';
 import type {
+  ExceptionResponse,
   Settings,
 } from '../models';
 import {
+    ExceptionResponseFromJSON,
+    ExceptionResponseToJSON,
     SettingsFromJSON,
     SettingsToJSON,
 } from '../models';

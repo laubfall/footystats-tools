@@ -15,9 +15,12 @@
 
 import * as runtime from '../runtime';
 import type {
+  ExceptionResponse,
   UploadFileResponse,
 } from '../models';
 import {
+    ExceptionResponseFromJSON,
+    ExceptionResponseToJSON,
     UploadFileResponseFromJSON,
     UploadFileResponseToJSON,
 } from '../models';

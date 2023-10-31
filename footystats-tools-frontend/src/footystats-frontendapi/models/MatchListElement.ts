@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ObjectId } from './ObjectId';
+import {
+    ObjectIdFromJSON,
+    ObjectIdFromJSONTyped,
+    ObjectIdToJSON,
+} from './ObjectId';
 import type { PredictionQualityRevision } from './PredictionQualityRevision';
 import {
     PredictionQualityRevisionFromJSON,
@@ -38,6 +44,12 @@ import {
  * @interface MatchListElement
  */
 export interface MatchListElement {
+    /**
+     * 
+     * @type {ObjectId}
+     * @memberof MatchListElement
+     */
+    id?: ObjectId;
     /**
      * 
      * @type {number}
@@ -162,6 +174,7 @@ export function MatchListElementFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
+        'id': !exists(json, 'id') ? undefined : ObjectIdFromJSON(json['id']),
         'dateUnix': !exists(json, 'dateUnix') ? undefined : json['dateUnix'],
         'dateGMT': !exists(json, 'dateGMT') ? undefined : (new Date(json['dateGMT'])),
         'country': !exists(json, 'country') ? undefined : json['country'],
@@ -189,6 +202,7 @@ export function MatchListElementToJSON(value?: MatchListElement | null): any {
     }
     return {
         
+        'id': ObjectIdToJSON(value.id),
         'dateUnix': value.dateUnix,
         'dateGMT': value.dateGMT === undefined ? undefined : (value.dateGMT.toISOString()),
         'country': value.country,

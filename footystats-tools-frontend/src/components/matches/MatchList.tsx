@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
 	BsFillArrowDownCircleFill,

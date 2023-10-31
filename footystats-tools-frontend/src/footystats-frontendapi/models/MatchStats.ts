@@ -13,12 +13,31 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Country } from './Country';
+import {
+    CountryFromJSON,
+    CountryFromJSONTyped,
+    CountryToJSON,
+} from './Country';
+import type { ObjectId } from './ObjectId';
+import {
+    ObjectIdFromJSON,
+    ObjectIdFromJSONTyped,
+    ObjectIdToJSON,
+} from './ObjectId';
+
 /**
  * 
  * @export
  * @interface MatchStats
  */
 export interface MatchStats {
+    /**
+     * 
+     * @type {ObjectId}
+     * @memberof MatchStats
+     */
+    id?: ObjectId;
     /**
      * 
      * @type {number}
@@ -33,10 +52,10 @@ export interface MatchStats {
     dateGmt?: Date;
     /**
      * 
-     * @type {string}
+     * @type {Country}
      * @memberof MatchStats
      */
-    country?: string;
+    country?: Country;
     /**
      * 
      * @type {string}
@@ -695,9 +714,10 @@ export function MatchStatsFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     }
     return {
         
+        'id': !exists(json, 'id') ? undefined : ObjectIdFromJSON(json['id']),
         'dateUnix': !exists(json, 'dateUnix') ? undefined : json['dateUnix'],
         'dateGmt': !exists(json, 'dateGmt') ? undefined : (new Date(json['dateGmt'])),
-        'country': !exists(json, 'country') ? undefined : json['country'],
+        'country': !exists(json, 'country') ? undefined : CountryFromJSON(json['country']),
         'league': !exists(json, 'league') ? undefined : json['league'],
         'homeTeam': !exists(json, 'homeTeam') ? undefined : json['homeTeam'],
         'awayTeam': !exists(json, 'awayTeam') ? undefined : json['awayTeam'],
@@ -814,9 +834,10 @@ export function MatchStatsToJSON(value?: MatchStats | null): any {
     }
     return {
         
+        'id': ObjectIdToJSON(value.id),
         'dateUnix': value.dateUnix,
         'dateGmt': value.dateGmt === undefined ? undefined : (value.dateGmt.toISOString()),
-        'country': value.country,
+        'country': CountryToJSON(value.country),
         'league': value.league,
         'homeTeam': value.homeTeam,
         'awayTeam': value.awayTeam,

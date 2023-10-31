@@ -6,6 +6,7 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.stats.MatchStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,7 @@ public class Match {
 	private LocalDateTime dateGMT;
 	@Getter
 	@Setter
+	@Schema(implementation = String.class)
 	private Country country;
 	@Getter
 	@Setter

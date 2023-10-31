@@ -1,9 +1,14 @@
 import React, { useRef } from "react";
-import { FootyStatsCsvUploadControllerApi } from "../../footystats-frontendapi";
+import {
+	ExceptionResponse,
+	ExceptionResponseFromJSON,
+	FootyStatsCsvUploadControllerApi,
+} from "../../footystats-frontendapi";
 import { useFileUpload } from "../../react-use-file-upload/useFileUpload";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { Messages } from "../alert/Messages";
 import translate from "../../i18n/translate";
+import { apiCatchReasonHandler } from "../functions";
 
 export const FileUpload = () => {
 	const {
@@ -38,10 +43,7 @@ export const FileUpload = () => {
 			.then((response) => {
 				setMessages([translate("renderer.fileupload.upload.success")]);
 			})
-			.catch((error) => {
-				setMessages([translate("renderer.fileupload.upload.failed")]);
-				console.error("Failed to submit files.", error);
-			});
+			.catch(apiCatchReasonHandler);
 	};
 
 	return (

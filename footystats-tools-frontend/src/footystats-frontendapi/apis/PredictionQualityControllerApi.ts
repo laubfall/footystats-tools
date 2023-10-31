@@ -15,10 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
+  ExceptionResponse,
   JobInformation,
   Report,
 } from '../models';
 import {
+    ExceptionResponseFromJSON,
+    ExceptionResponseToJSON,
     JobInformationFromJSON,
     JobInformationToJSON,
     ReportFromJSON,

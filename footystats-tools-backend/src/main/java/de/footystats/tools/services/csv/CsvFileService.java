@@ -62,6 +62,10 @@ public class CsvFileService<T> {
 	 * @return the CsvFileInformation for the given fileName.
 	 */
 	public ICsvFileInformation csvFileInformationByFileName(String fileName) {
+		if (!StringUtils.endsWith(fileName, ".csv")) {
+			throw new ServiceException(Type.CSV_FILE_SERVICE_NO_CSV_EXTENSION);
+		}
+
 		if (StringUtils.startsWith(fileName, "matches_expanded")) {
 			return new CsvFileInformation(CsvFileType.MATCH_STATS, null);
 		}

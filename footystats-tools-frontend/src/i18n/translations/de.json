@@ -3,6 +3,8 @@
 	"main.msg.STARTED_IMPORT_DIRECTORY_WATCH": "Überwachung von Import-Verzeichnis begonnen",
 	"renderer.api.error.id.CSV_FILE_DOWNLOAD_SERVICE_LOGIN_FAILED": "Login bei Footystats hat nicht geklappt.",
 	"renderer.api.error.id.CSV_FILE_DOWNLOAD_SERVICE_SETTINGS_MISSING": "Bitte speichern Sie Benutzername und Password für footystats.org um Spielstatistiken downloaden zu können.",
+	"renderer.api.error.id.CSV_FILE_SERVICE_NO_CSV_EXTENSION": "Datei endet nicht auf .csv",
+	"renderer.api.error.id.CSV_FILE_SERVICE_NO_CSV_TYPE": "Der Typ der CSV Datei kann nicht ermittelt werden. Bitte den Dateinamen prüfen.",
 	"renderer.api.error.unknown": "Ein unbekannter Fehler ist aufgetreten.",
 	"renderer.fileupload.button.selectfile": "Datei(en) auswählen",
 	"renderer.fileupload.button.upload": "Hochladen",

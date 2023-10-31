@@ -15,11 +15,14 @@
 
 import * as runtime from '../runtime';
 import type {
+  ExceptionResponse,
   JobInformation,
   ListMatchRequest,
   PagingResponseMatchListElement,
 } from '../models';
 import {
+    ExceptionResponseFromJSON,
+    ExceptionResponseToJSON,
     JobInformationFromJSON,
     JobInformationToJSON,
     ListMatchRequestFromJSON,

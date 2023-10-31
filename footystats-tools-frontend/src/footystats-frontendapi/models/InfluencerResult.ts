@@ -46,6 +46,7 @@ export interface InfluencerResult {
 export const InfluencerResultPrecheckResultEnum = {
     NotEnoughInformation: 'NOT_ENOUGH_INFORMATION',
     DontKnowWhatToCalculateForBet: 'DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET',
+    InvalidStats: 'INVALID_STATS',
     Exception: 'EXCEPTION',
     Ok: 'OK'
 } as const;
