@@ -19,7 +19,7 @@ check_mvn_output() {
     local mvn_output="$1"
 
     # Überprüfen Sie, ob das Ergebnis des mvn-Kommandos einen Fehler enthält
-    if [[ $mvn_output == *"BUILD FAILURE"* ]]; then
+    if [[ $mvn_output != *"BUILD SUCCESS"* ]]; then
         # Beenden Sie das Skript, wenn das mvn-Kommando fehlgeschlagen ist
         echo "Das mvn-Kommando ist fehlgeschlagen. Das Skript wird beendet."
         exit 1
