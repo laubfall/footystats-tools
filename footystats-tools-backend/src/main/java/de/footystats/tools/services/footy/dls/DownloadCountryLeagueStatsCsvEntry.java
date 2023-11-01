@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 public class DownloadCountryLeagueStatsCsvEntry {
 
-	@CsvCustomBindByName(column = "country", required = true, converter = CountryCsvConverter.class)
+	@CsvCustomBindByName(column = "country", converter = CountryCsvConverter.class)
 	private Country country;
 
 	@CsvBindByName(required = true)
