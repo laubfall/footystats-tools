@@ -8,11 +8,11 @@
 	"renderer.api.error.unknown": "Ein unbekannter Fehler ist aufgetreten.",
 	"renderer.fileupload.button.selectfile": "Datei(en) auswählen",
 	"renderer.fileupload.button.upload": "Hochladen",
-	"renderer.fileupload.upload.success": "Datei(en) erfolgreich hochgeladen",
-	"renderer.fileupload.upload.failed": "Datei(en) konnte nicht hochgeladen werden",
 	"renderer.fileupload.draghere": "Datei(en) hierher ziehen",
 	"renderer.fileupload.info": "Hier können Sie CSV Dateien hochladen, die Sie von footystats.org heruntergeladen haben.",
 	"renderer.fileupload.title": "Footystats.org csv Dateien hochladen",
+	"renderer.fileupload.upload.failed": "Datei(en) konnte nicht hochgeladen werden",
+	"renderer.fileupload.upload.success": "Datei(en) erfolgreich hochgeladen",
 	"renderer.influencerdistributiongraph.scatterdiagram.betfailed": "Nicht erfolgreich bewertet",
 	"renderer.influencerdistributiongraph.scatterdiagram.betsuccess": "Erfolgreich bewertet",
 	"renderer.matchesview.bet.BTTS_YES": "BTTS ja",
@@ -71,5 +71,6 @@
 	"renderer.settings.input.footypassword": "Footystats Passwort",
 	"renderer.settings.input.footypassword.required": "Passwort ist ein Pflichtfeld",
 	"renderer.settings.input.footyusername": "Benutzername Footystats",
-	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld"
+	"renderer.settings.input.footyusername.required": "Benutzername ist ein Pflichtfeld",
+	"renderer.settings.save.success": "Einstellungen wurden gespeichert"
 }

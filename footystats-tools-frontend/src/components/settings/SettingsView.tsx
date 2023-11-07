@@ -3,10 +3,9 @@ import * as yup from "yup";
 import { Formik, FormikValues } from "formik";
 import { Button, Form } from "react-bootstrap";
 import translate from "../../i18n/translate";
-import {
-	Configuration,
-	SettingsControllerApi,
-} from "../../footystats-frontendapi";
+import { SettingsControllerApi } from "../../footystats-frontendapi";
+import { apiCatchReasonHandler } from "../functions";
+import AlertMessagesStore from "../../mobx/AlertMessages";
 
 export const SettingsView = () => {
 	const sca = new SettingsControllerApi();
@@ -37,7 +36,13 @@ export const SettingsView = () => {
 					password: values.footypassword,
 				},
 			},
-		});
+		})
+			.then(() => {
+				AlertMessagesStore.addMessage(
+					translate("renderer.settings.save.success"),
+				);
+			})
+			.catch(apiCatchReasonHandler);
 	};
 
 	useEffect(() => {
