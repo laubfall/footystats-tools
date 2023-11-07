@@ -46,13 +46,15 @@ export const SettingsView = () => {
 	};
 
 	useEffect(() => {
-		sca.loadSettings().then((response) =>
-			setInitialValues({
-				...initialValues,
-				footyusername: response.footyStatsUsername,
-				footypassword: response.footyStatsPassword?.password,
-			}),
-		);
+		sca.loadSettings()
+			.then((response) =>
+				setInitialValues({
+					...initialValues,
+					footyusername: response.footyStatsUsername,
+					footypassword: response.footyStatsPassword?.password,
+				}),
+			)
+			.catch(apiCatchReasonHandler);
 	}, []);
 
 	return (
