@@ -58,55 +58,49 @@ export const SettingsView = () => {
 	}, []);
 
 	return (
-		<>
-			<Formik
-				initialValues={initialValues}
-				onSubmit={handleSubmit}
-				validationSchema={validationSchema}
-				enableReinitialize={true}
-			>
-				{({ values, errors, handleChange, handleSubmit }) => (
-					<Form onSubmit={handleSubmit} noValidate>
-						<Form.Group className="mb-3" controlId="footyusername">
-							<Form.Label>
-								{translate(
-									"renderer.settings.input.footyusername",
-								)}
-							</Form.Label>
-							<Form.Control
-								type="text"
-								onChange={handleChange}
-								value={values.footyusername}
-								isInvalid={!!errors.footyusername}
-							/>
-							<Form.Control.Feedback type="invalid">
-								{errors.footyusername as string}
-							</Form.Control.Feedback>
-						</Form.Group>
+		<Formik
+			initialValues={initialValues}
+			onSubmit={handleSubmit}
+			validationSchema={validationSchema}
+			enableReinitialize={true}
+		>
+			{({ values, errors, handleChange, handleSubmit }) => (
+				<Form onSubmit={handleSubmit} noValidate>
+					<Form.Group className="mb-3" controlId="footyusername">
+						<Form.Label>
+							{translate("renderer.settings.input.footyusername")}
+						</Form.Label>
+						<Form.Control
+							type="text"
+							onChange={handleChange}
+							value={values.footyusername}
+							isInvalid={!!errors.footyusername}
+						/>
+						<Form.Control.Feedback type="invalid">
+							{errors.footyusername as string}
+						</Form.Control.Feedback>
+					</Form.Group>
 
-						<Form.Group className="mb-3" controlId="footypassword">
-							<Form.Label>
-								{translate(
-									"renderer.settings.input.footypassword",
-								)}
-							</Form.Label>
-							<Form.Control
-								type="password"
-								value={values.footypassword}
-								onChange={handleChange}
-								isInvalid={!!errors.footypassword}
-							/>
-							<Form.Control.Feedback type="invalid">
-								{errors.footypassword as string}
-							</Form.Control.Feedback>
-						</Form.Group>
+					<Form.Group className="mb-3" controlId="footypassword">
+						<Form.Label>
+							{translate("renderer.settings.input.footypassword")}
+						</Form.Label>
+						<Form.Control
+							type="password"
+							value={values.footypassword}
+							onChange={handleChange}
+							isInvalid={!!errors.footypassword}
+						/>
+						<Form.Control.Feedback type="invalid">
+							{errors.footypassword as string}
+						</Form.Control.Feedback>
+					</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Submit
-						</Button>
-					</Form>
-				)}
-			</Formik>
-		</>
+					<Button variant="primary" type="submit">
+						Submit
+					</Button>
+				</Form>
+			)}
+		</Formik>
 	);
 };
