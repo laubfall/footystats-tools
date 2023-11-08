@@ -14,69 +14,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
-import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * This class represents a match as shown in the match list.
+ */
 @Document
-@Builder()
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonComponent
 @CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1, 'state': 1}")
 public class Match {
 
 	@Id
-	@Getter
-	@Setter
 	private ObjectId id;
-	@Getter
-	@Setter
 	private Long dateUnix;
-	@Getter
-	@Setter
+	@Indexed
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
 	private LocalDateTime dateGMT;
-	@Getter
-	@Setter
+	@Indexed
 	@Schema(implementation = String.class)
 	private Country country;
-	@Getter
-	@Setter
 	private String league;
 	@TextIndexed
-	@Getter
-	@Setter
 	private String homeTeam;
 	@TextIndexed
-	@Getter
-	@Setter
 	private String awayTeam;
-	@Getter
-	@Setter
 	private Integer goalsHomeTeam;
-	@Getter
-	@Setter
 	private Integer goalsAwayTeam;
-	@Getter
-	@Setter
 	private MatchStatus state;
-	@Getter
-	@Setter
 	private String footyStatsUrl;
-	@Getter
-	@Setter
 	private PredictionResult o05;
-	@Getter
-	@Setter
 	private PredictionResult o15;
-	@Getter
-	@Setter
 	private PredictionResult bttsYes;
-	@Getter
-	@Setter
 	private PredictionQualityRevision revision;
 
 	/**

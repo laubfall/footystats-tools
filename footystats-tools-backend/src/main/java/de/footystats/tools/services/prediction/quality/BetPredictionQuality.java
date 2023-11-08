@@ -2,28 +2,30 @@ package de.footystats.tools.services.prediction.quality;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.InfluencerPercentDistribution;
-import lombok.*;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 /**
  * The Document that stores all information for a prediction with a specific prediction percent value.
- *
+ * <p>
  * Included are the influencer results of all influencer that were involved in computing the prediction percent value.
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@CompoundIndexes({
-	@CompoundIndex(name = "unique", def = "{'revision' : 1, 'bet': 1, 'predictionPercent': 1, 'revision.revision': 1}"),
-	@CompoundIndex(name = "influencerDistribution", def = "{'influencerDistribution.influencerName' : 1, 'influencerDistribution.predictionPercent' : 1}")
-})
+@CompoundIndex(name = "unique", def = "{'revision' : 1, 'bet': 1, 'predictionPercent': 1, 'revision.revision': 1}")
+@CompoundIndex(name = "influencerDistribution", def = "{'influencerDistribution.influencerName' : 1, 'influencerDistribution.predictionPercent' : 1}")
 @Document
 @Builder(toBuilder = true, access = AccessLevel.PUBLIC)
 public class BetPredictionQuality implements IBetPredictionBaseData {
+
 	@Id
 	@Getter
 	@Setter

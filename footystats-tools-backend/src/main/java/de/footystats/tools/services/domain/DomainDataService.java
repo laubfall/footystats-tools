@@ -64,7 +64,7 @@ public class DomainDataService {
 		// Create a Country object for each country in the file.
 		IOUtils.readLines(countryResource.getInputStream(), StandardCharsets.UTF_8).forEach(line -> {
 			var country = new Country(line);
-			log.info("Created country: {}", country);
+			log.debug("Created country: {}", country);
 			countries.add(country);
 		});
 	}
