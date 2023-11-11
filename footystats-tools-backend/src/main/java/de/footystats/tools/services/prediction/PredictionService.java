@@ -8,6 +8,7 @@ import de.footystats.tools.services.prediction.influencer.FootyStatsOverFTPredic
 import de.footystats.tools.services.prediction.influencer.HomeTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsBttsYesInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsGoalOverInfluencer;
+import de.footystats.tools.services.prediction.influencer.XgHomeAndAwayInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverZeroFiveInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
@@ -15,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to calculate the prediction for different bets for a match.
+ */
 @Service
 public class PredictionService {
 
@@ -28,9 +32,51 @@ public class PredictionService {
 		new XgOverZeroFiveInfluencer(),
 		new XgOverOneFiveInfluencer(),
 		new AwayTeamLeaguePosInfluencer(),
-		new HomeTeamLeaguePosInfluencer()
+		new HomeTeamLeaguePosInfluencer(),
+		new XgHomeAndAwayInfluencer()
 	};
 
+	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx, boolean betOnThis) {
+		if ((ctx.match().getResultAwayTeamGoals() > 0 &&
+			ctx.match().getResultHomeTeamGoals() > 0 &&
+			betOnThis) ||
+			((ctx.match().getResultAwayTeamGoals() == 0 ||
+				ctx.match().getResultHomeTeamGoals() == 0) &&
+				!betOnThis)) {
+			return PredictionAnalyze.SUCCESS;
+		}
+
+		return PredictionAnalyze.FAILED;
+	}
+
+	private static PredictionAnalyze analyzeOverOneFive(BetPredictionContext ctx, boolean betOnThis) {
+		var goals = ctx.match().getResultAwayTeamGoals() +
+			ctx.match().getResultHomeTeamGoals();
+		if ((goals > 1 && betOnThis) || (goals <= 1 && !betOnThis)) {
+			return PredictionAnalyze.SUCCESS;
+		}
+
+		return PredictionAnalyze.FAILED;
+	}
+
+	private static PredictionAnalyze analyzeOverZeroFive(BetPredictionContext ctx, boolean betOnThis) {
+		var goals = ctx.match().getResultAwayTeamGoals() +
+			ctx.match().getResultHomeTeamGoals();
+		if ((goals > 0 && betOnThis) || (goals == 0 && !betOnThis)) {
+			return PredictionAnalyze.SUCCESS;
+		}
+
+		return PredictionAnalyze.FAILED;
+	}
+
+	/**
+	 * Calculate if the prediction was correct.
+	 *
+	 * @param ctx                      Mandatory. The context to use.
+	 * @param didPredictionCalculation True if the prediction was calculated.
+	 * @param betOnThis                True if prediction said bet on this bet, otherwise false.
+	 * @return The result of the analysis.
+	 */
 	public final PredictionAnalyze analyze(
 		BetPredictionContext ctx,
 		boolean didPredictionCalculation,
@@ -43,40 +89,12 @@ public class PredictionService {
 			return PredictionAnalyze.NOT_COMPLETED;
 		}
 
-		switch (ctx.bet()) {
-			case OVER_ZERO_FIVE: {
-				var goals = ctx.match().getResultAwayTeamGoals() +
-					ctx.match().getResultHomeTeamGoals();
-				if ((goals > 0 && betOnThis) || (goals == 0 && !betOnThis)) {
-					return PredictionAnalyze.SUCCESS;
-				}
-
-				return PredictionAnalyze.FAILED;
-			}
-			case OVER_ONE_FIVE: {
-				var goals = ctx.match().getResultAwayTeamGoals() +
-					ctx.match().getResultHomeTeamGoals();
-				if ((goals > 1 && betOnThis) || (goals <= 1 && !betOnThis)) {
-					return PredictionAnalyze.SUCCESS;
-				}
-
-				return PredictionAnalyze.FAILED;
-			}
-			case BTTS_YES: {
-				if ((ctx.match().getResultAwayTeamGoals() > 0 &&
-					ctx.match().getResultHomeTeamGoals() > 0 &&
-					betOnThis) ||
-					((ctx.match().getResultAwayTeamGoals() == 0 ||
-						ctx.match().getResultHomeTeamGoals() == 0) &&
-						!betOnThis)) {
-					return PredictionAnalyze.SUCCESS;
-				}
-
-				return PredictionAnalyze.FAILED;
-			}
-			default:
-				return PredictionAnalyze.NOT_ANALYZED;
-		}
+		return switch (ctx.bet()) {
+			case OVER_ZERO_FIVE -> analyzeOverZeroFive(ctx, betOnThis);
+			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx, betOnThis);
+			case BTTS_YES -> analyzeBttsYes(ctx, betOnThis);
+			default -> PredictionAnalyze.NOT_ANALYZED;
+		};
 	}
 
 	public PredictionResult prediction(BetPredictionContext ctx) {
