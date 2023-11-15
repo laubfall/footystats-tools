@@ -6,26 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Stores Information about the distribution of one influencer and its calculated value.
- * One calculated value can exist for multiple predictions.
+ * Stores Information about the distribution of one influencer and its calculated value. One calculated value can exist for multiple predictions.
  */
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class InfluencerPercentDistribution
-{
-	@Getter
-	@Setter
+public class InfluencerPercentDistribution {
+
 	private Integer predictionPercent;
-	@Getter
-	@Setter
+
+	// Count of successful predictions for a bet with the same influencer prediction percent value.
 	private Long betSucceeded;
-	@Getter
-	@Setter
+
+	// Count of failed predictions for a bet with the same influencer prediction percent value.
 	private Long betFailed;
-	@Getter
-	@Setter
+
 	private String influencerName;
-	@Getter
-	@Setter
+
 	private PrecheckResult precheckResult; // why?
 }

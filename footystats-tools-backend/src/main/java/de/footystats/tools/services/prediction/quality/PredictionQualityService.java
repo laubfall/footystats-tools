@@ -143,12 +143,12 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		});
 	}
 
-	private void mergeInfluencerDistribution(BetPredictionQuality target, BetPredictionQuality source) {
-		if (target.getInfluencerDistribution() == null) {
-			target.setInfluencerDistribution(new ArrayList<>());
+	private void mergeInfluencerDistribution(BetPredictionQuality targetBetPredictionQuality, BetPredictionQuality sourceBetPredictionQuality) {
+		if (targetBetPredictionQuality.getInfluencerDistribution() == null) {
+			targetBetPredictionQuality.setInfluencerDistribution(new ArrayList<>());
 		}
-		source.getInfluencerDistribution().forEach((sourceInfluencerDistribution) -> {
-			var optTId = target.getInfluencerDistribution().stream().filter(
+		sourceBetPredictionQuality.getInfluencerDistribution().forEach((sourceInfluencerDistribution) -> {
+			var optTId = targetBetPredictionQuality.getInfluencerDistribution().stream().filter(
 					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(sourceInfluencerDistribution.getInfluencerName()) &&
 						tId.getPredictionPercent().equals(sourceInfluencerDistribution.getPredictionPercent()) &&
 						tId.getPrecheckResult() == sourceInfluencerDistribution.getPrecheckResult())
@@ -159,7 +159,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 				tIpd.setBetSucceeded(tIpd.getBetSucceeded() + sourceInfluencerDistribution.getBetSucceeded());
 				tIpd.setBetFailed(tIpd.getBetFailed() + sourceInfluencerDistribution.getBetFailed());
 			} else {
-				target.getInfluencerDistribution().add(sourceInfluencerDistribution);
+				targetBetPredictionQuality.getInfluencerDistribution().add(sourceInfluencerDistribution);
 			}
 		});
 	}
