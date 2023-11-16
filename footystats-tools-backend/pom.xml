@@ -31,7 +31,7 @@
 					</execution>
 				</executions>
 				<groupId>org.asciidoctor</groupId>
-				<version>1.5.8</version>
+				<version>2.2.4</version>
 			</plugin>
 			<plugin>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -82,12 +82,13 @@
 		<dependency>
 			<artifactId>hibernate-validator</artifactId>
 			<groupId>org.hibernate.validator</groupId>
-			<version>8.0.0.Final</version>
+			<version>8.0.1.Final</version>
 		</dependency>
 		<dependency>
 			<artifactId>h2</artifactId>
 			<groupId>com.h2database</groupId>
 			<scope>runtime</scope>
+			<version>2.2.224</version>
 		</dependency>
 		<dependency>
 			<artifactId>commons-io</artifactId>
@@ -97,17 +98,17 @@
 		<dependency>
 			<artifactId>opencsv</artifactId>
 			<groupId>com.opencsv</groupId>
-			<version>5.7.1</version>
+			<version>5.8</version>
 		</dependency>
 		<dependency>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<version>2.14.1</version>
+			<version>2.16.0</version>
 		</dependency>
 		<dependency>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<groupId>org.springdoc</groupId>
-			<version>2.0.2</version>
+			<version>2.2.0</version>
 		</dependency>
 		<dependency>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -124,11 +125,12 @@
 			<artifactId>lombok</artifactId>
 			<groupId>org.projectlombok</groupId>
 			<optional>true</optional>
+			<version>1.18.30</version>
 		</dependency>
 		<dependency>
 			<artifactId>modelmapper</artifactId>
 			<groupId>org.modelmapper</groupId>
-			<version>3.1.1</version>
+			<version>3.2.0</version>
 		</dependency>
 		<dependency>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -146,7 +148,7 @@
 			<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
 			<groupId>de.flapdoodle.embed</groupId>
 			<scope>test</scope>
-			<version>4.3.2</version>
+			<version>4.10.1</version>
 		</dependency>
 		<dependency>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
@@ -161,7 +163,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<groupId>org.springframework.boot</groupId>
 		<relativePath/>
-		<version>3.1.1</version> <!-- lookup parent from repository -->
+		<version>3.1.5</version> <!-- lookup parent from repository -->
 	</parent>
 	<profiles>
 		<profile>
