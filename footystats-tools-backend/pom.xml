@@ -247,9 +247,9 @@
 
 	<properties>
 		<frontend.api.generator.backendurl>localhost</frontend.api.generator.backendurl>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
 
-	<version>1.1.6</version>
+	<version>1.1.7</version>
 </project>
