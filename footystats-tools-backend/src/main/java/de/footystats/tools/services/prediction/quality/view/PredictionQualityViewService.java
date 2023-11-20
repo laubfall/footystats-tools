@@ -42,6 +42,15 @@ public class PredictionQualityViewService {
 		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
+	/**
+	 * Sum up the betSucceeded and betFailed values for each influencer and predictionPercent.
+	 *
+	 * @param bet       The bet to filter for.
+	 * @param betOnThis If true the predictionPercent must be greater than or equal to the lower exclusive border of the betOnThis range.
+	 * @param revision  The revision to filter for.
+	 * @return Map of influencerName to List of BetPredictionQualityInfluencerAggregate that holds the aggregation of betSucceeded and betFailed for
+	 * each predictionPercent of the influencer.
+	 */
 	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis,
 		PredictionQualityRevision revision) {
 		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
@@ -71,6 +80,7 @@ public class PredictionQualityViewService {
 	 * Based on the BetPredictionAggregates documents this method aggregates the counts of done prediction bet / dont bet succeeded / failed.
 	 * Aggregations are done via mongodb query.
 	 *
+	 * @param revision The revision to filter for.
 	 * @return List of aggregated values.
 	 */
 	public List<BetPredictionQualityAllBetsAggregate> matchPredictionQualityMeasurementCounts(PredictionQualityRevision revision) {
@@ -114,11 +124,25 @@ public class PredictionQualityViewService {
 		return result;
 	}
 
+	/**
+	 * This method provides a view of success / failed counts of prediction for bet on this.
+	 *
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
+	 * @return List of aggregated values.
+	 */
 	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision,
 			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
 	}
 
+	/**
+	 * This method provides a view of success / failed counts of prediction for don't bet on this.
+	 *
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
+	 * @return List of aggregated values.
+	 */
 	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision,
 			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);

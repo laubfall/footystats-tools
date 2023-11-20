@@ -90,7 +90,8 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 		Assertions.assertEquals(3, matchRepository.count());
 
 		mockMvc.perform(get("/predictionquality/compute"))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jobId", equalTo(1)));
 
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
