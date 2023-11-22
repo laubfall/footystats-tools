@@ -2,8 +2,15 @@ package de.footystats.tools.services.prediction.quality.view;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.quality.IBetPredictionBaseData;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData {
+
 	private Bet bet;
 	private Long betSucceeded;
 	private Long betFailed;
@@ -15,23 +22,13 @@ public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData 
 	}
 
 	@Override
-	public Long getBetSucceeded() {
-		return betSucceeded;
-	}
-
-	@Override
-	public Long getBetFailed() {
-		return betFailed;
-	}
-
-	@Override
-	public Integer getPredictionPercent() {
-		return predictionPercent;
-	}
-
-	@Override
 	public void setBet(Bet bet) {
 		this.bet = bet;
+	}
+
+	@Override
+	public Long getBetSucceeded() {
+		return betSucceeded;
 	}
 
 	@Override
@@ -40,8 +37,18 @@ public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData 
 	}
 
 	@Override
+	public Long getBetFailed() {
+		return betFailed;
+	}
+
+	@Override
 	public void setBetFailed(Long betFailed) {
 		this.betFailed = betFailed;
+	}
+
+	@Override
+	public Integer getPredictionPercent() {
+		return predictionPercent;
 	}
 
 	@Override

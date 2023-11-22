@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,16 +38,16 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		(PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ||
 			PredictionAnalyze.FAILED.equals(prediction.analyzeResult()));
 
-	private final BetPredictionQualityRepository betPredictionAggregateRepository;
+	private final BetPredictionQualityRepository betPredictionQualityRepository;
 
 	public PredictionQualityService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
-		BetPredictionQualityRepository betPredictionAggregateRepository) {
+		BetPredictionQualityRepository betPredictionQualityRepository) {
 		super(mongoTemplate, mappingMongoConverter);
-		this.betPredictionAggregateRepository = betPredictionAggregateRepository;
+		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
 	public PredictionQualityRevision latestRevision() {
-		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(
+		final BetPredictionQualityRevisionView latest = betPredictionQualityRepository.findTopByRevisionIsNotOrderByRevisionDesc(
 			PredictionQualityRevision.IN_RECOMPUTATION);
 		if (latest == null) {
 			return new PredictionQualityRevision(0);
@@ -56,7 +57,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	}
 
 	private PredictionQualityRevision nextRevision() {
-		final BetPredictionQualityRevisionView latest = betPredictionAggregateRepository.findTopByRevisionIsNotOrderByRevisionDesc(
+		final BetPredictionQualityRevisionView latest = betPredictionQualityRepository.findTopByRevisionIsNotOrderByRevisionDesc(
 			PredictionQualityRevision.IN_RECOMPUTATION);
 		if (latest == null) {
 			return new PredictionQualityRevision(0);
@@ -126,19 +127,20 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			.toList();
 	}
 
+	@CacheEvict(cacheNames = {"betPredictionQualityBetAggregate", "dontBetPredictionQualityBetAggregate"}, allEntries = true)
 	public void merge(Collection<BetPredictionQuality> measurements, PredictionQualityRevision revision) {
 		measurements.forEach((betPredictionQuality) -> {
-			var existingBetPredictionQuality = betPredictionAggregateRepository.findByBetAndPredictionPercentAndRevision(
+			var existingBetPredictionQuality = betPredictionQualityRepository.findByBetAndPredictionPercentAndRevision(
 				betPredictionQuality.getBet(),
 				betPredictionQuality.getPredictionPercent(), revision);
 			if (existingBetPredictionQuality == null) {
-				betPredictionAggregateRepository.insert(betPredictionQuality);
+				betPredictionQualityRepository.insert(betPredictionQuality);
 			} else {
 				existingBetPredictionQuality.setCount(existingBetPredictionQuality.getCount() + 1);
 				existingBetPredictionQuality.setBetSucceeded(existingBetPredictionQuality.getBetSucceeded() + betPredictionQuality.getBetSucceeded());
 				existingBetPredictionQuality.setBetFailed(existingBetPredictionQuality.getBetFailed() + betPredictionQuality.getBetFailed());
 				mergeInfluencerDistribution(existingBetPredictionQuality, betPredictionQuality);
-				betPredictionAggregateRepository.save(existingBetPredictionQuality);
+				betPredictionQualityRepository.save(existingBetPredictionQuality);
 			}
 		});
 	}

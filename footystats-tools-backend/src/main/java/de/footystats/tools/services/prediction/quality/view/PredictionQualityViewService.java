@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bson.Document;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -51,6 +52,7 @@ public class PredictionQualityViewService {
 	 * @return Map of influencerName to List of BetPredictionQualityInfluencerAggregate that holds the aggregation of betSucceeded and betFailed for
 	 * each predictionPercent of the influencer.
 	 */
+	@Cacheable(cacheNames = "betPredictionQualityInfluencerAggregate", key = "{#bet, #betOnThis, #revision.revision.intValue()}")
 	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis,
 		PredictionQualityRevision revision) {
 		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
@@ -131,6 +133,7 @@ public class PredictionQualityViewService {
 	 * @param revision The revision to filter for.
 	 * @return List of aggregated values.
 	 */
+	@Cacheable(cacheNames = "betPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision,
 			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
@@ -143,6 +146,7 @@ public class PredictionQualityViewService {
 	 * @param revision The revision to filter for.
 	 * @return List of aggregated values.
 	 */
+	@Cacheable(cacheNames = "dontBetPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision,
 			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);

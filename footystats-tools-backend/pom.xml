@@ -78,7 +78,10 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<groupId>org.springframework.boot</groupId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+		<dependency>
+			<artifactId>spring-boot-starter-cache</artifactId>
+			<groupId>org.springframework.boot</groupId>
+		</dependency>
 		<dependency>
 			<artifactId>hibernate-validator</artifactId>
 			<groupId>org.hibernate.validator</groupId>
@@ -247,6 +250,7 @@
 
 	<properties>
 		<frontend.api.generator.backendurl>localhost</frontend.api.generator.backendurl>
+		<java.version>21</java.version> <!-- Otherwise mvn uses an older jdk even if java_home env is set correctly. -->
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 	</properties>

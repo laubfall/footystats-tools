@@ -8,14 +8,18 @@ import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.prediction.quality.PredictionQualityService;
+import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityBetAggregate;
 import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.footystats.tools.services.prediction.quality.view.PredictionQualityViewService;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -60,12 +64,15 @@ public class StatisticalResultOutcomeService {
 		if (result == null) {
 			return null;
 		}
+
 		final Double matchStatisticalOutcome = calcMatchPredictionStatisticalOutcome(result, bet);
 		if (matchStatisticalOutcome == null) {
 			return null;
 		}
 
-		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, calcInfluencerStatisticalOutcome(result, bet));
+		final PredictionQualityRevision predictionQualityRevision = predictionQualityService.latestRevision();
+		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, calcBetRanking(bet, result, predictionQualityRevision),
+			calcInfluencerStatisticalOutcome(result, bet));
 	}
 
 	private List<InfluencerStatisticalResultOutcome> calcInfluencerStatisticalOutcome(final PredictionResult result, final Bet bet) {
@@ -79,11 +86,48 @@ public class StatisticalResultOutcomeService {
 				BetPredictionQualityInfluencerAggregate influencerAggregate = measured.get();
 				var succeeded = influencerAggregate.betSucceeded().doubleValue();
 				var failed = influencerAggregate.betFailed().doubleValue();
-				influencerOutcomes.add(new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), succeeded / (succeeded + failed)));
+				influencerOutcomes.add(
+					new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), succeeded / (succeeded + failed), null));
 			}
 		}
 
 		return influencerOutcomes;
+	}
+
+	Ranking calcBetRanking(Bet bet, PredictionResult result, PredictionQualityRevision revision) {
+
+		final var betAggregates = predictionQualityViewService.betPredictionQuality(bet, revision);
+		// Invert the bet aggregates for the don't bet prediction without this swap the calculation of
+		// the statistical outcome would be wrong.
+		final var dontBetAggregates = predictionQualityViewService.dontBetPredictionQuality(bet, revision);
+
+		final var all = new ArrayList<BetPredictionQualityBetAggregate>();
+		all.addAll(betAggregates);
+		all.addAll(dontBetAggregates);
+
+		if (all.isEmpty()) {
+			return null;
+		}
+
+		List<IntermediateRankingInfo> rankings = all.stream()
+			.map(a -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(a.getBetSucceeded(), a.getBetFailed()), a.getPredictionPercent()))
+			.sorted(Comparator.comparingInt(IntermediateRankingInfo::getPredictionPercent))
+			.toList()
+			.reversed();
+
+		Optional<IntermediateRankingInfo> optIntermediateRankingInfo = rankings.stream()
+			.filter(i -> i.predictionPercent == result.betSuccessInPercent()).findFirst();
+
+		if (optIntermediateRankingInfo.isEmpty()) {
+			return null;
+		}
+
+		IntermediateRankingInfo intermediateRankingInfo = optIntermediateRankingInfo.get();
+		int pos = rankings.indexOf(intermediateRankingInfo) + 1;
+
+		float b10 = rankings.size() * 0.1F;
+		float b20 = rankings.size() * 0.2F;
+		return new Ranking(pos, rankings.size(), pos <= b10, pos <= b20);
 	}
 
 	/**
@@ -122,7 +166,18 @@ public class StatisticalResultOutcomeService {
 			// may happen if the predicted result does not exist cause there was no completed match with the same prediction value before.
 			return null;
 		}
+		return calcStatisticalMatchOutcome(result, aggregate);
+	}
 
+	/**
+	 * This method takes care about the fact that in case of a don't bet prediction the statistical outcome is inverted, means that successful don't
+	 * bet predictions are actually failed bet predictions.
+	 *
+	 * @param result    The prediction result.
+	 * @param aggregate The aggregate of the prediction result.
+	 * @return The statistical outcome of the match prediction.
+	 */
+	private double calcStatisticalMatchOutcome(PredictionResult result, BetPredictionQuality aggregate) {
 		double matchStatisticalOutcome;
 		if (result.betSuccessInPercent() >= PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS) {
 			matchStatisticalOutcome = calcStatisticalMatchOutcome(aggregate.getBetSucceeded(), aggregate.getBetFailed());
@@ -138,5 +193,14 @@ public class StatisticalResultOutcomeService {
 
 	record InfluencerPredictionCacheKey(Bet bet, boolean betOnThis) {
 
+	}
+
+	@Getter
+	@AllArgsConstructor
+	static class IntermediateRankingInfo {
+
+		private double statisticalOutcome;
+
+		private int predictionPercent;
 	}
 }
