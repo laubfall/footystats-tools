@@ -1,8 +1,12 @@
 import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
+	BsAirplane,
+	BsAirplaneFill,
+	BsArrowUpLeftCircle,
 	BsFillArrowDownCircleFill,
 	BsFillArrowUpCircleFill,
+	BsFillArrowUpLeftCircleFill,
 } from "react-icons/bs";
 import {
 	PaginationChangePage,
@@ -18,6 +22,7 @@ import {
 } from "../../footystats-frontendapi";
 import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import { BetPredictionIcon } from "./BetPredictionIcon";
 
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
@@ -43,6 +48,11 @@ function createBetPredictionColumns(
 						return null;
 					}
 
+					const statisticalOutcome =
+						row.statisticalResultOutcome.find(
+							(sro) => sro?.bet === bet,
+						);
+
 					return (
 						<OverlayTrigger
 							placement="right"
@@ -56,9 +66,9 @@ function createBetPredictionColumns(
 									<Popover.Body>
 										<BetDetailInfoOverlay
 											betPrediction={betPrediction}
-											statisticalOutcome={row.statisticalResultOutcome.find(
-												(sro) => sro?.bet === bet,
-											)}
+											statisticalOutcome={
+												statisticalOutcome
+											}
 										/>
 									</Popover.Body>
 								</Popover>
@@ -66,20 +76,13 @@ function createBetPredictionColumns(
 						>
 							<span>
 								{betPrediction?.prediction.betSuccessInPercent}
-								{betPrediction?.prediction.betOnThis ===
-									true && (
-									<>
-										&nbsp;
-										<BsFillArrowUpCircleFill />
-									</>
-								)}
-								{betPrediction?.prediction.betOnThis ===
-									false && (
-									<>
-										&nbsp;
-										<BsFillArrowDownCircleFill />
-									</>
-								)}
+								&nbsp;
+								<BetPredictionIcon
+									predictionResult={betPrediction?.prediction}
+									statisticalResultOutcome={
+										statisticalOutcome
+									}
+								/>
 							</span>
 						</OverlayTrigger>
 					);

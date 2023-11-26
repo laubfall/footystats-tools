@@ -23,6 +23,7 @@ models/PagingResponseMatchListElement.ts
 models/Password.ts
 models/PredictionQualityRevision.ts
 models/PredictionResult.ts
+models/Ranking.ts
 models/Report.ts
 models/Settings.ts
 models/StatisticalResultOutcome.ts

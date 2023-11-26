@@ -19,6 +19,12 @@ import {
     InfluencerStatisticalResultOutcomeFromJSONTyped,
     InfluencerStatisticalResultOutcomeToJSON,
 } from './InfluencerStatisticalResultOutcome';
+import type { Ranking } from './Ranking';
+import {
+    RankingFromJSON,
+    RankingFromJSONTyped,
+    RankingToJSON,
+} from './Ranking';
 
 /**
  * 
@@ -38,6 +44,12 @@ export interface StatisticalResultOutcome {
      * @memberof StatisticalResultOutcome
      */
     betStatisticalSuccess?: number;
+    /**
+     * 
+     * @type {Ranking}
+     * @memberof StatisticalResultOutcome
+     */
+    ranking?: Ranking;
     /**
      * 
      * @type {Array<InfluencerStatisticalResultOutcome>}
@@ -80,6 +92,7 @@ export function StatisticalResultOutcomeFromJSONTyped(json: any, ignoreDiscrimin
         
         'bet': !exists(json, 'bet') ? undefined : json['bet'],
         'betStatisticalSuccess': !exists(json, 'betStatisticalSuccess') ? undefined : json['betStatisticalSuccess'],
+        'ranking': !exists(json, 'ranking') ? undefined : RankingFromJSON(json['ranking']),
         'influencerStatisticalResultOutcomes': !exists(json, 'influencerStatisticalResultOutcomes') ? undefined : ((json['influencerStatisticalResultOutcomes'] as Array<any>).map(InfluencerStatisticalResultOutcomeFromJSON)),
     };
 }
@@ -95,6 +108,7 @@ export function StatisticalResultOutcomeToJSON(value?: StatisticalResultOutcome 
         
         'bet': value.bet,
         'betStatisticalSuccess': value.betStatisticalSuccess,
+        'ranking': RankingToJSON(value.ranking),
         'influencerStatisticalResultOutcomes': value.influencerStatisticalResultOutcomes === undefined ? undefined : ((value.influencerStatisticalResultOutcomes as Array<any>).map(InfluencerStatisticalResultOutcomeToJSON)),
     };
 }
