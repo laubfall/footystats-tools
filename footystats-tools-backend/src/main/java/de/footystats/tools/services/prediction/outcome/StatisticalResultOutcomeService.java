@@ -18,9 +18,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -104,20 +104,36 @@ public class StatisticalResultOutcomeService {
 		final var influencerStatisticalOutcomeDonBet = predictionQualityViewService.influencerPredictionsAggregated(bet,
 			false, revision);
 
-		// Find matching influencer aggregates for the influencer and the prediction value.
-		final var optBetPrediction = influencerStatisticalOutcomeBet.get(result.influencerName()).stream()
-			.filter(b -> b.predictionPercent().equals(result.influencerPredictionValue())).findFirst();
+		List<IntermediateInfluencerBetAggregate> betIntermediate = influencerStatisticalOutcomeBet.get(result.influencerName()).stream()
+			.map(a -> new IntermediateInfluencerBetAggregate(a,
+				a.predictionPercent(), true)).toList();
 
-		final var optDontBetPrediction = influencerStatisticalOutcomeDonBet.get(result.influencerName())
-			.stream()
-			.filter(b -> b.predictionPercent().equals(result.influencerPredictionValue())).findFirst();
+		List<IntermediateInfluencerBetAggregate> dontBetIntermediate = influencerStatisticalOutcomeDonBet.get(result.influencerName()).stream()
+			.map(a -> new IntermediateInfluencerBetAggregate(a, a.predictionPercent(), false)).toList();
 
-		if (optBetPrediction.isEmpty() && optDontBetPrediction.isEmpty()) {
-			return null;
-		}
+		List<IntermediateInfluencerBetAggregate> combined = new ArrayList<>(betIntermediate);
+		combined.addAll(dontBetIntermediate);
+		Map<Integer, List<IntermediateInfluencerBetAggregate>> groupPerPredictionPercent = combined.stream()
+			.collect(Collectors.groupingBy(IntermediateInfluencerBetAggregate::keyPredictionPercent));
 
-		var betAggs = influencerGroupedAggregates(result, optBetPrediction, optDontBetPrediction);
-		return calcRanking(betAggs, result.influencerPredictionValue());
+		List<IRanked> aggregated = new ArrayList<>();
+		groupPerPredictionPercent.entrySet().stream().map(Entry::getValue).forEach(value -> {
+			if (value.size() == 2) {
+				var one = value.get(0);
+				var two = value.get(1);
+				long aggCntOne = one.aggregate.betSucceeded() + two.aggregate.betFailed();
+				long aggCntTwo = one.aggregate.betFailed() + two.aggregate.betSucceeded();
+				aggregated.add(new BetPredictionQualityInfluencerAggregate(one.aggregate.influencerName(),
+					one.aggregate.predictionPercent(),
+					one.betOnThis ? aggCntOne : aggCntTwo,
+					!one.betOnThis ? aggCntTwo : aggCntOne)
+				);
+			} else {
+				aggregated.add(value.get(0).aggregate);
+			}
+		});
+
+		return calcRanking(aggregated, result.influencerPredictionValue());
 	}
 
 	Ranking calcBetRanking(Bet bet, PredictionResult result, PredictionQualityRevision revision) {
@@ -138,30 +154,10 @@ public class StatisticalResultOutcomeService {
 		return calcRanking(new ArrayList<>(all), result.betSuccessInPercent());
 	}
 
-	private ArrayList<IRanked> influencerGroupedAggregates(InfluencerResult result,
-		Optional<BetPredictionQualityInfluencerAggregate> optBetPrediction,
-		Optional<BetPredictionQualityInfluencerAggregate> optDontBetPrediction) {
-		var betAggs = new ArrayList<IRanked>();
-
-		// Now aggregate if a prediction exists for bet and don't bet.
-		if (optBetPrediction.isPresent() && optDontBetPrediction.isPresent()) {
-			var betPrediction = optBetPrediction.get();
-			var dontBetPrediction = optDontBetPrediction.get();
-			betAggs.add(new BetPredictionQualityInfluencerAggregate(result.influencerName(), result.influencerPredictionValue(),
-				betPrediction.betSucceeded() + dontBetPrediction.betFailed(),
-				betPrediction.betFailed() + dontBetPrediction.betSucceeded()));
-		} else if (optBetPrediction.isPresent()) {
-			betAggs.add(optBetPrediction.get());
-		} else {
-			optDontBetPrediction.ifPresent(betAggs::add);
-		}
-		return betAggs;
-	}
-
 	private Ranking calcRanking(Collection<IRanked> betAggs, Integer calculatedPredictionPercent) {
 		List<IntermediateRankingInfo> rankings = betAggs.stream()
 			.map(a -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(a.betSucceeded(), a.betFailed()), a.predictionPercent()))
-			.sorted(Comparator.comparingInt(IntermediateRankingInfo::getPredictionPercent))
+			.sorted(Comparator.comparingInt(IntermediateRankingInfo::predictionPercent))
 			.toList()
 			.reversed();
 
@@ -245,12 +241,11 @@ public class StatisticalResultOutcomeService {
 
 	}
 
-	@Getter
-	@AllArgsConstructor
-	static class IntermediateRankingInfo {
+	record IntermediateRankingInfo(double statisticalOutcome, int predictionPercent) {
 
-		private double statisticalOutcome;
+	}
 
-		private int predictionPercent;
+	record IntermediateInfluencerBetAggregate(BetPredictionQualityInfluencerAggregate aggregate, int keyPredictionPercent, boolean betOnThis) {
+
 	}
 }
