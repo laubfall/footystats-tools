@@ -127,7 +127,8 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			.toList();
 	}
 
-	@CacheEvict(cacheNames = {"betPredictionQualityBetAggregate", "dontBetPredictionQualityBetAggregate"}, allEntries = true)
+	@CacheEvict(cacheNames = {"betPredictionQualityBetAggregate", "dontBetPredictionQualityBetAggregate",
+		"betPredictionQualityInfluencerAggregate"}, allEntries = true)
 	public void merge(Collection<BetPredictionQuality> measurements, PredictionQualityRevision revision) {
 		measurements.forEach((betPredictionQuality) -> {
 			var existingBetPredictionQuality = betPredictionQualityRepository.findByBetAndPredictionPercentAndRevision(

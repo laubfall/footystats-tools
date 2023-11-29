@@ -4,13 +4,17 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.InfluencerResult;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.prediction.quality.PredictionQualityService;
 import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityBetAggregate;
+import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.footystats.tools.services.prediction.quality.view.PredictionQualityViewService;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +84,35 @@ class StatisticalResultOutcomeServiceTest {
 		when(predictionQualityViewService.dontBetPredictionQuality(bet, revision)).thenReturn(dontBetAggregates);
 		Ranking ranking = statisticalResultOutcomeService.calcBetRanking(bet, new PredictionResult(predictedResult, true, null, null), revision);
 		Assertions.assertNotNull(ranking);
-		Assertions.assertEquals(ranking.best10Percent(), best10percent);
-		Assertions.assertEquals(ranking.best20Percent(), best20percent);
+		Assertions.assertEquals(best10percent, ranking.best10Percent());
+		Assertions.assertEquals(best20percent, ranking.best20Percent());
+	}
+
+	@ParameterizedTest
+	@MethodSource("calcBetRankingsParams")
+	void calcInfluencerBetRankings(Integer influencerPredictionValue, boolean best10percent, boolean best20percent) {
+		final var revision = new PredictionQualityRevision(1);
+		var influencerName = "influencerName";
+		InfluencerResult result = new InfluencerResult(influencerName, influencerPredictionValue, null);
+
+		var betAggregates = new ArrayList<BetPredictionQualityInfluencerAggregate>();
+		var dontBetAggregates = new ArrayList<BetPredictionQualityInfluencerAggregate>();
+		for (int i = 0; i <= 100; i++) {
+			betAggregates.add(new BetPredictionQualityInfluencerAggregate(influencerName, i, (long) (i), (long) (100 - i)));
+			dontBetAggregates.add(new BetPredictionQualityInfluencerAggregate(influencerName, i, (long) (100 - i), (long) (i)));
+		}
+		var betAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+		betAggregateMap.put(influencerName, betAggregates);
+
+		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+		dontBetAggregateMap.put(influencerName, dontBetAggregates);
+
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(betAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(dontBetAggregateMap);
+
+		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
+		Assertions.assertNotNull(ranking);
+		Assertions.assertEquals(best10percent, ranking.best10Percent());
+		Assertions.assertEquals(best20percent, ranking.best20Percent());
 	}
 }

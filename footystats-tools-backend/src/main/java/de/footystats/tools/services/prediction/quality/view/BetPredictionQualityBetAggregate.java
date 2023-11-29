@@ -1,6 +1,7 @@
 package de.footystats.tools.services.prediction.quality.view;
 
 import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.outcome.IRanked;
 import de.footystats.tools.services.prediction.quality.IBetPredictionBaseData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData {
+public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData, IRanked {
 
 	private Bet bet;
 	private Long betSucceeded;
@@ -54,5 +55,20 @@ public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData 
 	@Override
 	public void setPredictionPercent(Integer predictionPercent) {
 		this.predictionPercent = predictionPercent;
+	}
+
+	@Override
+	public Integer predictionPercent() {
+		return predictionPercent;
+	}
+
+	@Override
+	public Long betSucceeded() {
+		return betSucceeded;
+	}
+
+	@Override
+	public Long betFailed() {
+		return betFailed;
 	}
 }
