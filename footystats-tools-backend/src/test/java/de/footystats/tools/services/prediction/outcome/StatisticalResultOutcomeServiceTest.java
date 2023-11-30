@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,12 +108,49 @@ class StatisticalResultOutcomeServiceTest {
 		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
 		dontBetAggregateMap.put(influencerName, dontBetAggregates);
 
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(betAggregateMap);
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(dontBetAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNotNull(ranking);
 		Assertions.assertEquals(best10percent, ranking.best10Percent());
 		Assertions.assertEquals(best20percent, ranking.best20Percent());
+	}
+
+	@Test
+	void noStatisticalOutcome() {
+		final var revision = new PredictionQualityRevision(1);
+		var influencerName = "influencerName";
+		InfluencerResult result = new InfluencerResult(influencerName, 100, null);
+
+		var betAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+		betAggregateMap.put("otherInfluencer", new ArrayList<>());
+		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+
+		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
+		Assertions.assertNull(ranking);
+	}
+
+	@Test
+	void noStatisticalOutcomeForPredictionPercent() {
+		final var revision = new PredictionQualityRevision(1);
+		var influencerName = "influencerName";
+		InfluencerResult result = new InfluencerResult(influencerName, 100, null);
+
+		var betAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+		var aggs = new ArrayList<BetPredictionQualityInfluencerAggregate>();
+		aggs.add(new BetPredictionQualityInfluencerAggregate(influencerName, 0, 10L, 0L));
+		betAggregateMap.put(influencerName, aggs);
+		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+
+		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
+		Assertions.assertNull(ranking);
+
 	}
 }

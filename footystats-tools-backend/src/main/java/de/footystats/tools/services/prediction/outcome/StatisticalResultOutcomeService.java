@@ -104,12 +104,18 @@ public class StatisticalResultOutcomeService {
 		final var influencerStatisticalOutcomeDonBet = predictionQualityViewService.influencerPredictionsAggregated(bet,
 			false, revision);
 
-		List<IntermediateInfluencerBetAggregate> betIntermediate = influencerStatisticalOutcomeBet.get(result.influencerName()).stream()
-			.map(a -> new IntermediateInfluencerBetAggregate(a,
-				a.predictionPercent(), true)).toList();
+		List<IntermediateInfluencerBetAggregate> betIntermediate = new ArrayList<>(0);
+		if (influencerStatisticalOutcomeBet.containsKey(result.influencerName())) {
+			betIntermediate = influencerStatisticalOutcomeBet.get(result.influencerName()).stream()
+				.map(a -> new IntermediateInfluencerBetAggregate(a,
+					a.predictionPercent(), true)).toList();
+		}
 
-		List<IntermediateInfluencerBetAggregate> dontBetIntermediate = influencerStatisticalOutcomeDonBet.get(result.influencerName()).stream()
-			.map(a -> new IntermediateInfluencerBetAggregate(a, a.predictionPercent(), false)).toList();
+		List<IntermediateInfluencerBetAggregate> dontBetIntermediate = new ArrayList<>(0);
+		if (influencerStatisticalOutcomeDonBet.containsKey(result.influencerName())) {
+			dontBetIntermediate = influencerStatisticalOutcomeDonBet.get(result.influencerName()).stream()
+				.map(a -> new IntermediateInfluencerBetAggregate(a, a.predictionPercent(), false)).toList();
+		}
 
 		List<IntermediateInfluencerBetAggregate> combined = new ArrayList<>(betIntermediate);
 		combined.addAll(dontBetIntermediate);
