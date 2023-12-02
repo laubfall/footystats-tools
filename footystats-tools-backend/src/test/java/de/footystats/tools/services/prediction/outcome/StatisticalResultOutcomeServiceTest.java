@@ -118,6 +118,27 @@ class StatisticalResultOutcomeServiceTest {
 	}
 
 	@Test
+	void singleStatisticalPredictionPercentMatch() {
+		final var revision = new PredictionQualityRevision(1);
+		var influencerName = "influencerName";
+		InfluencerResult result = new InfluencerResult(influencerName, 100, null);
+
+		var betAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+		var aggs = new ArrayList<BetPredictionQualityInfluencerAggregate>();
+		aggs.add(new BetPredictionQualityInfluencerAggregate(influencerName, 100, 10L, 0L));
+		betAggregateMap.put(influencerName, aggs);
+		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
+
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+
+		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
+		Assertions.assertNotNull(ranking);
+		Assertions.assertFalse(ranking.best10Percent());
+		Assertions.assertFalse(ranking.best20Percent());
+	}
+
+	@Test
 	void noStatisticalOutcome() {
 		final var revision = new PredictionQualityRevision(1);
 		var influencerName = "influencerName";
@@ -151,6 +172,5 @@ class StatisticalResultOutcomeServiceTest {
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNull(ranking);
-
 	}
 }

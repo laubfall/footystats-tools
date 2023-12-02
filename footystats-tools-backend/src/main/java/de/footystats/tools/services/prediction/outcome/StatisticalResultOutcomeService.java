@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +122,7 @@ public class StatisticalResultOutcomeService {
 			.collect(Collectors.groupingBy(IntermediateInfluencerBetAggregate::keyPredictionPercent));
 
 		List<IRanked> aggregated = new ArrayList<>();
-		groupPerPredictionPercent.entrySet().stream().map(Entry::getValue).forEach(value -> {
+		groupPerPredictionPercent.values().forEach(value -> {
 			if (value.size() == 2) {
 				var one = value.get(0);
 				var two = value.get(1);
@@ -177,9 +176,8 @@ public class StatisticalResultOutcomeService {
 		IntermediateRankingInfo intermediateRankingInfo = optIntermediateRankingInfo.get();
 		int pos = rankings.indexOf(intermediateRankingInfo) + 1;
 
-		float b10 = rankings.size() * 0.1F;
-		float b20 = rankings.size() * 0.2F;
-		return new Ranking(pos, rankings.size(), pos <= b10, pos <= b20);
+		float b10 = ((float) pos / rankings.size()) * 100;
+		return new Ranking(pos, rankings.size(), b10 <= 10, b10 <= 20);
 	}
 
 	/**
