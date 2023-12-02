@@ -72,19 +72,18 @@ export const BetDetailInfoOverlay = ({
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
 				</ListGroupItem>
-				{relevantDetails &&
-					relevantDetails.map((influencerResult) => (
-						<ListGroupItem key={uniqueId()}>
-							{influencerResult.influencerName}:{" "}
-							{influencerResult.influencerPredictionValue}
-							{" / "}
-							{humanReadablePercent(
-								influencerStatisticalOutcome(
-									influencerResult.influencerName,
-								)?.statisticalOutcomeBetSuccess,
-							)}
-						</ListGroupItem>
-					))}
+				{relevantDetails?.map((influencerResult) => (
+					<ListGroupItem key={uniqueId()}>
+						{influencerResult.influencerName}:{" "}
+						{influencerResult.influencerPredictionValue}
+						{" / "}
+						{humanReadablePercent(
+							influencerStatisticalOutcome(
+								influencerResult.influencerName,
+							)?.statisticalOutcomeBetSuccess,
+						)}
+					</ListGroupItem>
+				))}
 			</ListGroup>
 		</>
 	);

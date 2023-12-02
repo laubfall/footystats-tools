@@ -1,14 +1,6 @@
 import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
-	BsAirplane,
-	BsAirplaneFill,
-	BsArrowUpLeftCircle,
-	BsFillArrowDownCircleFill,
-	BsFillArrowUpCircleFill,
-	BsFillArrowUpLeftCircleFill,
-} from "react-icons/bs";
-import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
@@ -166,27 +158,25 @@ export const MatchList = ({
 	columns = columns.concat(predictionColumns);
 
 	return (
-		<>
-			<DataTable
-				columns={columns}
-				data={entries}
-				onSort={sortHandler}
-				onChangePage={pageChange}
-				onChangeRowsPerPage={pageSizeChange}
-				onRowDoubleClicked={(row) => {
-					window.open(
-						`https://footystats.org${row.footyStatsUrl}`,
-						"_blank",
-					);
-				}}
-				paginationTotalRows={totalRows}
-				defaultSortFieldId={1}
-				defaultSortAsc={false}
-				pagination
-				sortServer
-				paginationServer
-			/>
-		</>
+		<DataTable
+			columns={columns}
+			data={entries}
+			onSort={sortHandler}
+			onChangePage={pageChange}
+			onChangeRowsPerPage={pageSizeChange}
+			onRowDoubleClicked={(row) => {
+				window.open(
+					`https://footystats.org${row.footyStatsUrl}`,
+					"_blank",
+				);
+			}}
+			paginationTotalRows={totalRows}
+			defaultSortFieldId={1}
+			defaultSortAsc={false}
+			pagination
+			sortServer
+			paginationServer
+		/>
 	);
 };
 
