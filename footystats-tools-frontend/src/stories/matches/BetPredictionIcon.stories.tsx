@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BetPredictionIcon } from "./BetPredictionIcon";
+import { BetPredictionIcon } from "../../components/matches/BetPredictionIcon";
 
 const meta: Meta<typeof BetPredictionIcon> = {
 	component: BetPredictionIcon,

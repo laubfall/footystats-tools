@@ -14,7 +14,6 @@ import de.footystats.tools.services.prediction.quality.view.PredictionQualityVie
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +85,10 @@ public class StatisticalResultOutcomeService {
 				.filter(a -> a.predictionPercent().equals(influencerResult.influencerPredictionValue())).findFirst();
 			if (measured.isPresent()) {
 				BetPredictionQualityInfluencerAggregate influencerAggregate = measured.get();
-				var succeeded = influencerAggregate.betSucceeded().doubleValue();
-				var failed = influencerAggregate.betFailed().doubleValue();
+				var succeeded = influencerAggregate.betSucceeded();
+				var failed = influencerAggregate.betFailed();
 				influencerOutcomes.add(
-					new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), succeeded / (succeeded + failed),
+					new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), calcStatisticalMatchOutcome(succeeded, failed),
 						calcInfluencerRanking(bet, influencerResult, latestRevision)));
 			}
 		}
@@ -131,7 +130,7 @@ public class StatisticalResultOutcomeService {
 				aggregated.add(new BetPredictionQualityInfluencerAggregate(one.aggregate.influencerName(),
 					one.aggregate.predictionPercent(),
 					one.betOnThis ? aggCntOne : aggCntTwo,
-					!one.betOnThis ? aggCntTwo : aggCntOne)
+					one.betOnThis ? aggCntTwo : aggCntOne)
 				);
 			} else {
 				aggregated.add(value.get(0).aggregate);
@@ -160,24 +159,27 @@ public class StatisticalResultOutcomeService {
 	}
 
 	private Ranking calcRanking(Collection<IRanked> betAggs, Integer calculatedPredictionPercent) {
-		List<IntermediateRankingInfo> rankings = betAggs.stream()
+		final List<IntermediateRankingInfo> rankings = betAggs.stream()
 			.map(a -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(a.betSucceeded(), a.betFailed()), a.predictionPercent()))
-			.sorted(Comparator.comparingInt(IntermediateRankingInfo::predictionPercent))
 			.toList()
 			.reversed();
 
-		Optional<IntermediateRankingInfo> optIntermediateRankingInfo = rankings.stream()
+		final Optional<IntermediateRankingInfo> optIntermediateRankingInfo = rankings.stream()
 			.filter(i -> i.predictionPercent == calculatedPredictionPercent).findFirst();
 
 		if (optIntermediateRankingInfo.isEmpty()) {
 			return null;
 		}
 
-		IntermediateRankingInfo intermediateRankingInfo = optIntermediateRankingInfo.get();
-		int pos = rankings.indexOf(intermediateRankingInfo) + 1;
+		List<Double> sortedStatisticalOutcome = rankings.stream().collect(Collectors.groupingBy(IntermediateRankingInfo::statisticalOutcome)).keySet()
+			.stream().sorted()
+			.toList().reversed();
 
-		float b10 = ((float) pos / rankings.size()) * 100;
-		return new Ranking(pos, rankings.size(), b10 <= 10, b10 <= 20);
+		IntermediateRankingInfo intermediateRankingInfo = optIntermediateRankingInfo.get();
+		int pos = sortedStatisticalOutcome.indexOf(intermediateRankingInfo.statisticalOutcome) + 1;
+
+		float b10 = ((float) pos / sortedStatisticalOutcome.size()) * 100;
+		return new Ranking(pos, sortedStatisticalOutcome.size(), b10 <= 10, b10 <= 20);
 	}
 
 	/**

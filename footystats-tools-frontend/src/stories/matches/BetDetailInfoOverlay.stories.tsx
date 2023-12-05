@@ -21,7 +21,7 @@ export const BetDetailInfoOverlayComponent = () => (
 						betPrediction={{
 							bet: "OVER_ZERO_FIVE",
 							prediction: {
-								betOnThis: true,
+								betOnThis: false,
 								betSuccessInPercent: 64,
 								analyzeResult: "SUCCESS",
 								influencerDetailedResult: [
@@ -40,6 +40,12 @@ export const BetDetailInfoOverlayComponent = () => (
 								{
 									influencerName: "OverZeroFive",
 									statisticalOutcomeBetSuccess: 0.31,
+									ranking: {
+										position: 1,
+										total: 40,
+										best10Percent: true,
+										best20Percent: true,
+									},
 								},
 							],
 						}}
