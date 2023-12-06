@@ -51,18 +51,15 @@ export const BetDetailInfoOverlay = ({
 
 	function influencerRanking(
 		statisticalResultOutcome: InfluencerStatisticalResultOutcome,
-		betOnThis: boolean,
 	): string {
 		if (!statisticalResultOutcome?.ranking) {
 			return "";
 		}
 
 		const ranking: Ranking = statisticalResultOutcome.ranking;
-		return `Ranking: ${ranking.position}/${ranking.total} ${
-			!betOnThis
-				? statisticalResultOutcome.statisticalOutcomeBetSuccess
-				: ""
-		}`;
+		return `${translate("renderer.matchlist.influencer.popup.ranking")} ${
+			ranking.position
+		}/${ranking.total}`;
 	}
 
 	return (
@@ -79,6 +76,12 @@ export const BetDetailInfoOverlay = ({
 					{humanReadablePercent(
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
+					<br />
+					{`${translate(
+						"renderer.matchlist.influencer.popup.ranking",
+					)} ${statisticalOutcome?.ranking?.position}/${
+						statisticalOutcome?.ranking?.total
+					}`}
 				</ListGroupItem>
 				<ListGroupItem>
 					<b>
@@ -101,11 +104,9 @@ export const BetDetailInfoOverlay = ({
 							{" / "}
 							{humanReadablePercent(
 								statOutcome?.statisticalOutcomeBetSuccess,
-							)}{" "}
-							{influencerRanking(
-								statOutcome,
-								betPrediction.prediction.betOnThis,
 							)}
+							<br />
+							{influencerRanking(statOutcome)}
 						</ListGroupItem>
 					);
 				})}

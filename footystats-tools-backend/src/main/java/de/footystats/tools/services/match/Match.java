@@ -72,9 +72,6 @@ public class Match {
 			case BTTS_YES -> {
 				return bttsYes;
 			}
-			case BTTS_NO -> {
-				return null;
-			}
 			default -> {
 				return null;
 			}

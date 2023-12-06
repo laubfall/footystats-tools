@@ -2,6 +2,7 @@ package de.footystats.tools.services.prediction.outcome;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.InfluencerResult;
+import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
@@ -79,6 +80,9 @@ public class StatisticalResultOutcomeService {
 		var latestRevision = predictionQualityService.latestRevision();
 		List<InfluencerStatisticalResultOutcome> influencerOutcomes = new ArrayList<>();
 		for (InfluencerResult influencerResult : result.influencerDetailedResult()) {
+			if (!PrecheckResult.OK.equals(influencerResult.precheckResult())) {
+				continue;
+			}
 			final List<BetPredictionQualityInfluencerAggregate> aggregates = influencerDistributionByCache(bet, result,
 				influencerResult.influencerName());
 			final Optional<BetPredictionQualityInfluencerAggregate> measured = aggregates.stream()

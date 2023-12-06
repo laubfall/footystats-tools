@@ -29,6 +29,7 @@
 	"renderer.matchfilter.label.teamsearch": "Suche nach Teamname",
 	"renderer.matchlist.influencer.popup.help": "Wette (Influencer): berechnet / statistisch",
 	"renderer.matchlist.influencer.popup.influencer.title": "Berechnete zu statistischer Wahrscheinlichkeit",
+	"renderer.matchlist.influencer.popup.ranking": "Ranking:",
 	"renderer.matchlist.influencer.popup.recommended.odd": "Empfohlene Quote:",
 	"renderer.matchlist.influencer.popup.statistical.outcome": "Wette gesamt: ",
 	"renderer.matchlist.influencer.popup.title": "Eintrittswahrscheinlichkeit",
