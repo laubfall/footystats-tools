@@ -1,5 +1,5 @@
 import React from "react";
-import { MatchList, MatchListEntry } from "./MatchList";
+import { MatchList, MatchListEntry } from "../../components/matches/MatchList";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 export default {

@@ -10,6 +10,8 @@ import {
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetPrediction } from "./MatchList";
+import { BsAirplaneFill, BsArrowUp, BsArrowUpCircleFill } from "react-icons/bs";
+import { RankingInfo } from "./RankingInfo";
 
 export const BetDetailInfoOverlay = ({
 	betPrediction,
@@ -49,19 +51,6 @@ export const BetDetailInfoOverlay = ({
 		return (1 / statisticalOutcome).toFixed(2);
 	}
 
-	function influencerRanking(
-		statisticalResultOutcome: InfluencerStatisticalResultOutcome,
-	): string {
-		if (!statisticalResultOutcome?.ranking) {
-			return "";
-		}
-
-		const ranking: Ranking = statisticalResultOutcome.ranking;
-		return `${translate("renderer.matchlist.influencer.popup.ranking")} ${
-			ranking.position
-		}/${ranking.total}`;
-	}
-
 	return (
 		<>
 			{translate("renderer.matchlist.influencer.popup.help")}
@@ -77,11 +66,7 @@ export const BetDetailInfoOverlay = ({
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
 					<br />
-					{`${translate(
-						"renderer.matchlist.influencer.popup.ranking",
-					)} ${statisticalOutcome?.ranking?.position}/${
-						statisticalOutcome?.ranking?.total
-					}`}
+					<RankingInfo ranking={statisticalOutcome.ranking} />
 				</ListGroupItem>
 				<ListGroupItem>
 					<b>
@@ -106,7 +91,7 @@ export const BetDetailInfoOverlay = ({
 								statOutcome?.statisticalOutcomeBetSuccess,
 							)}
 							<br />
-							{influencerRanking(statOutcome)}
+							<RankingInfo ranking={statOutcome.ranking} />
 						</ListGroupItem>
 					);
 				})}
