@@ -72,14 +72,16 @@ class StatisticalResultOutcomeServiceTest {
 		final var revision = new PredictionQualityRevision(1);
 		var betAggregates = new ArrayList<BetPredictionQualityBetAggregate>();
 		for (int i = 100; i > 50; i--) {
-			betAggregates.add(new BetPredictionQualityBetAggregate(bet, (long) (i - 1), (long) (100 - i - 1), i));
+			betAggregates.add(new BetPredictionQualityBetAggregate(bet, (long) i, (long) (100 - i), i));
 		}
 
 		when(predictionQualityViewService.betPredictionQuality(bet, revision)).thenReturn(betAggregates);
 
 		var dontBetAggregates = new ArrayList<BetPredictionQualityBetAggregate>();
 		for (int i = 50; i > 0; i--) {
-			betAggregates.add(new BetPredictionQualityBetAggregate(bet, (long) (i), (long) (50 - i), i));
+			// It's intended that the failed count is based on 100 so all the don't bets statistical outcomes
+			// are lower than the ones of the bet aggregates. Otherwise, the test expected values would be wrong.
+			betAggregates.add(new BetPredictionQualityBetAggregate(bet, (long) (i), (long) (100 - i), i));
 		}
 
 		when(predictionQualityViewService.dontBetPredictionQuality(bet, revision)).thenReturn(dontBetAggregates);

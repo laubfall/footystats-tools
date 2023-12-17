@@ -147,8 +147,6 @@ public class StatisticalResultOutcomeService {
 	Ranking calcBetRanking(Bet bet, PredictionResult result, PredictionQualityRevision revision) {
 
 		final var betAggregates = predictionQualityViewService.betPredictionQuality(bet, revision);
-		// Invert the bet aggregates for the don't bet prediction without this swap the calculation of
-		// the statistical outcome would be wrong.
 		final var dontBetAggregates = predictionQualityViewService.dontBetPredictionQuality(bet, revision);
 
 		final var all = new ArrayList<BetPredictionQualityBetAggregate>();
