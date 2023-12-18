@@ -35,8 +35,8 @@ public class MatchServiceConfiguration {
 
 	@Bean
 	public MatchService matchService(MongoTemplate mongoTemplate, PredictionService predictionService, MappingMongoConverter mappingMongoConverter,
-		DomainDataService domainDataService) {
+		MatchRepository matchRepository) {
 		return new MatchService(mongoTemplate, mappingMongoConverter, predictionService, cachedConfiguredStatsService, leagueStatsService,
-			teamStatsService);
+			teamStatsService, matchRepository);
 	}
 }

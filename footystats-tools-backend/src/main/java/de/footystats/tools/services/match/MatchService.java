@@ -36,14 +36,18 @@ public class MatchService extends MongoService<Match> {
 
 	private final TeamStatsService teamStatsService;
 
+	private final MatchRepository matchRepository;
+
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
-		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService) {
+		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService,
+		MatchRepository matchRepository) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
 		this.cachedConfiguredStatsService = cachedConfiguredStatsService;
 		this.leagueStatsService = leagueStatsService;
 		this.teamStatsService = teamStatsService;
+		this.matchRepository = matchRepository;
 	}
 
 	public Page<Match> find(final MatchSearch search) {
@@ -81,6 +85,12 @@ public class MatchService extends MongoService<Match> {
 
 	public void writeMatch(MatchStats matchStats) {
 		Match match = convert(matchStats);
+		Match existingMatch = matchRepository.findByDateUnixAndCountryAndLeagueAndHomeTeamAndAwayTeam(
+			matchStats.getDateUnix(), matchStats.getCountry(),
+			matchStats.getLeague(), matchStats.getHomeTeam(), matchStats.getAwayTeam());
+		if (existingMatch != null) {
+			match.setRevision(existingMatch.getRevision());
+		}
 		upsert(match);
 	}
 

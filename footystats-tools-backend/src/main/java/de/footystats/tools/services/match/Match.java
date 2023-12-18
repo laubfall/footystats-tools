@@ -34,6 +34,7 @@ public class Match {
 
 	@Id
 	private ObjectId id;
+	@Indexed
 	private Long dateUnix;
 	@Indexed
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
@@ -48,6 +49,7 @@ public class Match {
 	private String awayTeam;
 	private Integer goalsHomeTeam;
 	private Integer goalsAwayTeam;
+	@Indexed
 	private MatchStatus state;
 	private String footyStatsUrl;
 	private PredictionResult o05;
