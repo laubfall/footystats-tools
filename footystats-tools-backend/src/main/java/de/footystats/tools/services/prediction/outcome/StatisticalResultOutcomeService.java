@@ -137,7 +137,7 @@ public class StatisticalResultOutcomeService {
 					one.betOnThis ? aggCntTwo : aggCntOne)
 				);
 			} else {
-				aggregated.add(value.get(0).aggregate);
+				aggregated.add(value.getFirst().aggregate());
 			}
 		});
 
@@ -162,7 +162,8 @@ public class StatisticalResultOutcomeService {
 
 	private Ranking calcRanking(Collection<IRanked> betAggs, Integer calculatedPredictionPercent) {
 		final List<IntermediateRankingInfo> rankings = betAggs.stream()
-			.map(a -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(a.betSucceeded(), a.betFailed()), a.predictionPercent()))
+			.map(ranked -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(ranked.betSucceeded(), ranked.betFailed()),
+				ranked.predictionPercent()))
 			.toList()
 			.reversed();
 
