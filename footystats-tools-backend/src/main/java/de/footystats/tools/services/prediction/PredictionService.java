@@ -36,33 +36,29 @@ public class PredictionService {
 		new XgHomeAndAwayInfluencer()
 	};
 
-	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx, boolean betOnThis) {
-		if ((ctx.match().getResultAwayTeamGoals() > 0 &&
-			ctx.match().getResultHomeTeamGoals() > 0 &&
-			betOnThis) ||
-			((ctx.match().getResultAwayTeamGoals() == 0 ||
-				ctx.match().getResultHomeTeamGoals() == 0) &&
-				!betOnThis)) {
+	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx) {
+		if (ctx.match().getResultAwayTeamGoals() > 0 &&
+			ctx.match().getResultHomeTeamGoals() > 0) {
 			return PredictionAnalyze.SUCCESS;
 		}
 
 		return PredictionAnalyze.FAILED;
 	}
 
-	private static PredictionAnalyze analyzeOverOneFive(BetPredictionContext ctx, boolean betOnThis) {
+	private static PredictionAnalyze analyzeOverOneFive(BetPredictionContext ctx) {
 		var goals = ctx.match().getResultAwayTeamGoals() +
 			ctx.match().getResultHomeTeamGoals();
-		if ((goals > 1 && betOnThis) || (goals <= 1 && !betOnThis)) {
+		if (goals > 1) {
 			return PredictionAnalyze.SUCCESS;
 		}
 
 		return PredictionAnalyze.FAILED;
 	}
 
-	private static PredictionAnalyze analyzeOverZeroFive(BetPredictionContext ctx, boolean betOnThis) {
+	private static PredictionAnalyze analyzeOverZeroFive(BetPredictionContext ctx) {
 		var goals = ctx.match().getResultAwayTeamGoals() +
 			ctx.match().getResultHomeTeamGoals();
-		if ((goals > 0 && betOnThis) || (goals == 0 && !betOnThis)) {
+		if (goals > 0) {
 			return PredictionAnalyze.SUCCESS;
 		}
 
@@ -79,8 +75,7 @@ public class PredictionService {
 	 */
 	public final PredictionAnalyze analyze(
 		BetPredictionContext ctx,
-		boolean didPredictionCalculation,
-		boolean betOnThis) {
+		boolean didPredictionCalculation) {
 		if (!didPredictionCalculation) {
 			return PredictionAnalyze.NOT_PREDICTED;
 		}
@@ -90,9 +85,9 @@ public class PredictionService {
 		}
 
 		return switch (ctx.bet()) {
-			case OVER_ZERO_FIVE -> analyzeOverZeroFive(ctx, betOnThis);
-			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx, betOnThis);
-			case BTTS_YES -> analyzeBttsYes(ctx, betOnThis);
+			case OVER_ZERO_FIVE -> analyzeOverZeroFive(ctx);
+			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx);
+			case BTTS_YES -> analyzeBttsYes(ctx);
 			default -> PredictionAnalyze.NOT_ANALYZED;
 		};
 	}
@@ -123,7 +118,7 @@ public class PredictionService {
 			result = result / doneInfluencerCalculations;
 		}
 		var betOnThis = result > LOWER_EXCLUSIVE_BORDER_BET_ON_THIS;
-		return new PredictionResult(result, betOnThis, analyze(ctx, doneInfluencerCalculations > 0, betOnThis),
+		return new PredictionResult(result, betOnThis, analyze(ctx, doneInfluencerCalculations > 0),
 			influencerDetailedResult);
 	}
 }
