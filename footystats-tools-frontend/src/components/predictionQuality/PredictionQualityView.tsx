@@ -23,9 +23,6 @@ export const PredictionQualityView = () => {
 	const [currentBetAggregate, setCurrentBetAggregate] =
 		useState<Array<BetPredictionQualityBetAggregate>>();
 
-	const [currentDontBetAggregate, setCurrentDontBetAggregate] =
-		useState<Array<BetPredictionQualityBetAggregate>>();
-
 	const [selectedBet, setSelectedBet] = useState<BetPredictionQualityBetEnum>(
 		BetPredictionQualityBetEnum.OverZeroFive,
 	);
@@ -35,7 +32,6 @@ export const PredictionQualityView = () => {
 	const predictionQualityService = new IpcPredictionQualityService();
 
 	useEffect(() => {
-		setCurrentDontBetAggregate(report?.dontBetPredictionDistributions);
 		setCurrentBetAggregate(report?.betPredictionDistributions);
 	}, [report]);
 
@@ -152,7 +148,6 @@ export const PredictionQualityView = () => {
 
 			<PredictionGraphView
 				betPredictionPercentDistribution={currentBetAggregate}
-				dontBetPredictionPercentDistribution={currentDontBetAggregate}
 				bet={selectedBet}
 			/>
 

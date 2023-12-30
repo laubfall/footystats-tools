@@ -9,7 +9,6 @@ import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.prediction.quality.PredictionQualityService;
-import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityBetAggregate;
 import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.footystats.tools.services.prediction.quality.view.PredictionQualityViewService;
 import java.util.ArrayList;
@@ -147,17 +146,7 @@ public class StatisticalResultOutcomeService {
 	Ranking calcBetRanking(Bet bet, PredictionResult result, PredictionQualityRevision revision) {
 
 		final var betAggregates = predictionQualityViewService.betPredictionQuality(bet, revision);
-		final var dontBetAggregates = predictionQualityViewService.dontBetPredictionQuality(bet, revision);
-
-		final var all = new ArrayList<BetPredictionQualityBetAggregate>();
-		all.addAll(betAggregates);
-		all.addAll(dontBetAggregates);
-
-		if (all.isEmpty()) {
-			return null;
-		}
-
-		return calcRanking(new ArrayList<>(all), result.betSuccessInPercent());
+		return calcRanking(new ArrayList<>(betAggregates), result.betSuccessInPercent());
 	}
 
 	private Ranking calcRanking(Collection<IRanked> betAggs, Integer calculatedPredictionPercent) {

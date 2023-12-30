@@ -135,8 +135,7 @@ public class PredictionQualityViewService {
 	 */
 	@Cacheable(cacheNames = "betPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet, PredictionQualityRevision revision) {
-		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision,
-			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
+		return betPredictionQualityRepository.findAllByBetAndRevision(bet, revision, BetPredictionQualityBetAggregate.class);
 	}
 
 	/**
@@ -146,6 +145,7 @@ public class PredictionQualityViewService {
 	 * @param revision The revision to filter for.
 	 * @return List of aggregated values.
 	 */
+	@Deprecated
 	@Cacheable(cacheNames = "dontBetPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision,
