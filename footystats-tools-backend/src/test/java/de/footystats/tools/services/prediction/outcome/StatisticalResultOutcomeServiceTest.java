@@ -110,8 +110,8 @@ class StatisticalResultOutcomeServiceTest {
 		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
 		dontBetAggregateMap.put(influencerName, dontBetAggregates);
 
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, revision)).thenReturn(betAggregateMap);
+//		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE,  revision)).thenReturn(dontBetAggregateMap);
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNotNull(ranking);
@@ -131,8 +131,8 @@ class StatisticalResultOutcomeServiceTest {
 		betAggregateMap.put(influencerName, aggs);
 		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
 
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, revision)).thenReturn(betAggregateMap);
+//		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNotNull(ranking);
@@ -150,8 +150,8 @@ class StatisticalResultOutcomeServiceTest {
 		betAggregateMap.put("otherInfluencer", new ArrayList<>());
 		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
 
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, revision)).thenReturn(betAggregateMap);
+//		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNull(ranking);
@@ -169,8 +169,8 @@ class StatisticalResultOutcomeServiceTest {
 		betAggregateMap.put(influencerName, aggs);
 		var dontBetAggregateMap = new HashMap<String, List<BetPredictionQualityInfluencerAggregate>>();
 
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, true, revision)).thenReturn(betAggregateMap);
-		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
+		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, revision)).thenReturn(betAggregateMap);
+//		when(predictionQualityViewService.influencerPredictionsAggregated(Bet.OVER_ZERO_FIVE, false, revision)).thenReturn(dontBetAggregateMap);
 
 		Ranking ranking = statisticalResultOutcomeService.calcInfluencerRanking(Bet.OVER_ZERO_FIVE, result, revision);
 		Assertions.assertNull(ranking);

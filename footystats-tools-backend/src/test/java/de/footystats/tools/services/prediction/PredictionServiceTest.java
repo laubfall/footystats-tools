@@ -41,17 +41,17 @@ class PredictionServiceTest {
 		var bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
 		PredictionAnalyze analyze = predictionService.analyze(bctx, true);
 		Assertions.assertNotNull(analyze);
-		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
+		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
 
 		builder = builder.resultHomeTeamGoals(1);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
 		analyze = predictionService.analyze(bctx, true);
-		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
+		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 
 		builder = builder.resultAwayTeamGoals(1);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
 		analyze = predictionService.analyze(bctx, true);
-		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
+		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 	}
 
 	public void analyze_bttsYes() {

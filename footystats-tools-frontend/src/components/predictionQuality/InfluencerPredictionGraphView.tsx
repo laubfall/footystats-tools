@@ -62,25 +62,6 @@ const InfluencerPredictionGraph = ({
 	);
 };
 
-function influencerPercentDistributions(
-	distribution: Array<BetPredictionQualityInfluencerAggregate>,
-): PercentDistribution[] {
-	const aggregatePredictionPercentAndCount: Map<number, PercentDistribution> =
-		new Map();
-
-	distribution.forEach((influencerDistributions) => {
-		aggregatePredictionPercentAndCount.set(
-			influencerDistributions.predictionPercent,
-			{
-				count: influencerDistributions.count,
-				predictionPercent: influencerDistributions.predictionPercent,
-			},
-		);
-	});
-
-	return [...aggregatePredictionPercentAndCount.values()];
-}
-
 export const InfluencerPredictionGraphView = ({
 	measurementBetInfluencerAggregate,
 	bet,
@@ -110,7 +91,7 @@ export const InfluencerPredictionGraphView = ({
 						} as PercentDistribution),
 				);
 
-				const Graph = (
+				return (
 					<InfluencerPredictionGraph
 						i1Distribution={g1Data}
 						i2Distribution={g2Data}
@@ -119,8 +100,6 @@ export const InfluencerPredictionGraphView = ({
 						key={uniqueId()}
 					/>
 				);
-
-				return Graph;
 			})}
 		</>
 	);

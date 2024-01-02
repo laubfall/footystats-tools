@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public record Report(List<BetPredictionQualityAllBetsAggregate> betPredictionResults,
 					 List<BetPredictionQualityBetAggregate> betPredictionDistributions,
-					 Map<String, List<BetPredictionQualityInfluencerAggregate>> betInfluencerPercentDistributions,
-					 Map<String, List<BetPredictionQualityInfluencerAggregate>> dontBetInfluencerPercentDistributions) {
+					 Map<String, List<BetPredictionQualityInfluencerAggregate>> betInfluencerPercentDistributions) {
 
 }

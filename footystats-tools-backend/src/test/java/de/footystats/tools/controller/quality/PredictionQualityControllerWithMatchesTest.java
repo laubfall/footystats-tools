@@ -1,6 +1,5 @@
 package de.footystats.tools.controller.quality;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -76,7 +75,6 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			// Because we have no league stats
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['HomeTeamLeaguePosInfluencer']").doesNotExist())
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['AwayTeamLeaguePosInfluencer']").doesNotExist())
-			.andExpect(jsonPath("$.dontBetInfluencerPercentDistributions.keys()", empty()))
 			.andExpect(jsonPath("$.betPredictionDistributions", hasSize(3)))
 		;
 	}

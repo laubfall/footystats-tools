@@ -46,22 +46,16 @@ public class PredictionQualityViewService {
 	/**
 	 * Sum up the betSucceeded and betFailed values for each influencer and predictionPercent.
 	 *
-	 * @param bet       The bet to filter for.
-	 * @param betOnThis If true the predictionPercent must be greater than or equal to the lower exclusive border of the betOnThis range.
-	 * @param revision  The revision to filter for.
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
 	 * @return Map of influencerName to List of BetPredictionQualityInfluencerAggregate that holds the aggregation of betSucceeded and betFailed for
 	 * each predictionPercent of the influencer.
 	 */
-	@Cacheable(cacheNames = "betPredictionQualityInfluencerAggregate", key = "{#bet, #betOnThis, #revision.revision.intValue()}")
-	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis,
+	@Cacheable(cacheNames = "betPredictionQualityInfluencerAggregate", key = "{#bet, #revision.revision.intValue()}")
+	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet,
 		PredictionQualityRevision revision) {
 		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
-		MatchOperation predictionPercentMatch;
-		if (betOnThis) {
-			predictionPercentMatch = match(where("predictionPercent").gte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
-		} else {
-			predictionPercentMatch = match(where("predictionPercent").lt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
-		}
+
 		final UnwindOperation unwind = unwind("influencerDistribution");
 		final GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent")
 			.sum("influencerDistribution.betSucceeded").as("betSucceeded")
@@ -71,7 +65,7 @@ public class PredictionQualityViewService {
 			Fields.field("predictionPercent", "$_id.predictionPercent")))
 			.andExclude("$_id")
 			.andInclude("betSucceeded", "betFailed");
-		final Aggregation aggregation = newAggregation(revisionMatch, predictionPercentMatch, unwind, groupOperation, projectionOperation);
+		final Aggregation aggregation = newAggregation(revisionMatch, unwind, groupOperation, projectionOperation);
 		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation,
 			BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
 		return aggregationResults.getMappedResults().stream().collect(

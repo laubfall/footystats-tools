@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Accordion, AccordionContext, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Accordion, Button } from "react-bootstrap";
 import AccordionBody from "react-bootstrap/AccordionBody";
 import AccordionHeader from "react-bootstrap/AccordionHeader";
 import translate from "../../i18n/translate";
@@ -27,8 +27,6 @@ export const PredictionQualityView = () => {
 		BetPredictionQualityBetEnum.OverZeroFive,
 	);
 
-	const [recalculateAvailable, setRecalculateAvailable] = useState(false);
-
 	const predictionQualityService = new IpcPredictionQualityService();
 
 	useEffect(() => {
@@ -53,56 +51,6 @@ export const PredictionQualityView = () => {
 			})
 			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}, [selectedBet]);
-
-	const InfluencerDistributions = () => {
-		const { activeEventKey } = useContext(AccordionContext);
-		return (
-			<>
-				{activeEventKey === "0" &&
-					{
-						/*
-					<Row>
-						<Col>
-							<h3>
-								{translate(
-									"renderer.predictionqualitiyview.header.influencerdistribution.bet",
-								)}
-							</h3>
-							<InfluencerDistributionScatterChartView
-								distributionBetSuccess={
-									currentDontBetAggregate?.distributionBetOnThis ||
-									[]
-								}
-								distributionBetFailed={
-									currentDontBetAggregate?.distributionBetOnThisFailed ||
-									[]
-								}
-							/>
-						</Col>
-
-						<Col>
-							<h3>
-								{translate(
-									"renderer.predictionqualitiyview.header.influencerdistribution.dontbet",
-								)}
-							</h3>
-							<InfluencerDistributionScatterChartView
-								distributionBetFailed={
-									currentDontBetAggregate?.distributionDontBetOnThisFailed ||
-									[]
-								}
-								distributionBetSuccess={
-									currentDontBetAggregate?.distributionDontBetOnThis ||
-									[]
-								}
-							/>
-						</Col>
-					</Row>
-					*/
-					}}
-			</>
-		);
-	};
 
 	function handleOnClickComputeQuality() {
 		LoadingOverlayStore.loadingNow();
@@ -171,16 +119,6 @@ export const PredictionQualityView = () => {
 								bet={selectedBet}
 							/>
 						)}
-					</AccordionBody>
-				</Accordion.Item>
-				<Accordion.Item eventKey="0">
-					<AccordionHeader>
-						{translate(
-							"renderer.predictionqualitiyview.influencerdistributiongraph",
-						)}
-					</AccordionHeader>
-					<AccordionBody>
-						<InfluencerDistributions />
 					</AccordionBody>
 				</Accordion.Item>
 			</Accordion>

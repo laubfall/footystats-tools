@@ -46,11 +46,10 @@ public class PredictionQualityController {
 
 		// create prediction results for all bets
 		final var influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType,
-			true, latestRevision);
-		final var dontBetInfluencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(
-			moreQualityDetailsForThisBetType, false, latestRevision);
+			latestRevision);
+
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult,
-			influencerPredictionsAggregated, dontBetInfluencerPredictionsAggregated);
+			influencerPredictionsAggregated);
 	}
 
 	@GetMapping(name = "/recompute", path = {"/recompute"}, produces = {"application/json"})
