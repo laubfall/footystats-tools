@@ -12,6 +12,10 @@ export const ReportList = ({
 	onRowClicked,
 	selectedBet,
 }: ReportListProps) => {
+	function percentDisplay(value: number, total: number) {
+		return `${value} (${Math.round((value / total) * 100)}%)`;
+	}
+
 	const columns: TableColumn<BetPredictionQualityAllBetsAggregate>[] = [
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.one"),
@@ -25,20 +29,48 @@ export const ReportList = ({
 			selector: (bpq) => bpq.assessed,
 		},
 		{
+			name: translate(
+				"renderer.predictionqualitiyview.table.col.betsuccess",
+			),
+			selector: (bpq) => {
+				const sum = bpq.betSuccess + bpq.dontBetSuccess;
+				return percentDisplay(sum, bpq.assessed);
+			},
+		},
+		{
+			name: translate(
+				"renderer.predictionqualitiyview.table.col.betfailed",
+			),
+			selector: (bpq) => {
+				const sum = bpq.betFailed + bpq.dontBetFailed;
+				return percentDisplay(sum, bpq.assessed);
+			},
+		},
+		{
 			name: translate("renderer.predictionqualitiyview.table.col.three"),
-			selector: (bpq) => bpq.betSuccess,
+			selector: (bpq) =>
+				percentDisplay(bpq.betSuccess, bpq.betFailed + bpq.betSuccess),
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.four"),
-			selector: (bpq) => bpq.betFailed,
+			selector: (bpq) =>
+				percentDisplay(bpq.betFailed, bpq.betFailed + bpq.betSuccess),
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.five"),
-			selector: (bpq) => bpq.dontBetSuccess,
+			selector: (bpq) =>
+				percentDisplay(
+					bpq.dontBetSuccess,
+					bpq.dontBetFailed + bpq.dontBetSuccess,
+				),
 		},
 		{
 			name: translate("renderer.predictionqualitiyview.table.col.six"),
-			selector: (bpq) => bpq.dontBetFailed,
+			selector: (bpq) =>
+				percentDisplay(
+					bpq.dontBetFailed,
+					bpq.dontBetFailed + bpq.dontBetSuccess,
+				),
 		},
 	];
 
