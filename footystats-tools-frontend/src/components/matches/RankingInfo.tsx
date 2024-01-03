@@ -14,6 +14,8 @@ export const RankingInfo = ({ ranking }: RankingInfoProps) => {
 		}/${ranking.total}`;
 	}
 
+	if (ranking == undefined) return null;
+
 	return (
 		<div id={"rankingInfo"}>
 			<div className={"col-12"}>

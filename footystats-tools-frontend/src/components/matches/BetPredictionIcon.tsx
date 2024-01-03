@@ -16,8 +16,8 @@ export const BetPredictionIcon = (props: BetPredictionIconProps) => {
 	const prediction = props.predictionResult;
 	const statisticalOutcome = props.statisticalResultOutcome;
 
-	let b10 = statisticalOutcome.ranking?.best10Percent;
-	if (!b10) {
+	let b10 = statisticalOutcome?.ranking?.best10Percent;
+	if (statisticalOutcome != undefined && !b10) {
 		// find a influencer with a best10Percent
 		const influencers =
 			statisticalOutcome.influencerStatisticalResultOutcomes;
@@ -31,8 +31,8 @@ export const BetPredictionIcon = (props: BetPredictionIconProps) => {
 		}
 	}
 
-	let b20 = statisticalOutcome.ranking?.best20Percent;
-	if (!b20) {
+	let b20 = statisticalOutcome?.ranking?.best20Percent;
+	if (statisticalOutcome != undefined && !b20) {
 		// find a influencer with a best10Percent
 		const influencers =
 			statisticalOutcome.influencerStatisticalResultOutcomes;

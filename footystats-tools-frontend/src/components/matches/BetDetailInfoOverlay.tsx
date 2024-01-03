@@ -3,14 +3,11 @@ import { ListGroup, ListGroupItem } from "react-bootstrap";
 import translate from "../../i18n/translate";
 import { uniqueId } from "lodash";
 import {
-	InfluencerResult,
 	InfluencerResultPrecheckResultEnum,
 	InfluencerStatisticalResultOutcome,
-	Ranking,
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetPrediction } from "./MatchList";
-import { BsAirplaneFill, BsArrowUp, BsArrowUpCircleFill } from "react-icons/bs";
 import { RankingInfo } from "./RankingInfo";
 
 export const BetDetailInfoOverlay = ({
@@ -66,7 +63,7 @@ export const BetDetailInfoOverlay = ({
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
 					<br />
-					<RankingInfo ranking={statisticalOutcome.ranking} />
+					<RankingInfo ranking={statisticalOutcome?.ranking} />
 				</ListGroupItem>
 				<ListGroupItem>
 					<b>
@@ -91,7 +88,7 @@ export const BetDetailInfoOverlay = ({
 								statOutcome?.statisticalOutcomeBetSuccess,
 							)}
 							<br />
-							<RankingInfo ranking={statOutcome.ranking} />
+							<RankingInfo ranking={statOutcome?.ranking} />
 						</ListGroupItem>
 					);
 				})}

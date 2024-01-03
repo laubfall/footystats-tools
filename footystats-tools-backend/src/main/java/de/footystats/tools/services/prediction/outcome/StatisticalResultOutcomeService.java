@@ -66,6 +66,7 @@ public class StatisticalResultOutcomeService {
 
 		final Double matchStatisticalOutcome = calcMatchPredictionStatisticalOutcome(result, bet);
 		if (matchStatisticalOutcome == null) {
+			log.info("There are no statistical informations for the predicted result: " + result.betSuccessInPercent() + " for bet: " + bet);
 			return null;
 		}
 
