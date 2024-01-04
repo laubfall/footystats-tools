@@ -96,22 +96,22 @@
 		<dependency>
 			<artifactId>commons-io</artifactId>
 			<groupId>commons-io</groupId>
-			<version>2.11.0</version>
+			<version>2.15.1</version>
 		</dependency>
 		<dependency>
 			<artifactId>opencsv</artifactId>
 			<groupId>com.opencsv</groupId>
-			<version>5.8</version>
+			<version>5.9</version>
 		</dependency>
 		<dependency>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<version>2.16.0</version>
+			<version>2.16.1</version>
 		</dependency>
 		<dependency>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<groupId>org.springdoc</groupId>
-			<version>2.2.0</version>
+			<version>2.3.0</version>
 		</dependency>
 		<dependency>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -145,13 +145,13 @@
 			<artifactId>spring-batch-test</artifactId>
 			<groupId>org.springframework.batch</groupId>
 			<scope>test</scope>
-			<version>5.0.2</version>
+			<version>5.0.4</version>
 		</dependency>
 		<dependency>
 			<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
 			<groupId>de.flapdoodle.embed</groupId>
 			<scope>test</scope>
-			<version>4.10.1</version>
+			<version>4.11.0</version>
 		</dependency>
 		<dependency>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
@@ -166,7 +166,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<groupId>org.springframework.boot</groupId>
 		<relativePath/>
-		<version>3.1.5</version> <!-- lookup parent from repository -->
+		<version>3.2.1</version> <!-- lookup parent from repository -->
 	</parent>
 	<profiles>
 		<profile>

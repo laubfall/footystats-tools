@@ -3,7 +3,6 @@ package de.footystats.tools.services.footy;
 import static org.mockito.Mockito.reset;
 
 import de.footystats.tools.services.csv.Configuration;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -49,12 +48,9 @@ class CsvFileDownloadServiceTest {
 		fileDownloadService.workingWithTempFile((fis) -> {
 			// Read the fileInputStream fis to a list of strings and assert that the third line contains the value blah.
 			List<String> lines = null;
-			try {
-				lines = IOUtils.readLines(fis, "UTF-8");
-				Assertions.assertTrue(lines.get(3).contains(expectedTeamName));
-			} catch (IOException e) {
-				Assertions.fail();
-			}
+			lines = IOUtils.readLines(fis, "UTF-8");
+			Assertions.assertTrue(lines.get(3).contains(expectedTeamName));
+
 		}, rawData, "test");
 	}
 
