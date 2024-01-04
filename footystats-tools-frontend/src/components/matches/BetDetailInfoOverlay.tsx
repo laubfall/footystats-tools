@@ -8,6 +8,7 @@ import {
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetPrediction } from "./MatchList";
+import { RankingInfo } from "./RankingInfo";
 
 export const BetDetailInfoOverlay = ({
 	betPrediction,
@@ -61,6 +62,8 @@ export const BetDetailInfoOverlay = ({
 					{humanReadablePercent(
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
+					<br />
+					<RankingInfo ranking={statisticalOutcome?.ranking} />
 				</ListGroupItem>
 				<ListGroupItem>
 					<b>
@@ -72,19 +75,23 @@ export const BetDetailInfoOverlay = ({
 						statisticalOutcome?.betStatisticalSuccess,
 					)}
 				</ListGroupItem>
-				{relevantDetails &&
-					relevantDetails.map((influencerResult) => (
+				{relevantDetails?.map((influencerResult) => {
+					const statOutcome = influencerStatisticalOutcome(
+						influencerResult.influencerName,
+					);
+					return (
 						<ListGroupItem key={uniqueId()}>
 							{influencerResult.influencerName}:{" "}
 							{influencerResult.influencerPredictionValue}
 							{" / "}
 							{humanReadablePercent(
-								influencerStatisticalOutcome(
-									influencerResult.influencerName,
-								)?.statisticalOutcomeBetSuccess,
+								statOutcome?.statisticalOutcomeBetSuccess,
 							)}
+							<br />
+							<RankingInfo ranking={statOutcome?.ranking} />
 						</ListGroupItem>
-					))}
+					);
+				})}
 			</ListGroup>
 		</>
 	);

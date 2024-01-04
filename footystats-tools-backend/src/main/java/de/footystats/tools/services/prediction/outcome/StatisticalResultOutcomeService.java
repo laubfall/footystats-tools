@@ -2,8 +2,8 @@ package de.footystats.tools.services.prediction.outcome;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.InfluencerResult;
+import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.PredictionResult;
-import de.footystats.tools.services.prediction.PredictionService;
 import de.footystats.tools.services.prediction.quality.BetPredictionQuality;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
@@ -11,11 +11,13 @@ import de.footystats.tools.services.prediction.quality.PredictionQualityService;
 import de.footystats.tools.services.prediction.quality.view.BetPredictionQualityInfluencerAggregate;
 import de.footystats.tools.services.prediction.quality.view.PredictionQualityViewService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class StatisticalResultOutcomeService {
 
 	private final PredictionQualityViewService predictionQualityViewService;
 
+	// Replace with Spring cache?
 	private final Map<InfluencerPredictionCacheKey, Map<String, List<BetPredictionQualityInfluencerAggregate>>> influencerPredictionCache = new HashMap<>();
 
 	/**
@@ -60,30 +63,88 @@ public class StatisticalResultOutcomeService {
 		if (result == null) {
 			return null;
 		}
+
 		final Double matchStatisticalOutcome = calcMatchPredictionStatisticalOutcome(result, bet);
 		if (matchStatisticalOutcome == null) {
+			log.info("There are no statistical informations for the predicted result: " + result.betSuccessInPercent() + " for bet: " + bet);
 			return null;
 		}
 
-		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, calcInfluencerStatisticalOutcome(result, bet));
+		final PredictionQualityRevision predictionQualityRevision = predictionQualityService.latestRevision();
+		return new StatisticalResultOutcome(bet, matchStatisticalOutcome, calcBetRanking(bet, result, predictionQualityRevision),
+			calcInfluencerStatisticalOutcome(result, bet));
 	}
 
 	private List<InfluencerStatisticalResultOutcome> calcInfluencerStatisticalOutcome(final PredictionResult result, final Bet bet) {
+		var latestRevision = predictionQualityService.latestRevision();
 		List<InfluencerStatisticalResultOutcome> influencerOutcomes = new ArrayList<>();
 		for (InfluencerResult influencerResult : result.influencerDetailedResult()) {
+			if (!PrecheckResult.OK.equals(influencerResult.precheckResult())) {
+				continue;
+			}
 			final List<BetPredictionQualityInfluencerAggregate> aggregates = influencerDistributionByCache(bet, result,
 				influencerResult.influencerName());
 			final Optional<BetPredictionQualityInfluencerAggregate> measured = aggregates.stream()
 				.filter(a -> a.predictionPercent().equals(influencerResult.influencerPredictionValue())).findFirst();
 			if (measured.isPresent()) {
 				BetPredictionQualityInfluencerAggregate influencerAggregate = measured.get();
-				var succeeded = influencerAggregate.betSucceeded().doubleValue();
-				var failed = influencerAggregate.betFailed().doubleValue();
-				influencerOutcomes.add(new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), succeeded / (succeeded + failed)));
+				var succeeded = influencerAggregate.betSucceeded();
+				var failed = influencerAggregate.betFailed();
+				influencerOutcomes.add(
+					new InfluencerStatisticalResultOutcome(influencerResult.influencerName(), calcStatisticalMatchOutcome(succeeded, failed),
+						calcInfluencerRanking(bet, influencerResult, latestRevision)));
 			}
 		}
 
 		return influencerOutcomes;
+	}
+
+	Ranking calcInfluencerRanking(Bet bet, InfluencerResult result, PredictionQualityRevision revision) {
+		final var influencerStatisticalOutcomeBet = predictionQualityViewService.influencerPredictionsAggregated(bet,
+			revision);
+
+		List<IntermediateInfluencerBetAggregate> betIntermediate = new ArrayList<>(0);
+		if (influencerStatisticalOutcomeBet.containsKey(result.influencerName())) {
+			betIntermediate = influencerStatisticalOutcomeBet.get(result.influencerName()).stream()
+				.map(a -> new IntermediateInfluencerBetAggregate(a,
+					a.predictionPercent(), true)).toList();
+		}
+
+		List<IRanked> aggregated = new ArrayList<>();
+
+		betIntermediate.stream().map(IntermediateInfluencerBetAggregate::aggregate).forEach(aggregated::add);
+
+		return calcRanking(aggregated, result.influencerPredictionValue());
+	}
+
+	Ranking calcBetRanking(Bet bet, PredictionResult result, PredictionQualityRevision revision) {
+		final var betAggregates = predictionQualityViewService.betPredictionQuality(bet, revision);
+		return calcRanking(new ArrayList<>(betAggregates), result.betSuccessInPercent());
+	}
+
+	private Ranking calcRanking(Collection<IRanked> betAggs, Integer calculatedPredictionPercent) {
+		final List<IntermediateRankingInfo> rankings = betAggs.stream()
+			.map(ranked -> new IntermediateRankingInfo(calcStatisticalMatchOutcome(ranked.betSucceeded(), ranked.betFailed()),
+				ranked.predictionPercent()))
+			.toList()
+			.reversed();
+
+		final Optional<IntermediateRankingInfo> optIntermediateRankingInfo = rankings.stream()
+			.filter(i -> i.predictionPercent == calculatedPredictionPercent).findFirst();
+
+		if (optIntermediateRankingInfo.isEmpty()) {
+			return null;
+		}
+
+		List<Double> sortedStatisticalOutcome = rankings.stream().collect(Collectors.groupingBy(IntermediateRankingInfo::statisticalOutcome)).keySet()
+			.stream().sorted()
+			.toList().reversed();
+
+		IntermediateRankingInfo intermediateRankingInfo = optIntermediateRankingInfo.get();
+		int pos = sortedStatisticalOutcome.indexOf(intermediateRankingInfo.statisticalOutcome) + 1;
+
+		float b10 = ((float) pos / sortedStatisticalOutcome.size()) * 100;
+		return new Ranking(pos, sortedStatisticalOutcome.size(), b10 <= 10, b10 <= 20);
 	}
 
 	/**
@@ -101,7 +162,7 @@ public class StatisticalResultOutcomeService {
 		if (influencerPredictionCache.containsKey(cacheKey)) {
 			matching = influencerPredictionCache.get(cacheKey);
 		} else {
-			matching = predictionQualityViewService.influencerPredictionsAggregated(bet, result.betOnThis(),
+			matching = predictionQualityViewService.influencerPredictionsAggregated(bet,
 				predictionQualityService.latestRevision());
 			influencerPredictionCache.put(cacheKey, matching);
 		}
@@ -122,14 +183,11 @@ public class StatisticalResultOutcomeService {
 			// may happen if the predicted result does not exist cause there was no completed match with the same prediction value before.
 			return null;
 		}
+		return calcStatisticalMatchOutcome(aggregate);
+	}
 
-		double matchStatisticalOutcome;
-		if (result.betSuccessInPercent() >= PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS) {
-			matchStatisticalOutcome = calcStatisticalMatchOutcome(aggregate.getBetSucceeded(), aggregate.getBetFailed());
-		} else {
-			matchStatisticalOutcome = calcStatisticalMatchOutcome(aggregate.getBetFailed(), aggregate.getBetSucceeded());
-		}
-		return matchStatisticalOutcome;
+	private double calcStatisticalMatchOutcome(BetPredictionQuality aggregate) {
+		return calcStatisticalMatchOutcome(aggregate.getBetSucceeded(), aggregate.getBetFailed());
 	}
 
 	private double calcStatisticalMatchOutcome(Long success, Long failed) {
@@ -137,6 +195,14 @@ public class StatisticalResultOutcomeService {
 	}
 
 	record InfluencerPredictionCacheKey(Bet bet, boolean betOnThis) {
+
+	}
+
+	record IntermediateRankingInfo(double statisticalOutcome, int predictionPercent) {
+
+	}
+
+	record IntermediateInfluencerBetAggregate(BetPredictionQualityInfluencerAggregate aggregate, int keyPredictionPercent, boolean betOnThis) {
 
 	}
 }

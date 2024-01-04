@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bson.Document;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -42,15 +43,19 @@ public class PredictionQualityViewService {
 		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
 
-	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet, boolean betOnThis,
+	/**
+	 * Sum up the betSucceeded and betFailed values for each influencer and predictionPercent.
+	 *
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
+	 * @return Map of influencerName to List of BetPredictionQualityInfluencerAggregate that holds the aggregation of betSucceeded and betFailed for
+	 * each predictionPercent of the influencer.
+	 */
+	@Cacheable(cacheNames = "betPredictionQualityInfluencerAggregate", key = "{#bet, #revision.revision.intValue()}")
+	public Map<String, List<BetPredictionQualityInfluencerAggregate>> influencerPredictionsAggregated(Bet bet,
 		PredictionQualityRevision revision) {
 		MatchOperation revisionMatch = match(where("revision_revision").is(revision.getRevision()).and("bet").is(bet));
-		MatchOperation predictionPercentMatch;
-		if (betOnThis) {
-			predictionPercentMatch = match(where("predictionPercent").gte(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
-		} else {
-			predictionPercentMatch = match(where("predictionPercent").lt(PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS));
-		}
+
 		final UnwindOperation unwind = unwind("influencerDistribution");
 		final GroupOperation groupOperation = group("influencerDistribution.influencerName", "influencerDistribution.predictionPercent")
 			.sum("influencerDistribution.betSucceeded").as("betSucceeded")
@@ -60,7 +65,7 @@ public class PredictionQualityViewService {
 			Fields.field("predictionPercent", "$_id.predictionPercent")))
 			.andExclude("$_id")
 			.andInclude("betSucceeded", "betFailed");
-		final Aggregation aggregation = newAggregation(revisionMatch, predictionPercentMatch, unwind, groupOperation, projectionOperation);
+		final Aggregation aggregation = newAggregation(revisionMatch, unwind, groupOperation, projectionOperation);
 		final AggregationResults<BetPredictionQualityInfluencerAggregate> aggregationResults = mongoTemplate.aggregate(aggregation,
 			BetPredictionQuality.class, BetPredictionQualityInfluencerAggregate.class);
 		return aggregationResults.getMappedResults().stream().collect(
@@ -71,6 +76,7 @@ public class PredictionQualityViewService {
 	 * Based on the BetPredictionAggregates documents this method aggregates the counts of done prediction bet / dont bet succeeded / failed.
 	 * Aggregations are done via mongodb query.
 	 *
+	 * @param revision The revision to filter for.
 	 * @return List of aggregated values.
 	 */
 	public List<BetPredictionQualityAllBetsAggregate> matchPredictionQualityMeasurementCounts(PredictionQualityRevision revision) {
@@ -114,11 +120,27 @@ public class PredictionQualityViewService {
 		return result;
 	}
 
+	/**
+	 * This method provides a view of success / failed counts of prediction for bet on this.
+	 *
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
+	 * @return List of aggregated values.
+	 */
+	@Cacheable(cacheNames = "betPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> betPredictionQuality(Bet bet, PredictionQualityRevision revision) {
-		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentGreaterThanEqual(bet, revision,
-			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);
+		return betPredictionQualityRepository.findAllByBetAndRevision(bet, revision, BetPredictionQualityBetAggregate.class);
 	}
 
+	/**
+	 * This method provides a view of success / failed counts of prediction for don't bet on this.
+	 *
+	 * @param bet      The bet to filter for.
+	 * @param revision The revision to filter for.
+	 * @return List of aggregated values.
+	 */
+	@Deprecated
+	@Cacheable(cacheNames = "dontBetPredictionQualityBetAggregate", key = "{#bet, #revision.revision.intValue()}")
 	public List<BetPredictionQualityBetAggregate> dontBetPredictionQuality(Bet bet, PredictionQualityRevision revision) {
 		return betPredictionQualityRepository.findAllByBetAndRevisionAndPredictionPercentLessThan(bet, revision,
 			PredictionService.LOWER_EXCLUSIVE_BORDER_BET_ON_THIS, BetPredictionQualityBetAggregate.class);

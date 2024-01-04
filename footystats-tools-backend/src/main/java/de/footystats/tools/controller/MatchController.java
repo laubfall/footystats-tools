@@ -67,32 +67,22 @@ public class MatchController {
 		return JobInformation.convert(jobExecution);
 	}
 
+	@Setter
+	@Getter
 	public static class ListMatchRequest {
 
-		@Setter
-		@Getter
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 		private LocalDateTime start;
 
-		@Setter
-		@Getter
 		private List<String> country;
 
-		@Setter
-		@Getter
 		private List<String> league;
 
-		@Getter
-		@Setter
 		private String fullTextSearchTerms;
 
-		@Setter
-		@Getter
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 		private LocalDateTime end;
 
-		@Setter
-		@Getter
 		private Paging paging;
 	}
 }

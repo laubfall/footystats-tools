@@ -8,18 +8,14 @@ import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models
 
 export const PredictionGraphView = ({
 	betPredictionPercentDistribution,
-	dontBetPredictionPercentDistribution,
 	bet,
 }: PredictionGraphViewProps) => {
-	if (
-		betPredictionPercentDistribution?.length == 0 &&
-		dontBetPredictionPercentDistribution?.length == 0
-	) {
+	if (betPredictionPercentDistribution?.length == 0) {
 		return null;
 	}
 	return (
 		<Row>
-			<Col md={5}>
+			<Col md={12}>
 				<PercentageDistributionGraph
 					graphs={[
 						{
@@ -52,45 +48,11 @@ export const PredictionGraphView = ({
 					]}
 				/>
 			</Col>
-			<Col md={6}>
-				<PercentageDistributionGraph
-					graphs={[
-						{
-							name: `${translate(
-								`renderer.matchesview.bet.${bet}`,
-							)} ${translate(
-								"renderer.predictiongraphview.dontbet",
-							)}`,
-							data: dontBetPredictionPercentDistribution?.map(
-								(bppa) => ({
-									xPredictionPercent: bppa.predictionPercent,
-									yCount: bppa.betSucceeded,
-								}),
-							),
-							color: colord("rgb(40,200,0)").toRgb(),
-						},
-						{
-							name: `${translate(
-								`renderer.matchesview.bet.${bet}`,
-							)} ${translate(
-								"renderer.predictiongraphview.dontbet.failed",
-							)}`,
-							data: dontBetPredictionPercentDistribution?.map(
-								(bppa) => ({
-									xPredictionPercent: bppa.predictionPercent,
-									yCount: bppa.betFailed,
-								}),
-							),
-						},
-					]}
-				/>
-			</Col>
 		</Row>
 	);
 };
 
 export type PredictionGraphViewProps = {
 	betPredictionPercentDistribution?: Array<BetPredictionQualityBetAggregate>;
-	dontBetPredictionPercentDistribution?: Array<BetPredictionQualityBetAggregate>;
 	bet: BetPredictionQualityBetEnum;
 };

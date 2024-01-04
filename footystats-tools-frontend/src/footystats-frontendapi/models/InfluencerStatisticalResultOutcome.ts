@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Ranking } from './Ranking';
+import {
+    RankingFromJSON,
+    RankingFromJSONTyped,
+    RankingToJSON,
+} from './Ranking';
+
 /**
  * 
  * @export
@@ -31,6 +38,12 @@ export interface InfluencerStatisticalResultOutcome {
      * @memberof InfluencerStatisticalResultOutcome
      */
     statisticalOutcomeBetSuccess?: number;
+    /**
+     * 
+     * @type {Ranking}
+     * @memberof InfluencerStatisticalResultOutcome
+     */
+    ranking?: Ranking;
 }
 
 /**
@@ -54,6 +67,7 @@ export function InfluencerStatisticalResultOutcomeFromJSONTyped(json: any, ignor
         
         'influencerName': !exists(json, 'influencerName') ? undefined : json['influencerName'],
         'statisticalOutcomeBetSuccess': !exists(json, 'statisticalOutcomeBetSuccess') ? undefined : json['statisticalOutcomeBetSuccess'],
+        'ranking': !exists(json, 'ranking') ? undefined : RankingFromJSON(json['ranking']),
     };
 }
 
@@ -68,6 +82,7 @@ export function InfluencerStatisticalResultOutcomeToJSON(value?: InfluencerStati
         
         'influencerName': value.influencerName,
         'statisticalOutcomeBetSuccess': value.statisticalOutcomeBetSuccess,
+        'ranking': RankingToJSON(value.ranking),
     };
 }
 

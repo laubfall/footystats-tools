@@ -17,6 +17,7 @@ export * from './PagingResponseMatchListElement';
 export * from './Password';
 export * from './PredictionQualityRevision';
 export * from './PredictionResult';
+export * from './Ranking';
 export * from './Report';
 export * from './Settings';
 export * from './StatisticalResultOutcome';

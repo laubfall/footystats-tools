@@ -1,15 +1,23 @@
 package de.footystats.tools.services.stats;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.footystats.tools.services.domain.DomainDataService;
+import de.footystats.tools.services.match.Match;
+import de.footystats.tools.services.match.MatchRepository;
+import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -28,6 +36,9 @@ class MatchStatsServiceTest {
 	@Autowired
 	private DomainDataService domainDataService;
 
+	@Autowired
+	private MatchRepository matchRepository;
+
 	@BeforeEach
 	public void cleanup() {
 		matchStatsRepository.deleteAll();
@@ -43,18 +54,18 @@ class MatchStatsServiceTest {
 		matchStatsService.upsert(matchStats);
 
 		var persistedMatchStats = matchStatsRepository.findByCountry(germany);
-		Assertions.assertNotNull(persistedMatchStats);
-		Assertions.assertEquals(1, persistedMatchStats.size());
+		assertNotNull(persistedMatchStats);
+		assertEquals(1, persistedMatchStats.size());
 
 		matchStats = builder.matchFootyStatsURL("test").build();
 		matchStatsService.upsert(matchStats);
 
 		persistedMatchStats = matchStatsRepository.findByCountry(germany);
-		Assertions.assertNotNull(persistedMatchStats);
-		Assertions.assertEquals(1, persistedMatchStats.size());
+		assertNotNull(persistedMatchStats);
+		assertEquals(1, persistedMatchStats.size());
 
 		var loadedMatchStats = persistedMatchStats.get(0);
-		Assertions.assertEquals("test", loadedMatchStats.getMatchFootyStatsURL());
+		assertEquals("test", loadedMatchStats.getMatchFootyStatsURL());
 	}
 
 	@Test
@@ -73,7 +84,7 @@ class MatchStatsServiceTest {
 		matchStatsService.upsert(matchStats);
 
 		List<MatchStats> byCountry = matchStatsRepository.findByCountry(country);
-		Assertions.assertEquals(2, byCountry.size());
+		assertEquals(2, byCountry.size());
 	}
 
 	@Test
@@ -87,8 +98,37 @@ class MatchStatsServiceTest {
 
 		matchStatsService.importMatchStats(matchStats);
 		List<MatchStats> persistedMatchStats = matchStatsRepository.findByCountry(france);
-		Assertions.assertNotNull(persistedMatchStats);
-		Assertions.assertEquals(1, persistedMatchStats.size());
+		assertNotNull(persistedMatchStats);
+		assertEquals(1, persistedMatchStats.size());
+	}
+
+	@Test
+	void importMatchStatsTwice_expectMatchRevisionIsNotNull() {
+		var time = System.currentTimeMillis();
+		var france = domainDataService.countryByNormalizedName("France");
+		var builder = MatchStats.builder().country(france).league("La Ligue").dateUnix(time).awayTeam("Team 1").homeTeam("Team 2")
+			.dateGmt(LocalDateTime.now())
+			.matchStatus(MatchStatus.incomplete);
+		var matchStats = builder.build();
+
+		matchStatsService.importMatchStats(matchStats);
+		List<MatchStats> persistedMatchStats = matchStatsRepository.findByCountry(france);
+		assertNotNull(persistedMatchStats);
+		assertEquals(1, persistedMatchStats.size());
+
+		Optional<Match> createdMatch = matchRepository.findOne(Example.of(Match.builder().awayTeam("Team 1").build()));
+		assertTrue(createdMatch.isPresent());
+
+		// Some fake revision and then the second import to ensure that the revision is still present
+		Match match = createdMatch.get();
+		match.setRevision(new PredictionQualityRevision(1));
+		matchRepository.save(match);
+
+		matchStatsService.importMatchStats(matchStats);
+		createdMatch = matchRepository.findOne(Example.of(Match.builder().awayTeam("Team 1").build()));
+		assertTrue(createdMatch.isPresent());
+		assertNotNull(createdMatch.get().getRevision());
+		assertEquals(createdMatch.get().getRevision().getRevision(), 1);
 	}
 
 	@Test
@@ -102,10 +142,10 @@ class MatchStatsServiceTest {
 
 		matchStatsService.importMatchStats(matchStats);
 		List<MatchStats> persistedMatchStats = matchStatsRepository.findByCountry(esports);
-		Assertions.assertTrue(persistedMatchStats.isEmpty());
+		assertTrue(persistedMatchStats.isEmpty());
 	}
 
-	@Deprecated // See MatchStatsService
+	@Deprecated // See MatchStatsService.reimportMatchStats
 	@Test
 	void reimportMatchStats() {
 		var denmark = domainDataService.countryByNormalizedName("Denmark");
@@ -117,10 +157,10 @@ class MatchStatsServiceTest {
 
 		matchStatsService.importMatchStats(matchStats);
 		var denmarkMatches = matchStatsRepository.findByCountry(denmark);
-		Assertions.assertNotNull(denmarkMatches);
-		Assertions.assertEquals(1, denmarkMatches.size());
+		assertNotNull(denmarkMatches);
+		assertEquals(1, denmarkMatches.size());
 		var match = denmarkMatches.get(0);
-		Assertions.assertEquals(50, match.getBTTSAverage());
+		assertEquals(50, match.getBTTSAverage());
 
 		builder = builder.bTTSAverage(60);
 		matchStats = builder.build();
@@ -129,9 +169,9 @@ class MatchStatsServiceTest {
 		matchStatsService.reimportMatchStats();
 
 		denmarkMatches = matchStatsRepository.findByCountry(denmark);
-		Assertions.assertNotNull(denmarkMatches);
-		Assertions.assertEquals(1, denmarkMatches.size());
+		assertNotNull(denmarkMatches);
+		assertEquals(1, denmarkMatches.size());
 		match = denmarkMatches.get(0);
-		Assertions.assertEquals(60, match.getBTTSAverage());
+		assertEquals(60, match.getBTTSAverage());
 	}
 }

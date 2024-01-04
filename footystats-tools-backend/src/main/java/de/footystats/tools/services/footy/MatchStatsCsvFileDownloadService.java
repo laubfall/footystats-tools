@@ -6,6 +6,7 @@ import de.footystats.tools.services.csv.CsvFileService;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.MatchStatsService;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,9 +43,9 @@ public class MatchStatsCsvFileDownloadService extends CsvFileDownloadService {
 
 	private List<String> downloadMatchStatsCsvFile(LocalDate matchStatsForDay, SessionCookie sessionCookie) {
 		try {
-			final URL url = new URL(
+			final URL url = URI.create(
 				properties.getWebpage().getBaseUrl() + properties.getWebpage().getMatchStatsDownloadRessource() + matchStatsForDay.toEpochSecond(
-					LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now())));
+					LocalTime.now(), ZoneId.of("Europe/Berlin").getRules().getOffset(LocalDateTime.now()))).toURL();
 			return csvHttpClient.connectToFootystatsAndRetrieveFileContent(sessionCookie, url);
 		} catch (IOException e) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_DL_FAILED, e);

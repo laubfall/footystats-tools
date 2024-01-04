@@ -11,7 +11,7 @@ import java.util.List;
  * @param influencerStatisticalResultOutcomes The statistical possibility of the calculated possibilities of every influencer that was involved in the
  *                                            prediction.
  */
-public record StatisticalResultOutcome(Bet bet, Double betStatisticalSuccess,
+public record StatisticalResultOutcome(Bet bet, Double betStatisticalSuccess, Ranking ranking,
 									   List<InfluencerStatisticalResultOutcome> influencerStatisticalResultOutcomes) {
 
 }

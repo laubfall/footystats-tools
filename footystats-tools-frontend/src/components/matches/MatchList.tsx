@@ -1,10 +1,6 @@
 import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
-	BsFillArrowDownCircleFill,
-	BsFillArrowUpCircleFill,
-} from "react-icons/bs";
-import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/src/DataTable/types";
@@ -18,6 +14,7 @@ import {
 } from "../../footystats-frontendapi";
 import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
 import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import { BetPredictionIcon } from "./BetPredictionIcon";
 
 function createBetPredictionColumns(
 	predictionForBets?: BetPredictionQualityBetEnum[],
@@ -43,6 +40,11 @@ function createBetPredictionColumns(
 						return null;
 					}
 
+					const statisticalOutcome =
+						row.statisticalResultOutcome.find(
+							(sro) => sro?.bet === bet,
+						);
+
 					return (
 						<OverlayTrigger
 							placement="right"
@@ -56,9 +58,9 @@ function createBetPredictionColumns(
 									<Popover.Body>
 										<BetDetailInfoOverlay
 											betPrediction={betPrediction}
-											statisticalOutcome={row.statisticalResultOutcome.find(
-												(sro) => sro?.bet === bet,
-											)}
+											statisticalOutcome={
+												statisticalOutcome
+											}
 										/>
 									</Popover.Body>
 								</Popover>
@@ -66,20 +68,13 @@ function createBetPredictionColumns(
 						>
 							<span>
 								{betPrediction?.prediction.betSuccessInPercent}
-								{betPrediction?.prediction.betOnThis ===
-									true && (
-									<>
-										&nbsp;
-										<BsFillArrowUpCircleFill />
-									</>
-								)}
-								{betPrediction?.prediction.betOnThis ===
-									false && (
-									<>
-										&nbsp;
-										<BsFillArrowDownCircleFill />
-									</>
-								)}
+								&nbsp;
+								<BetPredictionIcon
+									predictionResult={betPrediction?.prediction}
+									statisticalResultOutcome={
+										statisticalOutcome
+									}
+								/>
 							</span>
 						</OverlayTrigger>
 					);
@@ -163,27 +158,25 @@ export const MatchList = ({
 	columns = columns.concat(predictionColumns);
 
 	return (
-		<>
-			<DataTable
-				columns={columns}
-				data={entries}
-				onSort={sortHandler}
-				onChangePage={pageChange}
-				onChangeRowsPerPage={pageSizeChange}
-				onRowDoubleClicked={(row) => {
-					window.open(
-						`https://footystats.org${row.footyStatsUrl}`,
-						"_blank",
-					);
-				}}
-				paginationTotalRows={totalRows}
-				defaultSortFieldId={1}
-				defaultSortAsc={false}
-				pagination
-				sortServer
-				paginationServer
-			/>
-		</>
+		<DataTable
+			columns={columns}
+			data={entries}
+			onSort={sortHandler}
+			onChangePage={pageChange}
+			onChangeRowsPerPage={pageSizeChange}
+			onRowDoubleClicked={(row) => {
+				window.open(
+					`https://footystats.org${row.footyStatsUrl}`,
+					"_blank",
+				);
+			}}
+			paginationTotalRows={totalRows}
+			defaultSortFieldId={1}
+			defaultSortAsc={false}
+			pagination
+			sortServer
+			paginationServer
+		/>
 	);
 };
 

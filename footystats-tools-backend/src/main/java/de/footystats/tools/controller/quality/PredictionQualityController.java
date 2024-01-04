@@ -43,16 +43,13 @@ public class PredictionQualityController {
 
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
 		final var betPercentDistributionResult = predictionQualityViewService.betPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
-		final var dontBetPercentDistributionResult = predictionQualityViewService.dontBetPredictionQuality(moreQualityDetailsForThisBetType,
-			latestRevision);
 
 		// create prediction results for all bets
 		final var influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType,
-			true, latestRevision);
-		final var dontBetInfluencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(
-			moreQualityDetailsForThisBetType, false, latestRevision);
-		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult, dontBetPercentDistributionResult,
-			influencerPredictionsAggregated, dontBetInfluencerPredictionsAggregated);
+			latestRevision);
+
+		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult,
+			influencerPredictionsAggregated);
 	}
 
 	@GetMapping(name = "/recompute", path = {"/recompute"}, produces = {"application/json"})

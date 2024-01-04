@@ -56,7 +56,7 @@ export const PercentageDistributionGraph = ({
 
 	return (
 		<LineChart
-			width={730}
+			width={window.innerWidth * 0.98}
 			height={250}
 			data={data?.sort(
 				(a, b) => a.predictionPercent - b.predictionPercent,

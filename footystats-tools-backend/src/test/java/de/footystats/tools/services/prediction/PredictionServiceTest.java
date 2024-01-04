@@ -20,18 +20,18 @@ class PredictionServiceTest {
 	void analyze_o05_betOnThis() {
 		var builder = MatchStats.builder().resultHomeTeamGoals(0).resultAwayTeamGoals(1).matchStatus(MatchStatus.complete);
 		var bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		PredictionAnalyze analyze = predictionService.analyze(bctx, true, true);
+		PredictionAnalyze analyze = predictionService.analyze(bctx, true);
 		Assertions.assertNotNull(analyze);
 		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 
 		builder = builder.resultHomeTeamGoals(1);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		analyze = predictionService.analyze(bctx, true, true);
+		analyze = predictionService.analyze(bctx, true);
 		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 
 		builder = builder.resultHomeTeamGoals(0).resultAwayTeamGoals(0);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		analyze = predictionService.analyze(bctx, true, true);
+		analyze = predictionService.analyze(bctx, true);
 		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
 	}
 
@@ -39,19 +39,19 @@ class PredictionServiceTest {
 	void analyze_o05_dontBetOnThis() {
 		var builder = MatchStats.builder().resultHomeTeamGoals(0).resultAwayTeamGoals(0).matchStatus(MatchStatus.complete);
 		var bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		PredictionAnalyze analyze = predictionService.analyze(bctx, true, false);
+		PredictionAnalyze analyze = predictionService.analyze(bctx, true);
 		Assertions.assertNotNull(analyze);
-		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
+		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
 
 		builder = builder.resultHomeTeamGoals(1);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		analyze = predictionService.analyze(bctx, true, false);
-		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
+		analyze = predictionService.analyze(bctx, true);
+		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 
 		builder = builder.resultAwayTeamGoals(1);
 		bctx = new BetPredictionContext(builder.build(), null, null, null, Bet.OVER_ZERO_FIVE);
-		analyze = predictionService.analyze(bctx, true, false);
-		Assertions.assertEquals(PredictionAnalyze.FAILED, analyze);
+		analyze = predictionService.analyze(bctx, true);
+		Assertions.assertEquals(PredictionAnalyze.SUCCESS, analyze);
 	}
 
 	public void analyze_bttsYes() {
