@@ -52,22 +52,10 @@ export interface Report {
     betPredictionDistributions?: Array<BetPredictionQualityBetAggregate>;
     /**
      * 
-     * @type {Array<BetPredictionQualityBetAggregate>}
-     * @memberof Report
-     */
-    dontBetPredictionDistributions?: Array<BetPredictionQualityBetAggregate>;
-    /**
-     * 
      * @type {{ [key: string]: Array<BetPredictionQualityInfluencerAggregate>; }}
      * @memberof Report
      */
     betInfluencerPercentDistributions?: { [key: string]: Array<BetPredictionQualityInfluencerAggregate>; };
-    /**
-     * 
-     * @type {{ [key: string]: Array<BetPredictionQualityInfluencerAggregate>; }}
-     * @memberof Report
-     */
-    dontBetInfluencerPercentDistributions?: { [key: string]: Array<BetPredictionQualityInfluencerAggregate>; };
 }
 
 /**
@@ -91,9 +79,7 @@ export function ReportFromJSONTyped(json: any, ignoreDiscriminator: boolean): Re
         
         'betPredictionResults': !exists(json, 'betPredictionResults') ? undefined : ((json['betPredictionResults'] as Array<any>).map(BetPredictionQualityAllBetsAggregateFromJSON)),
         'betPredictionDistributions': !exists(json, 'betPredictionDistributions') ? undefined : ((json['betPredictionDistributions'] as Array<any>).map(BetPredictionQualityBetAggregateFromJSON)),
-        'dontBetPredictionDistributions': !exists(json, 'dontBetPredictionDistributions') ? undefined : ((json['dontBetPredictionDistributions'] as Array<any>).map(BetPredictionQualityBetAggregateFromJSON)),
         'betInfluencerPercentDistributions': !exists(json, 'betInfluencerPercentDistributions') ? undefined : json['betInfluencerPercentDistributions'],
-        'dontBetInfluencerPercentDistributions': !exists(json, 'dontBetInfluencerPercentDistributions') ? undefined : json['dontBetInfluencerPercentDistributions'],
     };
 }
 
@@ -108,9 +94,7 @@ export function ReportToJSON(value?: Report | null): any {
         
         'betPredictionResults': value.betPredictionResults === undefined ? undefined : ((value.betPredictionResults as Array<any>).map(BetPredictionQualityAllBetsAggregateToJSON)),
         'betPredictionDistributions': value.betPredictionDistributions === undefined ? undefined : ((value.betPredictionDistributions as Array<any>).map(BetPredictionQualityBetAggregateToJSON)),
-        'dontBetPredictionDistributions': value.dontBetPredictionDistributions === undefined ? undefined : ((value.dontBetPredictionDistributions as Array<any>).map(BetPredictionQualityBetAggregateToJSON)),
         'betInfluencerPercentDistributions': value.betInfluencerPercentDistributions,
-        'dontBetInfluencerPercentDistributions': value.dontBetInfluencerPercentDistributions,
     };
 }
 
