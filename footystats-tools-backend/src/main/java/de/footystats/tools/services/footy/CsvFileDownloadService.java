@@ -1,6 +1,7 @@
 package de.footystats.tools.services.footy;
 
 import de.footystats.tools.FootystatsProperties;
+import de.footystats.tools.services.ServiceException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,10 +49,16 @@ public abstract class CsvFileDownloadService {
 			tmpFile = File.createTempFile(tmpFilePrefix, "csv");
 			FileUtils.writeLines(tmpFile, StandardCharsets.UTF_8.name(), rawCsvData);
 			fis = new FileInputStream(tmpFile);
-			saveCsvFileIfWanted(tmpFile, tmpFilePrefix);
 			consumer.accept(fis);
+			log.info("Successfully consumed csv tmp file: " + tmpFile.getAbsolutePath());
+			saveCsvFileIfWanted(tmpFile, tmpFilePrefix);
 		} catch (IOException e) {
-			log.error("An exception occured while processing csv tmp file", e);
+			log.error("An exception occurred while creating csv tmp file", e);
+		} catch (ServiceException e) {
+			if (tmpFile != null && tmpFile.exists()) {
+				log.error("An exception occurred while working with csv tmp file: " + tmpFile.getAbsolutePath(), e);
+			}
+			throw e;
 		} finally {
 			IOUtils.closeQuietly(fis);
 			if (tmpFile != null && tmpFile.exists()) {
@@ -75,9 +82,10 @@ public abstract class CsvFileDownloadService {
 		try {
 			String pointInTimeOfSave = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss"));
 			File fileToSave = new File(path, prefix + "_" + pointInTimeOfSave + ".csv");
-			FileUtils.copyFile(downloadedCsvFile, fileToSave);
+			byte[] bytes = FileUtils.readFileToByteArray(downloadedCsvFile);
+			Files.write(fileToSave.toPath(), bytes);
 			log.info("Saved csv file: " + fileToSave.getAbsolutePath());
-			grantFullAccessOnWindows(fileToSave);
+			//grantFullAccessOnWindows(fileToSave);
 		} catch (IOException e) {
 			log.error("Failed copying temp csv file to wanted destination.", e);
 		}

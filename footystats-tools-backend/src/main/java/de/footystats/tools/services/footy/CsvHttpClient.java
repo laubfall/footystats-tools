@@ -9,6 +9,7 @@ import de.footystats.tools.services.settings.SettingsRepository;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -71,9 +72,8 @@ public class CsvHttpClient {
 		if (validCookieFor.isPresent()) {
 			return validCookieFor.get();
 		}
-
 		try {
-			final URL url = new URL(properties.getWebpage().getBaseUrl() + properties.getWebpage().getLoginRessource());
+			final URL url = URI.create(properties.getWebpage().getBaseUrl() + properties.getWebpage().getLoginRessource()).toURL();
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection) con;
 			http.setRequestMethod("POST"); // PUT is another valid option
