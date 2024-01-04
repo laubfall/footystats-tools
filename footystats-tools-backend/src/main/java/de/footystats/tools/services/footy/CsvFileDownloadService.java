@@ -7,18 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclEntryPermission;
-import java.nio.file.attribute.AclEntryType;
-import java.nio.file.attribute.AclFileAttributeView;
-import java.nio.file.attribute.UserPrincipal;
-import java.nio.file.attribute.UserPrincipalLookupService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
@@ -85,36 +75,8 @@ public abstract class CsvFileDownloadService {
 			byte[] bytes = FileUtils.readFileToByteArray(downloadedCsvFile);
 			Files.write(fileToSave.toPath(), bytes);
 			log.info("Saved csv file: " + fileToSave.getAbsolutePath());
-			//grantFullAccessOnWindows(fileToSave);
 		} catch (IOException e) {
 			log.error("Failed copying temp csv file to wanted destination.", e);
-		}
-	}
-
-	// Check if os is windows, if so, grant full access to the file.
-	private void grantFullAccessOnWindows(File file) {
-		if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-			// https://stackoverflow.com/questions/664432/how-do-i-programmatically-change-file-permissions
-			Path filePath = Paths.get(file.getAbsolutePath());
-			AclFileAttributeView aclAttr = Files.getFileAttributeView(filePath, AclFileAttributeView.class);
-
-			UserPrincipalLookupService upls = filePath.getFileSystem().getUserPrincipalLookupService();
-			UserPrincipal user;
-
-			try {
-				user = upls.lookupPrincipalByName(System.getProperty("user.name"));
-				AclEntry.Builder builder = AclEntry.newBuilder();
-				builder.setPermissions(EnumSet.of(AclEntryPermission.READ_DATA, AclEntryPermission.EXECUTE,
-					AclEntryPermission.READ_ACL, AclEntryPermission.READ_ATTRIBUTES, AclEntryPermission.READ_NAMED_ATTRS,
-					AclEntryPermission.WRITE_ACL, AclEntryPermission.DELETE
-				));
-				builder.setPrincipal(user);
-				builder.setType(AclEntryType.ALLOW);
-				aclAttr.setAcl(Collections.singletonList(builder.build()));
-				log.info("Granted full access to file: " + file.getAbsolutePath());
-			} catch (IOException e) {
-				log.error("Failed granting full access to file: " + file.getAbsolutePath(), e);
-			}
 		}
 	}
 }
