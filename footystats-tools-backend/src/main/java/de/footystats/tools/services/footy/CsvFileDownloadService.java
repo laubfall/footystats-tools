@@ -40,7 +40,7 @@ public abstract class CsvFileDownloadService {
 			FileUtils.writeLines(tmpFile, StandardCharsets.UTF_8.name(), rawCsvData);
 			fis = new FileInputStream(tmpFile);
 			consumer.accept(fis);
-			log.info("Successfully consumed csv tmp file: " + tmpFile.getAbsolutePath());
+			log.info("Successfully consumed csv tmp file: " + tmpFile.getAbsoluteFile().getAbsolutePath());
 			saveCsvFileIfWanted(tmpFile, tmpFilePrefix);
 		} catch (IOException e) {
 			log.error("An exception occurred while creating csv tmp file", e);
