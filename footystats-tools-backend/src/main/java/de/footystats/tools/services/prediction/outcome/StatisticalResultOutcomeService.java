@@ -13,19 +13,15 @@ import de.footystats.tools.services.prediction.quality.view.PredictionQualityVie
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Scope("prototype")
-// Service holds a cache that depends on data that can change during runtime. So create it every time the service is injected.
 public class StatisticalResultOutcomeService {
 
 	private final BetPredictionQualityRepository betPredictionAggregateRepository;
@@ -33,9 +29,6 @@ public class StatisticalResultOutcomeService {
 	private final PredictionQualityService predictionQualityService;
 
 	private final PredictionQualityViewService predictionQualityViewService;
-
-	// Replace with Spring cache?
-	private final Map<InfluencerPredictionCacheKey, Map<String, List<BetPredictionQualityInfluencerAggregate>>> influencerPredictionCache = new HashMap<>();
 
 	/**
 	 * Constructor.
@@ -82,7 +75,7 @@ public class StatisticalResultOutcomeService {
 			if (!PrecheckResult.OK.equals(influencerResult.precheckResult())) {
 				continue;
 			}
-			final List<BetPredictionQualityInfluencerAggregate> aggregates = influencerDistributionByCache(bet, result,
+			final List<BetPredictionQualityInfluencerAggregate> aggregates = influencerDistributionByCache(bet,
 				influencerResult.influencerName());
 			final Optional<BetPredictionQualityInfluencerAggregate> measured = aggregates.stream()
 				.filter(a -> a.predictionPercent().equals(influencerResult.influencerPredictionValue())).findFirst();
@@ -151,21 +144,13 @@ public class StatisticalResultOutcomeService {
 	 * Checks the cache for influencer calculations for one specific prediction result and one type of bet.
 	 *
 	 * @param bet            Mandatory. The type of bet we are looking for a specific prediction result.
-	 * @param result         Mandatory. The result we are looking for.
 	 * @param influencerName Mandatory. The name of the influencer we are looking for.
 	 * @return List of prediction values the influencer calculated. Empty list if for the chosen bet and prediction result the influencer did not made
 	 * any predictions.
 	 */
-	private List<BetPredictionQualityInfluencerAggregate> influencerDistributionByCache(Bet bet, PredictionResult result, String influencerName) {
-		var cacheKey = new InfluencerPredictionCacheKey(bet, result.betOnThis());
-		Map<String, List<BetPredictionQualityInfluencerAggregate>> matching;
-		if (influencerPredictionCache.containsKey(cacheKey)) {
-			matching = influencerPredictionCache.get(cacheKey);
-		} else {
-			matching = predictionQualityViewService.influencerPredictionsAggregated(bet,
-				predictionQualityService.latestRevision());
-			influencerPredictionCache.put(cacheKey, matching);
-		}
+	private List<BetPredictionQualityInfluencerAggregate> influencerDistributionByCache(Bet bet, String influencerName) {
+		Map<String, List<BetPredictionQualityInfluencerAggregate>> matching = predictionQualityViewService.influencerPredictionsAggregated(bet,
+			predictionQualityService.latestRevision());
 
 		var influencerPredictions = matching.get(influencerName);
 		if (influencerPredictions == null) {
@@ -192,10 +177,6 @@ public class StatisticalResultOutcomeService {
 
 	private double calcStatisticalMatchOutcome(Long success, Long failed) {
 		return (double) success / (double) (success + failed);
-	}
-
-	record InfluencerPredictionCacheKey(Bet bet, boolean betOnThis) {
-
 	}
 
 	record IntermediateRankingInfo(double statisticalOutcome, int predictionPercent) {
