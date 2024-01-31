@@ -65,6 +65,9 @@ public class LiveAndHotController {
 
 	private Bet hotBet(Match match, Bet bet) {
 		StatisticalResultOutcome outcome = statisticalResultOutcomeService.compute(match.forBet(bet), bet);
+		if (outcome == null) {
+			return null;
+		}
 		if (determineInterestingMatch(outcome)) {
 			return bet;
 		}

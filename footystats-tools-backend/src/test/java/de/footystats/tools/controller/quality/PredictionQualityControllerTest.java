@@ -1,7 +1,10 @@
 package de.footystats.tools.controller.quality;
 
-import de.footystats.tools.services.match.MatchRepository;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import de.footystats.tools.controller.BaseControllerTest;
+import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -12,9 +15,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 class PredictionQualityControllerTest extends BaseControllerTest {
@@ -39,14 +39,14 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
+			.andExpect(jsonPath("$.betPredictionResults", IsNull.notNullValue()))
+			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 			.andExpect(status().isOk());
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults", IsNull.notNullValue()))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
+			.andExpect(jsonPath("$.betPredictionResults", IsNull.notNullValue()))
+			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 	}
 }

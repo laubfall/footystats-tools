@@ -1,5 +1,11 @@
 package de.footystats.tools.controller.live;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import de.footystats.tools.controller.BaseControllerTest;
@@ -12,6 +18,7 @@ import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcomeS
 import de.footystats.tools.services.stats.MatchStatus;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +34,13 @@ class LiveAndHotControllerTest extends BaseControllerTest {
 	@MockBean
 	private StatisticalResultOutcomeService statisticalResultOutcomeService;
 
+	@BeforeEach
+	void cleanup() {
+		matchRepository.deleteAll();
+	}
+
 	@Test
 	void found_some_hot_bets() throws Exception {
-
 		var country = domainDataService.countryByName("germany");
 		var started = LocalDateTime.now().minusMinutes(30);
 		long unix = started.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
@@ -47,11 +58,45 @@ class LiveAndHotControllerTest extends BaseControllerTest {
 				.awayTeam("away4").homeTeam("home").build());
 
 		Mockito.when(statisticalResultOutcomeService.compute(Mockito.any(), Mockito.eq(Bet.OVER_ZERO_FIVE)))
-			.thenReturn(new StatisticalResultOutcome(Bet.OVER_ZERO_FIVE, 0.9, new Ranking(1, 34, true, true), null))
-			.thenReturn(null, null, null);
+			.thenReturn(new StatisticalResultOutcome(Bet.OVER_ZERO_FIVE, 0.9, new Ranking(1, 34, true, true), null), // hot
+				new StatisticalResultOutcome(Bet.OVER_ZERO_FIVE, 0.9, new Ranking(1, 34, false, true), null), // not hot
+				null, null);
+
+		Mockito.when(statisticalResultOutcomeService.compute(Mockito.any(), Mockito.eq(Bet.OVER_ONE_FIVE)))
+			.thenReturn(new StatisticalResultOutcome(Bet.OVER_ONE_FIVE, 0.94, new Ranking(1, 20, true, true), null), // hot
+				null, null, null);
 
 		mockMvc.perform(RestDocumentationRequestBuilders
 				.get("/match/liveandhot").contentType(MediaType.APPLICATION_JSON))
+			.andDo(rh -> System.out.println(rh.getResponse().getContentAsString()))
+			.andExpect(jsonPath("$", notNullValue()))
+			.andExpect(jsonPath("$", hasSize(1)))
+			.andExpect(jsonPath("$[0].homeTeam", equalTo("home")))
+			.andExpect(jsonPath("$[0].awayTeam", equalTo("away")))
+			.andExpect(jsonPath("$[0].country", equalTo("germany")))
+			.andExpect(jsonPath("$[0].hotBets", notNullValue()))
+			.andExpect(jsonPath("$[0].hotBets", hasSize(2)))
+			.andExpect(jsonPath("$[0].hotBets", containsInAnyOrder("OVER_ZERO_FIVE", "OVER_ONE_FIVE")))
 			.andExpect(status().isOk());
+	}
+
+	@Test
+	void hot_bet_but_match_lays_in_the_past() throws Exception {
+		var country = domainDataService.countryByName("germany");
+		var started = LocalDateTime.now().minusDays(1);
+		long unix = started.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
+		matchRepository.save(
+			Match.builder().state(MatchStatus.complete).country(country).dateGMT(started).dateUnix(unix)
+				.awayTeam("away").homeTeam("home").build());
+
+		Mockito.when(statisticalResultOutcomeService.compute(Mockito.any(), Mockito.eq(Bet.OVER_ZERO_FIVE)))
+			.thenReturn(new StatisticalResultOutcome(Bet.OVER_ZERO_FIVE, 0.9,
+				new Ranking(1, 34, true, true), null));
+
+		mockMvc.perform(RestDocumentationRequestBuilders
+				.get("/match/liveandhot").contentType(MediaType.APPLICATION_JSON))
+			.andDo(rh -> System.out.println(rh.getResponse().getContentAsString()))
+			.andExpect(jsonPath("$", notNullValue()))
+			.andExpect(jsonPath("$", empty()));
 	}
 }
