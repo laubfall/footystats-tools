@@ -4,6 +4,8 @@ import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchSearch;
 import de.footystats.tools.services.match.MatchService;
 import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.outcome.InfluencerStatisticalResultOutcome;
+import de.footystats.tools.services.prediction.outcome.Ranking;
 import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcome;
 import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcomeService;
 import java.time.LocalDateTime;
@@ -80,8 +82,15 @@ public class LiveAndHotController {
 			return false;
 		}
 
-		// TODO what about the influencer rankings?
+		long b10InfluencerCount = 0;
+		if (statisticalResultOutcome.influencerStatisticalResultOutcomes() != null) {
+			b10InfluencerCount = statisticalResultOutcome.influencerStatisticalResultOutcomes()
+				.stream()
+				.map(InfluencerStatisticalResultOutcome::ranking)
+				.filter(Ranking::best10Percent)
+				.count();
+		}
 
-		return statisticalResultOutcome.ranking().best10Percent();
+		return statisticalResultOutcome.ranking().best10Percent() || b10InfluencerCount > 0;
 	}
 }

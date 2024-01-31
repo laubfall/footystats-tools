@@ -12,12 +12,15 @@ import de.footystats.tools.controller.BaseControllerTest;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.outcome.InfluencerStatisticalResultOutcome;
 import de.footystats.tools.services.prediction.outcome.Ranking;
 import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcome;
 import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcomeService;
 import de.footystats.tools.services.stats.MatchStatus;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -98,5 +101,35 @@ class LiveAndHotControllerTest extends BaseControllerTest {
 			.andDo(rh -> System.out.println(rh.getResponse().getContentAsString()))
 			.andExpect(jsonPath("$", notNullValue()))
 			.andExpect(jsonPath("$", empty()));
+	}
+
+	@Test
+	void hot_bet_because_influencer_result() throws Exception {
+		var country = domainDataService.countryByName("germany");
+		var started = LocalDateTime.now().minusMinutes(30);
+		long unix = started.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
+		matchRepository.save(
+			Match.builder().state(MatchStatus.complete).country(country).dateGMT(started).dateUnix(unix)
+				.awayTeam("somewhere").homeTeam("anywhere").build());
+
+		Mockito.when(statisticalResultOutcomeService.compute(Mockito.any(), Mockito.eq(Bet.OVER_ONE_FIVE)))
+			.thenReturn(new StatisticalResultOutcome(Bet.OVER_ONE_FIVE, 0.94, new Ranking(1, 20, false, true),
+					List.of(new InfluencerStatisticalResultOutcome("someInfluencer", 0.9, new Ranking(2, 40, true, true)))), // hot
+				new StatisticalResultOutcome(Bet.OVER_ONE_FIVE, 0.94, new Ranking(1, 20, false, true), // not hot
+					List.of(new InfluencerStatisticalResultOutcome("someInfluencer", 0.9, new Ranking(2, 40, false, true)))),
+				null, null);
+
+		mockMvc.perform(RestDocumentationRequestBuilders
+				.get("/match/liveandhot").contentType(MediaType.APPLICATION_JSON))
+			.andDo(rh -> System.out.println(rh.getResponse().getContentAsString()))
+			.andExpect(jsonPath("$", notNullValue()))
+			.andExpect(jsonPath("$", hasSize(1)))
+			.andExpect(jsonPath("$[0].homeTeam", equalTo("anywhere")))
+			.andExpect(jsonPath("$[0].awayTeam", equalTo("somewhere")))
+			.andExpect(jsonPath("$[0].country", equalTo("germany")))
+			.andExpect(jsonPath("$[0].hotBets", notNullValue()))
+			.andExpect(jsonPath("$[0].hotBets", hasSize(1)))
+			.andExpect(jsonPath("$[0].hotBets", Matchers.contains("OVER_ONE_FIVE")))
+			.andExpect(status().isOk());
 	}
 }
