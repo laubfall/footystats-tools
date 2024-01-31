@@ -5,8 +5,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.InfluencerResult;
@@ -43,15 +41,6 @@ class MatchControllerTest extends BaseControllerTest {
 
 	@Autowired
 	private MatchStatsRepository matchStatsRepository;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private DomainDataService domainDataService;
 
 	@AfterEach
 	public void cleanUp() {

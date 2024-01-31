@@ -1,6 +1,7 @@
 package de.footystats.tools.services.prediction.outcome;
 
 import de.footystats.tools.services.prediction.Bet;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,6 +13,6 @@ import java.util.List;
  *                                            prediction.
  */
 public record StatisticalResultOutcome(Bet bet, Double betStatisticalSuccess, Ranking ranking,
-									   List<InfluencerStatisticalResultOutcome> influencerStatisticalResultOutcomes) {
+									   List<InfluencerStatisticalResultOutcome> influencerStatisticalResultOutcomes) implements Serializable {
 
 }
