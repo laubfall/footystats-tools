@@ -1,5 +1,6 @@
 apis/FootyStatsCsvUploadControllerApi.ts
 apis/JobInformationControllerApi.ts
+apis/LiveAndHotControllerApi.ts
 apis/MatchControllerApi.ts
 apis/MatchStatsControllerApi.ts
 apis/PredictionQualityControllerApi.ts
@@ -15,6 +16,7 @@ models/InfluencerResult.ts
 models/InfluencerStatisticalResultOutcome.ts
 models/JobInformation.ts
 models/ListMatchRequest.ts
+models/LiveAndHotMatches.ts
 models/MatchListElement.ts
 models/MatchStats.ts
 models/ObjectId.ts

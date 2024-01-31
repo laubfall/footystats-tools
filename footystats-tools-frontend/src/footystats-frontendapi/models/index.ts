@@ -9,6 +9,7 @@ export * from './InfluencerResult';
 export * from './InfluencerStatisticalResultOutcome';
 export * from './JobInformation';
 export * from './ListMatchRequest';
+export * from './LiveAndHotMatches';
 export * from './MatchListElement';
 export * from './MatchStats';
 export * from './ObjectId';
