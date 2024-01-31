@@ -16,6 +16,7 @@ import { ObsJobProgressBar } from "./progress/JobProgressBar";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import LiveAndHotView from "./liveandhot/LiveAndHotView";
 
 const FootyStatsTools = () => {
 	const ObsMessages = observer(() => (
@@ -50,8 +51,9 @@ const FootyStatsTools = () => {
 					<Routes>
 						<Route
 							path="/"
-							element={<Navigate replace to={"/matchList"} />}
+							element={<Navigate replace to={"/liveandhot"} />}
 						/>
+						<Route path="liveandhot" element={<LiveAndHotView />} />
 						<Route path="matchList" element={<MatchesView />} />
 						<Route
 							path="predictionQuality"

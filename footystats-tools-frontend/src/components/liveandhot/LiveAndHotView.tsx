@@ -17,7 +17,7 @@ export const LiveAndHotView = () => {
 		api.list()
 			.then(setLiveAndHot)
 			.catch(apiCatchReasonHandler)
-			.finally(LoadingOverlayStore.notLoadingNow);
+			.finally(() => LoadingOverlayStore.notLoadingNow());
 	}, []);
 
 	if (liveAndHot?.length === 0) {

@@ -14,6 +14,7 @@ export const TableWithLiveAndHotMatches: Story = {
 	args: {
 		matches: [
 			{
+				start: new Date(),
 				awayTeam: "Frankfurt",
 				homeTeam: "Bayern",
 				country: { countryNameByFootystats: "Germany" },

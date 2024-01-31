@@ -59,7 +59,7 @@ public class LiveAndHotController {
 			if (hotBets.isEmpty()) {
 				continue;
 			}
-			result.add(new LiveAndHotMatches(match.getHomeTeam(), match.getAwayTeam(), match.getCountry(), hotBets));
+			result.add(new LiveAndHotMatches(match.getDateGMT(), match.getHomeTeam(), match.getAwayTeam(), match.getCountry(), hotBets));
 		}
 
 		return result;

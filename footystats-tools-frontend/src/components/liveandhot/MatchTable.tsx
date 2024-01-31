@@ -31,6 +31,7 @@ export const MatchTable = ({ matches }: MatchTableProps) => {
 				{matches.map((m) => {
 					return (
 						<tr key={uniqueId()}>
+							<td>{m.start.toLocaleString()}</td>
 							<td>{m.homeTeam}</td>
 							<td>{m.awayTeam}</td>
 							<td>{m.country.countryNameByFootystats}</td>

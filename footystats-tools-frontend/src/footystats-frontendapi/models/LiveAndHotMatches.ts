@@ -28,6 +28,12 @@ import {
 export interface LiveAndHotMatches {
     /**
      * 
+     * @type {Date}
+     * @memberof LiveAndHotMatches
+     */
+    start?: Date;
+    /**
+     * 
      * @type {string}
      * @memberof LiveAndHotMatches
      */
@@ -84,6 +90,7 @@ export function LiveAndHotMatchesFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
+        'start': !exists(json, 'start') ? undefined : (new Date(json['start'])),
         'homeTeam': !exists(json, 'homeTeam') ? undefined : json['homeTeam'],
         'awayTeam': !exists(json, 'awayTeam') ? undefined : json['awayTeam'],
         'country': !exists(json, 'country') ? undefined : CountryFromJSON(json['country']),
@@ -100,6 +107,7 @@ export function LiveAndHotMatchesToJSON(value?: LiveAndHotMatches | null): any {
     }
     return {
         
+        'start': value.start === undefined ? undefined : (value.start.toISOString()),
         'homeTeam': value.homeTeam,
         'awayTeam': value.awayTeam,
         'country': CountryToJSON(value.country),
