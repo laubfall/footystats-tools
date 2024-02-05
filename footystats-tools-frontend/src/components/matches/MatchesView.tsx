@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
@@ -230,7 +230,9 @@ export const MatchesView = () => {
 
 	return (
 		<>
-			<MatchFilterHoc somethingChanged={setFilter} />
+			<Container>
+				<MatchFilterHoc somethingChanged={setFilter} />
+			</Container>
 
 			<MatchList
 				entries={matches}

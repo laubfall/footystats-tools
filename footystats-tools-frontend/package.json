@@ -104,6 +104,7 @@
 		"react-router": "^6.4.0",
 		"react-router-dom": "^6.4.0",
 		"react-select": "^5.4.0",
+		"react-timer-hook": "^3.0.7",
 		"recharts": "^2.1.14",
 		"styled-components": "^5.3.6",
 		"yup": "^0.32.11"
