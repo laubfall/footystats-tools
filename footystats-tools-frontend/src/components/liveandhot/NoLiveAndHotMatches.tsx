@@ -4,7 +4,7 @@ import translate from "../../i18n/translate";
 
 export const NoLiveAndHotMatches = () => {
 	return (
-		<Alert variant="success">
+		<Alert variant="info">
 			<Alert.Heading>
 				{translate("renderer.liveandhot.noliveandhotmatches.header")}
 			</Alert.Heading>

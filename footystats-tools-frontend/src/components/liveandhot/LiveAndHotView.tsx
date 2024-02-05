@@ -7,6 +7,8 @@ import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 import { apiCatchReasonHandler } from "../functions";
 import NoLiveAndHotMatches from "./NoLiveAndHotMatches";
 import MatchTable from "./MatchTable";
+import { Alert } from "react-bootstrap";
+import translate from "../../i18n/translate";
 
 export const LiveAndHotView = () => {
 	const [liveAndHot, setLiveAndHot] = useState<LiveAndHotMatches[]>([]);
@@ -24,7 +26,17 @@ export const LiveAndHotView = () => {
 		return <NoLiveAndHotMatches />;
 	}
 
-	return <MatchTable matches={liveAndHot} />;
+	return (
+		<>
+			<Alert variant="success">
+				<Alert.Heading>
+					{translate("renderer.liveandhot.view.alert.header")}
+				</Alert.Heading>
+				<p>{translate("renderer.liveandhot.view.alert.text")}</p>
+			</Alert>
+			<MatchTable matches={liveAndHot} />;
+		</>
+	);
 };
 
 export default LiveAndHotView;

@@ -38,7 +38,13 @@ export const MatchTable = ({ matches }: MatchTableProps) => {
 							<td>
 								<ul>
 									{Array.from(m.hotBets).map((hb) => {
-										return <li key={uniqueId()}>{hb}</li>;
+										return (
+											<li key={uniqueId()}>
+												{translate(
+													`renderer.liveandhot.matchtable.col.hotbets.${hb}`,
+												)}
+											</li>
+										);
 									})}
 								</ul>
 							</td>
