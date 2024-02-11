@@ -11,7 +11,7 @@ setup.
 
 ### Requirements
 
-* Java 17 JDK
+* Java 21 JDK
 * Node.js 18
 * Maven
 * Docker
@@ -123,7 +123,7 @@ bitmask to 3 and so on. If you don't want to download any file set the bitmask t
 
 ### Requirements
 
-* Java 17 JDK
+* Java 21 JDK
 * Node.js 18
 * MongoDB Replica Set
 * Footystats-Tools Build (Frontend / Backend)

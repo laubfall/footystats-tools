@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Endpoint that provides information about running matches with bets that have a high probability of success.
+ */
 @RestController
 @RequestMapping("/match")
 public class LiveAndHotController {
