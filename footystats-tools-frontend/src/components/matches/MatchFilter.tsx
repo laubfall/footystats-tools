@@ -245,23 +245,21 @@ export const MatchFilterHoc = (props: MatchFilterHocProps) => {
 	}
 
 	return (
-		<>
-			<MatchFilter
-				leagues={leagues}
-				countries={countries}
-				selectedCountry={selectedCountry}
-				teamSearch={teamSearch}
-				teamSearchChanged={onTeamSearchChanged}
-				countryChanged={onChangeCountry}
-				currentMatches={currentMatches}
-				currentMatchesChanged={onCurrentMatches}
-				leagueChanged={onChangeLeague}
-				timeFromChanged={onTimeFromChanged}
-				timeUntilChanged={onTimeUntilChanged}
-				timeFrom={timeFrom}
-				timeUntil={timeUntil}
-			/>
-		</>
+		<MatchFilter
+			leagues={leagues}
+			countries={countries}
+			selectedCountry={selectedCountry}
+			teamSearch={teamSearch}
+			teamSearchChanged={onTeamSearchChanged}
+			countryChanged={onChangeCountry}
+			currentMatches={currentMatches}
+			currentMatchesChanged={onCurrentMatches}
+			leagueChanged={onChangeLeague}
+			timeFromChanged={onTimeFromChanged}
+			timeUntilChanged={onTimeUntilChanged}
+			timeFrom={timeFrom}
+			timeUntil={timeUntil}
+		/>
 	);
 };
 

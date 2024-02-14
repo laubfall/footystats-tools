@@ -44,7 +44,7 @@ export const LiveAndHotView = () => {
 	}, [expired]);
 
 	const RefreshBorder = ({ children }: { children: React.ReactNode }) => (
-		<Container>
+		<Container className={"m-4"}>
 			{children}
 			<Row>
 				<Col>
