@@ -6,6 +6,9 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caches session cookies for users.
+ */
 @Slf4j
 @Service
 public class SessionCookieCache {
@@ -38,4 +41,14 @@ public class SessionCookieCache {
 		}
 	}
 
+	public void invalidateCookie(String username) {
+		synchronized (cookies) {
+			if (cookies.containsKey(username)) {
+				cookies.remove(username);
+				log.info("Invalidated (removed from cache) cookie for user {}", username);
+			} else {
+				log.info("No cookie for user {} to invalidate.", username);
+			}
+		}
+	}
 }
