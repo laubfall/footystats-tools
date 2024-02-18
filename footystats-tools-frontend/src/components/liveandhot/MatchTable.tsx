@@ -10,6 +10,9 @@ export const MatchTable = ({ matches }: MatchTableProps) => {
 			<thead>
 				<tr>
 					<th>
+						{translate("renderer.liveandhot.matchtable.col.start")}
+					</th>
+					<th>
 						{translate("renderer.liveandhot.matchtable.col.home")}
 					</th>
 					<th>
