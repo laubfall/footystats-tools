@@ -1,5 +1,6 @@
 package de.footystats.tools.controller.live;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.prediction.Bet;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Set;
  * @param country  country of the match
  * @param hotBets  set of hot bets for the match. Hot bets are those with a high statistical result outcome.
  */
-public record LiveAndHotMatches(LocalDateTime start, String homeTeam, String awayTeam, Country country, Set<Bet> hotBets) {
+public record LiveAndHotMatches(@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'") LocalDateTime start, String homeTeam, String awayTeam, Country country,
+								Set<Bet> hotBets) {
 
 }

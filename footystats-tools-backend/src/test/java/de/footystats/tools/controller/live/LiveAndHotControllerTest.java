@@ -19,6 +19,7 @@ import de.footystats.tools.services.prediction.outcome.StatisticalResultOutcomeS
 import de.footystats.tools.services.stats.MatchStatus;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,6 +125,7 @@ class LiveAndHotControllerTest extends BaseControllerTest {
 			.andDo(rh -> System.out.println(rh.getResponse().getContentAsString()))
 			.andExpect(jsonPath("$", notNullValue()))
 			.andExpect(jsonPath("$", hasSize(1)))
+			.andExpect(jsonPath("$[0].start", equalTo(started.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm'Z'")))))
 			.andExpect(jsonPath("$[0].homeTeam", equalTo("anywhere")))
 			.andExpect(jsonPath("$[0].awayTeam", equalTo("somewhere")))
 			.andExpect(jsonPath("$[0].country", equalTo("germany")))

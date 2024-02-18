@@ -7,6 +7,9 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class used to represent a match with statistical result outcomes.
+ */
 public class MatchListElement extends Match implements Serializable {
 
 	@Getter

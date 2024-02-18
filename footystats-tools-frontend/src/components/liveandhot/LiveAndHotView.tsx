@@ -76,7 +76,7 @@ export const LiveAndHotView = () => {
 				</Alert.Heading>
 				<p>{translate("renderer.liveandhot.view.alert.text")}</p>
 			</Alert>
-			<MatchTable matches={liveAndHot} />;
+			<MatchTable matches={liveAndHot} />
 		</RefreshBorder>
 	);
 };
