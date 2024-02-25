@@ -1,5 +1,6 @@
 package de.footystats.tools.controller.quality;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,7 +43,8 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.betPredictionResults", IsNull.notNullValue()))
 			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jobId", equalTo(1)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())

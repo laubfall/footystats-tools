@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 @WebMvcTest
 @ContextConfiguration(classes = {Configuration.class})
-@AutoConfigureDataJpa // Set up the transactionmanager used by spring batch.
+@AutoConfigureDataJpa // Set up the transaction manager used by spring batch.
 @AutoConfigureTestDatabase // Set up the datasource used by spring batch.
 @AutoConfigureDataMongo
 public abstract class BaseControllerTest {
