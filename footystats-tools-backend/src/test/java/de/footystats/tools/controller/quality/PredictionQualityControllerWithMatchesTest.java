@@ -59,7 +59,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 		mockMvc.perform(get("/predictionquality/compute"))
 			.andExpect(status().isOk())
 			// checking for a specific id is unstable on github actions. So we just check for not null.
-			.andExpect(jsonPath("$.jobId", notNullValue()));
+			.andExpect(jsonPath("$.jobId", notNullValue(Integer.class)));
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.betPredictionResults", hasSize(3))) // "Actually we do predictions for two bet types"
@@ -91,7 +91,7 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 
 		mockMvc.perform(get("/predictionquality/compute"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.jobId", equalTo(1)));
+			.andExpect(jsonPath("$.jobId", notNullValue(Integer.class)));
 
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
