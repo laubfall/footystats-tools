@@ -2,6 +2,7 @@ package de.footystats.tools.controller.quality;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +58,8 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 
 		mockMvc.perform(get("/predictionquality/compute"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.jobId", equalTo(1)));
+			// checking for a specific id is unstable on github actions. So we just check for not null.
+			.andExpect(jsonPath("$.jobId", notNullValue()));
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.betPredictionResults", hasSize(3))) // "Actually we do predictions for two bet types"

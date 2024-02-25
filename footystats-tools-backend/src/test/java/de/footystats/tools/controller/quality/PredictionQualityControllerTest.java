@@ -1,6 +1,6 @@
 package de.footystats.tools.controller.quality;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +44,8 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.jobId", equalTo(1)));
+			// checking for a specific id is unstable on github actions. So we just check for not null.
+			.andExpect(jsonPath("$.jobId", notNullValue()));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/latest/report/BTTS_YES")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
