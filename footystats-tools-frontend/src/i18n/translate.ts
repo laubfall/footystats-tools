@@ -1,8 +1,8 @@
-import * as i18n from './translations/de.json';
-
 const substitutionStartTag = "{";
 
 const substitutionEndTag = "}";
+
+let i18n = {};
 
 export default function translate(
 	key: string,
@@ -21,3 +21,21 @@ export default function translate(
 
 	return translation;
 }
+
+export const initialize = async (locale?: Intl.Locale) => {
+	switch (locale.language) {
+		case "de":
+			{
+				i18n = await import(`./translations/de.json`);
+			}
+			break;
+		case "en":
+			{
+				i18n = await import(`./translations/en.json`);
+			}
+			break;
+		default: {
+			i18n = await import(`./translations/de.json`);
+		}
+	}
+};
