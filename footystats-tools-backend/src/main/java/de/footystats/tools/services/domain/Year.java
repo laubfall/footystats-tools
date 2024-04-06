@@ -1,13 +1,13 @@
-package de.footystats.tools.services.stats;
+package de.footystats.tools.services.domain;
 
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public final class Year {
+public final class Year implements Comparable<Year> {
 
 	@Getter
-	private int year;
+	private final int year;
 
 	public Year(int year) {
 		this.year = year;
@@ -34,5 +34,10 @@ public final class Year {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).append(year).toHashCode();
+	}
+
+	@Override
+	public int compareTo(Year o) {
+		return Integer.compare(year, o.year);
 	}
 }

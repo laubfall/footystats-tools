@@ -6,6 +6,7 @@ import com.opencsv.bean.CsvDate;
 import de.footystats.tools.services.csv.FloatConverter;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.CountryCsvConverter;
+import de.footystats.tools.services.prediction.heatmap.HeatMapped;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +54,7 @@ public class MatchStats {
 	private Float awayTeamPointsPerGameCurrent;
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Goals")
 	private Float averageGoals;
+	@HeatMapped(heatMappedProperty = "bttsAverage")
 	@CsvBindByName(column = "BTTS Average")
 	private Integer bTTSAverage;
 	@CsvBindByName(column = "Over05 Average")

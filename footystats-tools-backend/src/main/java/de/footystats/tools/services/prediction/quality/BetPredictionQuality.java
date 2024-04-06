@@ -24,31 +24,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(name = "influencerDistribution", def = "{'influencerDistribution.influencerName' : 1, 'influencerDistribution.predictionPercent' : 1}")
 @Document
 @Builder(toBuilder = true, access = AccessLevel.PUBLIC)
+@Getter
+@Setter
 public class BetPredictionQuality implements IBetPredictionBaseData {
 
 	@Id
-	@Getter
-	@Setter
 	private String _id; // Mongo document id. Required in order to be able to delete this.
-	@Getter
-	@Setter
+
 	private PredictionQualityRevision revision;
-	@Getter
-	@Setter
+
 	private Bet bet;
-	@Getter
-	@Setter
+
 	private Long betSucceeded; // PredictionAnalyze.SUCCESS either for bet or don't bet
-	@Getter
-	@Setter
+
 	private Long betFailed; // PredictionAnalyze.FAILED either for bet or don't bet
-	@Getter
-	@Setter
+
 	private Integer predictionPercent;
-	@Getter
-	@Setter
+
 	private Long count; // Count of predictions for a bet with the same prediction percent value.
-	@Getter
-	@Setter
+
 	private List<InfluencerPercentDistribution> influencerDistribution; // The results of all influencers that participate at the computation of the prediction percent value.
 }
