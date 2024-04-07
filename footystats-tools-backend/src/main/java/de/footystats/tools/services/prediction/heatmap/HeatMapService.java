@@ -9,10 +9,9 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -37,11 +36,15 @@ public class HeatMapService {
 
 		var incrementUpdate = createIncrementUpdate(analyzeResult);
 
-		heatMapRelevant(containsStats).forEach(statsBetResultDistribution -> {
-			//statsBetResultDistribution.setBet(bet);
+		heatMapRelevant(containsStats).stream().map(s -> applyKey(s, key)).forEach(statsBetResultDistribution -> {
 			var query = Query.query(Criteria.byExample(Example.of(statsBetResultDistribution)));
 			mongoTemplate.upsert(query, incrementUpdate, StatsBetResultDistribution.class);
 		});
+	}
+
+	private StatsBetResultDistribution<?> applyKey(StatsBetResultDistribution<?> statsBetResultDistribution, StatsBetResultDistributionKey key) {
+		statsBetResultDistribution.setKey(key);
+		return statsBetResultDistribution;
 	}
 
 	Collection<StatsBetResultDistribution<?>> heatMapRelevant(Object containsStats) {
@@ -53,9 +56,9 @@ public class HeatMapService {
 				f.setAccessible(true);
 				var heatMapAnno = f.getAnnotation(HeatMapped.class);
 				final var value = f.get(containsStats);
-				statsBetResultDistributions.add(
-					StatsBetResultDistribution.builder().statsName(heatMapAnno.heatMappedProperty()).value(value).statsType(containsStats.getClass())
-						.build());
+				if (value != null) {
+					statsBetResultDistributions.add(createStatsBetResultDistribution(heatMapAnno.heatMappedProperty(), value));
+				}
 			} catch (IllegalAccessException e) {
 				log.error("Could not access field", e);
 			}
@@ -64,11 +67,21 @@ public class HeatMapService {
 		return statsBetResultDistributions;
 	}
 
-	private AggregationUpdate createIncrementUpdate(PredictionAnalyze analyzeResult) {
+	private <V> StatsBetResultDistribution<?> createStatsBetResultDistribution(String statsName,
+		V value) {
+		return switch (value) {
+			case Integer v -> IntegerStatsDistribution.builder().statsName(statsName).value(v).build();
+			case Double d -> DoubleStatsDistribution.builder().statsName(statsName).value(d).build();
+			case Float f -> FloatStatsDistribution.builder().statsName(statsName).value(f).build();
+			default -> throw new IllegalStateException("Unexpected value: " + value);
+		};
+	}
+
+	private Update createIncrementUpdate(PredictionAnalyze analyzeResult) {
 		var fieldToUpdate = "betSucceeded";
 		if (PredictionAnalyze.FAILED.equals(analyzeResult)) {
 			fieldToUpdate = "betFailed";
 		}
-		return AggregationUpdate.update().set(fieldToUpdate).toValue(ArithmeticOperators.valueOf(fieldToUpdate).add(1));
+		return new Update().inc(fieldToUpdate, 1);
 	}
 }

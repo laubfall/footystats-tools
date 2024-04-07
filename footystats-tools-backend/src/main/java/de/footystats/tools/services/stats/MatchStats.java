@@ -75,8 +75,10 @@ public class MatchStats {
 	private Integer over052HGAverage;
 	@CsvBindByName(column = "Over15 2HG Average")
 	private Integer over152HGAverage;
+	@HeatMapped(heatMappedProperty = "averageCorners")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Corners")
 	private Float averageCorners;
+	@HeatMapped(heatMappedProperty = "averageCards")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Cards")
 	private Float averageCards;
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Over 8dot5 Corners")

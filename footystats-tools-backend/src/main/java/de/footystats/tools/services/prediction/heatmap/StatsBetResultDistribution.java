@@ -1,19 +1,17 @@
 package de.footystats.tools.services.prediction.heatmap;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "statsBetResultDistribution")
-public class StatsBetResultDistribution<V> {
+public abstract sealed class StatsBetResultDistribution<V> permits DoubleStatsDistribution, FloatStatsDistribution, IntegerStatsDistribution {
 
 	public static final String DISCRIMINATOR_KEY = "_discriminator";
 
@@ -21,16 +19,13 @@ public class StatsBetResultDistribution<V> {
 	private String statsName;
 
 	// Count of successful predictions for a bet with the same stat value.
-	private Long betSucceeded;
+	private Long betSucceeded = 0L;
 
 	// Count of failed predictions for a bet with the same stat value.
-	private Long betFailed;
+	private Long betFailed = 0L;
 
 	// The value of the stat that is analyzed. E.g. 1.5 goals
 	private V value;
-
-	// The type of the stats entity that is analyzed. E.g. MatchStats.class
-	private Class<?> statsType;
 
 	// The key that identifies the stats entity that is analyzed. E.g. the bet, or country and bet.
 	private StatsBetResultDistributionKey key;
