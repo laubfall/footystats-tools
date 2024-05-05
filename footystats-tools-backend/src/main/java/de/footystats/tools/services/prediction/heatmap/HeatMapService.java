@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +28,12 @@ import org.springframework.stereotype.Service;
 public class HeatMapService {
 
 	private final MongoTemplate mongoTemplate;
-	private StatsBetResultDistributionRepository statsBetResultDistributionRepository;
 
 	public HeatMapService(MongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
 	}
 
 	public void trackHeatMapValue(StatsBetResultDistributionKey key, PredictionAnalyze analyzeResult, Object containsStats) {
-
 		if (!PredictionAnalyze.FAILED.equals(analyzeResult) && !PredictionAnalyze.SUCCESS.equals(analyzeResult)) {
 			log.info("No heat map calculation because analyze result is not failed or success");
 			return;
@@ -50,16 +47,6 @@ public class HeatMapService {
 			var query = Query.query(Criteria.byExample(Example.of(statsBetResultDistribution)));
 			mongoTemplate.upsert(query, incrementUpdate, StatsBetResultDistribution.class);
 		});
-	}
-
-	public List<StatsBetResultDistribution> findByKey(StatsBetResultDistributionKey key) {
-		Criteria keyCriteria = Criteria.where("key.bet").is(key.getBet()).andOperator(
-			Criteria.where("key.country").is(key.getCountry()),
-			Criteria.where("key.league").is(key.getLeague()),
-			Criteria.where("key.season").is(key.getSeason())
-		);
-
-		return mongoTemplate.find(Query.query(keyCriteria), StatsBetResultDistribution.class);
 	}
 
 	public <S> Optional<S> findByKey(StatsBetResultDistributionKey key, String statsName, Object value) {
@@ -105,7 +92,7 @@ public class HeatMapService {
 			case Integer v -> IntegerStatsDistribution.builder().statsName(statsName).value(v).build();
 			case Double d -> DoubleStatsDistribution.builder().statsName(statsName).value(d).build();
 			case Float f -> FloatStatsDistribution.builder().statsName(statsName).value(f).build();
-			default -> throw new IllegalStateException("Unexpected value: " + value);
+			default -> throw new IllegalStateException("Unexpected value type for statsBetResultDistribution entity: " + value);
 		};
 	}
 

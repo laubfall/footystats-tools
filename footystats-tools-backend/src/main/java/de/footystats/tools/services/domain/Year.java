@@ -40,4 +40,9 @@ public final class Year implements Comparable<Year> {
 	public int compareTo(Year o) {
 		return Integer.compare(year, o.year);
 	}
+
+	@Override
+	public String toString() {
+		return Integer.toString(year);
+	}
 }
