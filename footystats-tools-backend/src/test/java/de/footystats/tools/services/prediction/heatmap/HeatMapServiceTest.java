@@ -1,5 +1,9 @@
 package de.footystats.tools.services.prediction.heatmap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.prediction.heatmap.StatsBetResultDistributionKey.StatsBetResultDistributionKeyBuilder;
@@ -24,10 +28,13 @@ import org.springframework.test.context.ActiveProfiles;
 class HeatMapServiceTest {
 
 	@Autowired
+	private DomainDataService domainDataService;
+
+	@Autowired
 	private HeatMapService heatMapService;
 
 	@Autowired
-	private StatsBetResultDistributionRepository statsBetResultDistributionRepository;
+	private StatsBetResultDistributionRepository<IntegerStatsDistribution> statsBetResultDistributionRepository;
 
 	static Stream<Arguments> trackHeatMapValueArguments() {
 		return Stream.of(
@@ -46,7 +53,7 @@ class HeatMapServiceTest {
 
 		Optional<StatsBetResultDistribution<?>> bttsAverage = statsBetResultDistributions.stream().filter(s -> s.getStatsName().equals("bttsAverage"))
 			.findFirst();
-		Assertions.assertTrue(bttsAverage.isPresent());
+		assertTrue(bttsAverage.isPresent());
 	}
 
 	@MethodSource("trackHeatMapValueArguments")
@@ -56,15 +63,60 @@ class HeatMapServiceTest {
 		matchStats.setBTTSAverage(34);
 		final StatsBetResultDistributionKey key = new StatsBetResultDistributionKeyBuilder().bet(bet).build();
 		heatMapService.trackHeatMapValue(key, analyzeResult, matchStats);
-		List<StatsBetResultDistribution<?>> all = statsBetResultDistributionRepository.findAll().stream().filter(s -> s.getKey().getBet().equals(bet))
+		List<IntegerStatsDistribution> all = statsBetResultDistributionRepository.findAll().stream()
+			.filter(s -> s.getKey().getBet().equals(bet))
 			.toList();
-		Assertions.assertEquals(1, all.size());
+		assertEquals(1, all.size());
 		Assertions.assertFalse(all.isEmpty());
 		StatsBetResultDistribution<?> statsBetResultDistribution = all.getFirst();
 		Assertions.assertInstanceOf(IntegerStatsDistribution.class, statsBetResultDistribution);
-		Assertions.assertEquals("bttsAverage", statsBetResultDistribution.getStatsName());
-		Assertions.assertEquals(34, statsBetResultDistribution.getValue());
-		Assertions.assertEquals(succeeded, statsBetResultDistribution.getBetSucceeded());
-		Assertions.assertEquals(failed, statsBetResultDistribution.getBetFailed());
+		assertEquals("bttsAverage", statsBetResultDistribution.getStatsName());
+		assertEquals(34, statsBetResultDistribution.getValue());
+		assertEquals(succeeded, statsBetResultDistribution.getBetSucceeded());
+		assertEquals(failed, statsBetResultDistribution.getBetFailed());
+	}
+
+	@Test
+	void trackHeatMapValuesForDifferentLevels() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+
+		var lvl1 = builder.build();
+		var lvl2 = builder.country(domainDataService.countryByName("germany")).build();
+		var lvl3 = builder.country(domainDataService.countryByName("germany")).league("Bundesliga").build();
+		var matchStats = new MatchStats();
+		matchStats.setBTTSAverage(46);
+
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, matchStats);
+		heatMapService.trackHeatMapValue(lvl2, PredictionAnalyze.SUCCESS, matchStats);
+		heatMapService.trackHeatMapValue(lvl3, PredictionAnalyze.SUCCESS, matchStats);
+//		heatMapService.trackHeatMapValue(lvl4, PredictionAnalyze.SUCCESS, matchStats);
+
+		var distribution = new IntegerStatsDistribution();
+		distribution.setKey(lvl1);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "bttsAverage", 46L);
+		assertTrue(heatMap.isPresent());
+		assertEquals(1, heatMap.get().getBetSucceeded());
+		assertEquals(0, heatMap.get().getBetFailed());
+
+		distribution.setKey(lvl2);
+		heatMap = heatMapService.findByKey(lvl2, "bttsAverage", 46L);
+
+		assertTrue(heatMap.isPresent());
+		assertEquals(1, heatMap.get().getBetSucceeded());
+		assertEquals(0, heatMap.get().getBetFailed());
+
+		distribution.setKey(lvl3);
+		heatMap = heatMapService.findByKey(lvl3, "bttsAverage", 46L);
+
+		assertTrue(heatMap.isPresent());
+		assertEquals(1, heatMap.get().getBetSucceeded());
+		assertEquals(0, heatMap.get().getBetFailed());
+
+//		distribution.setKey(lvl4);
+//		heatMap = statsBetResultDistributionRepository.findOne(Example.of(distribution));
+//		assertTrue(heatMap.isPresent());
+//		assertEquals(1, heatMap.get().getBetSucceeded());
+//		assertEquals(0, heatMap.get().getBetFailed());
 	}
 }

@@ -4,13 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Represents a distribution of successful and failed bets for a specific stat value.
+ *
+ * @param <V> The type of the stat value that is analyzed.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "statsBetResultDistribution")
+@CompoundIndex(name = "key", def = "{'key.bet' : 1, 'key.country': 1, 'key.league': 1}")
+@CompoundIndex(name = "unique", def = "{'key.bet' : 1, 'key.country': 1, 'key.league': 1, 'key.season': 1, 'statsName': 1, 'value': 1}", unique = true)
 public abstract sealed class StatsBetResultDistribution<V> permits DoubleStatsDistribution, FloatStatsDistribution, IntegerStatsDistribution {
 
 	public static final String DISCRIMINATOR_KEY = "_discriminator";

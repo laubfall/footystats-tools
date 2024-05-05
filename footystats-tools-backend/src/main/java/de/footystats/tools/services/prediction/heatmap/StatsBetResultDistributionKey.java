@@ -6,6 +6,12 @@ import de.footystats.tools.services.prediction.Bet;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Key that identifies a {@link StatsBetResultDistribution} entity.
+ * <p>
+ * The key is composed of a {@link Bet}, a {@link Country}, a league and a {@link Season}. Bet is always required, the other fields are optional. This
+ * way it is possible to create "broader" keys that group stats entities on different levels.
+ */
 @Getter
 public class StatsBetResultDistributionKey {
 
