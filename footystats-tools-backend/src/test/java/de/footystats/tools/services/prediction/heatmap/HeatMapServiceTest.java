@@ -14,6 +14,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,7 +85,6 @@ class HeatMapServiceTest {
 	@Test
 	void trackHeatMapValuesForDifferentLevels() {
 		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
-
 		var lvl1 = builder.build();
 		var lvl2 = builder.country(domainDataService.countryByName("germany")).build();
 		var lvl3 = builder.country(domainDataService.countryByName("germany")).league("Bundesliga").build();
@@ -115,5 +118,63 @@ class HeatMapServiceTest {
 		assertTrue(heatMap.isPresent());
 		assertEquals(1, heatMap.get().getBetSucceeded());
 		assertEquals(0, heatMap.get().getBetFailed());
+	}
+
+	@Test
+	void heatMap_annotation_without_field_name() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var lvl1 = builder.build();
+		final SomeStats someStats = new SomeStats(3, 0, 0, 0);
+
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "someValue", 3);
+		assertTrue(heatMap.isPresent());
+	}
+
+	@Test
+	void heatMap_value_fraction() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var lvl1 = builder.build();
+		final SomeStats someStats = new SomeStats(0, 0.4323, 1.2324532, 0);
+
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "someFractionValue", 0.4);
+		assertTrue(heatMap.isPresent());
+
+		heatMap = heatMapService.findByKey(lvl1, "someFractionValue2", 1.232);
+		assertTrue(heatMap.isPresent());
+	}
+
+	@Test
+	void heatMap_value_default_fraction() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var lvl1 = builder.build();
+		final SomeStats someStats = new SomeStats(0, 0, 0, 0.1234);
+
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "someValueWithDefaultFraction", 0.12);
+		assertTrue(heatMap.isPresent());
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	class SomeStats {
+
+		@HeatMap
+		private int someValue;
+
+		@HeatMap(fraction = 1)
+		private double someFractionValue;
+
+		@HeatMap(fraction = 3)
+		private double someFractionValue2;
+
+		@HeatMap
+		private double someValueWithDefaultFraction;
 	}
 }

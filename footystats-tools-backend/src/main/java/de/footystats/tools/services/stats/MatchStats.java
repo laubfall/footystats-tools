@@ -6,7 +6,9 @@ import com.opencsv.bean.CsvDate;
 import de.footystats.tools.services.csv.FloatConverter;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.CountryCsvConverter;
-import de.footystats.tools.services.prediction.heatmap.HeatMapped;
+import de.footystats.tools.services.domain.Season;
+import de.footystats.tools.services.domain.Year;
+import de.footystats.tools.services.prediction.heatmap.HeatMap;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,19 +46,25 @@ public class MatchStats {
 	private String homeTeam;
 	@CsvBindByName(column = "Away Team")
 	private String awayTeam;
+	@HeatMap(heatMappedProperty = "homeTeamPointsPerGamePreMatch")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Points Per Game (Pre-Match)")
 	private Float homeTeamPointsPerGamePreMatch;
+	@HeatMap(heatMappedProperty = "awayTeamPointsPerGamePreMatch")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Points Per Game (Pre-Match)")
 	private Float awayTeamPointsPerGamePreMatch;
+	@HeatMap(heatMappedProperty = "homeTeamPointsPerGameCurrent")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Points Per Game (Current)")
 	private Float homeTeamPointsPerGameCurrent;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Points Per Game (Current)")
 	private Float awayTeamPointsPerGameCurrent;
+	@HeatMap(heatMappedProperty = "averageGoals")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Goals")
 	private Float averageGoals;
-	@HeatMapped(heatMappedProperty = "bttsAverage")
+	@HeatMap(heatMappedProperty = "bttsAverage")
 	@CsvBindByName(column = "BTTS Average")
 	private Integer bTTSAverage;
+	@HeatMap(heatMappedProperty = "over05Average")
 	@CsvBindByName(column = "Over05 Average")
 	private Integer over05Average;
 	@CsvBindByName(column = "Over15 Average")
@@ -75,10 +83,10 @@ public class MatchStats {
 	private Integer over052HGAverage;
 	@CsvBindByName(column = "Over15 2HG Average")
 	private Integer over152HGAverage;
-	@HeatMapped(heatMappedProperty = "averageCorners")
+	@HeatMap(heatMappedProperty = "averageCorners")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Corners")
 	private Float averageCorners;
-	@HeatMapped(heatMappedProperty = "averageCards")
+	@HeatMap(heatMappedProperty = "averageCards")
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Cards")
 	private Float averageCards;
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Over 8dot5 Corners")
@@ -250,7 +258,21 @@ public class MatchStats {
 	@CsvBindByName(column = "Match FootyStats URL")
 	private String matchFootyStatsURL;
 
+	/**
+	 * Match stats short representation.
+	 *
+	 * @return short representation of match stats.
+	 */
 	public String matchStatsShort() {
 		return getCountry().getCountryNameByFootystats() + "-" + getLeague() + "-" + getHomeTeam() + "-" + getAwayTeam();
+	}
+
+	/**
+	 * Match stats don't have a season field. This method calculates the season based on the match date.
+	 *
+	 * @return season based on the match date.
+	 */
+	public Season seasonByMatchDate() {
+		return new Season(new Year(getDateGmt().getYear()));
 	}
 }

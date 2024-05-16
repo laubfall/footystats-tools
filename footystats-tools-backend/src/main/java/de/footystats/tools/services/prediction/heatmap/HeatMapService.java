@@ -33,6 +33,16 @@ public class HeatMapService {
 		this.mongoTemplate = mongoTemplate;
 	}
 
+	/**
+	 * Track a stats value in a StatsBetResultDistribution entity for the given key.
+	 * <p>
+	 * Method takes care of incrementing the "betSucceeded" or "betFailed" field of the StatsBetResultDistribution entity in case a
+	 * StatsBetResultDistribution entity with the given key, stats value and stats name already exists.
+	 *
+	 * @param key           Mandatory key.
+	 * @param analyzeResult Mandatory analyze result.
+	 * @param containsStats Mandatory object that contains stats values (for example a MatchStats entity).
+	 */
 	public void trackHeatMapValue(StatsBetResultDistributionKey key, PredictionAnalyze analyzeResult, Object containsStats) {
 		if (!PredictionAnalyze.FAILED.equals(analyzeResult) && !PredictionAnalyze.SUCCESS.equals(analyzeResult)) {
 			log.info("No heat map calculation because analyze result is not failed or success");
@@ -49,6 +59,15 @@ public class HeatMapService {
 		});
 	}
 
+	/**
+	 * Find a stats bet result distribution by key, stats value and stats name.
+	 *
+	 * @param key       Mandatory key.
+	 * @param statsName Mandatory stats name.
+	 * @param value     Mandatory stats value.
+	 * @param <S>       Type of stats bet result distribution.
+	 * @return Optional of stats bet result distribution.
+	 */
 	public <S> Optional<S> findByKey(StatsBetResultDistributionKey key, String statsName, Object value) {
 		Criteria keyCriteria = Criteria.where("key.bet").is(key.getBet()).andOperator(
 			Criteria.where("key.country").is(key.getCountry()),
@@ -69,14 +88,15 @@ public class HeatMapService {
 	Collection<StatsBetResultDistribution<?>> heatMapRelevant(Object containsStats) {
 		final Collection<StatsBetResultDistribution<?>> statsBetResultDistributions = new HashSet<>();
 		final Field[] declaredFields = containsStats.getClass().getDeclaredFields();
-		final Stream<Field> heatMappedFields = Arrays.stream(declaredFields).filter(f -> f.getAnnotation(HeatMapped.class) != null);
+		final Stream<Field> heatMappedFields = Arrays.stream(declaredFields).filter(f -> f.getAnnotation(HeatMap.class) != null);
 		heatMappedFields.forEach(f -> {
 			try {
 				f.setAccessible(true);
-				var heatMapAnno = f.getAnnotation(HeatMapped.class);
+				var heatMapAnno = f.getAnnotation(HeatMap.class);
 				final var value = f.get(containsStats);
 				if (value != null) {
-					statsBetResultDistributions.add(createStatsBetResultDistribution(heatMapAnno.heatMappedProperty(), value));
+					statsBetResultDistributions.add(
+						createStatsBetResultDistribution(buildStatsName(heatMapAnno, f), applyFraction(value, heatMapAnno)));
 				}
 			} catch (IllegalAccessException e) {
 				log.error("Could not access field", e);
@@ -84,6 +104,22 @@ public class HeatMapService {
 		});
 
 		return statsBetResultDistributions;
+	}
+
+	private String buildStatsName(HeatMap heatMapAnno, Field f) {
+		return heatMapAnno.heatMappedProperty().isEmpty() ? f.getName() : heatMapAnno.heatMappedProperty();
+	}
+
+	private Object applyFraction(Object value, HeatMap heatMapAnno) {
+		var operator = Math.pow(10, heatMapAnno.fraction());
+
+		return switch (value) {
+			case Integer v -> v;
+			case Long l -> l;
+			case Double d -> Math.floor(d * operator) / operator;
+			case Float f -> Math.floor(f * operator) / operator;
+			default -> throw new IllegalStateException("Unexpected value type for statsBetResultDistribution entity: " + value);
+		};
 	}
 
 	private <V> StatsBetResultDistribution<?> createStatsBetResultDistribution(String statsName,
