@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.footystats.tools.services.domain.DomainDataService;
 import de.footystats.tools.services.domain.Season;
 import de.footystats.tools.services.domain.Year;
+import de.footystats.tools.services.heatmap.StatsBetResultDistributionKey.StatsBetResultDistributionKeyBuilder;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
-import de.footystats.tools.services.prediction.heatmap.StatsBetResultDistributionKey.StatsBetResultDistributionKeyBuilder;
 import de.footystats.tools.services.stats.MatchStats;
 import java.util.Collection;
 import java.util.List;

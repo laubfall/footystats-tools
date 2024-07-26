@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import java.lang.reflect.Field;

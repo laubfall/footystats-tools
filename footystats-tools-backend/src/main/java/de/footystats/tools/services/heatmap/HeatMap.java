@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

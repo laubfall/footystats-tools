@@ -28,10 +28,8 @@ public class MatchServiceConfiguration {
 	@MockBean
 	TeamStatsService teamStatsService;
 
-	@Bean
-	public PredictionService predictionService() {
-		return new PredictionService();
-	}
+	@MockBean
+	PredictionService predictionService;
 
 	@Bean
 	public MatchService matchService(MongoTemplate mongoTemplate, PredictionService predictionService, MappingMongoConverter mappingMongoConverter,

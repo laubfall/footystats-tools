@@ -15,6 +15,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service for importing Footystats MatchStats CSV File.
+ */
 @Slf4j
 @Service
 public class MatchStatsService extends MongoService<MatchStats> {

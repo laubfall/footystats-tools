@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

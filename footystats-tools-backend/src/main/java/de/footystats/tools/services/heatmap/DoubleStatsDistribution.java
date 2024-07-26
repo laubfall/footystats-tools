@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import lombok.Builder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;

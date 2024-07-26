@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.heatmap;
+package de.footystats.tools.services.heatmap;
 
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.Season;

@@ -8,7 +8,7 @@ import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.CountryCsvConverter;
 import de.footystats.tools.services.domain.Season;
 import de.footystats.tools.services.domain.Year;
-import de.footystats.tools.services.prediction.heatmap.HeatMap;
+import de.footystats.tools.services.heatmap.HeatMap;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,73 +64,102 @@ public class MatchStats {
 	@HeatMap(heatMappedProperty = "bttsAverage")
 	@CsvBindByName(column = "BTTS Average")
 	private Integer bTTSAverage;
-	@HeatMap(heatMappedProperty = "over05Average")
+	@HeatMap
 	@CsvBindByName(column = "Over05 Average")
 	private Integer over05Average;
+	@HeatMap
 	@CsvBindByName(column = "Over15 Average")
 	private Integer over15Average;
+	@HeatMap
 	@CsvBindByName(column = "Over25 Average")
 	private Integer over25Average;
+	@HeatMap
 	@CsvBindByName(column = "Over35 Average")
 	private Integer over35Average;
+	@HeatMap
 	@CsvBindByName(column = "Over45 Average")
 	private Integer over45Average;
+	@HeatMap
 	@CsvBindByName(column = "Over05 FHG HT Average")
 	private Integer over05FHGHTAverage;
+	@HeatMap
 	@CsvBindByName(column = "Over15 FHG HT Average")
 	private Integer over15FHGHTAverage;
+	@HeatMap
 	@CsvBindByName(column = "Over05 2HG Average")
 	private Integer over052HGAverage;
+	@HeatMap
 	@CsvBindByName(column = "Over15 2HG Average")
 	private Integer over152HGAverage;
-	@HeatMap(heatMappedProperty = "averageCorners")
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Corners")
 	private Float averageCorners;
-	@HeatMap(heatMappedProperty = "averageCards")
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Cards")
 	private Float averageCards;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Over 8dot5 Corners")
 	private Float averageOver8dot5Corners;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Over 9dot5 Corners")
 	private Float averageOver9dot5Corners;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Average Over 10dot5 Corners")
 	private Float averageOver10dot5Corners;
 	@CsvBindByName(column = "Match Status")
 	private MatchStatus matchStatus;
+	@HeatMap
 	@CsvBindByName(column = "Result - Home Team Goals")
 	private Integer resultHomeTeamGoals;
+	@HeatMap
 	@CsvBindByName(column = "Result - Away Team Goals")
 	private Integer resultAwayTeamGoals;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Corners")
 	private Float homeTeamCorners;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Corners")
 	private Float awayTeamCorners;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Offsides")
 	private Float homeTeamOffsides;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Offsides")
 	private Float awayTeamOffsides;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Yellow Cards")
 	private Float homeTeamYellowCards;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Yellow Cards")
 	private Float awayTeamYellowCards;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Red Cards")
 	private Float homeTeamRedCards;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Red Cards")
 	private Float awayTeamRedCards;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Shots")
 	private Float homeTeamShots;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Shots")
 	private Float awayTeamShots;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Shots On Target")
 	private Float homeTeamShotsOnTarget;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Shots On Target")
 	private Float awayTeamShotsOnTarget;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Shots Off Target")
 	private Float homeTeamShotsOffTarget;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Shots Off Target")
 	private Float awayTeamShotsOffTarget;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Possession")
 	private Float homeTeamPossession;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Possession")
 	private Float awayTeamPossession;
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Home_Win")

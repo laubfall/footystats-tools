@@ -1,5 +1,6 @@
 package de.footystats.tools.services.prediction;
 
+import de.footystats.tools.services.heatmap.HeatMapService;
 import de.footystats.tools.services.prediction.influencer.AwayTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 public class PredictionService {
 
 	public static final int LOWER_EXCLUSIVE_BORDER_BET_ON_THIS = 50;
-
 	private final BetResultInfluencer[] betResultInfluencer = {
 		new OddsBttsYesInfluencer(),
 		new OddsGoalOverInfluencer(),
@@ -35,6 +35,11 @@ public class PredictionService {
 		new HomeTeamLeaguePosInfluencer(),
 		new XgHomeAndAwayInfluencer()
 	};
+	private HeatMapService heatMapService;
+
+	public PredictionService(HeatMapService heatMapService) {
+		this.heatMapService = heatMapService;
+	}
 
 	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx) {
 		if (ctx.match().getResultAwayTeamGoals() > 0 &&
