@@ -70,6 +70,7 @@ public class CsvHttpClient {
 
 		Optional<SessionCookie> validCookieFor = sessionCookieCache.validCookieFor(settings.getFootyStatsUsername());
 		if (validCookieFor.isPresent()) {
+			log.info("SessionCookie from cache {}", validCookieFor.get().cookie());
 			return validCookieFor.get();
 		}
 		try {
