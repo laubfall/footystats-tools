@@ -71,6 +71,7 @@ grenada
 guadeloupe
 guatemala
 guinea
+guyana
 haiti
 honduras
 hong-kong

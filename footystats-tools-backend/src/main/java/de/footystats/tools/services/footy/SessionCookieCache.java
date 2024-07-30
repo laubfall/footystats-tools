@@ -37,7 +37,7 @@ public class SessionCookieCache {
 	public void addCookie(SessionCookie cookie, String username) {
 		synchronized (cookies) {
 			cookies.put(username, cookie);
-			log.info("Added cookie for user {}", username);
+			log.info("Added cookie {} for user {}", cookie, username);
 		}
 	}
 
