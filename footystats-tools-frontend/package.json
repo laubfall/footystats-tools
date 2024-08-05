@@ -17,14 +17,6 @@
 	],
 	"author": "Daniel Ludwig",
 	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/vikpe/react-webpack-typescript-starter.git"
-	},
-	"bugs": {
-		"url": "https://github.com/vikpe/react-webpack-typescript-starter/issues"
-	},
-	"homepage": "https://github.com/vikpe/react-webpack-typescript-starter",
 	"scripts": {
 		"build": "yarn run clean-dist && webpack --config=configs/webpack/prod.js",
 		"build-with-stats": "yarn run clean-dist && webpack --config=configs/webpack/prod.js --profile --json > stats.json",

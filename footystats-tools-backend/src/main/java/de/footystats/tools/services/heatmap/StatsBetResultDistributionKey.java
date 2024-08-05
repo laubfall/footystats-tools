@@ -57,7 +57,7 @@ public class StatsBetResultDistributionKey {
 		return this;
 	}
 
-	static class StatsBetResultDistributionKeyBuilder {
+	public static class StatsBetResultDistributionKeyBuilder {
 
 		private Bet bet;
 
@@ -67,27 +67,27 @@ public class StatsBetResultDistributionKey {
 
 		private Season season;
 
-		StatsBetResultDistributionKeyBuilder bet(Bet bet) {
+		public StatsBetResultDistributionKeyBuilder bet(Bet bet) {
 			this.bet = bet;
 			return this;
 		}
 
-		StatsBetResultDistributionKeyBuilder country(Country country) {
+		public StatsBetResultDistributionKeyBuilder country(Country country) {
 			this.country = country;
 			return this;
 		}
 
-		StatsBetResultDistributionKeyBuilder league(String league) {
+		public StatsBetResultDistributionKeyBuilder league(String league) {
 			this.league = league;
 			return this;
 		}
 
-		StatsBetResultDistributionKeyBuilder season(Season season) {
+		public StatsBetResultDistributionKeyBuilder season(Season season) {
 			this.season = season;
 			return this;
 		}
 
-		StatsBetResultDistributionKey build() {
+		public StatsBetResultDistributionKey build() {
 			StatsBetResultDistributionKey key = new StatsBetResultDistributionKey();
 			key.bet = this.bet;
 			key.country = this.country;

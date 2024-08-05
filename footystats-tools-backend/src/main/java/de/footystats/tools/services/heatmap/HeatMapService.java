@@ -45,7 +45,7 @@ public class HeatMapService {
 	 */
 	public void trackHeatMapValue(StatsBetResultDistributionKey key, PredictionAnalyze analyzeResult, Object containsStats) {
 		if (!PredictionAnalyze.FAILED.equals(analyzeResult) && !PredictionAnalyze.SUCCESS.equals(analyzeResult)) {
-			log.info("No heat map calculation because analyze result is not failed or success");
+			log.info("No heat map calculation because analyze result is not equals failed or success");
 			return;
 		}
 

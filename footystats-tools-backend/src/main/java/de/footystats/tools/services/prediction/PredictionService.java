@@ -1,6 +1,7 @@
 package de.footystats.tools.services.prediction;
 
 import de.footystats.tools.services.heatmap.HeatMapService;
+import de.footystats.tools.services.heatmap.StatsBetResultDistributionKey.StatsBetResultDistributionKeyBuilder;
 import de.footystats.tools.services.prediction.influencer.AwayTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
@@ -35,7 +36,7 @@ public class PredictionService {
 		new HomeTeamLeaguePosInfluencer(),
 		new XgHomeAndAwayInfluencer()
 	};
-	private HeatMapService heatMapService;
+	private final HeatMapService heatMapService;
 
 	public PredictionService(HeatMapService heatMapService) {
 		this.heatMapService = heatMapService;
@@ -75,7 +76,6 @@ public class PredictionService {
 	 *
 	 * @param ctx                      Mandatory. The context to use.
 	 * @param didPredictionCalculation True if the prediction was calculated.
-	 * @param betOnThis                True if prediction said bet on this bet, otherwise false.
 	 * @return The result of the analysis.
 	 */
 	public final PredictionAnalyze analyze(
@@ -89,12 +89,18 @@ public class PredictionService {
 			return PredictionAnalyze.NOT_COMPLETED;
 		}
 
-		return switch (ctx.bet()) {
+		var analyzeResult = switch (ctx.bet()) {
 			case OVER_ZERO_FIVE -> analyzeOverZeroFive(ctx);
 			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx);
 			case BTTS_YES -> analyzeBttsYes(ctx);
 			default -> PredictionAnalyze.NOT_ANALYZED;
 		};
+
+		heatMapService.trackHeatMapValue(
+			new StatsBetResultDistributionKeyBuilder().bet(ctx.bet()).country(ctx.match().getCountry()).league(ctx.match().getLeague())
+				.season(ctx.match()
+					.seasonByMatchDate()).build(), analyzeResult, ctx.match());
+		return analyzeResult;
 	}
 
 	public PredictionResult prediction(BetPredictionContext ctx) {
