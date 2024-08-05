@@ -10,9 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 public record SessionCookie(String cookie) {
 
 	public boolean cookieIsValid() {
-		// The cookie lifetime is not the session lifetime. Actually the session lifetime of
-		// footystats.org is unknown, so add 12 hours to the current point in time to be sure.
-		return validUntil().isAfter(LocalDateTime.now().plusHours(12));
+		return validUntil().isAfter(LocalDateTime.now());
 	}
 
 	LocalDateTime validUntil() {

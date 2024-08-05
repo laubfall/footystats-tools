@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -48,18 +49,6 @@ public class CsvHttpClient {
 		}
 	}
 
-	public List<String> connectToFootystatsAndRetrieveFileContent(SessionCookie sessionCookie, URL url) throws IOException {
-		URLConnection con = url.openConnection();
-		HttpURLConnection http = (HttpURLConnection) con;
-		http.setRequestMethod("GET");
-		http.setDoOutput(true);
-		http.setRequestProperty("cookie", sessionCookie.cookie());
-		http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-		http.setRequestProperty("User-Agent", USER_AGENT_VALUE);
-		http.connect();
-		return IOUtils.readLines(http.getInputStream(), UTF_8);
-	}
-
 	public SessionCookie login() {
 		Optional<Settings> optSettings = settingsRepository.findAll().stream().findAny();
 		if (optSettings.isEmpty()) {
@@ -69,10 +58,16 @@ public class CsvHttpClient {
 		var settings = optSettings.get();
 
 		Optional<SessionCookie> validCookieFor = sessionCookieCache.validCookieFor(settings.getFootyStatsUsername());
-		if (validCookieFor.isPresent()) {
-			return validCookieFor.get();
-		}
 		try {
+			if (validCookieFor.isPresent()) {
+				SessionCookie sessionCookie = validCookieFor.get();
+				log.info("Found valid session cookie for user {}", settings.getFootyStatsUsername());
+				if (sessionValid(sessionCookie, settings)) {
+					log.info("Session cookie is still valid");
+					return sessionCookie;
+				}
+			}
+
 			final URL url = URI.create(properties.getWebpage().getBaseUrl() + properties.getWebpage().getLoginRessource()).toURL();
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection) con;
@@ -114,5 +109,24 @@ public class CsvHttpClient {
 		} catch (IOException e) {
 			throw new ServiceException(ServiceException.Type.CSV_FILE_DOWNLOAD_SERVICE_RETRIEVING_SESSION_FAILED, e);
 		}
+	}
+
+	public List<String> connectToFootystatsAndRetrieveFileContent(SessionCookie sessionCookie, URL url) throws IOException {
+		URLConnection con = url.openConnection();
+		HttpURLConnection http = (HttpURLConnection) con;
+		http.setRequestMethod("GET");
+		http.setDoOutput(true);
+		http.setRequestProperty("cookie", sessionCookie.cookie());
+		http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		http.setRequestProperty("User-Agent", USER_AGENT_VALUE);
+		http.connect();
+		return IOUtils.readLines(http.getInputStream(), UTF_8);
+	}
+
+	private boolean sessionValid(SessionCookie sessionCookie, Settings settings) throws IOException {
+		final List<String> strings = connectToFootystatsAndRetrieveFileContent(sessionCookie,
+			URI.create(properties.getWebpage().getBaseUrl()).toURL());
+		final String wholeDocument = StringUtils.join(strings, "\n");
+		return wholeDocument.contains(settings.getFootyStatsUsername());
 	}
 }

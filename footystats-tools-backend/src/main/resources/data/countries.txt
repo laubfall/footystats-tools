@@ -71,6 +71,7 @@ grenada
 guadeloupe
 guatemala
 guinea
+guyana
 haiti
 honduras
 hong-kong
@@ -131,6 +132,7 @@ oman
 pakistan
 palestine
 panama
+papua-new-guinea
 paraguay
 peru
 philippines
@@ -151,6 +153,7 @@ sierra-leone
 singapore
 slovakia
 slovenia
+solomon-islands
 somalia
 south-africa
 south-america
