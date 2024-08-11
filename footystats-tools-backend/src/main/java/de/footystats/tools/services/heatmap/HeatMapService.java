@@ -94,7 +94,7 @@ public class HeatMapService {
 				f.setAccessible(true);
 				var heatMapAnno = f.getAnnotation(HeatMap.class);
 				final var value = f.get(containsStats);
-				if (value != null) {
+				if (!ignore(value, heatMapAnno)) {
 					statsBetResultDistributions.add(
 						createStatsBetResultDistribution(buildStatsName(heatMapAnno, f), applyFraction(value, heatMapAnno)));
 				}
@@ -108,6 +108,19 @@ public class HeatMapService {
 
 	private String buildStatsName(HeatMap heatMapAnno, Field f) {
 		return heatMapAnno.heatMappedProperty().isEmpty() ? f.getName() : heatMapAnno.heatMappedProperty();
+	}
+
+	private boolean ignore(Object value, HeatMap heatMapAnno) {
+		if (value == null) {
+			return true;
+		}
+
+		if (value instanceof Number num) {
+			var statsValue = num.doubleValue();
+			return statsValue < heatMapAnno.ignoreLt() || statsValue > heatMapAnno.ignoreGt();
+		}
+
+		return false;
 	}
 
 	private Object applyFraction(Object value, HeatMap heatMapAnno) {

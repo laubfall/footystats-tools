@@ -1,6 +1,7 @@
 package de.footystats.tools.services.heatmap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.footystats.tools.services.domain.DomainDataService;
@@ -124,7 +125,7 @@ class HeatMapServiceTest {
 	void heatMap_annotation_without_field_name() {
 		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
 		var lvl1 = builder.build();
-		final SomeStats someStats = new SomeStats(3, 0, 0, 0);
+		final SomeStats someStats = new SomeStats(3, 0, 0, 0, 0, 0);
 
 		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
 
@@ -136,7 +137,7 @@ class HeatMapServiceTest {
 	void heatMap_value_fraction() {
 		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
 		var lvl1 = builder.build();
-		final SomeStats someStats = new SomeStats(0, 0.4323, 1.2324532, 0);
+		final SomeStats someStats = new SomeStats(0, 0.4323, 1.2324532, 0, 0, 0);
 
 		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
 
@@ -151,11 +152,40 @@ class HeatMapServiceTest {
 	void heatMap_value_default_fraction() {
 		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
 		var lvl1 = builder.build();
-		final SomeStats someStats = new SomeStats(0, 0, 0, 0.1234);
+		final SomeStats someStats = new SomeStats(0, 0, 0, 0.1234, 0, 0);
 
 		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
 
 		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "someValueWithDefaultFraction", 0.12);
+		assertTrue(heatMap.isPresent());
+	}
+
+	@Test
+	void heatMap_ignore_unwanted_values() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var lvl1 = builder.build();
+		SomeStats someStats = new SomeStats(-1, 100.32, 0, 0.1234, 0.4, 0.6);
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "ignoreLt", 0.4);
+		assertFalse(heatMap.isPresent());
+
+		heatMap = heatMapService.findByKey(lvl1, "ignoreGt", 0.6);
+		assertFalse(heatMap.isPresent());
+
+		heatMap = heatMapService.findByKey(lvl1, "someValue", -1);
+		assertFalse(heatMap.isPresent());
+
+		heatMap = heatMapService.findByKey(lvl1, "someFractionValue", 100.3);
+		assertFalse(heatMap.isPresent());
+
+		someStats = new SomeStats(0, 0, 0, 0.1234, 0.5, 0.5);
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, someStats);
+
+		heatMap = heatMapService.findByKey(lvl1, "ignoreLt", 0.5);
+		assertTrue(heatMap.isPresent());
+
+		heatMap = heatMapService.findByKey(lvl1, "ignoreGt", 0.5);
 		assertTrue(heatMap.isPresent());
 	}
 
@@ -176,5 +206,11 @@ class HeatMapServiceTest {
 
 		@HeatMap
 		private double someValueWithDefaultFraction;
+
+		@HeatMap(ignoreLt = 0.5)
+		private double ignoreLt;
+
+		@HeatMap(ignoreGt = 0.5)
+		private double ignoreGt;
 	}
 }

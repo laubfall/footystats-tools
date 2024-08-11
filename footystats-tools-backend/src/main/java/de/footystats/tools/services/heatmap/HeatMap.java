@@ -21,4 +21,10 @@ public @interface HeatMap {
 	// Used to find existing values for the heatmap calculation. Renaming this property after values have been stored will lead
 	// to a new heatmap calculation for this property. All other calculations for this property (based on the old value) will not be used anymore.
 	String heatMappedProperty() default "";
+
+	// Ignore values that are less than this value.
+	double ignoreLt() default 0;
+
+	// Ignore values that are greater than this value.
+	double ignoreGt() default 100;
 }
