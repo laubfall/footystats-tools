@@ -162,22 +162,31 @@ public class MatchStats {
 	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Away Team Possession")
 	private Float awayTeamPossession;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Home_Win")
 	private Float oddsHomeWin;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Draw")
 	private Float oddsDraw;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Away_Win")
 	private Float oddsAwayWin;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Over15")
 	private Float oddsOver15;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Over25")
 	private Float oddsOver25;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Over35")
 	private Float oddsOver35;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_Over45")
 	private Float oddsOver45;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_BTTS_Yes")
 	private Float oddsBTTS_Yes;
+	@HeatMap
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Odds_BTTS_No")
 	private Float oddsBTTS_No;
 	@CsvCustomBindByName(converter = FloatConverter.class, column = "Home Team Pre-Match xG")

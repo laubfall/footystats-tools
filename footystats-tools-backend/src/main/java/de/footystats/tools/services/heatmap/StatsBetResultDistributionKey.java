@@ -57,6 +57,15 @@ public class StatsBetResultDistributionKey {
 		return this;
 	}
 
+	/**
+	 * Returns true if the key is the broadest possible key (means all fields are null except the bet).
+	 *
+	 * @return true if the key is the broadest possible key.
+	 */
+	public boolean broadest() {
+		return country == null && league == null && season == null;
+	}
+
 	public static class StatsBetResultDistributionKeyBuilder {
 
 		private Bet bet;

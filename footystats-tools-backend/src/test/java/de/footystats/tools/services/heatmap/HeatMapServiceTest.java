@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,6 +49,11 @@ class HeatMapServiceTest {
 			Arguments.of(PredictionAnalyze.SUCCESS, Bet.BTTS_YES, 1, 0),
 			Arguments.of(PredictionAnalyze.FAILED, Bet.OVER_ZERO_FIVE, 0, 1)
 		);
+	}
+
+	@BeforeEach
+	void setUp() {
+		statsBetResultDistributionRepository.deleteAll();
 	}
 
 	@Test
@@ -93,9 +99,6 @@ class HeatMapServiceTest {
 		var matchStats = new MatchStats();
 		matchStats.setBTTSAverage(46);
 
-		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, matchStats);
-		heatMapService.trackHeatMapValue(lvl2, PredictionAnalyze.SUCCESS, matchStats);
-		heatMapService.trackHeatMapValue(lvl3, PredictionAnalyze.SUCCESS, matchStats);
 		heatMapService.trackHeatMapValue(lvl4, PredictionAnalyze.SUCCESS, matchStats);
 
 		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "bttsAverage", 46L);
@@ -118,6 +121,45 @@ class HeatMapServiceTest {
 		heatMap = heatMapService.findByKey(lvl4, "bttsAverage", 46L);
 		assertTrue(heatMap.isPresent());
 		assertEquals(1, heatMap.get().getBetSucceeded());
+		assertEquals(0, heatMap.get().getBetFailed());
+	}
+
+	@Test
+	void accumulate_for_different_keys_with_identical_root() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var germany = builder.country(domainDataService.countryByName("germany")).build();
+		var austria = builder.country(domainDataService.countryByName("austria")).build();
+
+		var matchStats = new MatchStats();
+		matchStats.setOddsBTTS_Yes(1.5f);
+
+		heatMapService.trackHeatMapValue(germany, PredictionAnalyze.SUCCESS, matchStats);
+		heatMapService.trackHeatMapValue(austria, PredictionAnalyze.SUCCESS, matchStats);
+
+		Optional<StatsBetResultDistribution<Float>> oddsBTTSYes = heatMapService.findByKey(germany, "oddsBTTS_Yes", matchStats.getOddsBTTS_Yes());
+		assertTrue(oddsBTTSYes.isPresent());
+		oddsBTTSYes = heatMapService.findByKey(austria, "oddsBTTS_Yes", matchStats.getOddsBTTS_Yes());
+		assertTrue(oddsBTTSYes.isPresent());
+
+		oddsBTTSYes = heatMapService.findByKey(germany.broader(), "oddsBTTS_Yes", matchStats.getOddsBTTS_Yes());
+		assertTrue(oddsBTTSYes.isPresent());
+
+		assertEquals(2L, oddsBTTSYes.get().getBetSucceeded());
+	}
+
+	@Test
+	void heatMap_check_upsert() {
+		StatsBetResultDistributionKeyBuilder builder = new StatsBetResultDistributionKeyBuilder().bet(Bet.BTTS_YES);
+		var lvl1 = builder.build();
+		var matchStats = new MatchStats();
+		matchStats.setBTTSAverage(46);
+
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, matchStats);
+		heatMapService.trackHeatMapValue(lvl1, PredictionAnalyze.SUCCESS, matchStats);
+
+		Optional<IntegerStatsDistribution> heatMap = heatMapService.findByKey(lvl1, "bttsAverage", 46L);
+		assertTrue(heatMap.isPresent());
+		assertEquals(2, heatMap.get().getBetSucceeded());
 		assertEquals(0, heatMap.get().getBetFailed());
 	}
 
@@ -193,7 +235,7 @@ class HeatMapServiceTest {
 	@Setter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	class SomeStats {
+	static class SomeStats {
 
 		@HeatMap
 		private int someValue;

@@ -1,5 +1,7 @@
 package de.footystats.tools.services.heatmap;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -34,7 +37,8 @@ public class HeatMapService {
 	}
 
 	/**
-	 * Track a stats value in a StatsBetResultDistribution entity for the given key.
+	 * Track a stats value in a StatsBetResultDistribution entity for the given key and its broader versions (e.g. Bet-Country-League, Bet-Country,
+	 * Bet).
 	 * <p>
 	 * Method takes care of incrementing the "betSucceeded" or "betFailed" field of the StatsBetResultDistribution entity in case a
 	 * StatsBetResultDistribution entity with the given key, stats value and stats name already exists.
@@ -53,9 +57,23 @@ public class HeatMapService {
 
 		var incrementUpdate = createIncrementUpdate(analyzeResult);
 
-		heatMapRelevant(containsStats).stream().map(s -> applyKey(s, key)).forEach(statsBetResultDistribution -> {
-			var query = Query.query(Criteria.byExample(Example.of(statsBetResultDistribution)));
-			mongoTemplate.upsert(query, incrementUpdate, StatsBetResultDistribution.class);
+		heatMapRelevant(containsStats).forEach(statsBetResultDistribution -> {
+			var actualKey = key;
+			var upsertBroadest = false;
+			do {
+				upsertBroadest = actualKey.broadest();
+				statsBetResultDistribution.setKey(actualKey);
+				final var query = Query.query(
+					Criteria.byExample(Example.of(statsBetResultDistribution, ExampleMatcher.matching().withIncludeNullValues())));
+				final var upsertResult = mongoTemplate.upsert(query, incrementUpdate, StatsBetResultDistribution.class);
+				if (log.isTraceEnabled()) {
+					log.trace("Upserted heatmap value: {}", upsertResult);
+				}
+				if (upsertBroadest) {
+					break;
+				}
+				actualKey = actualKey.broader();
+			} while (true);
 		});
 	}
 
@@ -69,13 +87,11 @@ public class HeatMapService {
 	 * @return Optional of stats bet result distribution.
 	 */
 	public <S> Optional<S> findByKey(StatsBetResultDistributionKey key, String statsName, Object value) {
-		Criteria keyCriteria = Criteria.where("key.bet").is(key.getBet()).andOperator(
-			Criteria.where("key.country").is(key.getCountry()),
-			Criteria.where("key.league").is(key.getLeague()),
-			Criteria.where("key.season").is(key.getSeason()),
-			Criteria.where("statsName").is(statsName),
-			Criteria.where("value").is(value)
-		);
+		Criteria keyCriteria = where("key").is(key)
+			.andOperator(
+				where("statsName").is(statsName),
+				where("value").is(value)
+			);
 
 		return Optional.ofNullable((S) mongoTemplate.findOne(Query.query(keyCriteria), StatsBetResultDistribution.class));
 	}
