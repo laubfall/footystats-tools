@@ -67,7 +67,7 @@ class CsvFileServiceTest {
 		try (var inputStream = getClass().getResourceAsStream("matches_expanded-1630235153-expectRenamed.csv");) {
 			var entries = csvFileService.importFile(inputStream, MatchStats.class);
 			Assertions.assertNotNull(entries);
-			Assertions.assertEquals(1, entries.size());
+			Assertions.assertEquals(2, entries.size());
 
 			var onlyMatchStats = entries.get(0);
 			Assertions.assertEquals("germany", onlyMatchStats.getCountry().getCountryNameByFootystats());

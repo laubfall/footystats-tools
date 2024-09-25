@@ -2,8 +2,8 @@ package de.footystats.tools.services.stats;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
-import com.opencsv.bean.CsvDate;
 import de.footystats.tools.services.csv.FloatConverter;
+import de.footystats.tools.services.csv.FootyStatsDateTimeConverter;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.domain.CountryCsvConverter;
 import java.time.LocalDateTime;
@@ -32,8 +32,7 @@ public class MatchStats {
 	@Indexed
 	@CsvBindByName(column = "date_unix")
 	private Long dateUnix;
-	@CsvDate("MMM d u - h:mma")
-	@CsvBindByName(column = "date_GMT", locale = "en-in")
+	@CsvCustomBindByName(column = "date_GMT", converter = FootyStatsDateTimeConverter.class)
 	private LocalDateTime dateGmt;
 	@CsvCustomBindByName(column = "country", required = true, converter = CountryCsvConverter.class)
 	private Country country;
