@@ -10,6 +10,7 @@ import de.footystats.tools.services.prediction.influencer.OddsBttsYesInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsGoalOverInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgHomeAndAwayInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
+import de.footystats.tools.services.prediction.influencer.XgOverTwoFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverZeroFiveInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class PredictionService {
 		new FootyStatsOverFTPredictionInfluencer(),
 		new XgOverZeroFiveInfluencer(),
 		new XgOverOneFiveInfluencer(),
+		new XgOverTwoFiveInfluencer(),
 		new AwayTeamLeaguePosInfluencer(),
 		new HomeTeamLeaguePosInfluencer(),
 		new XgHomeAndAwayInfluencer()
@@ -45,20 +47,22 @@ public class PredictionService {
 		return PredictionAnalyze.FAILED;
 	}
 
-	private static PredictionAnalyze analyzeOverOneFive(BetPredictionContext ctx) {
-		var goals = ctx.match().getResultAwayTeamGoals() +
-			ctx.match().getResultHomeTeamGoals();
-		if (goals > 1) {
-			return PredictionAnalyze.SUCCESS;
-		}
+	private static PredictionAnalyze analyzeOverTwoFive(BetPredictionContext ctx) {
+		return analyzeOverXFive(ctx, 2);
+	}
 
-		return PredictionAnalyze.FAILED;
+	private static PredictionAnalyze analyzeOverOneFive(BetPredictionContext ctx) {
+		return analyzeOverXFive(ctx, 1);
 	}
 
 	private static PredictionAnalyze analyzeOverZeroFive(BetPredictionContext ctx) {
+		return analyzeOverXFive(ctx, 0);
+	}
+
+	private static PredictionAnalyze analyzeOverXFive(BetPredictionContext ctx, int expectedGoals) {
 		var goals = ctx.match().getResultAwayTeamGoals() +
 			ctx.match().getResultHomeTeamGoals();
-		if (goals > 0) {
+		if (goals > expectedGoals) {
 			return PredictionAnalyze.SUCCESS;
 		}
 
@@ -70,7 +74,6 @@ public class PredictionService {
 	 *
 	 * @param ctx                      Mandatory. The context to use.
 	 * @param didPredictionCalculation True if the prediction was calculated.
-	 * @param betOnThis                True if prediction said bet on this bet, otherwise false.
 	 * @return The result of the analysis.
 	 */
 	public final PredictionAnalyze analyze(
@@ -87,6 +90,7 @@ public class PredictionService {
 		return switch (ctx.bet()) {
 			case OVER_ZERO_FIVE -> analyzeOverZeroFive(ctx);
 			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx);
+			case OVER_TWO_FIVE -> analyzeOverTwoFive(ctx);
 			case BTTS_YES -> analyzeBttsYes(ctx);
 			default -> PredictionAnalyze.NOT_ANALYZED;
 		};

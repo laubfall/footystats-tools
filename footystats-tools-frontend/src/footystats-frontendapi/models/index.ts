@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './Bet';
 export * from './BetPredictionQualityAllBetsAggregate';
 export * from './BetPredictionQualityBetAggregate';
 export * from './BetPredictionQualityInfluencerAggregate';

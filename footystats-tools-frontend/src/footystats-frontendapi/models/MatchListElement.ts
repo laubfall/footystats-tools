@@ -127,6 +127,12 @@ export interface MatchListElement {
      * @type {PredictionResult}
      * @memberof MatchListElement
      */
+    o25?: PredictionResult;
+    /**
+     * 
+     * @type {PredictionResult}
+     * @memberof MatchListElement
+     */
     bttsYes?: PredictionResult;
     /**
      * 
@@ -187,6 +193,7 @@ export function MatchListElementFromJSONTyped(json: any, ignoreDiscriminator: bo
         'footyStatsUrl': !exists(json, 'footyStatsUrl') ? undefined : json['footyStatsUrl'],
         'o05': !exists(json, 'o05') ? undefined : PredictionResultFromJSON(json['o05']),
         'o15': !exists(json, 'o15') ? undefined : PredictionResultFromJSON(json['o15']),
+        'o25': !exists(json, 'o25') ? undefined : PredictionResultFromJSON(json['o25']),
         'bttsYes': !exists(json, 'bttsYes') ? undefined : PredictionResultFromJSON(json['bttsYes']),
         'revision': !exists(json, 'revision') ? undefined : PredictionQualityRevisionFromJSON(json['revision']),
         'statisticalResultOutcome': !exists(json, 'statisticalResultOutcome') ? undefined : ((json['statisticalResultOutcome'] as Array<any>).map(StatisticalResultOutcomeFromJSON)),
@@ -215,6 +222,7 @@ export function MatchListElementToJSON(value?: MatchListElement | null): any {
         'footyStatsUrl': value.footyStatsUrl,
         'o05': PredictionResultToJSON(value.o05),
         'o15': PredictionResultToJSON(value.o15),
+        'o25': PredictionResultToJSON(value.o25),
         'bttsYes': PredictionResultToJSON(value.bttsYes),
         'revision': PredictionQualityRevisionToJSON(value.revision),
         'statisticalResultOutcome': value.statisticalResultOutcome === undefined ? undefined : ((value.statisticalResultOutcome as Array<any>).map(StatisticalResultOutcomeToJSON)),

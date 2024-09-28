@@ -5,6 +5,7 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.quality.PredictionQualityService;
 import de.footystats.tools.services.prediction.quality.batch.IBetPredictionQualityJobService;
 import de.footystats.tools.services.prediction.quality.view.PredictionQualityViewService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +38,7 @@ public class PredictionQualityController {
 	}
 
 	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
-	public Report latestReport(@PathVariable Bet moreQualityDetailsForThisBetType) {
+	public Report latestReport(@Schema(enumAsRef = true) @PathVariable Bet moreQualityDetailsForThisBetType) {
 		final var latestRevision = predictionQualityService.latestRevision();
 		final var measuredPredictionCntAggregates = predictionQualityViewService.matchPredictionQualityMeasurementCounts(latestRevision);
 

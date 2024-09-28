@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Bet } from './Bet';
+import {
+    BetFromJSON,
+    BetFromJSONTyped,
+    BetToJSON,
+} from './Bet';
 import type { Country } from './Country';
 import {
     CountryFromJSON,
@@ -52,24 +58,11 @@ export interface LiveAndHotMatches {
     country?: Country;
     /**
      * 
-     * @type {Set<string>}
+     * @type {Set<Bet>}
      * @memberof LiveAndHotMatches
      */
-    hotBets?: Set<LiveAndHotMatchesHotBetsEnum>;
+    hotBets?: Set<Bet>;
 }
-
-
-/**
- * @export
- */
-export const LiveAndHotMatchesHotBetsEnum = {
-    OverZeroFive: 'OVER_ZERO_FIVE',
-    OverOneFive: 'OVER_ONE_FIVE',
-    BttsYes: 'BTTS_YES',
-    BttsNo: 'BTTS_NO'
-} as const;
-export type LiveAndHotMatchesHotBetsEnum = typeof LiveAndHotMatchesHotBetsEnum[keyof typeof LiveAndHotMatchesHotBetsEnum];
-
 
 /**
  * Check if a given object implements the LiveAndHotMatches interface.
@@ -94,7 +87,7 @@ export function LiveAndHotMatchesFromJSONTyped(json: any, ignoreDiscriminator: b
         'homeTeam': !exists(json, 'homeTeam') ? undefined : json['homeTeam'],
         'awayTeam': !exists(json, 'awayTeam') ? undefined : json['awayTeam'],
         'country': !exists(json, 'country') ? undefined : CountryFromJSON(json['country']),
-        'hotBets': !exists(json, 'hotBets') ? undefined : json['hotBets'],
+        'hotBets': !exists(json, 'hotBets') ? undefined : (new Set((json['hotBets'] as Array<any>).map(BetFromJSON))),
     };
 }
 
@@ -111,7 +104,7 @@ export function LiveAndHotMatchesToJSON(value?: LiveAndHotMatches | null): any {
         'homeTeam': value.homeTeam,
         'awayTeam': value.awayTeam,
         'country': CountryToJSON(value.country),
-        'hotBets': value.hotBets === undefined ? undefined : Array.from(value.hotBets as Set<any>),
+        'hotBets': value.hotBets === undefined ? undefined : (Array.from(value.hotBets as Set<any>).map(BetToJSON)),
     };
 }
 

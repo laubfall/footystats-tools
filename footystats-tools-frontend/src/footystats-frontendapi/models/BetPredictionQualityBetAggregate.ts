@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Bet } from './Bet';
+import {
+    BetFromJSON,
+    BetFromJSONTyped,
+    BetToJSON,
+} from './Bet';
+
 /**
  * 
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime';
 export interface BetPredictionQualityBetAggregate {
     /**
      * 
-     * @type {string}
+     * @type {Bet}
      * @memberof BetPredictionQualityBetAggregate
      */
-    bet?: BetPredictionQualityBetAggregateBetEnum;
+    bet?: Bet;
     /**
      * 
      * @type {number}
@@ -45,19 +52,6 @@ export interface BetPredictionQualityBetAggregate {
     predictionPercent?: number;
 }
 
-
-/**
- * @export
- */
-export const BetPredictionQualityBetAggregateBetEnum = {
-    OverZeroFive: 'OVER_ZERO_FIVE',
-    OverOneFive: 'OVER_ONE_FIVE',
-    BttsYes: 'BTTS_YES',
-    BttsNo: 'BTTS_NO'
-} as const;
-export type BetPredictionQualityBetAggregateBetEnum = typeof BetPredictionQualityBetAggregateBetEnum[keyof typeof BetPredictionQualityBetAggregateBetEnum];
-
-
 /**
  * Check if a given object implements the BetPredictionQualityBetAggregate interface.
  */
@@ -77,7 +71,7 @@ export function BetPredictionQualityBetAggregateFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'bet': !exists(json, 'bet') ? undefined : json['bet'],
+        'bet': !exists(json, 'bet') ? undefined : BetFromJSON(json['bet']),
         'betSucceeded': !exists(json, 'betSucceeded') ? undefined : json['betSucceeded'],
         'betFailed': !exists(json, 'betFailed') ? undefined : json['betFailed'],
         'predictionPercent': !exists(json, 'predictionPercent') ? undefined : json['predictionPercent'],
@@ -93,7 +87,7 @@ export function BetPredictionQualityBetAggregateToJSON(value?: BetPredictionQual
     }
     return {
         
-        'bet': value.bet,
+        'bet': BetToJSON(value.bet),
         'betSucceeded': value.betSucceeded,
         'betFailed': value.betFailed,
         'predictionPercent': value.predictionPercent,

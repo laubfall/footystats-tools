@@ -119,6 +119,7 @@ public class MatchService extends MongoService<Match> {
 			.bttsYes(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.BTTS_YES)))
 			.o05(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ZERO_FIVE)))
 			.o15(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ONE_FIVE)))
+			.o25(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_TWO_FIVE)))
 			.build();
 	}
 

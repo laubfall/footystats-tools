@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Bet } from './Bet';
+import {
+    BetFromJSON,
+    BetFromJSONTyped,
+    BetToJSON,
+} from './Bet';
 import type { InfluencerStatisticalResultOutcome } from './InfluencerStatisticalResultOutcome';
 import {
     InfluencerStatisticalResultOutcomeFromJSON,
@@ -34,10 +40,10 @@ import {
 export interface StatisticalResultOutcome {
     /**
      * 
-     * @type {string}
+     * @type {Bet}
      * @memberof StatisticalResultOutcome
      */
-    bet?: StatisticalResultOutcomeBetEnum;
+    bet?: Bet;
     /**
      * 
      * @type {number}
@@ -58,19 +64,6 @@ export interface StatisticalResultOutcome {
     influencerStatisticalResultOutcomes?: Array<InfluencerStatisticalResultOutcome>;
 }
 
-
-/**
- * @export
- */
-export const StatisticalResultOutcomeBetEnum = {
-    OverZeroFive: 'OVER_ZERO_FIVE',
-    OverOneFive: 'OVER_ONE_FIVE',
-    BttsYes: 'BTTS_YES',
-    BttsNo: 'BTTS_NO'
-} as const;
-export type StatisticalResultOutcomeBetEnum = typeof StatisticalResultOutcomeBetEnum[keyof typeof StatisticalResultOutcomeBetEnum];
-
-
 /**
  * Check if a given object implements the StatisticalResultOutcome interface.
  */
@@ -90,7 +83,7 @@ export function StatisticalResultOutcomeFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'bet': !exists(json, 'bet') ? undefined : json['bet'],
+        'bet': !exists(json, 'bet') ? undefined : BetFromJSON(json['bet']),
         'betStatisticalSuccess': !exists(json, 'betStatisticalSuccess') ? undefined : json['betStatisticalSuccess'],
         'ranking': !exists(json, 'ranking') ? undefined : RankingFromJSON(json['ranking']),
         'influencerStatisticalResultOutcomes': !exists(json, 'influencerStatisticalResultOutcomes') ? undefined : ((json['influencerStatisticalResultOutcomes'] as Array<any>).map(InfluencerStatisticalResultOutcomeFromJSON)),
@@ -106,7 +99,7 @@ export function StatisticalResultOutcomeToJSON(value?: StatisticalResultOutcome 
     }
     return {
         
-        'bet': value.bet,
+        'bet': BetToJSON(value.bet),
         'betStatisticalSuccess': value.betStatisticalSuccess,
         'ranking': RankingToJSON(value.ranking),
         'influencerStatisticalResultOutcomes': value.influencerStatisticalResultOutcomes === undefined ? undefined : ((value.influencerStatisticalResultOutcomes as Array<any>).map(InfluencerStatisticalResultOutcomeToJSON)),

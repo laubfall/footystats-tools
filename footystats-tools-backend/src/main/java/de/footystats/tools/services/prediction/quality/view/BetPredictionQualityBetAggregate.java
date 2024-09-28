@@ -3,6 +3,7 @@ package de.footystats.tools.services.prediction.quality.view;
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.outcome.IRanked;
 import de.footystats.tools.services.prediction.quality.IBetPredictionBaseData;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData, IRanked {
 
+	@Schema(enumAsRef = true)
 	private Bet bet;
 	private Long betSucceeded;
 	private Long betFailed;

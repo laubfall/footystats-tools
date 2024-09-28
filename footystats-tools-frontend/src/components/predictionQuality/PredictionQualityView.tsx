@@ -11,10 +11,10 @@ import { apiCatchReasonHandler } from "../functions";
 import AlertMessageStore from "../../mobx/AlertMessages";
 import LoadingOverlayStore from "../../mobx/LoadingOverlayStore";
 import {
+	Bet,
 	BetPredictionQualityBetAggregate,
 	Report,
 } from "../../footystats-frontendapi";
-import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 import JobProgressStore from "../../mobx/JobProgressStore";
 
 export const PredictionQualityView = () => {
@@ -23,9 +23,7 @@ export const PredictionQualityView = () => {
 	const [currentBetAggregate, setCurrentBetAggregate] =
 		useState<Array<BetPredictionQualityBetAggregate>>();
 
-	const [selectedBet, setSelectedBet] = useState<BetPredictionQualityBetEnum>(
-		BetPredictionQualityBetEnum.OverZeroFive,
-	);
+	const [selectedBet, setSelectedBet] = useState<Bet>(Bet.OverZeroFive);
 
 	const predictionQualityService = new IpcPredictionQualityService();
 

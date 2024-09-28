@@ -52,3 +52,8 @@ public class BetPredictionQuality implements IBetPredictionBaseData {
 	@Setter
 	private List<InfluencerPercentDistribution> influencerDistribution; // The results of all influencers that participate at the computation of the prediction percent value.
 }
+
+
+
+
+

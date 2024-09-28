@@ -54,6 +54,7 @@ public class Match {
 	private String footyStatsUrl;
 	private PredictionResult o05;
 	private PredictionResult o15;
+	private PredictionResult o25;
 	private PredictionResult bttsYes;
 	private PredictionQualityRevision revision;
 
@@ -70,6 +71,9 @@ public class Match {
 			}
 			case OVER_ONE_FIVE -> {
 				return o15;
+			}
+			case OVER_TWO_FIVE -> {
+				return o25;
 			}
 			case BTTS_YES -> {
 				return bttsYes;
