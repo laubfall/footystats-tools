@@ -9,16 +9,14 @@ import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
 import {
+	Bet,
 	PredictionResult,
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
 import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
-import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 import { BetPredictionIcon } from "./BetPredictionIcon";
 
-function createBetPredictionColumns(
-	predictionForBets?: BetPredictionQualityBetEnum[],
-) {
+function createBetPredictionColumns(predictionForBets?: Bet[]) {
 	return (
 		predictionForBets?.map((bet) => {
 			const tr: TableColumn<MatchListEntry> = {
@@ -181,7 +179,7 @@ export const MatchList = ({
 };
 
 export type BetPrediction = {
-	bet: BetPredictionQualityBetEnum;
+	bet: Bet;
 	prediction: PredictionResult;
 };
 
@@ -202,7 +200,7 @@ export type MatchListProps = {
 	sortHandler: SortHandler;
 	pageChange?: PaginationChangePage;
 	pageSizeChange?: PaginationChangeRowsPerPage;
-	predictionForBets?: BetPredictionQualityBetEnum[];
+	predictionForBets?: Bet[];
 };
 
 export type SortHandler = {

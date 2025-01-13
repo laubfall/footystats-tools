@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class BetPredictionQualityBetAggregate implements IBetPredictionBaseData, IRanked {
 
-	@Schema(enumAsRef = true)
+	@Schema(enumAsRef = true, implementation = Bet.class)
 	private Bet bet;
 	private Long betSucceeded;
 	private Long betFailed;

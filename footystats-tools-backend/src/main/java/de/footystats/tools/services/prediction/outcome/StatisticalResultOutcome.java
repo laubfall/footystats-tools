@@ -2,6 +2,7 @@ package de.footystats.tools.services.prediction.outcome;
 
 import de.footystats.tools.services.prediction.Bet;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,7 +14,8 @@ import java.util.List;
  * @param influencerStatisticalResultOutcomes The statistical possibility of the calculated possibilities of every influencer that was involved in the
  *                                            prediction.
  */
-public record StatisticalResultOutcome(@Schema(enumAsRef = true) Bet bet, Double betStatisticalSuccess, Ranking ranking,
-									   List<InfluencerStatisticalResultOutcome> influencerStatisticalResultOutcomes) implements Serializable {
+public record StatisticalResultOutcome(@Schema(enumAsRef = true, implementation = Bet.class) Bet bet,
+                                       Double betStatisticalSuccess, Ranking ranking,
+                                       List<InfluencerStatisticalResultOutcome> influencerStatisticalResultOutcomes) implements Serializable {
 
 }

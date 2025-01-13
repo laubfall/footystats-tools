@@ -29,7 +29,7 @@ import {
 } from '../models';
 
 export interface LatestReportRequest {
-    moreQualityDetailsForThisBetType: string;
+    moreQualityDetailsForThisBetType: LatestReportMoreQualityDetailsForThisBetTypeEnum;
 }
 
 /**
@@ -114,3 +114,15 @@ export class PredictionQualityControllerApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const LatestReportMoreQualityDetailsForThisBetTypeEnum = {
+    OverZeroFive: 'OVER_ZERO_FIVE',
+    OverOneFive: 'OVER_ONE_FIVE',
+    OverTwoFive: 'OVER_TWO_FIVE',
+    BttsYes: 'BTTS_YES',
+    BttsNo: 'BTTS_NO'
+} as const;
+export type LatestReportMoreQualityDetailsForThisBetTypeEnum = typeof LatestReportMoreQualityDetailsForThisBetTypeEnum[keyof typeof LatestReportMoreQualityDetailsForThisBetTypeEnum];

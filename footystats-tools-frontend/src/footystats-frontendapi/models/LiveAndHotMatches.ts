@@ -58,10 +58,10 @@ export interface LiveAndHotMatches {
     country?: Country;
     /**
      * 
-     * @type {Set<Bet>}
+     * @type {Bet}
      * @memberof LiveAndHotMatches
      */
-    hotBets?: Set<Bet>;
+    hotBets?: Bet;
 }
 
 /**
@@ -87,7 +87,7 @@ export function LiveAndHotMatchesFromJSONTyped(json: any, ignoreDiscriminator: b
         'homeTeam': !exists(json, 'homeTeam') ? undefined : json['homeTeam'],
         'awayTeam': !exists(json, 'awayTeam') ? undefined : json['awayTeam'],
         'country': !exists(json, 'country') ? undefined : CountryFromJSON(json['country']),
-        'hotBets': !exists(json, 'hotBets') ? undefined : (new Set((json['hotBets'] as Array<any>).map(BetFromJSON))),
+        'hotBets': !exists(json, 'hotBets') ? undefined : BetFromJSON(json['hotBets']),
     };
 }
 
@@ -104,7 +104,7 @@ export function LiveAndHotMatchesToJSON(value?: LiveAndHotMatches | null): any {
         'homeTeam': value.homeTeam,
         'awayTeam': value.awayTeam,
         'country': CountryToJSON(value.country),
-        'hotBets': value.hotBets === undefined ? undefined : (Array.from(value.hotBets as Set<any>).map(BetToJSON)),
+        'hotBets': BetToJSON(value.hotBets),
     };
 }
 

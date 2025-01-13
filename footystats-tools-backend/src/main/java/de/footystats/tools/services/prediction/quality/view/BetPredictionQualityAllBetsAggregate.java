@@ -13,8 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @param dontBetSuccess Count success don't bet.
  * @param dontBetFailed  Count failed don't bet.
  */
-public record BetPredictionQualityAllBetsAggregate(@Schema(enumAsRef = true) Bet bet, Long assessed, Long betSuccess, Long betFailed,
-												   Long dontBetSuccess,
-												   Long dontBetFailed) {
+public record BetPredictionQualityAllBetsAggregate(@Schema(enumAsRef = true, implementation = Bet.class) Bet bet,
+                                                   Long assessed, Long betSuccess, Long betFailed,
+                                                   Long dontBetSuccess,
+                                                   Long dontBetFailed) {
 
 }

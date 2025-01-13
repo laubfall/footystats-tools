@@ -25,7 +25,7 @@ public class PredictionQualityController {
 	private final IBetPredictionQualityJobService betPredictionQualityJobService;
 
 	public PredictionQualityController(PredictionQualityService predictionQualityService, PredictionQualityViewService predictionQualityViewService,
-		IBetPredictionQualityJobService betPredictionQualityJobService) {
+	                                   IBetPredictionQualityJobService betPredictionQualityJobService) {
 		this.predictionQualityService = predictionQualityService;
 		this.predictionQualityViewService = predictionQualityViewService;
 		this.betPredictionQualityJobService = betPredictionQualityJobService;
@@ -38,15 +38,18 @@ public class PredictionQualityController {
 	}
 
 	@GetMapping("/latest/report/{moreQualityDetailsForThisBetType}")
-	public Report latestReport(@Schema(enumAsRef = true) @PathVariable Bet moreQualityDetailsForThisBetType) {
+	public Report latestReport(@Schema(enumAsRef = true, implementation = Bet.class) @PathVariable Bet moreQualityDetailsForThisBetType) {
 		final var latestRevision = predictionQualityService.latestRevision();
-		final var measuredPredictionCntAggregates = predictionQualityViewService.matchPredictionQualityMeasurementCounts(latestRevision);
+		final var measuredPredictionCntAggregates = predictionQualityViewService.matchPredictionQualityMeasurementCounts(
+			latestRevision);
 
 		// Create the bet prediction percent with count succeeded / failed for a specific percent value.
-		final var betPercentDistributionResult = predictionQualityViewService.betPredictionQuality(moreQualityDetailsForThisBetType, latestRevision);
+		final var betPercentDistributionResult = predictionQualityViewService.betPredictionQuality(
+			moreQualityDetailsForThisBetType, latestRevision);
 
 		// create prediction results for all bets
-		final var influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(moreQualityDetailsForThisBetType,
+		final var influencerPredictionsAggregated = predictionQualityViewService.influencerPredictionsAggregated(
+			moreQualityDetailsForThisBetType,
 			latestRevision);
 
 		return new Report(measuredPredictionCntAggregates, betPercentDistributionResult,

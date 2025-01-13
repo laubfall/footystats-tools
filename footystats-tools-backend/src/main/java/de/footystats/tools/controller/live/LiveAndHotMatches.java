@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import de.footystats.tools.services.domain.Country;
 import de.footystats.tools.services.prediction.Bet;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -16,7 +17,8 @@ import java.util.Set;
  * @param country  country of the match
  * @param hotBets  set of hot bets for the match. Hot bets are those with a high statistical result outcome.
  */
-public record LiveAndHotMatches(@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'") LocalDateTime start, String homeTeam, String awayTeam, Country country,
-								@Schema(enumAsRef = true) Set<Bet> hotBets) {
+public record LiveAndHotMatches(@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'") LocalDateTime start, String homeTeam,
+                                String awayTeam, Country country,
+                                @Schema(enumAsRef = true, implementation = Bet.class) Set<Bet> hotBets) {
 
 }
