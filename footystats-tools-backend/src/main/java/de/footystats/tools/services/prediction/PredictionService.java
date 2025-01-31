@@ -12,10 +12,13 @@ import de.footystats.tools.services.prediction.influencer.XgHomeAndAwayInfluence
 import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverTwoFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverZeroFiveInfluencer;
+import de.footystats.tools.services.prediction.influencer.team.AwayTeamWinOddsInfluencer;
+import de.footystats.tools.services.prediction.influencer.team.HomeTeamWinOddsInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.stereotype.Service;
 
 /**
  * Service to calculate the prediction for different bets for a match.
@@ -35,7 +38,9 @@ public class PredictionService {
 		new XgOverTwoFiveInfluencer(),
 		new AwayTeamLeaguePosInfluencer(),
 		new HomeTeamLeaguePosInfluencer(),
-		new XgHomeAndAwayInfluencer()
+		new XgHomeAndAwayInfluencer(),
+		new HomeTeamWinOddsInfluencer(),
+		new AwayTeamWinOddsInfluencer()
 	};
 
 	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx) {

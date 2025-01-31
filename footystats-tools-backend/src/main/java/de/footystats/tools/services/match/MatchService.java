@@ -1,7 +1,5 @@
 package de.footystats.tools.services.match;
 
-import static org.springframework.data.mongodb.core.query.Query.query;
-
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.prediction.Bet;
@@ -12,8 +10,6 @@ import de.footystats.tools.services.stats.LeagueStatsService;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.TeamStats;
 import de.footystats.tools.services.stats.TeamStatsService;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
@@ -23,6 +19,11 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Slf4j
 @Service
@@ -39,8 +40,8 @@ public class MatchService extends MongoService<Match> {
 	private final MatchRepository matchRepository;
 
 	public MatchService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter, PredictionService predictionService,
-		CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService,
-		MatchRepository matchRepository) {
+	                    CachedConfiguredStatsService cachedConfiguredStatsService, LeagueStatsService leagueStatsService, TeamStatsService teamStatsService,
+	                    MatchRepository matchRepository) {
 		super(mongoTemplate, mappingMongoConverter);
 
 		this.predictionService = predictionService;
@@ -103,30 +104,46 @@ public class MatchService extends MongoService<Match> {
 			// prediction result. For example in case of old matches there is maybe no stats download config.
 			cachedConfiguredStatsService.updateConfiguredStats(matchStats.getCountry(), matchStats.getLeague());
 		} catch (ServiceException serviceException) {
-			log.warn("Failed to update stats for match: {} because of: {}. Prediction calculation resumes without updated csv stats.",
+			log.warn(
+				"Failed to update stats for match: {} because of: {}. Prediction calculation resumes without updated csv stats.",
 				matchStats.matchStatsShort(), serviceException.getMessage());
 		}
 		// Load Team and League stats and add them to the context (if they exist).
-		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(matchStats.getLeague(), matchStats.getCountry(),
+		final LeagueStats aggregatedLeagueStats = leagueStatsService.aggregate(matchStats.getLeague(),
+			matchStats.getCountry(),
 			matchStats.getDateGmt().getYear());
-		final TeamStats homeTeam = teamStatsService.aggregate(matchStats.getHomeTeam(), matchStats.getCountry(), matchStats.getDateGmt().getYear());
-		final TeamStats awayTeam = teamStatsService.aggregate(matchStats.getAwayTeam(), matchStats.getCountry(), matchStats.getDateGmt().getYear());
+		final TeamStats homeTeam = teamStatsService.aggregate(matchStats.getHomeTeam(), matchStats.getCountry(),
+			matchStats.getDateGmt().getYear());
+		final TeamStats awayTeam = teamStatsService.aggregate(matchStats.getAwayTeam(), matchStats.getCountry(),
+			matchStats.getDateGmt().getYear());
 
-		return Match.builder().country(matchStats.getCountry()).league(matchStats.getLeague()).dateUnix(matchStats.getDateUnix())
-			.dateGMT(matchStats.getDateGmt()).footyStatsUrl(matchStats.getMatchFootyStatsURL()).state(matchStats.getMatchStatus())
-			.awayTeam(matchStats.getAwayTeam()).homeTeam(matchStats.getHomeTeam()).goalsAwayTeam(matchStats.getResultAwayTeamGoals())
+		return Match.builder().country(matchStats.getCountry()).league(matchStats.getLeague()).dateUnix(
+				matchStats.getDateUnix())
+			.dateGMT(matchStats.getDateGmt()).footyStatsUrl(matchStats.getMatchFootyStatsURL()).state(
+				matchStats.getMatchStatus())
+			.awayTeam(matchStats.getAwayTeam()).homeTeam(matchStats.getHomeTeam()).goalsAwayTeam(
+				matchStats.getResultAwayTeamGoals())
 			.goalsHomeTeam(matchStats.getResultHomeTeamGoals())
-			.bttsYes(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.BTTS_YES)))
-			.o05(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ZERO_FIVE)))
-			.o15(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ONE_FIVE)))
-			.o25(predictionService.prediction(new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_TWO_FIVE)))
+			.bttsYes(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.BTTS_YES)))
+			.o05(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ZERO_FIVE)))
+			.o15(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_ONE_FIVE)))
+			.o25(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.OVER_TWO_FIVE)))
+			.homeTeamWin(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.HOME_WIN)))
+			.awayTeamWin(predictionService.prediction(
+				new BetPredictionContext(matchStats, homeTeam, awayTeam, aggregatedLeagueStats, Bet.AWAY_WIN)))
 			.build();
 	}
 
 	@Override
 	public Query upsertQuery(Match example) {
 		return query(
-			Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(example.getDateUnix())
+			Criteria.where("country").is(example.getCountry()).and("league").is(example.getLeague()).and("dateUnix").is(
+					example.getDateUnix())
 				.and("awayTeam").is(example.getAwayTeam()).and("homeTeam").is(example.getHomeTeam()));
 	}
 

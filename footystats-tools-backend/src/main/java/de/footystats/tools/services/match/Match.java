@@ -7,7 +7,6 @@ import de.footystats.tools.services.prediction.PredictionResult;
 import de.footystats.tools.services.prediction.quality.PredictionQualityRevision;
 import de.footystats.tools.services.stats.MatchStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +18,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 /**
  * This class represents a match as shown in the match list.
@@ -55,6 +56,8 @@ public class Match {
 	private PredictionResult o05;
 	private PredictionResult o15;
 	private PredictionResult o25;
+	private PredictionResult homeTeamWin;
+	private PredictionResult awayTeamWin;
 	private PredictionResult bttsYes;
 	private PredictionQualityRevision revision;
 

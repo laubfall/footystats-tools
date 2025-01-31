@@ -2,10 +2,15 @@ package de.footystats.tools.services.prediction;
 
 import java.util.EnumSet;
 
+/**
+ * Enum representing bets known by the application.
+ */
 public enum Bet {
 	OVER_ZERO_FIVE,
 	OVER_ONE_FIVE,
 	OVER_TWO_FIVE,
+	HOME_WIN,
+	AWAY_WIN,
 	BTTS_YES,
 	BTTS_NO,
 	;
