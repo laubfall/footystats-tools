@@ -2,10 +2,10 @@ import React from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import translate from "../../i18n/translate";
 import {
+	Bet,
 	BetPredictionQualityAllBetsAggregate,
 	Report,
 } from "../../footystats-frontendapi";
-import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
 
 export const ReportList = ({
 	report,
@@ -97,7 +97,7 @@ export const ReportList = ({
 export type ReportListProps = {
 	report?: Report;
 	onRowClicked?: (row: BetPredictionQualityAllBetsAggregate) => void;
-	selectedBet?: BetPredictionQualityBetEnum;
+	selectedBet?: Bet;
 };
 
 export default { ReportList };

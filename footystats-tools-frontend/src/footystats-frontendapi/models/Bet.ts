@@ -21,6 +21,8 @@ export const Bet = {
     OverZeroFive: 'OVER_ZERO_FIVE',
     OverOneFive: 'OVER_ONE_FIVE',
     OverTwoFive: 'OVER_TWO_FIVE',
+    HomeWin: 'HOME_WIN',
+    AwayWin: 'AWAY_WIN',
     BttsYes: 'BTTS_YES',
     BttsNo: 'BTTS_NO'
 } as const;

@@ -74,6 +74,20 @@ public class PredictionService {
 		return PredictionAnalyze.FAILED;
 	}
 
+	private static PredictionAnalyze analyzeTeamWin(BetPredictionContext ctx) {
+		if (ctx.bet() == Bet.HOME_WIN) {
+			if (ctx.match().getResultHomeTeamGoals() > ctx.match().getResultAwayTeamGoals()) {
+				return PredictionAnalyze.SUCCESS;
+			}
+		} else if (ctx.bet() == Bet.AWAY_WIN) {
+			if (ctx.match().getResultAwayTeamGoals() > ctx.match().getResultHomeTeamGoals()) {
+				return PredictionAnalyze.SUCCESS;
+			}
+		}
+
+		return PredictionAnalyze.FAILED;
+	}
+
 	/**
 	 * Calculate if the prediction was correct.
 	 *
@@ -97,6 +111,7 @@ public class PredictionService {
 			case OVER_ONE_FIVE -> analyzeOverOneFive(ctx);
 			case OVER_TWO_FIVE -> analyzeOverTwoFive(ctx);
 			case BTTS_YES -> analyzeBttsYes(ctx);
+			case HOME_WIN, AWAY_WIN -> analyzeTeamWin(ctx);
 			default -> PredictionAnalyze.NOT_ANALYZED;
 		};
 	}

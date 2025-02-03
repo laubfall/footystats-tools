@@ -1,9 +1,5 @@
 package de.footystats.tools.controller.quality;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import de.footystats.tools.controller.BaseControllerTest;
 import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.quality.BetPredictionQualityRepository;
@@ -16,6 +12,10 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 class PredictionQualityControllerTest extends BaseControllerTest {
@@ -41,7 +41,7 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.betPredictionResults", IsNull.notNullValue(Integer.class)))
-			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
+			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(6)));
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/predictionquality/compute"))
 			.andExpect(status().isOk())
 			// checking for a specific id is unstable on github actions. So we just check for not null.
@@ -50,6 +50,6 @@ class PredictionQualityControllerTest extends BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.betPredictionResults", IsNull.notNullValue()))
-			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(3)));
+			.andExpect(jsonPath("$.betPredictionResults.size()", Matchers.equalTo(6)));
 	}
 }

@@ -21,6 +21,6 @@ public enum Bet {
 	 * @return s. description.
 	 */
 	public static EnumSet<Bet> activeBets() {
-		return EnumSet.of(OVER_ZERO_FIVE, OVER_ONE_FIVE, OVER_TWO_FIVE, BTTS_YES);
+		return EnumSet.of(OVER_ZERO_FIVE, OVER_ONE_FIVE, OVER_TWO_FIVE, BTTS_YES, HOME_WIN, AWAY_WIN);
 	}
 }

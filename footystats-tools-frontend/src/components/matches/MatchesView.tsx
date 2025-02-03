@@ -40,6 +40,14 @@ function matchListEntries(n: MatchListElement[]) {
 			footyStatsUrl: ms.footyStatsUrl,
 			betPredictions: [
 				{
+					bet: Bet.HomeWin,
+					prediction: ms.homeTeamWin,
+				},
+				{
+					bet: Bet.AwayWin,
+					prediction: ms.awayTeamWin,
+				},
+				{
 					bet: Bet.OverZeroFive,
 					prediction: ms.o05,
 				},
@@ -245,6 +253,8 @@ export const MatchesView = () => {
 				pageChange={changePageHandler}
 				pageSizeChange={changePageSizeHandler}
 				predictionForBets={[
+					Bet.HomeWin,
+					Bet.AwayWin,
 					Bet.OverZeroFive,
 					Bet.OverOneFive,
 					Bet.OverTwoFive,

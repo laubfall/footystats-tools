@@ -133,6 +133,18 @@ export interface MatchListElement {
      * @type {PredictionResult}
      * @memberof MatchListElement
      */
+    homeTeamWin?: PredictionResult;
+    /**
+     * 
+     * @type {PredictionResult}
+     * @memberof MatchListElement
+     */
+    awayTeamWin?: PredictionResult;
+    /**
+     * 
+     * @type {PredictionResult}
+     * @memberof MatchListElement
+     */
     bttsYes?: PredictionResult;
     /**
      * 
@@ -194,6 +206,8 @@ export function MatchListElementFromJSONTyped(json: any, ignoreDiscriminator: bo
         'o05': !exists(json, 'o05') ? undefined : PredictionResultFromJSON(json['o05']),
         'o15': !exists(json, 'o15') ? undefined : PredictionResultFromJSON(json['o15']),
         'o25': !exists(json, 'o25') ? undefined : PredictionResultFromJSON(json['o25']),
+        'homeTeamWin': !exists(json, 'homeTeamWin') ? undefined : PredictionResultFromJSON(json['homeTeamWin']),
+        'awayTeamWin': !exists(json, 'awayTeamWin') ? undefined : PredictionResultFromJSON(json['awayTeamWin']),
         'bttsYes': !exists(json, 'bttsYes') ? undefined : PredictionResultFromJSON(json['bttsYes']),
         'revision': !exists(json, 'revision') ? undefined : PredictionQualityRevisionFromJSON(json['revision']),
         'statisticalResultOutcome': !exists(json, 'statisticalResultOutcome') ? undefined : ((json['statisticalResultOutcome'] as Array<any>).map(StatisticalResultOutcomeFromJSON)),
@@ -223,6 +237,8 @@ export function MatchListElementToJSON(value?: MatchListElement | null): any {
         'o05': PredictionResultToJSON(value.o05),
         'o15': PredictionResultToJSON(value.o15),
         'o25': PredictionResultToJSON(value.o25),
+        'homeTeamWin': PredictionResultToJSON(value.homeTeamWin),
+        'awayTeamWin': PredictionResultToJSON(value.awayTeamWin),
         'bttsYes': PredictionResultToJSON(value.bttsYes),
         'revision': PredictionQualityRevisionToJSON(value.revision),
         'statisticalResultOutcome': value.statisticalResultOutcome === undefined ? undefined : ((value.statisticalResultOutcome as Array<any>).map(StatisticalResultOutcomeToJSON)),
