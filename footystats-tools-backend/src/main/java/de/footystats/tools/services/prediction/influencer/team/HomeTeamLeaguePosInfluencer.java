@@ -1,4 +1,4 @@
-package de.footystats.tools.services.prediction.influencer;
+package de.footystats.tools.services.prediction.influencer.team;
 
 public final class HomeTeamLeaguePosInfluencer extends LeaguePositionInfluencer {
 

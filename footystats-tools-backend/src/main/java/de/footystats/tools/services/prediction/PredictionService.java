@@ -1,18 +1,18 @@
 package de.footystats.tools.services.prediction;
 
-import de.footystats.tools.services.prediction.influencer.AwayTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
 import de.footystats.tools.services.prediction.influencer.FootyStatsBttsYesPredictionInfluencer;
 import de.footystats.tools.services.prediction.influencer.FootyStatsOverFTPredictionInfluencer;
-import de.footystats.tools.services.prediction.influencer.HomeTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsBttsYesInfluencer;
 import de.footystats.tools.services.prediction.influencer.OddsGoalOverInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgHomeAndAwayInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverOneFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverTwoFiveInfluencer;
 import de.footystats.tools.services.prediction.influencer.XgOverZeroFiveInfluencer;
+import de.footystats.tools.services.prediction.influencer.team.AwayTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.team.AwayTeamWinOddsInfluencer;
+import de.footystats.tools.services.prediction.influencer.team.HomeTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.team.HomeTeamWinOddsInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
 import org.springframework.stereotype.Service;

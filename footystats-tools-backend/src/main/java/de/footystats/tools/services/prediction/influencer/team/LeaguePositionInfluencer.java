@@ -1,7 +1,9 @@
-package de.footystats.tools.services.prediction.influencer;
+package de.footystats.tools.services.prediction.influencer.team;
 
 import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
+import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
+import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
 import de.footystats.tools.services.stats.TeamStats;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,7 +16,7 @@ public abstract sealed class LeaguePositionInfluencer implements BetResultInflue
 	 * Home or away team stats.
 	 */
 	private final boolean homeTeam;
-
+	
 	protected LeaguePositionInfluencer(boolean homeTeam) {
 		this.homeTeam = homeTeam;
 	}

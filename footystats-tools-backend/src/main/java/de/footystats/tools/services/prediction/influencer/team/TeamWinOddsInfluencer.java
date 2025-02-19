@@ -4,11 +4,11 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 
-abstract class TeamVictoryOddsInfluencer extends TeamWinInfluencer {
+abstract class TeamWinOddsInfluencer extends TeamWinInfluencer {
 
 	static float DIFF_RANGE = 4f;
 
-	public TeamVictoryOddsInfluencer(Bet teamBet) {
+	public TeamWinOddsInfluencer(Bet teamBet) {
 		super(teamBet);
 	}
 
@@ -41,7 +41,7 @@ abstract class TeamVictoryOddsInfluencer extends TeamWinInfluencer {
 
 	private Float oddsTeamWin(BetPredictionContext ctx) {
 		var matchStats = ctx.match();
-		if (ctx.bet() == Bet.HOME_WIN) {
+		if (Bet.HOME_WIN.equals(getTeamBet())) {
 			return matchStats.getOddsHomeWin();
 		} else {
 			return matchStats.getOddsAwayWin();
@@ -50,7 +50,7 @@ abstract class TeamVictoryOddsInfluencer extends TeamWinInfluencer {
 
 	private Float oddsOtherTeam(BetPredictionContext ctx) {
 		var matchStats = ctx.match();
-		if (ctx.bet() == Bet.HOME_WIN) {
+		if (Bet.HOME_WIN.equals(getTeamBet())) {
 			return matchStats.getOddsAwayWin();
 		} else {
 			return matchStats.getOddsHomeWin();
