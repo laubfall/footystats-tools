@@ -64,15 +64,22 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(jsonPath("$.jobId", notNullValue(Integer.class)));
 		mockMvc.perform(get("/predictionquality/latest/report/OVER_ZERO_FIVE"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.betPredictionResults", hasSize(6))) // "Actually we do predictions for two bet types"
+			.andExpect(jsonPath("$.betPredictionResults",
+				hasSize(6))) // Count of bets we did quality computations for the predictions.
 			.andExpect(jsonPath("$.betPredictionResults[0].bet", equalTo("OVER_ZERO_FIVE")))
 			.andExpect(jsonPath("$.betPredictionResults[0].assessed", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[0].betSuccess", equalTo(4)))
 			.andExpect(jsonPath("$.betPredictionResults[0].betFailed", equalTo(0)))
-			.andExpect(jsonPath("$.betPredictionResults[2].bet", equalTo("BTTS_YES")))
+			.andExpect(jsonPath("$.betPredictionResults[1].bet", equalTo("OVER_ONE_FIVE")))
+			.andExpect(jsonPath("$.betPredictionResults[1].assessed", equalTo(4)))
+			.andExpect(jsonPath("$.betPredictionResults[1].betSuccess", equalTo(3)))
+			.andExpect(jsonPath("$.betPredictionResults[1].dontBetSuccess",
+				equalTo(1))) // One match was expected to fail against this bet
+			.andExpect(jsonPath("$.betPredictionResults[1].betFailed", equalTo(0)))
+			.andExpect(jsonPath("$.betPredictionResults[2].bet", equalTo("OVER_TWO_FIVE")))
 			.andExpect(jsonPath("$.betPredictionResults[2].assessed", equalTo(4)))
-			.andExpect(jsonPath("$.betPredictionResults[2].betSuccess", equalTo(3)))
-			.andExpect(jsonPath("$.betPredictionResults[2].betFailed", equalTo(1)))
+			.andExpect(jsonPath("$.betPredictionResults[2].betSuccess", equalTo(1)))
+			.andExpect(jsonPath("$.betPredictionResults[2].betFailed", equalTo(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions.keys()", hasSize(3)))
 			.andExpect(jsonPath("$.betInfluencerPercentDistributions['OddsGoalsOverInfluencer']", hasSize(3)))
 			.andExpect(
@@ -101,8 +108,8 @@ class PredictionQualityControllerWithMatchesTest extends BaseControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.betPredictionResults", hasSize(6)));
 
-		Assertions.assertEquals(3, betPredictionQualityRepository.count(),
-			"Two, cause one for btts_yes and one for over_zero_five.");
+		Assertions.assertEquals(6, betPredictionQualityRepository.count(),
+			"Six, because this is the count of active bets (Bet.activeBets)");
 		var overZeroFiveQuality = new BetPredictionQuality();
 		overZeroFiveQuality.setBet(Bet.OVER_ZERO_FIVE);
 		Optional<BetPredictionQuality> optOverZeroFive = betPredictionQualityRepository.findOne(

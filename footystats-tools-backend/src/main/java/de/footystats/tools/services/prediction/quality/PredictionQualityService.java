@@ -1,9 +1,5 @@
 package de.footystats.tools.services.prediction.quality;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
-
 import com.mongodb.client.result.UpdateResult;
 import de.footystats.tools.services.MongoService;
 import de.footystats.tools.services.match.Match;
@@ -12,10 +8,6 @@ import de.footystats.tools.services.prediction.InfluencerPercentDistribution;
 import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.prediction.PredictionResult;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -23,6 +15,15 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
 
 /**
  * This class computes the quality of done predictions for a match. This mainly means it checks if a prediction was right or wrong and write the
@@ -41,7 +42,7 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	private final BetPredictionQualityRepository betPredictionQualityRepository;
 
 	public PredictionQualityService(MongoTemplate mongoTemplate, MappingMongoConverter mappingMongoConverter,
-		BetPredictionQualityRepository betPredictionQualityRepository) {
+	                                BetPredictionQualityRepository betPredictionQualityRepository) {
 		super(mongoTemplate, mappingMongoConverter);
 		this.betPredictionQualityRepository = betPredictionQualityRepository;
 	}
@@ -73,13 +74,16 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	@Transactional
 	public void revisionUpdateOnRecompute() {
 		final PredictionQualityRevision predictionQualityRevision = nextRevision();
-		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION)),
+		final UpdateResult updateResult = mongoTemplate.updateMulti(
+			query(where("revision").is(PredictionQualityRevision.IN_RECOMPUTATION)),
 			update("revision", predictionQualityRevision), BetPredictionQuality.class);
-		log.info("Updated " + updateResult.getMatchedCount() + " revision of bet prediction qualities due to recomputated bet predictions.");
+		log.info(
+			"Updated " + updateResult.getMatchedCount() + " revision of bet prediction qualities due to recomputated bet predictions.");
 
 		final UpdateResult updateResultMatches = mongoTemplate.updateMulti(query(where("revision").exists(false)),
 			update("revision", predictionQualityRevision), Match.class);
-		log.info("Updated " + updateResultMatches.getMatchedCount() + " revision of matches due to recomputated bet predictions.");
+		log.info(
+			"Updated " + updateResultMatches.getMatchedCount() + " revision of matches due to recomputated bet predictions.");
 	}
 
 	/**
@@ -89,7 +93,8 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 	@Transactional
 	public void markMatchesWithRevisionOnCompute() {
 		final PredictionQualityRevision latestRevision = latestRevision();
-		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").exists(false)), update("revision", latestRevision),
+		final UpdateResult updateResult = mongoTemplate.updateMulti(query(where("revision").exists(false)),
+			update("revision", latestRevision),
 			Match.class);
 		log.info("Updated " + updateResult.getMatchedCount() + " matches revision due to computed bet predictions.");
 	}
@@ -122,7 +127,8 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 			.filter(influencerResult -> influencerResult.precheckResult().equals(PrecheckResult.OK))
 			.map(influencerResult -> new InfluencerPercentDistribution(influencerResult.influencerPredictionValue(),
 				PredictionAnalyze.SUCCESS.equals(prediction.analyzeResult()) ? 1L : 0L,
-				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()) ? 1L : 0L, influencerResult.influencerName(),
+				PredictionAnalyze.FAILED.equals(prediction.analyzeResult()) ? 1L : 0L,
+				influencerResult.influencerName(),
 				influencerResult.precheckResult()))
 			.toList();
 	}
@@ -138,8 +144,10 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 				betPredictionQualityRepository.insert(betPredictionQuality);
 			} else {
 				existingBetPredictionQuality.setCount(existingBetPredictionQuality.getCount() + 1);
-				existingBetPredictionQuality.setBetSucceeded(existingBetPredictionQuality.getBetSucceeded() + betPredictionQuality.getBetSucceeded());
-				existingBetPredictionQuality.setBetFailed(existingBetPredictionQuality.getBetFailed() + betPredictionQuality.getBetFailed());
+				existingBetPredictionQuality.setBetSucceeded(
+					existingBetPredictionQuality.getBetSucceeded() + betPredictionQuality.getBetSucceeded());
+				existingBetPredictionQuality.setBetFailed(
+					existingBetPredictionQuality.getBetFailed() + betPredictionQuality.getBetFailed());
 				mergeInfluencerDistribution(existingBetPredictionQuality, betPredictionQuality);
 				betPredictionQualityRepository.save(existingBetPredictionQuality);
 			}
@@ -152,7 +160,8 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		}
 		sourceBetPredictionQuality.getInfluencerDistribution().forEach((sourceInfluencerDistribution) -> {
 			var optTId = targetBetPredictionQuality.getInfluencerDistribution().stream().filter(
-					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(sourceInfluencerDistribution.getInfluencerName()) &&
+					(InfluencerPercentDistribution tId) -> tId.getInfluencerName().equals(
+						sourceInfluencerDistribution.getInfluencerName()) &&
 						tId.getPredictionPercent().equals(sourceInfluencerDistribution.getPredictionPercent()) &&
 						tId.getPrecheckResult() == sourceInfluencerDistribution.getPrecheckResult())
 				.findAny();

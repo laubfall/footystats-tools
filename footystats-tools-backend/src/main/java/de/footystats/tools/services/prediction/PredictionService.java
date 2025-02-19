@@ -15,6 +15,7 @@ import de.footystats.tools.services.prediction.influencer.team.AwayTeamWinOddsIn
 import de.footystats.tools.services.prediction.influencer.team.HomeTeamLeaguePosInfluencer;
 import de.footystats.tools.services.prediction.influencer.team.HomeTeamWinOddsInfluencer;
 import de.footystats.tools.services.stats.MatchStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * Service to calculate the prediction for different bets for a match.
  */
+@Slf4j
 @Service
 public class PredictionService {
 
@@ -124,7 +126,6 @@ public class PredictionService {
 		var doneInfluencerCalculations = 0;
 
 		for (BetResultInfluencer influencer : betResultInfluencer) {
-
 			var preCheckResult = influencer.preCheck(ctx);
 			if (preCheckResult == PrecheckResult.OK) {
 				var predictionInfluence = influencer.calculateInfluence(ctx);
@@ -142,6 +143,10 @@ public class PredictionService {
 			result = result / doneInfluencerCalculations;
 		}
 		var betOnThis = result > LOWER_EXCLUSIVE_BORDER_BET_ON_THIS;
+		log.debug("Done prediction bet {} and match: {} - {} with result: {} and bet on this: {}", ctx.bet(),
+			ctx.match().getAwayTeam(),
+			ctx.match().getHomeTeam(), result,
+			betOnThis);
 		return new PredictionResult(result, betOnThis, analyze(ctx, doneInfluencerCalculations > 0),
 			influencerDetailedResult);
 	}

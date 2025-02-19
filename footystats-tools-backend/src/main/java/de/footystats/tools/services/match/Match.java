@@ -81,8 +81,17 @@ public class Match {
 			case BTTS_YES -> {
 				return bttsYes;
 			}
+			case BTTS_NO -> {
+				return null; // Actually we don't do prediction for this bet type.
+			}
+			case HOME_WIN -> {
+				return homeTeamWin;
+			}
+			case AWAY_WIN -> {
+				return awayTeamWin;
+			}
 			default -> {
-				return null;
+				throw new IllegalArgumentException("Don't know which prediction result to supply for: " + bet);
 			}
 		}
 	}

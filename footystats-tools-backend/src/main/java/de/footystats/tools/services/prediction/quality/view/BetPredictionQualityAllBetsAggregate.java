@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @param assessed       Total count of all predictions for this bet type.
  * @param betSuccess     Count successful bets.
  * @param betFailed      Count failed bets.
- * @param dontBetSuccess Count success don't bet.
- * @param dontBetFailed  Count failed don't bet.
+ * @param dontBetSuccess Count of successful bets but prediction was "don't bet".
+ * @param dontBetFailed  Count of failed bets but prediction was "don't bet" (so this is the positive case: don't bet and bet failed indeed).
  */
 public record BetPredictionQualityAllBetsAggregate(@Schema(enumAsRef = true, implementation = Bet.class) Bet bet,
                                                    Long assessed, Long betSuccess, Long betFailed,
