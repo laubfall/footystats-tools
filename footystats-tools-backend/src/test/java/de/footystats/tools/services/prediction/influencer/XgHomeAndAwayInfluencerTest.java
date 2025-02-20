@@ -32,8 +32,6 @@ class XgHomeAndAwayInfluencerTest {
 	static Object[][] precheckParams() {
 		return new Object[][]{
 			{1F, 3F, Bet.BTTS_YES, PrecheckResult.OK},
-			{1F, 3F, Bet.OVER_ZERO_FIVE, PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET},
-			{1F, 3F, Bet.OVER_ONE_FIVE, PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET},
 			{null, 3F, Bet.BTTS_YES, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{3F, null, Bet.BTTS_YES, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{null, null, Bet.BTTS_YES, PrecheckResult.NOT_ENOUGH_INFORMATION},
@@ -45,7 +43,8 @@ class XgHomeAndAwayInfluencerTest {
 	@MethodSource("calculateInfluenceParams")
 	void calculateInfluence(Float xgHomePreMatch, Float xgAwayPreMatch, int expectedResult) {
 		var influencer = new XgHomeAndAwayInfluencer();
-		MatchStats matchStats = MatchStats.builder().homeTeamPreMatchxG(xgHomePreMatch).awayTeamPreMatchxG(xgAwayPreMatch).build();
+		MatchStats matchStats = MatchStats.builder().homeTeamPreMatchxG(xgHomePreMatch).awayTeamPreMatchxG(
+			xgAwayPreMatch).build();
 		var ctx = new BetPredictionContext(matchStats, null, null, null, null);
 		var result = influencer.calculateInfluence(ctx);
 		Assertions.assertEquals(expectedResult, result);
@@ -56,7 +55,8 @@ class XgHomeAndAwayInfluencerTest {
 	@MethodSource("precheckParams")
 	void precheck(Float xgHomePreMatch, Float xgAwayPreMatch, Bet bet, PrecheckResult expectedResult) {
 		var influencer = new XgHomeAndAwayInfluencer();
-		MatchStats matchStats = MatchStats.builder().homeTeamPreMatchxG(xgHomePreMatch).awayTeamPreMatchxG(xgAwayPreMatch).build();
+		MatchStats matchStats = MatchStats.builder().homeTeamPreMatchxG(xgHomePreMatch).awayTeamPreMatchxG(
+			xgAwayPreMatch).build();
 		var ctx = new BetPredictionContext(matchStats, null, null, null, bet);
 		var result = influencer.preCheck(ctx);
 		Assertions.assertEquals(expectedResult, result);

@@ -7,9 +7,10 @@ import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 abstract class TeamWinOddsInfluencer extends TeamWinInfluencer {
 
 	static float DIFF_RANGE = 4f;
+	private final Bet teamBet;
 
 	public TeamWinOddsInfluencer(Bet teamBet) {
-		super(teamBet);
+		this.teamBet = teamBet;
 	}
 
 	@Override
@@ -41,7 +42,7 @@ abstract class TeamWinOddsInfluencer extends TeamWinInfluencer {
 
 	private Float oddsTeamWin(BetPredictionContext ctx) {
 		var matchStats = ctx.match();
-		if (Bet.HOME_WIN.equals(getTeamBet())) {
+		if (Bet.HOME_WIN.equals(teamBet)) {
 			return matchStats.getOddsHomeWin();
 		} else {
 			return matchStats.getOddsAwayWin();
@@ -50,7 +51,7 @@ abstract class TeamWinOddsInfluencer extends TeamWinInfluencer {
 
 	private Float oddsOtherTeam(BetPredictionContext ctx) {
 		var matchStats = ctx.match();
-		if (Bet.HOME_WIN.equals(getTeamBet())) {
+		if (Bet.HOME_WIN.equals(teamBet)) {
 			return matchStats.getOddsAwayWin();
 		} else {
 			return matchStats.getOddsHomeWin();

@@ -36,7 +36,8 @@ class XgOverZeroFiveInfluencerTest {
 		Assertions.assertEquals(PrecheckResult.OK, precheckResult);
 		prediction = influencer.calculateInfluence(ctx);
 		Assertions.assertNotNull(prediction);
-		Assertions.assertEquals(100, prediction, "Influencer takes 2 as the max count of goals for achieving 100 percent");
+		Assertions.assertEquals(100, prediction,
+			"Influencer takes 2 as the max count of goals for achieving 100 percent");
 	}
 
 	@Test
@@ -49,15 +50,6 @@ class XgOverZeroFiveInfluencerTest {
 		Integer prediction = influencer.calculateInfluence(ctx);
 		Assertions.assertNotNull(prediction);
 		Assertions.assertEquals(0, prediction);
-	}
-
-	@Test
-	void wrongbet() {
-		var influencer = new XgOverZeroFiveInfluencer();
-		MatchStats matchStats = MatchStats.builder().awayTeamPreMatchxG(1.3f).homeTeamPreMatchxG(1.6f).build();
-		var ctx = new BetPredictionContext(matchStats, null, null, null, Bet.OVER_ONE_FIVE);
-		PrecheckResult precheckResult = influencer.preCheck(ctx);
-		Assertions.assertEquals(PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET, precheckResult);
 	}
 
 	@Test

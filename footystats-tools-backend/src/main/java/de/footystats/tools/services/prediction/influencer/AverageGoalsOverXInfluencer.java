@@ -12,13 +12,6 @@ public class AverageGoalsOverXInfluencer implements BetResultInfluencer {
 	private static final Float MAX_EXPECTED_AVERAGE_GOALS = 6f;
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-		switch (ctx.bet()) {
-			case OVER_ZERO_FIVE, OVER_ONE_FIVE, OVER_TWO_FIVE:
-				break;
-			default:
-				return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
-
 		final MatchStats match = ctx.match();
 		if (match == null || match.getAverageGoals() == null) {
 			return PrecheckResult.NOT_ENOUGH_INFORMATION;

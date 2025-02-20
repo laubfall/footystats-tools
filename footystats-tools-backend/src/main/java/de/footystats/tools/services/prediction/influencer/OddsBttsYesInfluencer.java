@@ -1,6 +1,5 @@
 package de.footystats.tools.services.prediction.influencer;
 
-import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
 
 public class OddsBttsYesInfluencer implements BetResultInfluencer {
@@ -11,11 +10,6 @@ public class OddsBttsYesInfluencer implements BetResultInfluencer {
 	private static final float VALUE_RANGE = UPPER_ODDS_BOUND - LOWER_ODDS_BOUND;
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-
-		if (ctx.bet() != Bet.BTTS_YES) {
-			return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
-
 		var odds = ctx.match().getOddsBTTS_Yes();
 		// Odds with a value lower then 0 won't occure inside a footystats csv but odds
 		// with value of 0 can.

@@ -1,6 +1,5 @@
 package de.footystats.tools.services.prediction.influencer;
 
-import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
 
 /**
@@ -12,10 +11,6 @@ public class XgHomeAndAwayInfluencer implements BetResultInfluencer {
 
 	@Override
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-		if (!Bet.BTTS_YES.equals(ctx.bet())) {
-			return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
-
 		Float homeTeamPreMatchxG = ctx.match().getHomeTeamPreMatchxG();
 		Float awayTeamPreMatchxG = ctx.match().getAwayTeamPreMatchxG();
 

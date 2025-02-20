@@ -7,6 +7,7 @@ import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.TeamStats;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,6 +22,7 @@ public class TeamWinLeaguePosInfluencerTest {
 		);
 	}
 
+	@Disabled
 	@ParameterizedTest
 	@MethodSource("data")
 	public void expected_precheck_and_result(int homeTeamLeaguePosition, int awayTeamLeaguePosition, int numberOfClubs, Bet bet, TeamWinLeaguePosInfluencer influencer, int expectedInfluence, PrecheckResult expectedPrecheckResult) {

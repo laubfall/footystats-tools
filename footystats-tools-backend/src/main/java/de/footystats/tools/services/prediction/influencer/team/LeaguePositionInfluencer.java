@@ -1,12 +1,10 @@
 package de.footystats.tools.services.prediction.influencer.team;
 
-import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
 import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.prediction.influencer.BetResultInfluencer;
 import de.footystats.tools.services.stats.TeamStats;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 
 @Slf4j
 public abstract sealed class LeaguePositionInfluencer implements BetResultInfluencer permits AwayTeamLeaguePosInfluencer,
@@ -16,17 +14,12 @@ public abstract sealed class LeaguePositionInfluencer implements BetResultInflue
 	 * Home or away team stats.
 	 */
 	private final boolean homeTeam;
-	
+
 	protected LeaguePositionInfluencer(boolean homeTeam) {
 		this.homeTeam = homeTeam;
 	}
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-
-		if (!ArrayUtils.contains(new Bet[]{Bet.OVER_ONE_FIVE, Bet.OVER_ZERO_FIVE}, ctx.bet())) {
-			return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
-
 		var teamStats = relevantTeamStats(ctx);
 		var leagueStats = ctx.leagueStats();
 		if (teamStats == null || leagueStats == null || leagueStats.getNumberOfClubs() == null

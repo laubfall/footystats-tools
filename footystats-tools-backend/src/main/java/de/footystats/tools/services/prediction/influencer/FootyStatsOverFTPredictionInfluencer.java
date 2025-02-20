@@ -1,19 +1,13 @@
 package de.footystats.tools.services.prediction.influencer;
 
+import de.footystats.tools.services.prediction.PrecheckResult;
+
 import static de.footystats.tools.services.prediction.Bet.OVER_TWO_FIVE;
 import static de.footystats.tools.services.prediction.Bet.OVER_ZERO_FIVE;
-
-import de.footystats.tools.services.prediction.PrecheckResult;
 
 public class FootyStatsOverFTPredictionInfluencer implements BetResultInfluencer {
 
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-		switch (ctx.bet()) {
-			case OVER_ZERO_FIVE, OVER_ONE_FIVE, OVER_TWO_FIVE:
-				break;
-			default:
-				return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
 		if (ctx.match().getOver05Average() == null) {
 			return PrecheckResult.NOT_ENOUGH_INFORMATION;
 		}

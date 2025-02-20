@@ -32,15 +32,15 @@ class AverageGoalsOverXInfluencerTest {
 			new Object[]{Bet.OVER_ZERO_FIVE, null, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			new Object[]{Bet.OVER_ZERO_FIVE, 1.0f, PrecheckResult.OK},
 			new Object[]{Bet.OVER_ONE_FIVE, 2.0f, PrecheckResult.OK},
-			new Object[]{Bet.OVER_TWO_FIVE, 3.0f, PrecheckResult.OK},
-			new Object[]{Bet.BTTS_YES, 1.0f, PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET}
+			new Object[]{Bet.OVER_TWO_FIVE, 3.0f, PrecheckResult.OK}
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("averageGoalsOverXInfluencerSource")
 	void averageGoalsOverXInfluencerCalculate(Float averageGoals, Bet bet, int expectedPredictionPercent) {
-		MatchStats matchStats = MatchStats.builder().dateGmt(LocalDateTime.now()).league("Bundesliga").awayTeam("away team")
+		MatchStats matchStats = MatchStats.builder().dateGmt(LocalDateTime.now()).league("Bundesliga").awayTeam(
+				"away team")
 			.homeTeam("home team").averageGoals(averageGoals).build();
 		TeamStats teamStats = new TeamStats();
 		LeagueStats leagueStats = LeagueStats.builder().numberOfClubs(18).build();
@@ -53,7 +53,8 @@ class AverageGoalsOverXInfluencerTest {
 	@ParameterizedTest
 	@MethodSource("averageGoalsOverXInfluencerPrecheckSource")
 	void averageGoalsOverXInfluencerPrecheck(Bet bet, Float averageGoals, PrecheckResult expectedPrecheckResult) {
-		MatchStats matchStats = MatchStats.builder().dateGmt(LocalDateTime.now()).league("Bundesliga").awayTeam("away team")
+		MatchStats matchStats = MatchStats.builder().dateGmt(LocalDateTime.now()).league("Bundesliga").awayTeam(
+				"away team")
 			.homeTeam("home team").averageGoals(averageGoals).build();
 		TeamStats teamStats = new TeamStats();
 		LeagueStats leagueStats = LeagueStats.builder().numberOfClubs(18).build();

@@ -7,12 +7,6 @@ public class OddsGoalOverInfluencer implements BetResultInfluencer {
 
 	// eslint-disable-next-line class-methods-use-this
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-		switch (ctx.bet()) {
-			case OVER_ZERO_FIVE, OVER_ONE_FIVE:
-				break;
-			default:
-				return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
 		if (ctx.match() == null || ctx.match().getOddsOver15() == null) {
 			return PrecheckResult.NOT_ENOUGH_INFORMATION;
 		}

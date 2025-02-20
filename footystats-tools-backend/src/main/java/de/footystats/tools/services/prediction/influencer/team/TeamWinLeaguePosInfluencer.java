@@ -13,9 +13,10 @@ public abstract class TeamWinLeaguePosInfluencer extends TeamWinInfluencer {
 	private final AwayTeamLeaguePosInfluencer awayTeamLeaguePosInfluencer;
 
 	private final HomeTeamLeaguePosInfluencer homeTeamLeaguePosInfluencer;
+	private final Bet teamBet;
 
 	public TeamWinLeaguePosInfluencer(Bet teamBet) {
-		super(teamBet);
+		this.teamBet = teamBet;
 		awayTeamLeaguePosInfluencer = new AwayTeamLeaguePosInfluencer();
 		homeTeamLeaguePosInfluencer = new HomeTeamLeaguePosInfluencer();
 	}
@@ -38,11 +39,10 @@ public abstract class TeamWinLeaguePosInfluencer extends TeamWinInfluencer {
 		var awayInf = awayTeamLeaguePosInfluencer.calculateInfluence(ctx);
 		var homeInf = homeTeamLeaguePosInfluencer.calculateInfluence(ctx);
 
-		var team = getTeamBet();
 		var result = 0;
-		if (Bet.HOME_WIN.equals(team)) {
+		if (Bet.HOME_WIN.equals(teamBet)) {
 			result = homeInf - awayInf;
-		} else if (Bet.AWAY_WIN.equals(team)) {
+		} else if (Bet.AWAY_WIN.equals(teamBet)) {
 			result = awayInf - homeInf;
 		}
 

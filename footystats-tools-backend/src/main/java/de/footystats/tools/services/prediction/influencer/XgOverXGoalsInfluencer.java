@@ -1,25 +1,17 @@
 package de.footystats.tools.services.prediction.influencer;
 
-import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PrecheckResult;
 
 public abstract class XgOverXGoalsInfluencer implements BetResultInfluencer {
 
 	private final int xgBase;
 
-	private final Bet validFor;
-
-	protected XgOverXGoalsInfluencer(int xgBase, Bet validFor) {
+	protected XgOverXGoalsInfluencer(int xgBase) {
 		this.xgBase = xgBase;
-		this.validFor = validFor;
 	}
 
 	@Override
 	public PrecheckResult preCheck(BetPredictionContext ctx) {
-		if (!validFor.equals(ctx.bet())) {
-			return PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET;
-		}
-
 		if (ctx.match().getAwayTeamPreMatchxG() == null && ctx.match().getHomeTeamPreMatchxG() == null) {
 			return PrecheckResult.NOT_ENOUGH_INFORMATION;
 		}

@@ -46,8 +46,6 @@ class LeaguePositionInfluencerTest {
 				10), PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{5, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5,
 				4), null, PrecheckResult.NOT_ENOUGH_INFORMATION},
-			{5, Bet.BTTS_YES, new HomeTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5, 10), null,
-				PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET},
 			{5, Bet.OVER_ZERO_FIVE, new HomeTeamLeaguePosInfluencer(), null, null, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{10, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), null, teamStatsBuilder(2, 5,
 				10), PrecheckResult.OK},
@@ -55,8 +53,6 @@ class LeaguePositionInfluencerTest {
 				10), null, PrecheckResult.NOT_ENOUGH_INFORMATION},
 			{5, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5,
 				4), null, PrecheckResult.NOT_ENOUGH_INFORMATION},
-			{5, Bet.BTTS_YES, new AwayTeamLeaguePosInfluencer(), teamStatsBuilder(2, 5, 10), null,
-				PrecheckResult.DONT_KNOW_WHAT_TO_CALCULATE_FOR_BET},
 			{5, Bet.OVER_ZERO_FIVE, new AwayTeamLeaguePosInfluencer(), null, null, PrecheckResult.NOT_ENOUGH_INFORMATION}
 		};
 	}

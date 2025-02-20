@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service to calculate the prediction for different bets for a match.
@@ -30,20 +31,18 @@ public class PredictionService {
 
 	public static final int LOWER_EXCLUSIVE_BORDER_BET_ON_THIS = 50;
 
-	private final BetResultInfluencer[] betResultInfluencer = {
-		new OddsBttsYesInfluencer(),
-		new OddsGoalOverInfluencer(),
-		new FootyStatsBttsYesPredictionInfluencer(),
-		new FootyStatsOverFTPredictionInfluencer(),
-		new XgOverZeroFiveInfluencer(),
-		new XgOverOneFiveInfluencer(),
-		new XgOverTwoFiveInfluencer(),
-		new AwayTeamLeaguePosInfluencer(),
-		new HomeTeamLeaguePosInfluencer(),
-		new XgHomeAndAwayInfluencer(),
-		new HomeTeamWinOddsInfluencer(),
-		new AwayTeamWinOddsInfluencer()
-	};
+	private final Map<Bet, BetResultInfluencer[]> betResultInfluencerConfig = Map.of(
+		Bet.BTTS_YES,
+		new BetResultInfluencer[]{new OddsBttsYesInfluencer(), new FootyStatsBttsYesPredictionInfluencer(), new XgHomeAndAwayInfluencer()},
+		Bet.OVER_ZERO_FIVE,
+		new BetResultInfluencer[]{new OddsGoalOverInfluencer(), new XgOverZeroFiveInfluencer(), new FootyStatsOverFTPredictionInfluencer(), new AwayTeamLeaguePosInfluencer(), new HomeTeamLeaguePosInfluencer()},
+		Bet.OVER_ONE_FIVE,
+		new BetResultInfluencer[]{new OddsGoalOverInfluencer(), new XgOverOneFiveInfluencer(), new FootyStatsOverFTPredictionInfluencer(), new AwayTeamLeaguePosInfluencer(), new HomeTeamLeaguePosInfluencer()},
+		Bet.OVER_TWO_FIVE,
+		new BetResultInfluencer[]{new XgOverTwoFiveInfluencer(), new FootyStatsOverFTPredictionInfluencer(), new AwayTeamLeaguePosInfluencer(), new HomeTeamLeaguePosInfluencer()},
+		Bet.HOME_WIN, new BetResultInfluencer[]{new HomeTeamWinOddsInfluencer()},
+		Bet.AWAY_WIN, new BetResultInfluencer[]{new AwayTeamWinOddsInfluencer()}
+	);
 
 	private static PredictionAnalyze analyzeBttsYes(BetPredictionContext ctx) {
 		if (ctx.match().getResultAwayTeamGoals() > 0 &&
@@ -125,6 +124,7 @@ public class PredictionService {
 
 		var doneInfluencerCalculations = 0;
 
+		BetResultInfluencer[] betResultInfluencer = betResultInfluencerConfig.get(ctx.bet());
 		for (BetResultInfluencer influencer : betResultInfluencer) {
 			var preCheckResult = influencer.preCheck(ctx);
 			if (preCheckResult == PrecheckResult.OK) {
