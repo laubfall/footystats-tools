@@ -3,7 +3,9 @@ package de.footystats.tools.services.bet;
 import de.footystats.tools.services.bet.attributes.Attributes;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.DoubleAttribute;
+import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.Bet;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +35,15 @@ public class BetTicketServiceTest {
 		List<BaseBetAttribute<?>> attributes = List.of(new BetAttribute(Bet.OVER_ZERO_FIVE),
 			new DoubleAttribute(1.5, Attributes.ODDS));
 
-		BetTicket ticket = betTicketService.placeBet(attributes, false, 1.0);
+		var match = new Match();
+		match.setId(new ObjectId());
+		BetTicket ticket = betTicketService.placeBet(match, attributes, false, 1.0);
 		Assertions.assertNotNull(ticket);
 
 		List<BetTicket> all = betTicketRepository.findAll();
 		Assertions.assertEquals(1, all.size());
 		ticket = all.getFirst();
-		Assertions.assertEquals(2, ticket.getAttributeSeries().size());
+		Assertions.assertEquals(2, ticket.getAttributes().size());
 
 		List<BetSeries> allBetSeries = betSeriesRepository.findAll();
 		// One bet series with both attributes and another one with only the betAttribute.

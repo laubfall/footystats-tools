@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +16,10 @@ import java.util.List;
 @Setter
 @ToString
 public class BetSeries {
-	private final List<BaseBetAttribute<?>> attributeSeries;
+	private final List<BaseBetAttribute<?>> attributes;
+
+	@Transient
+	private final AttributeSeries attributeSeries;
 
 	@Indexed
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
@@ -25,7 +29,8 @@ public class BetSeries {
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
 	private LocalDateTime validUntil;
 
-	public BetSeries(List<BaseBetAttribute<?>> attributeSeries) {
-		this.attributeSeries = attributeSeries;
+	public BetSeries(List<BaseBetAttribute<?>> attributes) {
+		this.attributeSeries = new AttributeSeries(attributes);
+		this.attributes = attributes;
 	}
 }

@@ -2,7 +2,10 @@ package de.footystats.tools.services.bet;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -14,7 +17,10 @@ import java.util.List;
 @Getter
 @Setter
 public class BetTicket {
-	private final List<BaseBetAttribute<?>> attributeSeries;
+	private final List<BaseBetAttribute<?>> attributes;
+
+	@Transient
+	private AttributeSeries attributeSeries;
 
 	/**
 	 * If true the outcome of the bet should be involved in computing the total bet series (e.g. won money/bets).
@@ -33,7 +39,17 @@ public class BetTicket {
 
 	private double wonMoney = 0;
 
-	public BetTicket(List<BaseBetAttribute<?>> attributeSeries) {
-		this.attributeSeries = attributeSeries;
+	private boolean evaluated;
+
+	/**
+	 * The id of the document that contains the match information. Document is of type Match.
+	 */
+	private ObjectId matchDocumentId;
+
+	public BetTicket(ObjectId matchDocumentId, List<BaseBetAttribute<?>> attributes) {
+		Assert.notNull(matchDocumentId, "Match document id must not be null");
+		this.attributeSeries = new AttributeSeries(attributes);
+		this.attributes = attributes;
+		this.matchDocumentId = matchDocumentId;
 	}
 }

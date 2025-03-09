@@ -7,6 +7,7 @@ import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,9 @@ public class BetTicketService {
 		this.betSeriesRepository = betSeriesRepository;
 	}
 
-	public BetTicket placeBet(List<BaseBetAttribute<?>> attributes, boolean virtual, double stake) {
+	public BetTicket placeBet(Match match, List<BaseBetAttribute<?>> attributes, boolean virtual, double stake) {
+		Assert.notNull(match, "Match must not be null");
+		Assert.notNull(match.getId(), "Match id must not be null");
 		var result = hasExactlyOneBetAttribute(attributes);
 		if (!result) {
 			throw new ServiceException(ServiceException.Type.BET_TICKET_SERVICE_NO_BET_ATTRIBUTE);
@@ -34,7 +37,7 @@ public class BetTicketService {
 
 		prepareBetSeries(attributes);
 
-		var ticket = new BetTicket(attributes);
+		var ticket = new BetTicket(match.getId(), attributes);
 		ticket.setVirtual(virtual);
 		ticket.setStake(stake);
 
@@ -48,19 +51,23 @@ public class BetTicketService {
 			return;
 		}
 		// Find all bet tickets that match the completed match.
-		// Evaluate the bet tickets.
-		// Update the bet tickets.
+		var betsForMatch = betTicketRepository.findAllByMatchDocumentIdAndEvaluatedIsFalse(completedMatch.getId());
+		for (BetTicket forMatch : betsForMatch) {
+			List<List<BaseBetAttribute<?>>> possibleBetSeries = forMatch.getAttributeSeries().possibleBetAttributeSeries();
+			// Evaluate the bet tickets.
+			// Update the bet tickets.
+		}
+
 	}
 
 	public BetSeries betSeriesByAttributes(List<BaseBetAttribute<?>> attributes) {
 		List<BetSeries> possibleBetSeries = betSeriesRepository.findAll();
 
 		Optional<BetSeries> matching = possibleBetSeries.stream().filter(
-				series -> CollectionUtils.isEqualCollection(series.getAttributeSeries(), attributes))
+				series -> CollectionUtils.isEqualCollection(series.getAttributes(), attributes))
 			.findFirst();
 
 		return matching.orElse(null);
-
 	}
 
 	private void prepareBetSeries(List<BaseBetAttribute<?>> attributes) {
