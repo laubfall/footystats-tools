@@ -4,6 +4,8 @@ import de.footystats.tools.services.bet.attributes.Attributes;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -13,6 +15,8 @@ public abstract class BaseBetAttribute<A> {
 	protected final A value;
 	@Setter
 	protected Attributes name;
+	@Id
+	private ObjectId id;
 
 	public BaseBetAttribute(A value, Attributes name) {
 		this.value = value;

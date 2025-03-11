@@ -1,9 +1,11 @@
 package de.footystats.tools.services.bet;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
 
@@ -14,13 +16,13 @@ import java.util.List;
  * These attributes are used to determine the bet series where the bet ticket should count against.
  */
 @Document
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class BetTicket {
-	private final List<BaseBetAttribute<?>> attributes;
-
-	@Transient
-	private AttributeSeries attributeSeries;
+	@Indexed
+	private List<ObjectId> attributeIds;
 
 	/**
 	 * If true the outcome of the bet should be involved in computing the total bet series (e.g. won money/bets).
@@ -39,17 +41,18 @@ public class BetTicket {
 
 	private double wonMoney = 0;
 
+	@Indexed
 	private boolean evaluated;
 
 	/**
 	 * The id of the document that contains the match information. Document is of type Match.
 	 */
+	@Indexed
 	private ObjectId matchDocumentId;
 
-	public BetTicket(ObjectId matchDocumentId, List<BaseBetAttribute<?>> attributes) {
+	public BetTicket(ObjectId matchDocumentId, AttributeSeries attributeSeries) {
 		Assert.notNull(matchDocumentId, "Match document id must not be null");
-		this.attributeSeries = new AttributeSeries(attributes);
-		this.attributes = attributes;
+		this.attributeIds = attributeSeries.computeAttributeIds();
 		this.matchDocumentId = matchDocumentId;
 	}
 }

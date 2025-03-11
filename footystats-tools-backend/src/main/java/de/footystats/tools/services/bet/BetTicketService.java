@@ -1,18 +1,15 @@
 package de.footystats.tools.services.bet;
 
-import de.footystats.tools.services.ServiceException;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,22 +19,21 @@ public class BetTicketService {
 
 	private final BetSeriesRepository betSeriesRepository;
 
-	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository) {
+	private final BetAttributeRepository betAttributeRepository;
+
+	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository) {
 		this.betTicketRepository = betTicketRepository;
 		this.betSeriesRepository = betSeriesRepository;
+		this.betAttributeRepository = betAttributeRepository;
 	}
 
-	public BetTicket placeBet(Match match, List<BaseBetAttribute<?>> attributes, boolean virtual, double stake) {
+	public BetTicket placeBet(Match match, AttributeSeries attributeSeries, boolean virtual, double stake) {
 		Assert.notNull(match, "Match must not be null");
 		Assert.notNull(match.getId(), "Match id must not be null");
-		var result = hasExactlyOneBetAttribute(attributes);
-		if (!result) {
-			throw new ServiceException(ServiceException.Type.BET_TICKET_SERVICE_NO_BET_ATTRIBUTE);
-		}
 
-		prepareBetSeries(attributes);
+		prepareBetSeries(attributeSeries);
 
-		var ticket = new BetTicket(match.getId(), attributes);
+		var ticket = new BetTicket(match.getId(), attributeSeries);
 		ticket.setVirtual(virtual);
 		ticket.setStake(stake);
 
@@ -53,41 +49,25 @@ public class BetTicketService {
 		// Find all bet tickets that match the completed match.
 		var betsForMatch = betTicketRepository.findAllByMatchDocumentIdAndEvaluatedIsFalse(completedMatch.getId());
 		for (BetTicket forMatch : betsForMatch) {
-			List<List<BaseBetAttribute<?>>> possibleBetSeries = forMatch.getAttributeSeries().possibleBetAttributeSeries();
+			List<BaseBetAttribute<?>> matchBetAttributes = betAttributeRepository.findAllById(
+				forMatch.getAttributeIds());
+
 			// Evaluate the bet tickets.
 			// Update the bet tickets.
 		}
 
 	}
 
-	public BetSeries betSeriesByAttributes(List<BaseBetAttribute<?>> attributes) {
-		List<BetSeries> possibleBetSeries = betSeriesRepository.findAll();
-
-		Optional<BetSeries> matching = possibleBetSeries.stream().filter(
-				series -> CollectionUtils.isEqualCollection(series.getAttributes(), attributes))
-			.findFirst();
-
-		return matching.orElse(null);
-	}
-
-	private void prepareBetSeries(List<BaseBetAttribute<?>> attributes) {
+	private void prepareBetSeries(AttributeSeries attributeSeries) {
 		// Find the BetAttribute in the list
-		BaseBetAttribute<?> betAttribute = attributes.stream()
-			.filter(attribute -> attribute instanceof BetAttribute)
-			.findFirst()
-			.orElse(null);
-
-		if (betAttribute == null) {
-			// No need to throw exception, is done before.
-			return;
-		}
+		var betAttribute = attributeSeries.findBetAttribute();
 
 		// Create a new list without the BetAttribute
-		List<BaseBetAttribute<?>> attributesWithoutBet = new ArrayList<>(attributes);
+		List<BaseBetAttribute<?>> attributesWithoutBet = new ArrayList<>(attributeSeries.getAttributes());
 		attributesWithoutBet.remove(betAttribute);
 
 		// Recursively check for BetSeries
-		checkBetSeries((BetAttribute) betAttribute, attributesWithoutBet);
+		checkBetSeries(betAttribute, attributesWithoutBet);
 	}
 
 	private void checkBetSeries(BetAttribute betAttribute, List<BaseBetAttribute<?>> attributes) {
@@ -95,9 +75,10 @@ public class BetTicketService {
 		// Check if a BetSeries exists for the current list of attributes
 		var fullAttributes = new ArrayList<>(attributes);
 		fullAttributes.add(betAttribute);
-		BetSeries betSeries = betSeriesByAttributes(fullAttributes);
+		var attributeSeries = new AttributeSeries(fullAttributes);
+		BetSeries betSeries = betSeriesRepository.searchByAttributeIds(attributeSeries.computeAttributeIds());
 		if (betSeries == null) {
-			var series = new BetSeries(fullAttributes);
+			var series = new BetSeries(attributeSeries);
 			series.setValidFrom(LocalDateTime.now());
 			betSeriesRepository.insert(series);
 			log.info("Created new BetSeries: {}", series);
@@ -112,15 +93,5 @@ public class BetTicketService {
 			reducedAttributes.remove(i);
 			checkBetSeries(betAttribute, reducedAttributes);
 		}
-	}
-
-	/**
-	 * Method that checks if the list of attributes contains exactly one BetAttribute. More would not make sense.
-	 *
-	 * @param attributes The list of attributes to check.
-	 * @return True if the list contains exactly one BetAttribute, false otherwise.
-	 */
-	private boolean hasExactlyOneBetAttribute(List<BaseBetAttribute<?>> attributes) {
-		return attributes.stream().filter(attribute -> attribute instanceof BetAttribute).count() == 1;
 	}
 }
