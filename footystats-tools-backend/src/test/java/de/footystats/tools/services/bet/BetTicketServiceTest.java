@@ -1,7 +1,10 @@
 package de.footystats.tools.services.bet;
 
+import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.Attributes;
+import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
+import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
 import de.footystats.tools.services.bet.attributes.DoubleAttribute;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.Bet;
@@ -21,7 +24,7 @@ import java.util.stream.Stream;
 @DataMongoTest
 @AutoConfigureDataMongo
 @Import({BetTicktServiceConfiguration.class})
-public class BetTicketServiceTest {
+class BetTicketServiceTest {
 	@Autowired
 	private BetTicketService betTicketService;
 
@@ -35,19 +38,19 @@ public class BetTicketServiceTest {
 	private BetAttributeRepository betAttributeRepository;
 
 	@Test
-	public void place_a_ticket_without_existing_bet_series() {
+	void place_a_ticket_without_existing_bet_series() {
 		List<BaseBetAttribute<?>> attributes = List.of(new BetAttribute(Bet.OVER_ZERO_FIVE),
 			new DoubleAttribute(1.5, Attributes.ODDS));
 
 		var match = new Match();
 		match.setId(new ObjectId());
-		BetTicket ticket = betTicketService.placeBet(match, new AttributeSeries(attributes), false, 1.0);
+		BetTicket ticket = betTicketService.placeBet(match, List.of(), false, 1.0);
 		Assertions.assertNotNull(ticket);
 
 		List<BetTicket> all = betTicketRepository.findAll();
 		Assertions.assertEquals(1, all.size());
 		ticket = all.getFirst();
-		Assertions.assertEquals(2, ticket.getAttributeIds().size());
+		Assertions.assertEquals(2, ticket.getChosenAttributeValues().size());
 
 		List<BetSeries> allBetSeries = betSeriesRepository.findAll();
 		// One bet series with both attributes and another one with only the betAttribute.
@@ -62,7 +65,7 @@ public class BetTicketServiceTest {
 	}
 
 	@Test
-	public void referende_attribute_ids() {
+	void referende_attribute_ids() {
 		var betAttribute = betAttributeRepository.insert(new BetAttribute(Bet.BTTS_YES));
 		var doubAttr1 = betAttributeRepository.insert(new DoubleAttribute(12.2, Attributes.ODDS));
 		var doubAttr2 = betAttributeRepository.insert(new DoubleAttribute(3.2, Attributes.ODDS));

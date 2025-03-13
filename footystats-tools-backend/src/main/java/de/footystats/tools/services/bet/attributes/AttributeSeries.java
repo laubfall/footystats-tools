@@ -1,7 +1,6 @@
-package de.footystats.tools.services.bet;
+package de.footystats.tools.services.bet.attributes;
 
 
-import de.footystats.tools.services.bet.attributes.BetAttribute;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.util.Assert;
@@ -22,6 +21,7 @@ public class AttributeSeries {
 	public AttributeSeries(List<BaseBetAttribute<?>> attributes) {
 		Assert.isTrue(attributes.stream().filter(attr -> attr instanceof BetAttribute).count() == 1,
 			"Exact one attribute must be of type BetAttribute");
+		Assert.isTrue(attributes.stream().noneMatch(attr -> attr.getId() == null), "All attributes must have an id");
 		this.attributes = attributes;
 	}
 

@@ -1,6 +1,7 @@
 package de.footystats.tools.services.bet;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

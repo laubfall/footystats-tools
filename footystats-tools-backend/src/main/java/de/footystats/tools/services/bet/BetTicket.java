@@ -1,5 +1,7 @@
 package de.footystats.tools.services.bet;
 
+import de.footystats.tools.services.bet.attributes.AttributeSeries;
+import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 public class BetTicket {
-	@Indexed
-	private List<ObjectId> attributeIds;
+	private List<ChosenAttributeValue> chosenAttributeValues;
 
 	/**
 	 * If true the outcome of the bet should be involved in computing the total bet series (e.g. won money/bets).
@@ -52,7 +53,10 @@ public class BetTicket {
 
 	public BetTicket(ObjectId matchDocumentId, AttributeSeries attributeSeries) {
 		Assert.notNull(matchDocumentId, "Match document id must not be null");
-		this.attributeIds = attributeSeries.computeAttributeIds();
+
+		chosenAttributeValues = attributeSeries.getAttributes().stream().map(
+			attr -> new ChosenAttributeValue(attr.getId(), null, null, null)).toList();
+
 		this.matchDocumentId = matchDocumentId;
 	}
 }

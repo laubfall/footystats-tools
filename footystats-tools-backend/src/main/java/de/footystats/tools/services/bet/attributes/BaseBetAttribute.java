@@ -1,6 +1,5 @@
-package de.footystats.tools.services.bet;
+package de.footystats.tools.services.bet.attributes;
 
-import de.footystats.tools.services.bet.attributes.Attributes;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +17,13 @@ public abstract class BaseBetAttribute<A> {
 	@Id
 	private ObjectId id;
 
-	public BaseBetAttribute(A value, Attributes name) {
+	protected BaseBetAttribute(A value, Attributes name) {
 		this.value = value;
 		this.name = name;
+	}
+
+	protected final boolean baseMatch(ChosenAttributeValue value) {
+		return value.getAttributeId().equals(id) && match(value);
 	}
 
 	/**
@@ -29,5 +32,5 @@ public abstract class BaseBetAttribute<A> {
 	 * @param value The value to check against.
 	 * @return True if the value matches, false otherwise.
 	 */
-	protected abstract boolean match(A value);
+	protected abstract boolean match(ChosenAttributeValue value);
 }
