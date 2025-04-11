@@ -20,9 +20,6 @@ class AttributeServiceTest {
 	@Autowired
 	private AttributeService attributeService;
 
-	@Autowired
-	private InitialAttributesPopulator config;
-
 	@Test
 	void initialize_and_load() {
 		List<AttributeSeries> bttsAttributeSeries = attributeService.by(Bet.OVER_ZERO_FIVE);

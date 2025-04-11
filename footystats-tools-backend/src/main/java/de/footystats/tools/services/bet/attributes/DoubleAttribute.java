@@ -1,8 +1,15 @@
 package de.footystats.tools.services.bet.attributes;
 
 public class DoubleAttribute extends BaseBetAttribute<Double> {
+
+	public static final String DOUBLE_ATTR = "double_";
+
 	public DoubleAttribute(Double value, Attributes name) {
-		super(value, name);
+		super(value, name, uniqueName(value, name));
+	}
+
+	public static String uniqueName(Double value, Attributes name) {
+		return DOUBLE_ATTR + value + "_" + name;
 	}
 
 	@Override

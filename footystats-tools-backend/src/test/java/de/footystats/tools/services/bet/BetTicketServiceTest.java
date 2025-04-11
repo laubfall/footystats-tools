@@ -1,10 +1,9 @@
 package de.footystats.tools.services.bet;
 
-import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.Attributes;
-import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
+import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.bet.attributes.DoubleAttribute;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.Bet;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @ActiveProfiles("test")
 @DataMongoTest
@@ -39,12 +37,20 @@ class BetTicketServiceTest {
 
 	@Test
 	void place_a_ticket_without_existing_bet_series() {
-		List<BaseBetAttribute<?>> attributes = List.of(new BetAttribute(Bet.OVER_ZERO_FIVE),
-			new DoubleAttribute(1.5, Attributes.ODDS));
 
 		var match = new Match();
 		match.setId(new ObjectId());
-		BetTicket ticket = betTicketService.placeBet(match, List.of(), false, 1.0);
+
+		//bet_OVER_ZERO_FIVE,double_1.0_ODDS
+		var attrBetOver05 = betAttributeRepository.findByUniqueName(BetAttribute.uniqueName(Bet.OVER_ZERO_FIVE),
+			BetAttribute.class);
+		var attrOdds1 = betAttributeRepository.findByUniqueName(DoubleAttribute.uniqueName(1.0, Attributes.ODDS),
+			DoubleAttribute.class);
+
+		BetTicket ticket = betTicketService.placeBet(match,
+			List.of(new ChosenAttributeValue(attrBetOver05.getId(), attrBetOver05.getValue().name()),
+				new ChosenAttributeValue(attrOdds1.getId(), attrOdds1.getValue())),
+			false, 1.0);
 		Assertions.assertNotNull(ticket);
 
 		List<BetTicket> all = betTicketRepository.findAll();
@@ -56,45 +62,11 @@ class BetTicketServiceTest {
 		// One bet series with both attributes and another one with only the betAttribute.
 		Assertions.assertEquals(2, allBetSeries.size());
 
-		var betSeries = betSeriesRepository.searchByAttributeIds(new AttributeSeries(attributes).computeAttributeIds());
+
+		var betSeries = betSeriesRepository.searchByAttributeIds(List.of(attrBetOver05.getId(), attrOdds1.getId()));
 		Assertions.assertNotNull(betSeries);
 
-		betSeries = betSeriesRepository.searchByAttributeIds(
-			new AttributeSeries(new BetAttribute(Bet.OVER_ZERO_FIVE)).computeAttributeIds());
+		betSeries = betSeriesRepository.searchByAttributeIds(List.of(attrBetOver05.getId()));
 		Assertions.assertNotNull(betSeries);
-	}
-
-	@Test
-	void referende_attribute_ids() {
-		var betAttribute = betAttributeRepository.insert(new BetAttribute(Bet.BTTS_YES));
-		var doubAttr1 = betAttributeRepository.insert(new DoubleAttribute(12.2, Attributes.ODDS));
-		var doubAttr2 = betAttributeRepository.insert(new DoubleAttribute(3.2, Attributes.ODDS));
-
-		var match = new Match();
-		match.setId(new ObjectId());
-
-		var allAttributes = betAttributeRepository.findAll();
-
-		betTicketRepository.insert(new BetTicket(match.getId(), new AttributeSeries(List.of(betAttribute, doubAttr1))));
-
-		var attrIds = allAttributes.stream().map(BaseBetAttribute::getId).toList();
-		List<BetTicket> allByAttributeIds = betTicketRepository.findAllByAttributeIds(attrIds);
-		Assertions.assertEquals(0, allByAttributeIds.size());
-
-
-		allByAttributeIds = betTicketRepository.findAllByAttributeIds(
-			Stream.of(betAttribute, doubAttr1).map(BaseBetAttribute::getId).toList());
-
-		Assertions.assertEquals(1, allByAttributeIds.size());
-
-		allByAttributeIds = betTicketRepository.findAllByAttributeIds(
-			Stream.of(betAttribute, doubAttr2).map(BaseBetAttribute::getId).toList());
-
-		Assertions.assertEquals(0, allByAttributeIds.size());
-
-		allByAttributeIds = betTicketRepository.findAllByAttributeIds(
-			Stream.of(betAttribute).map(BaseBetAttribute::getId).toList());
-
-		Assertions.assertEquals(0, allByAttributeIds.size());
 	}
 }

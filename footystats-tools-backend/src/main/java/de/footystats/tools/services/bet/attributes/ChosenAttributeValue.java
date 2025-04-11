@@ -16,4 +16,19 @@ public class ChosenAttributeValue {
 	private Double valueDouble;
 
 	private Integer valueInt;
+
+	public ChosenAttributeValue(ObjectId attributeId, String value) {
+		this.attributeId = attributeId;
+		this.value = value;
+	}
+
+	public ChosenAttributeValue(ObjectId attributeId, Double value) {
+		this.attributeId = attributeId;
+		this.valueDouble = value;
+	}
+
+	public ChosenAttributeValue(ObjectId attributeId, Integer value) {
+		this.attributeId = attributeId;
+		this.valueInt = value;
+	}
 }

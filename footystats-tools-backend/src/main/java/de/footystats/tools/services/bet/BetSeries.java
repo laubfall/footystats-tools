@@ -32,6 +32,12 @@ public class BetSeries {
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm'Z'")
 	private LocalDateTime validUntil;
 
+	private long successCount;
+
+	private long failCount;
+
+	private double wonMoney;
+
 	public BetSeries(AttributeSeries attributeSeries) {
 		this.attributeIds = attributeSeries.computeAttributeIds();
 	}

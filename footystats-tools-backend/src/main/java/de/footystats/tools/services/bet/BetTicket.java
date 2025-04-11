@@ -40,7 +40,7 @@ public class BetTicket {
 	 */
 	private double stake;
 
-	private double wonMoney = 0;
+	private double odds;
 
 	@Indexed
 	private boolean evaluated;
@@ -58,5 +58,9 @@ public class BetTicket {
 			attr -> new ChosenAttributeValue(attr.getId(), null, null, null)).toList();
 
 		this.matchDocumentId = matchDocumentId;
+	}
+
+	public double getWonMoney() {
+		return won ? stake * odds - stake : -stake;
 	}
 }

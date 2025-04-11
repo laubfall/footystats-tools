@@ -10,6 +10,7 @@ import org.springframework.data.repository.init.RepositoryPopulator;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -19,25 +20,39 @@ public class InitialAttributesPopulator implements RepositoryPopulator, Applicat
 
 	public void populate(Repositories repositories) {
 		Optional<Object> repositoryFor = repositories.getRepositoryFor(BaseBetAttribute.class);
-
 		if (repositoryFor.isEmpty()) {
 			return;
 		}
 
-		BetAttributeRepository repository = (BetAttributeRepository) repositoryFor.get();
-		repository.save(new BetAttribute(Bet.OVER_ZERO_FIVE));
-		repository.save(new DoubleAttribute(1.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(2.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(3.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(4.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(5.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(6.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(7.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(8.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(9.0, Attributes.ODDS));
-		repository.save(new DoubleAttribute(10.0, Attributes.ODDS));
+		var attributesWaveOne = List.of(
+			new BetAttribute(Bet.OVER_ZERO_FIVE),
+			new BetAttribute(Bet.OVER_ONE_FIVE),
+			new BetAttribute(Bet.OVER_TWO_FIVE),
+			new BetAttribute(Bet.BTTS_YES),
+			new BetAttribute(Bet.HOME_WIN),
+			new BetAttribute(Bet.AWAY_WIN),
+			new DoubleAttribute(1.0, Attributes.ODDS),
+			new DoubleAttribute(2.0, Attributes.ODDS),
+			new DoubleAttribute(3.0, Attributes.ODDS),
+			new DoubleAttribute(4.0, Attributes.ODDS),
+			new DoubleAttribute(5.0, Attributes.ODDS),
+			new DoubleAttribute(6.0, Attributes.ODDS),
+			new DoubleAttribute(7.0, Attributes.ODDS),
+			new DoubleAttribute(8.0, Attributes.ODDS),
+			new DoubleAttribute(9.0, Attributes.ODDS),
+			new DoubleAttribute(10.0, Attributes.ODDS)
+		);
 
-		applicationEventPublisher.publishEvent(new RepositoriesPopulatedEvent(this, repositories));
+
+		BetAttributeRepository repository = (BetAttributeRepository) repositoryFor.get();
+		if (needPopulation(repository, attributesWaveOne.size())) {
+			repository.saveAll(attributesWaveOne);
+			applicationEventPublisher.publishEvent(new RepositoriesPopulatedEvent(this, repositories));
+		}
+	}
+
+	private boolean needPopulation(BetAttributeRepository repository, long expectedAttributeCount) {
+		return repository.count() != expectedAttributeCount;
 	}
 
 
