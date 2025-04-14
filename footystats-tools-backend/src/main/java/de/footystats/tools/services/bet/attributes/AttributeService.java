@@ -25,7 +25,9 @@ import java.util.Map;
 public class AttributeService implements ApplicationListener<RepositoriesPopulatedEvent> {
 
 	private final Map<Bet, List<AttributeSeries>> attributeSeriesMap = new HashMap<>();
+
 	private final BetAttributeRepository attributeRepository;
+
 	@Value("classpath:data/initialAttributeSeries.csv")
 	private Resource initialAttributeSeriesResource;
 
@@ -35,6 +37,15 @@ public class AttributeService implements ApplicationListener<RepositoriesPopulat
 
 	public List<AttributeSeries> by(Bet bet) {
 		return attributeSeriesMap.get(bet);
+	}
+
+	public AttributeSeries byChosenValues(List<ChosenAttributeValue> chosenAttributeValues) {
+		if (chosenAttributeValues.isEmpty()) {
+			return null;
+		}
+
+		var attributeIds = chosenAttributeValues.stream().map(ChosenAttributeValue::getAttributeId).toList();
+		return by(attributeIds);
 	}
 
 	public AttributeSeries by(List<ObjectId> attributeIds) {

@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Populates the database with initial attributes if they are not already present.
+ * Fires an event after populating the database so that other components can react to it.
+ * This is actual the initialization of the attribute series.
+ */
 @Component
 public class InitialAttributesPopulator implements RepositoryPopulator, ApplicationListener<ContextRefreshedEvent>, ApplicationEventPublisherAware {
 

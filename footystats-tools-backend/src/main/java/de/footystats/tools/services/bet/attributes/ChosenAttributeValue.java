@@ -5,6 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 
+/**
+ * A chosen value for an attribute.
+ * <p>
+ * Only one type of value can be set at a time.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

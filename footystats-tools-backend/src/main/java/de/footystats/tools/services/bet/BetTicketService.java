@@ -1,6 +1,7 @@
 package de.footystats.tools.services.bet;
 
 import de.footystats.tools.services.bet.attributes.AttributeSeries;
+import de.footystats.tools.services.bet.attributes.AttributeService;
 import de.footystats.tools.services.bet.attributes.Attributes;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
@@ -11,8 +12,6 @@ import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -31,11 +30,13 @@ public class BetTicketService {
 	private final BetSeriesRepository betSeriesRepository;
 
 	private final BetAttributeRepository betAttributeRepository;
+	private final AttributeService attributeService;
 
-	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository) {
+	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository, AttributeService attributeService) {
 		this.betTicketRepository = betTicketRepository;
 		this.betSeriesRepository = betSeriesRepository;
 		this.betAttributeRepository = betAttributeRepository;
+		this.attributeService = attributeService;
 	}
 
 	public BetTicket placeBet(Match match, Collection<ChosenAttributeValue> betValues, boolean virtual, double stake) {
@@ -61,27 +62,19 @@ public class BetTicketService {
 		}
 		// Find all bet tickets that match the completed match.
 		var betsForMatch = betTicketRepository.findAllByMatchDocumentIdAndEvaluatedIsFalse(completedMatch.getId());
-		for (BetTicket forMatch : betsForMatch) {
+		for (BetTicket ticket : betsForMatch) {
 
 			// Update the bet tickets.
-			var betWon = wonBet(forMatch, completedMatch);
-			forMatch.setWon(betWon);
-			forMatch.setEvaluated(true);
-			betTicketRepository.save(forMatch);
+			var betWon = wonBet(ticket, completedMatch);
+			ticket.setWon(betWon);
+			ticket.setEvaluated(true);
+			betTicketRepository.save(ticket);
 
 
 			// Update the bet series with matching bet attributes.
-
-			var ticketAttributes = betAttributeRepository.findAllById(
-				forMatch.getChosenAttributeValues().stream().map(
-					ChosenAttributeValue::getAttributeId).toList());
-
-
-			var attributeSeries = new AttributeSeries(ticketAttributes);
-			List<Pair<BaseBetAttribute<?>, ChosenAttributeValue>> attrsAndChosenValues = attributeSeries.groupById(
-				forMatch.getChosenAttributeValues());
+			AttributeSeries matchingSeries = attributeService.byChosenValues(ticket.getChosenAttributeValues());
 			// Todo Find all bet series that match at least a subset of the bet attributes.
-			//betSeriesRepository.searchByAttributeIds(forMatch.getAttributeIds());
+			//betSeriesRepository.searchByAttributeIds(ticket.getAttributeIds());
 		}
 	}
 
@@ -98,11 +91,7 @@ public class BetTicketService {
 	}
 
 	private AttributeSeries by(Collection<ChosenAttributeValue> betValues) {
-		List<ObjectId> chosenAttributeIds
-			= betValues.stream().map(ChosenAttributeValue::getAttributeId).toList();
-		List<BaseBetAttribute<?>> attributes = betAttributeRepository.findAllById(chosenAttributeIds);
-
-		return new AttributeSeries(attributes);
+		return attributeService.byChosenValues(new ArrayList<>(betValues));
 	}
 
 	private void prepareBetSeries(AttributeSeries attributeSeries) {
