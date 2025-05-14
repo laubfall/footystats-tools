@@ -2,25 +2,51 @@ package de.footystats.tools.services.bet.attributes;
 
 
 import lombok.Getter;
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents the functional logic behind an attribute series.
  */
+@Document
+@NoArgsConstructor
 @Getter
 public class AttributeSeries {
-	private final List<BaseBetAttribute<?>> attributes;
+	private List<ObjectId> attributeIds;
 
-	public AttributeSeries(List<BaseBetAttribute<?>> attributes) {
+	@Id
+	private ObjectId id;
+
+	/**
+	 * The attributes that are part of this series and matches the attributeIds.
+	 * Filled by aspect AttributeSeriesRepositoryAspect.
+	 */
+	@Transient
+	private List<? extends BaseBetAttribute<?>> attributes;
+
+	/**
+	 * Used for deserialization.
+	 *
+	 * @param attributeIds attribute ids.
+	 * @param id           id of the attribute series.
+	 */
+	AttributeSeries(List<ObjectId> attributeIds, ObjectId id) {
+		this.attributeIds = attributeIds;
+		this.id = id;
+	}
+
+	public void setAttributes(List<? extends BaseBetAttribute<?>> attributes) {
 		Assert.isInstanceOf(BetAttribute.class, attributes.getFirst(), "First attribute must be a BetAttribute");
 		Assert.isTrue(attributes.stream().noneMatch(attr -> attr.getId() == null), "All attributes must have an id");
 		this.attributes = attributes;
+		attributeIds = attributes.stream().map(BaseBetAttribute::getId).toList();
 	}
 
 	public final List<ObjectId> computeAttributeIds() {
@@ -37,39 +63,42 @@ public class AttributeSeries {
 			attr -> attr instanceof BetAttribute).findFirst().orElseThrow();
 	}
 
-	/**
-	 * Method provides the bet attribute paired with the chosen attribute value.
-	 *
-	 * @param chosenAttributeValues Mandatory.
-	 * @return List of pairs of bet attribute and chosen attribute value.
-	 */
-	@Deprecated // Possibly not needed anymore.
-	public List<Pair<BaseBetAttribute<?>, ChosenAttributeValue>> groupById(List<ChosenAttributeValue> chosenAttributeValues) {
-		Assert.notNull(chosenAttributeValues, "Chosen attribute values must not be null");
-		if (chosenAttributeValues.isEmpty()) {
+
+	public List<List<BaseBetAttribute<?>>> generateCombinations() {
+		List<List<BaseBetAttribute<?>>> combinations = new ArrayList<>();
+		if (attributes.size() == 1) {
 			return List.of();
 		}
+		var withoutBetAttribute = new ArrayList<BaseBetAttribute<?>>(attributes);
+		var betAttribute = withoutBetAttribute.removeFirst();
+		generateCombinationsRecursive(withoutBetAttribute, combinations);
 
-		var result = new ArrayList<Pair<BaseBetAttribute<?>, ChosenAttributeValue>>(attributes.size());
-		for (ChosenAttributeValue chosenAttributeValue : chosenAttributeValues) {
-			for (BaseBetAttribute<?> attribute : attributes) {
-				if (attribute.getId().equals(chosenAttributeValue.getAttributeId())) {
-					result.add(Pair.of(attribute, chosenAttributeValue));
-					break;
-				}
-			}
+		for (List<BaseBetAttribute<?>> combination : combinations) {
+			combination.addFirst(betAttribute);
 		}
 
-		return result;
+		combinations.add(List.of(betAttribute));
+
+		return combinations;
 	}
 
-	public Optional<AttributeSeries> fewerAttributes() {
-		if (attributes.size() == 1) {
-			return Optional.empty();
+	private void generateCombinationsRecursive(List<BaseBetAttribute<?>> currentList, List<List<BaseBetAttribute<?>>> combinations) {
+		if (currentList.size() <= 1) {
+			return;
 		}
 
-		var fewer = new ArrayList<>(attributes);
-		fewer.removeLast();
-		return Optional.of(new AttributeSeries(fewer));
+		// Die BetAttribute immer in den Kombinationen beibehalten
+		BaseBetAttribute<?> betAttribute = findBetAttribute();
+
+		for (int i = 0; i < currentList.size(); i++) {
+			if (currentList.get(i).equals(betAttribute)) {
+				continue; // BetAttribute nicht entfernen
+			}
+
+			List<BaseBetAttribute<?>> newCombination = new ArrayList<>(currentList);
+			newCombination.remove(i);
+			combinations.add(newCombination);
+			generateCombinationsRecursive(newCombination, combinations);
+		}
 	}
 }

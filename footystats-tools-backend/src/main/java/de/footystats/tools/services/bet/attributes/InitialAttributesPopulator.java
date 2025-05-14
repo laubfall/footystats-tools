@@ -45,7 +45,10 @@ public class InitialAttributesPopulator implements RepositoryPopulator, Applicat
 			new DoubleAttribute(7.0, Attributes.ODDS),
 			new DoubleAttribute(8.0, Attributes.ODDS),
 			new DoubleAttribute(9.0, Attributes.ODDS),
-			new DoubleAttribute(10.0, Attributes.ODDS)
+			new DoubleAttribute(10.0, Attributes.ODDS),
+			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.BOTH),
+			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.FIRST_HALF),
+			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.SECOND_HALF)
 		);
 
 

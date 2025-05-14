@@ -10,12 +10,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 @Getter
+@Setter
 @EqualsAndHashCode(of = {"value", "name"})
 public abstract class BaseBetAttribute<A> {
 	@Indexed
 	protected final A value;
 	@Indexed
-	@Setter
 	protected Attributes name;
 	protected String uniqueName;
 	@Id

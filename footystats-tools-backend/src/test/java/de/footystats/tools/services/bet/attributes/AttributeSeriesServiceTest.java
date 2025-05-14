@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -15,14 +16,17 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @DataMongoTest
-@Import({AttributeService.class, JunitJacksonConfiguration.class, FootystatsProperties.class, MongoConfiguration.class, InitialAttributesPopulator.class})
-class AttributeServiceTest {
+@EnableAspectJAutoProxy
+@Import({AttributeSeriesService.class, AttributeSeriesRepositoryAspect.class, JunitJacksonConfiguration.class, FootystatsProperties.class, MongoConfiguration.class, InitialAttributesPopulator.class})
+class AttributeSeriesServiceTest {
 	@Autowired
-	private AttributeService attributeService;
+	private AttributeSeriesService attributeService;
 
 	@Test
 	void initialize_and_load() {
 		List<AttributeSeries> bttsAttributeSeries = attributeService.by(Bet.OVER_ZERO_FIVE);
 		Assertions.assertFalse(bttsAttributeSeries.isEmpty());
+		Assertions.assertEquals(2, bttsAttributeSeries.size());
+		bttsAttributeSeries.forEach(series -> Assertions.assertNotNull(series.getAttributes()));
 	}
 }

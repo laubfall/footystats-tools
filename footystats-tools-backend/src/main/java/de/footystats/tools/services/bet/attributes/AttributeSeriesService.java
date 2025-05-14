@@ -2,7 +2,6 @@ package de.footystats.tools.services.bet.attributes;
 
 import de.footystats.tools.services.prediction.Bet;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,30 +12,33 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Creates the attribute series and provides methods to access them.
  */
 @Slf4j
 @Service
-public class AttributeService implements ApplicationListener<RepositoriesPopulatedEvent> {
-
-	private final Map<Bet, List<AttributeSeries>> attributeSeriesMap = new HashMap<>();
+public class AttributeSeriesService implements ApplicationListener<RepositoriesPopulatedEvent> {
 
 	private final BetAttributeRepository attributeRepository;
+
+	private final AttributeSeriesRepository attributeSeriesRepository;
 
 	@Value("classpath:data/initialAttributeSeries.csv")
 	private Resource initialAttributeSeriesResource;
 
-	public AttributeService(BetAttributeRepository attributeRepository) {
+	public AttributeSeriesService(BetAttributeRepository attributeRepository, AttributeSeriesRepository attributeSeriesRepository) {
 		this.attributeRepository = attributeRepository;
+		this.attributeSeriesRepository = attributeSeriesRepository;
 	}
 
 	public List<AttributeSeries> by(Bet bet) {
-		return attributeSeriesMap.get(bet);
+		var betAttribute = attributeRepository.findByValueAndName(bet, Attributes.BET_ATTRIBUTE);
+		if (betAttribute == null) {
+			return List.of();
+		}
+		return attributeSeriesRepository.findByAttributeIdsContains(betAttribute.getId());
 	}
 
 	public AttributeSeries byChosenValues(List<ChosenAttributeValue> chosenAttributeValues) {
@@ -49,17 +51,19 @@ public class AttributeService implements ApplicationListener<RepositoriesPopulat
 	}
 
 	public AttributeSeries by(List<ObjectId> attributeIds) {
-		List<List<AttributeSeries>> matchingBySize = attributeSeriesMap.values().stream().filter(
-			attrs -> attrs.size() == attributeIds.size()).toList();
+		return attributeSeriesRepository.searchByAttributeIds(attributeIds);
+	}
 
-		for (List<AttributeSeries> attributeSeries : matchingBySize) {
-			for (AttributeSeries series : attributeSeries) {
-				if (CollectionUtils.isEqualCollection(series.computeAttributeIds(), attributeIds)) {
-					return series;
-				}
-			}
-		}
-
+	/**
+	 * Returns the attribute series that are subsequent to the given series.
+	 * For example, if the given series is o05, odds 1.5, first half, the subsequent series
+	 * would be all o05 series with or without of one the attributes of the given series.
+	 * Series with other attributes are not considered.
+	 *
+	 * @param series the series to check for subsequent series.
+	 * @return the list of subsequent series.
+	 */
+	public List<AttributeSeries> subsequent(AttributeSeries series) {
 		return null;
 	}
 
@@ -70,12 +74,11 @@ public class AttributeService implements ApplicationListener<RepositoriesPopulat
 		}
 		List<AttributeSeries> attributeSeries = loadConfiguredSeries();
 		for (AttributeSeries series : attributeSeries) {
-			addSeriesToInMemoryMap(series.findBetAttribute(), series);
+			var persistedSeries = attributeSeriesRepository.searchByAttributeIds(series.computeAttributeIds());
+			if (persistedSeries == null) {
+				attributeSeriesRepository.insert(series);
+			}
 		}
-	}
-
-	private void addSeriesToInMemoryMap(BetAttribute bet, AttributeSeries series) {
-		attributeSeriesMap.computeIfAbsent(bet.value, k -> new ArrayList<>()).add(series);
 	}
 
 	private List<AttributeSeries> loadConfiguredSeries() {
@@ -94,7 +97,9 @@ public class AttributeService implements ApplicationListener<RepositoriesPopulat
 					attributes.add(attr);
 				}
 
-				result.add(new AttributeSeries(attributes));
+				var series = new AttributeSeries();
+				series.setAttributes(attributes);
+				result.add(series);
 			}
 
 		} catch (IOException e) {
