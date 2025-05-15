@@ -49,10 +49,6 @@ public class AttributeSeries {
 		attributeIds = attributes.stream().map(BaseBetAttribute::getId).toList();
 	}
 
-	public final List<ObjectId> computeAttributeIds() {
-		return attributes.stream().map(BaseBetAttribute::getId).toList();
-	}
-
 	/**
 	 * Method computes the bet attribute of type BetAttribute.
 	 *

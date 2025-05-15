@@ -7,6 +7,9 @@ import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.bet.attributes.DoubleAttribute;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.Bet;
+import de.footystats.tools.services.prediction.PredictionAnalyze;
+import de.footystats.tools.services.prediction.PredictionResult;
+import de.footystats.tools.services.stats.MatchStatus;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,8 @@ class BetTicketServiceTest {
 
 		var match = new Match();
 		match.setId(new ObjectId());
+		match.setState(MatchStatus.complete);
+		match.setO05(new PredictionResult(100, true, PredictionAnalyze.SUCCESS, List.of()));
 
 		//bet_OVER_ZERO_FIVE,double_1.0_ODDS
 		var attrBetOver05 = betAttributeRepository.findByUniqueName(BetAttribute.uniqueName(Bet.OVER_ZERO_FIVE),
@@ -50,7 +55,7 @@ class BetTicketServiceTest {
 		BetTicket ticket = betTicketService.placeBet(match,
 			List.of(new ChosenAttributeValue(attrBetOver05.getId(), attrBetOver05.getValue().name()),
 				new ChosenAttributeValue(attrOdds1.getId(), attrOdds1.getValue())),
-			false, 1.0);
+			false, 1.0, 1.0);
 		Assertions.assertNotNull(ticket);
 
 		List<BetTicket> all = betTicketRepository.findAll();
@@ -58,15 +63,16 @@ class BetTicketServiceTest {
 		ticket = all.getFirst();
 		Assertions.assertEquals(2, ticket.getChosenAttributeValues().size());
 
-		List<BetSeries> allBetSeries = betSeriesRepository.findAll();
-		// One bet series with both attributes and another one with only the betAttribute.
-		Assertions.assertEquals(2, allBetSeries.size());
 
+		betTicketService.evaluateMatchingBetTickets(match);
 
-		var betSeries = betSeriesRepository.searchByAttributeIds(List.of(attrBetOver05.getId(), attrOdds1.getId()));
-		Assertions.assertNotNull(betSeries);
+		List<BetSeries> o05series = betSeriesRepository.findAll();
+		Assertions.assertEquals(2, o05series.size());
 
-		betSeries = betSeriesRepository.searchByAttributeIds(List.of(attrBetOver05.getId()));
-		Assertions.assertNotNull(betSeries);
+		o05series.forEach(series -> {
+			Assertions.assertEquals(1L, series.getSuccessCount());
+			Assertions.assertEquals(0L, series.getFailCount());
+			Assertions.assertEquals(1.0, series.getWonMoney());
+		});
 	}
 }

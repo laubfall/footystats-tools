@@ -26,7 +26,8 @@ public class BetTicket {
 	private List<ChosenAttributeValue> chosenAttributeValues;
 
 	/**
-	 * If true the outcome of the bet should be involved in computing the total bet series (e.g. won money/bets).
+	 * True if the bet was not placed for real. Used to track bets you don't want to place but
+	 * you want to know if it would have been successful or not.
 	 */
 	private boolean virtual;
 
@@ -40,8 +41,14 @@ public class BetTicket {
 	 */
 	private double stake;
 
+	/**
+	 * The odds of the bet ticket.
+	 */
 	private double odds;
 
+	/**
+	 * True if the bet ticket was evaluated (i.e. the match was played and the bet tickets result is written down to the bet series).
+	 */
 	@Indexed
 	private boolean evaluated;
 
@@ -61,6 +68,6 @@ public class BetTicket {
 	}
 
 	public double getWonMoney() {
-		return won ? stake * odds - stake : -stake;
+		return won ? stake * odds : -stake;
 	}
 }

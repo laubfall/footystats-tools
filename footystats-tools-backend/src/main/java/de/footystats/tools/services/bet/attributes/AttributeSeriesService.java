@@ -74,7 +74,7 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 		}
 		List<AttributeSeries> attributeSeries = loadConfiguredSeries();
 		for (AttributeSeries series : attributeSeries) {
-			var persistedSeries = attributeSeriesRepository.searchByAttributeIds(series.computeAttributeIds());
+			var persistedSeries = attributeSeriesRepository.searchByAttributeIds(series.getAttributeIds());
 			if (persistedSeries == null) {
 				attributeSeriesRepository.insert(series);
 			}

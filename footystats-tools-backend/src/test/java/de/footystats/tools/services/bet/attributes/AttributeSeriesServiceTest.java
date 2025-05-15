@@ -1,14 +1,10 @@
 package de.footystats.tools.services.bet.attributes;
 
-import de.footystats.tools.FootystatsProperties;
-import de.footystats.tools.jackson.JunitJacksonConfiguration;
-import de.footystats.tools.mongo.MongoConfiguration;
 import de.footystats.tools.services.prediction.Bet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -16,8 +12,7 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @DataMongoTest
-@EnableAspectJAutoProxy
-@Import({AttributeSeriesService.class, AttributeSeriesRepositoryAspect.class, JunitJacksonConfiguration.class, FootystatsProperties.class, MongoConfiguration.class, InitialAttributesPopulator.class})
+@Import({AttributeSeriesServiceConfiguration.class})
 class AttributeSeriesServiceTest {
 	@Autowired
 	private AttributeSeriesService attributeService;
@@ -26,7 +21,7 @@ class AttributeSeriesServiceTest {
 	void initialize_and_load() {
 		List<AttributeSeries> bttsAttributeSeries = attributeService.by(Bet.OVER_ZERO_FIVE);
 		Assertions.assertFalse(bttsAttributeSeries.isEmpty());
-		Assertions.assertEquals(2, bttsAttributeSeries.size());
+		Assertions.assertEquals(6, bttsAttributeSeries.size());
 		bttsAttributeSeries.forEach(series -> Assertions.assertNotNull(series.getAttributes()));
 	}
 }

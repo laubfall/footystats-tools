@@ -1,6 +1,7 @@
 package de.footystats.tools.services.bet;
 
 import de.footystats.tools.services.bet.attributes.AttributeSeries;
+import de.footystats.tools.services.bet.attributes.AttributeSeriesRepository;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesService;
 import de.footystats.tools.services.bet.attributes.Attributes;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
@@ -8,7 +9,6 @@ import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
 import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.match.Match;
-import de.footystats.tools.services.prediction.Bet;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,25 +30,29 @@ public class BetTicketService {
 	private final BetSeriesRepository betSeriesRepository;
 
 	private final BetAttributeRepository betAttributeRepository;
-	private final AttributeSeriesService attributeService;
 
-	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository, AttributeSeriesService attributeService) {
+	private final AttributeSeriesService attributeService;
+	
+	private final AttributeSeriesRepository attributeSeriesRepository;
+
+	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository, AttributeSeriesService attributeService, AttributeSeriesRepository attributeSeriesRepository) {
 		this.betTicketRepository = betTicketRepository;
 		this.betSeriesRepository = betSeriesRepository;
 		this.betAttributeRepository = betAttributeRepository;
 		this.attributeService = attributeService;
+		this.attributeSeriesRepository = attributeSeriesRepository;
 	}
 
-	public BetTicket placeBet(Match match, Collection<ChosenAttributeValue> betValues, boolean virtual, double stake) {
+	public BetTicket placeBet(Match match, Collection<ChosenAttributeValue> betValues, boolean virtual, double stake, double odds) {
 		Assert.notNull(match, "Match must not be null");
 		Assert.notNull(match.getId(), "Match id must not be null");
 
 		var attributeSeries = by(betValues);
-		prepareBetSeries(attributeSeries);
 
 		var ticket = new BetTicket(match.getId(), attributeSeries);
 		ticket.setVirtual(virtual);
 		ticket.setStake(stake);
+		ticket.setOdds(odds);
 
 		betTicketRepository.insert(ticket);
 
@@ -71,70 +76,49 @@ public class BetTicketService {
 
 
 			// Update the bet series with matching bet attributes.
-			AttributeSeries matchingSeries = attributeService.byChosenValues(ticket.getChosenAttributeValues());
-			// Todo Find all bet series that match at least a subset of the bet attributes.
+			final AttributeSeries matchingSeries = attributeService.byChosenValues(ticket.getChosenAttributeValues());
+			var mainSeries = betSeriesRepository.searchByAttributeIds(matchingSeries.getAttributeIds());
+			mainSeries = safeGet(mainSeries, matchingSeries);
+			mainSeries.evaluatedBetTicket(ticket);
+			betSeriesRepository.save(mainSeries);
+
+			// Find all bet series that match at least a subset of the bet attributes.
 			for (List<BaseBetAttribute<?>> generateCombination : matchingSeries.generateCombinations()) {
 				var existsMaybeSeries = new AttributeSeries();
 				existsMaybeSeries.setAttributes(generateCombination);
-				BetSeries subsequentSeries = betSeriesRepository.searchByAttributeIds(
+				existsMaybeSeries = attributeSeriesRepository.searchByAttributeIds(existsMaybeSeries.getAttributeIds());
+				BetSeries subsequentBetSeries = betSeriesRepository.searchByAttributeIds(
 					existsMaybeSeries.getAttributeIds());
-			}
 
+				if (existsMaybeSeries != null) {
+					subsequentBetSeries = safeGet(subsequentBetSeries, existsMaybeSeries);
+					subsequentBetSeries.evaluatedBetTicket(ticket);
+					betSeriesRepository.save(subsequentBetSeries);
+				}
+			}
 		}
+	}
+
+	private BetSeries safeGet(BetSeries mainSeries, AttributeSeries matchingSeries) {
+		if (mainSeries == null) {
+			mainSeries = new BetSeries();
+			mainSeries.setAttributeSeriesId(matchingSeries.getId());
+			mainSeries.setValidFrom(LocalDateTime.now());
+			betSeriesRepository.insert(mainSeries);
+			log.info("Created new bet series: {}", mainSeries);
+		}
+		return mainSeries;
 	}
 
 	private boolean wonBet(BetTicket betTicket, Match completedMatch) {
 		BetAttribute bet = betAttributeRepository.findByNameAndIdIn(Attributes.BET_ATTRIBUTE,
-			betTicket.getChosenAttributeValues().stream().map(
-				ChosenAttributeValue::getAttributeId).toList(), BetAttribute.class);
+			betTicket.getChosenAttributeValues().stream().map(ChosenAttributeValue::getAttributeId).toList(),
+			BetAttribute.class);
 
-		if (Bet.OVER_ONE_FIVE.equals(bet.getValue())) {
-			return PredictionAnalyze.SUCCESS.equals(completedMatch.getO05().analyzeResult());
-		}
-
-		return false;
+		return PredictionAnalyze.SUCCESS.equals(completedMatch.forBet(bet.getValue()).analyzeResult());
 	}
 
 	private AttributeSeries by(Collection<ChosenAttributeValue> betValues) {
 		return attributeService.byChosenValues(new ArrayList<>(betValues));
-	}
-
-	private void prepareBetSeries(AttributeSeries attributeSeries) {
-//		// Find the BetAttribute in the list
-//		var betAttribute = attributeSeries.findBetAttribute();
-//
-//		// Create a new list without the BetAttribute
-//		List<BaseBetAttribute<?>> attributesWithoutBet = new ArrayList<>(attributeSeries.getAttributes());
-//		attributesWithoutBet.remove(betAttribute);
-//
-//		// Recursively check for BetSeries
-//		checkBetSeries(betAttribute, attributesWithoutBet);
-
-		List<AttributeSeries> subsequent = attributeService.subsequent(attributeSeries);
-	}
-
-	private void checkBetSeries(BetAttribute betAttribute, List<BaseBetAttribute<?>> attributes) {
-
-		// Check if a BetSeries exists for the current list of attributes
-//		var fullAttributes = new ArrayList<>(attributes);
-//		fullAttributes.addFirst(betAttribute);
-//		var attributeSeries = new AttributeSeries(fullAttributes);
-//		BetSeries betSeries = betSeriesRepository.searchByAttributeIds(attributeSeries.computeAttributeIds());
-//		if (betSeries == null) {
-//			var series = new BetSeries(attributeSeries);
-//			series.setValidFrom(LocalDateTime.now());
-//			betSeriesRepository.insert(series);
-//			log.info("Created new BetSeries: {}", series);
-//			if (fullAttributes.size() == 1) {
-//				return;
-//			}
-//		}
-//
-//		// Recursively check for BetSeries with one less element
-//		for (int i = 0; i < attributes.size(); i++) {
-//			List<BaseBetAttribute<?>> reducedAttributes = new ArrayList<>(attributes);
-//			reducedAttributes.remove(i);
-//			checkBetSeries(betAttribute, reducedAttributes);
-//		}
 	}
 }
