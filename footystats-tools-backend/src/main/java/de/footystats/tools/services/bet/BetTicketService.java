@@ -1,9 +1,9 @@
 package de.footystats.tools.services.bet;
 
+import de.footystats.tools.services.bet.attributes.Attribute;
 import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesRepository;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesService;
-import de.footystats.tools.services.bet.attributes.Attributes;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
@@ -32,7 +32,7 @@ public class BetTicketService {
 	private final BetAttributeRepository betAttributeRepository;
 
 	private final AttributeSeriesService attributeService;
-	
+
 	private final AttributeSeriesRepository attributeSeriesRepository;
 
 	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository, AttributeSeriesService attributeService, AttributeSeriesRepository attributeSeriesRepository) {
@@ -77,7 +77,7 @@ public class BetTicketService {
 
 			// Update the bet series with matching bet attributes.
 			final AttributeSeries matchingSeries = attributeService.byChosenValues(ticket.getChosenAttributeValues());
-			var mainSeries = betSeriesRepository.searchByAttributeIds(matchingSeries.getAttributeIds());
+			var mainSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(matchingSeries.getId());
 			mainSeries = safeGet(mainSeries, matchingSeries);
 			mainSeries.evaluatedBetTicket(ticket);
 			betSeriesRepository.save(mainSeries);
@@ -87,8 +87,8 @@ public class BetTicketService {
 				var existsMaybeSeries = new AttributeSeries();
 				existsMaybeSeries.setAttributes(generateCombination);
 				existsMaybeSeries = attributeSeriesRepository.searchByAttributeIds(existsMaybeSeries.getAttributeIds());
-				BetSeries subsequentBetSeries = betSeriesRepository.searchByAttributeIds(
-					existsMaybeSeries.getAttributeIds());
+				BetSeries subsequentBetSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(
+					existsMaybeSeries.getId());
 
 				if (existsMaybeSeries != null) {
 					subsequentBetSeries = safeGet(subsequentBetSeries, existsMaybeSeries);
@@ -111,7 +111,7 @@ public class BetTicketService {
 	}
 
 	private boolean wonBet(BetTicket betTicket, Match completedMatch) {
-		BetAttribute bet = betAttributeRepository.findByNameAndIdIn(Attributes.BET_ATTRIBUTE,
+		BetAttribute bet = betAttributeRepository.findByNameAndIdIn(Attribute.BET_ATTRIBUTE,
 			betTicket.getChosenAttributeValues().stream().map(ChosenAttributeValue::getAttributeId).toList(),
 			BetAttribute.class);
 

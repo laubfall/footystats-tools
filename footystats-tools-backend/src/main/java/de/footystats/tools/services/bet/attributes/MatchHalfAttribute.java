@@ -3,7 +3,7 @@ package de.footystats.tools.services.bet.attributes;
 public class MatchHalfAttribute extends BaseBetAttribute<MatchHalfAttribute.MatchHalf> {
 
 	protected MatchHalfAttribute(MatchHalf value) {
-		super(value, Attributes.HALF, Attributes.HALF.attributeName + "_" + value);
+		super(value, Attribute.HALF, Attribute.HALF.attributeName + "_" + value);
 	}
 
 	@Override

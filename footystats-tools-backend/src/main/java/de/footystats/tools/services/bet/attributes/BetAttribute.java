@@ -7,7 +7,7 @@ public class BetAttribute extends BaseBetAttribute<Bet> {
 	public static final String BET_ATTR = "bet_";
 
 	public BetAttribute(Bet value) {
-		super(value, Attributes.BET_ATTRIBUTE, uniqueName(value));
+		super(value, Attribute.BET_ATTRIBUTE, uniqueName(value));
 	}
 
 	public static String uniqueName(Bet value) {

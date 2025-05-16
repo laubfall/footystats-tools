@@ -14,7 +14,7 @@ class AttributeSeriesTest {
 		// Arrange: Erstelle eine AttributeSeries mit einer Liste von BaseBetAttributes
 		BetAttribute betAttribute = new BetAttribute(Bet.OVER_ZERO_FIVE);
 		betAttribute.setId(new ObjectId());
-		var attr1 = new DoubleAttribute(1.0, Attributes.ODDS);
+		var attr1 = new DoubleAttribute(1.0, Attribute.ODDS);
 		attr1.setId(new ObjectId());
 		var attr2 = new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.FIRST_HALF);
 		attr2.setId(new ObjectId());

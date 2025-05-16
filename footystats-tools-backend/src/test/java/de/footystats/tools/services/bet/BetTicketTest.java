@@ -1,7 +1,7 @@
 package de.footystats.tools.services.bet;
 
+import de.footystats.tools.services.bet.attributes.Attribute;
 import de.footystats.tools.services.bet.attributes.AttributeSeries;
-import de.footystats.tools.services.bet.attributes.Attributes;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.DoubleAttribute;
@@ -30,7 +30,7 @@ class BetTicketTest {
 		betAttribute.setId(new ObjectId());
 		attributes.add(betAttribute);
 
-		BaseBetAttribute<?> otherAttribute = new DoubleAttribute(1.0, Attributes.ODDS);
+		BaseBetAttribute<?> otherAttribute = new DoubleAttribute(1.0, Attribute.ODDS);
 		otherAttribute.setId(new ObjectId());
 		attributes.add(otherAttribute);
 

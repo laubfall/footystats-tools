@@ -15,13 +15,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public abstract class BaseBetAttribute<A> {
 	@Indexed
 	protected final A value;
+
 	@Indexed
-	protected Attributes name;
+	protected Attribute name;
+
+	@Indexed
 	protected String uniqueName;
+
 	@Id
 	private ObjectId id;
 
-	protected BaseBetAttribute(A value, Attributes name, String uniqueName) {
+	protected BaseBetAttribute(A value, Attribute name, String uniqueName) {
 		this.value = value;
 		this.name = name;
 		this.uniqueName = uniqueName;

@@ -34,7 +34,7 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 	}
 
 	public List<AttributeSeries> by(Bet bet) {
-		var betAttribute = attributeRepository.findByValueAndName(bet, Attributes.BET_ATTRIBUTE);
+		var betAttribute = attributeRepository.findByValueAndName(bet, Attribute.BET_ATTRIBUTE);
 		if (betAttribute == null) {
 			return List.of();
 		}

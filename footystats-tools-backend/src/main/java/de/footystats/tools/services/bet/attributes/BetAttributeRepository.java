@@ -15,12 +15,12 @@ public interface BetAttributeRepository extends MongoRepository<BaseBetAttribute
 	<B extends BaseBetAttribute<?>> B findByUniqueName(String uniqueName, Class<B> clazz);
 
 	@Cacheable("byValueAndName")
-	BaseBetAttribute<?> findByValueAndName(Object value, Attributes name);
+	BaseBetAttribute<?> findByValueAndName(Object value, Attribute name);
 
 	@Cacheable("byValueAndNameAndType")
-	<B extends BaseBetAttribute<?>> B findByValueAndName(Object value, Attributes name, Class<B> clazz);
+	<B extends BaseBetAttribute<?>> B findByValueAndName(Object value, Attribute name, Class<B> clazz);
 
-	<B extends BaseBetAttribute<?>> B findByNameAndIdIn(Attributes name, Collection<ObjectId> ids, Class<B> clazz);
+	<B extends BaseBetAttribute<?>> B findByNameAndIdIn(Attribute name, Collection<ObjectId> ids, Class<B> clazz);
 
 	@Cacheable("byId")
 	@Override

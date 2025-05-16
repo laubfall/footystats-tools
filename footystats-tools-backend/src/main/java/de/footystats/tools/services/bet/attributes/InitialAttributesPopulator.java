@@ -29,6 +29,7 @@ public class InitialAttributesPopulator implements RepositoryPopulator, Applicat
 			return;
 		}
 
+		// Attributes are created via code because it is easier than writing a parser for a config file with all the attributes.
 		var attributesWaveOne = List.of(
 			new BetAttribute(Bet.OVER_ZERO_FIVE),
 			new BetAttribute(Bet.OVER_ONE_FIVE),
@@ -36,16 +37,16 @@ public class InitialAttributesPopulator implements RepositoryPopulator, Applicat
 			new BetAttribute(Bet.BTTS_YES),
 			new BetAttribute(Bet.HOME_WIN),
 			new BetAttribute(Bet.AWAY_WIN),
-			new DoubleAttribute(1.0, Attributes.ODDS),
-			new DoubleAttribute(2.0, Attributes.ODDS),
-			new DoubleAttribute(3.0, Attributes.ODDS),
-			new DoubleAttribute(4.0, Attributes.ODDS),
-			new DoubleAttribute(5.0, Attributes.ODDS),
-			new DoubleAttribute(6.0, Attributes.ODDS),
-			new DoubleAttribute(7.0, Attributes.ODDS),
-			new DoubleAttribute(8.0, Attributes.ODDS),
-			new DoubleAttribute(9.0, Attributes.ODDS),
-			new DoubleAttribute(10.0, Attributes.ODDS),
+			new DoubleAttribute(1.0, Attribute.ODDS),
+			new DoubleAttribute(2.0, Attribute.ODDS),
+			new DoubleAttribute(3.0, Attribute.ODDS),
+			new DoubleAttribute(4.0, Attribute.ODDS),
+			new DoubleAttribute(5.0, Attribute.ODDS),
+			new DoubleAttribute(6.0, Attribute.ODDS),
+			new DoubleAttribute(7.0, Attribute.ODDS),
+			new DoubleAttribute(8.0, Attribute.ODDS),
+			new DoubleAttribute(9.0, Attribute.ODDS),
+			new DoubleAttribute(10.0, Attribute.ODDS),
 			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.BOTH),
 			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.FIRST_HALF),
 			new MatchHalfAttribute(MatchHalfAttribute.MatchHalf.SECOND_HALF)
