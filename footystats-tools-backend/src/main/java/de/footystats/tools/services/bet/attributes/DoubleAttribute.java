@@ -14,6 +14,6 @@ public class DoubleAttribute extends BaseBetAttribute<Double> {
 
 	@Override
 	protected boolean match(ChosenAttributeValue value) {
-		return false;
+		return getValue().equals(value.getValueDouble());
 	}
 }

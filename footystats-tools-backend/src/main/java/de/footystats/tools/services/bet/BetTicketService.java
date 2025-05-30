@@ -5,7 +5,6 @@ import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesRepository;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesService;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
-import de.footystats.tools.services.bet.attributes.BetAttribute;
 import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
 import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.match.Match;
@@ -17,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -47,9 +46,7 @@ public class BetTicketService {
 		Assert.notNull(match, "Match must not be null");
 		Assert.notNull(match.getId(), "Match id must not be null");
 
-		var attributeSeries = by(betValues);
-
-		var ticket = new BetTicket(match.getId(), attributeSeries);
+		var ticket = new BetTicket(match.getId(), betValues);
 		ticket.setVirtual(virtual);
 		ticket.setStake(stake);
 		ticket.setOdds(odds);
@@ -76,24 +73,28 @@ public class BetTicketService {
 
 
 			// Update the bet series with matching bet attributes.
-			final AttributeSeries matchingSeries = attributeService.byChosenValues(ticket.getChosenAttributeValues());
-			var mainSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(matchingSeries.getId());
-			mainSeries = safeGet(mainSeries, matchingSeries);
-			mainSeries.evaluatedBetTicket(ticket);
-			betSeriesRepository.save(mainSeries);
+			final List<AttributeSeries> matchingSeries = attributeService.byChosenValues(
+				ticket.getChosenAttributeValues());
+			for (AttributeSeries sery : matchingSeries) {
+				var mainSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(sery.getId());
+				mainSeries = safeGet(mainSeries, sery);
+				mainSeries.evaluatedBetTicket(ticket);
+				betSeriesRepository.save(mainSeries);
 
-			// Find all bet series that match at least a subset of the bet attributes.
-			for (List<BaseBetAttribute<?>> generateCombination : matchingSeries.generateCombinations()) {
-				var existsMaybeSeries = new AttributeSeries();
-				existsMaybeSeries.setAttributes(generateCombination);
-				existsMaybeSeries = attributeSeriesRepository.searchByAttributeIds(existsMaybeSeries.getAttributeIds());
-				BetSeries subsequentBetSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(
-					existsMaybeSeries.getId());
+				// Find all bet series that match at least a subset of the bet attributes.
+				for (List<BaseBetAttribute<?>> generateCombination : sery.generateCombinations()) {
+					var existsMaybeSeries = new AttributeSeries();
+					existsMaybeSeries.setAttributes(generateCombination);
+					existsMaybeSeries = attributeSeriesRepository.findByAttributeIds(
+						existsMaybeSeries.getAttributeIds());
+					BetSeries subsequentBetSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(
+						existsMaybeSeries.getId());
 
-				if (existsMaybeSeries != null) {
-					subsequentBetSeries = safeGet(subsequentBetSeries, existsMaybeSeries);
-					subsequentBetSeries.evaluatedBetTicket(ticket);
-					betSeriesRepository.save(subsequentBetSeries);
+					if (existsMaybeSeries != null) {
+						subsequentBetSeries = safeGet(subsequentBetSeries, existsMaybeSeries);
+						subsequentBetSeries.evaluatedBetTicket(ticket);
+						betSeriesRepository.save(subsequentBetSeries);
+					}
 				}
 			}
 		}
@@ -111,14 +112,18 @@ public class BetTicketService {
 	}
 
 	private boolean wonBet(BetTicket betTicket, Match completedMatch) {
-		BetAttribute bet = betAttributeRepository.findByNameAndIdIn(Attribute.BET_ATTRIBUTE,
-			betTicket.getChosenAttributeValues().stream().map(ChosenAttributeValue::getAttributeId).toList(),
-			BetAttribute.class);
 
-		return PredictionAnalyze.SUCCESS.equals(completedMatch.forBet(bet.getValue()).analyzeResult());
-	}
+		Optional<ChosenAttributeValue> first = betTicket.getChosenAttributeValues().stream().filter(
+			chosenValue -> chosenValue.getChosenAttribute().equals(Attribute.BET_ATTRIBUTE)).findFirst();
 
-	private AttributeSeries by(Collection<ChosenAttributeValue> betValues) {
-		return attributeService.byChosenValues(new ArrayList<>(betValues));
+		Assert.isTrue(first.isPresent(), "Bet ticket must contain a bet attribute");
+
+		var bet = first.get().getBet();
+
+		var predictionResult = completedMatch.forBet(bet);
+
+		Assert.notNull(predictionResult, "Match must contain a prediction result for the bet: " + bet);
+
+		return PredictionAnalyze.SUCCESS.equals(predictionResult.analyzeResult());
 	}
 }

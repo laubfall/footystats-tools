@@ -1,9 +1,9 @@
 package de.footystats.tools.services.bet.attributes;
 
+import de.footystats.tools.services.prediction.Bet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 
 /**
  * A chosen value for an attribute.
@@ -14,7 +14,10 @@ import org.bson.types.ObjectId;
 @AllArgsConstructor
 @Getter
 public class ChosenAttributeValue {
-	private ObjectId attributeId;
+	/**
+	 * The attribute that was chosen.
+	 */
+	private Attribute chosenAttribute;
 
 	private String value;
 
@@ -22,18 +25,30 @@ public class ChosenAttributeValue {
 
 	private Integer valueInt;
 
-	public ChosenAttributeValue(ObjectId attributeId, String value) {
-		this.attributeId = attributeId;
+	public ChosenAttributeValue(Bet bet) {
+		chosenAttribute = Attribute.BET_ATTRIBUTE;
+		value = bet.name();
+	}
+
+	public ChosenAttributeValue(Attribute chosenAttribute, String value) {
+		this.chosenAttribute = chosenAttribute;
 		this.value = value;
 	}
 
-	public ChosenAttributeValue(ObjectId attributeId, Double value) {
-		this.attributeId = attributeId;
+	public ChosenAttributeValue(Attribute chosenAttribute, Double value) {
+		this.chosenAttribute = chosenAttribute;
 		this.valueDouble = value;
 	}
 
-	public ChosenAttributeValue(ObjectId attributeId, Integer value) {
-		this.attributeId = attributeId;
+	public ChosenAttributeValue(Attribute chosenAttribute, Integer value) {
+		this.chosenAttribute = chosenAttribute;
 		this.valueInt = value;
+	}
+
+	public Bet getBet() {
+		if (chosenAttribute != Attribute.BET_ATTRIBUTE) {
+			throw new IllegalStateException("Chosen attribute is not a bet attribute");
+		}
+		return Bet.valueOf(value);
 	}
 }

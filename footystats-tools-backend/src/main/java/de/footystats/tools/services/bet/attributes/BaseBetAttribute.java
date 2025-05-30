@@ -2,6 +2,7 @@ package de.footystats.tools.services.bet.attributes;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -11,10 +12,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode(of = {"value", "name"})
 public abstract class BaseBetAttribute<A> {
 	@Indexed
-	protected final A value;
+	protected A value;
 
 	@Indexed
 	protected Attribute name;
@@ -29,10 +31,6 @@ public abstract class BaseBetAttribute<A> {
 		this.value = value;
 		this.name = name;
 		this.uniqueName = uniqueName;
-	}
-
-	protected final boolean baseMatch(ChosenAttributeValue value) {
-		return value.getAttributeId().equals(id) && match(value);
 	}
 
 	/**

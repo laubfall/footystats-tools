@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AttributeSeriesRepository extends MongoRepository<AttributeSeries, ObjectId> {
 	@Query("{ 'attributeIds': {$all : ?0, $size: ?#{[0].size()} }}")
-	AttributeSeries searchByAttributeIds(List<ObjectId> attributeIds);
+	AttributeSeries findByAttributeIds(List<ObjectId> attributeIds);
 
 	List<AttributeSeries> findByAttributeIdsContains(ObjectId attributeId);
 

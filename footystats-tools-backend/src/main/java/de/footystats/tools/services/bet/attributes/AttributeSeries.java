@@ -42,6 +42,12 @@ public class AttributeSeries {
 		this.id = id;
 	}
 
+	public static AttributeSeries of(List<? extends BaseBetAttribute<?>> attributes) {
+		var series = new AttributeSeries();
+		series.setAttributes(attributes);
+		return series;
+	}
+
 	public void setAttributes(List<? extends BaseBetAttribute<?>> attributes) {
 		Assert.isInstanceOf(BetAttribute.class, attributes.getFirst(), "First attribute must be a BetAttribute");
 		Assert.isTrue(attributes.stream().noneMatch(attr -> attr.getId() == null), "All attributes must have an id");
@@ -58,7 +64,6 @@ public class AttributeSeries {
 		return (BetAttribute) attributes.stream().filter(
 			attr -> attr instanceof BetAttribute).findFirst().orElseThrow();
 	}
-
 
 	public List<List<BaseBetAttribute<?>>> generateCombinations() {
 		List<List<BaseBetAttribute<?>>> combinations = new ArrayList<>();

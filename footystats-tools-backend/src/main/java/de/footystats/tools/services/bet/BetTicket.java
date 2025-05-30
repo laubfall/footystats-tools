@@ -1,6 +1,5 @@
 package de.footystats.tools.services.bet;
 
-import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +11,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -62,16 +63,15 @@ public class BetTicket {
 	@Indexed
 	private ObjectId matchDocumentId;
 
-	public BetTicket(ObjectId matchDocumentId, AttributeSeries attributeSeries) {
+	public BetTicket(ObjectId matchDocumentId, Collection<ChosenAttributeValue> chosenAttributeValues) {
 		Assert.notNull(matchDocumentId, "Match document id must not be null");
 
-		chosenAttributeValues = attributeSeries.getAttributes().stream().map(
-			attr -> new ChosenAttributeValue(attr.getId(), null, null, null)).toList();
+		this.chosenAttributeValues = new ArrayList<>(chosenAttributeValues);
 
 		this.matchDocumentId = matchDocumentId;
 	}
 
 	public double getWonMoney() {
-		return won ? stake * odds : -stake;
+		return won ? ((stake * odds) - stake) : -stake;
 	}
 }

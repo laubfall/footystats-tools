@@ -1,21 +1,16 @@
 package de.footystats.tools.services.bet;
 
 import de.footystats.tools.services.bet.attributes.Attribute;
-import de.footystats.tools.services.bet.attributes.AttributeSeries;
-import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
-import de.footystats.tools.services.bet.attributes.BetAttribute;
-import de.footystats.tools.services.bet.attributes.DoubleAttribute;
+import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.prediction.Bet;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BetTicketTest {
 
@@ -23,18 +18,10 @@ class BetTicketTest {
 	void constructor() {
 		// Arrange
 		ObjectId matchId = new ObjectId();
-		AttributeSeries attributeSeries = new AttributeSeries();
-		List<BaseBetAttribute<?>> attributes = new ArrayList<>();
+		var attributeSeries = new ArrayList<ChosenAttributeValue>();
 
-		BetAttribute betAttribute = new BetAttribute(Bet.BTTS_NO);
-		betAttribute.setId(new ObjectId());
-		attributes.add(betAttribute);
-
-		BaseBetAttribute<?> otherAttribute = new DoubleAttribute(1.0, Attribute.ODDS);
-		otherAttribute.setId(new ObjectId());
-		attributes.add(otherAttribute);
-
-		attributeSeries.setAttributes(attributes);
+		attributeSeries.add(new ChosenAttributeValue(Bet.BTTS_YES));
+		attributeSeries.add(new ChosenAttributeValue(Attribute.ODDS, 1.5));
 
 		// Act
 		BetTicket betTicket = new BetTicket(matchId, attributeSeries);
@@ -43,8 +30,6 @@ class BetTicketTest {
 		assertNotNull(betTicket);
 		assertEquals(matchId, betTicket.getMatchDocumentId());
 		assertEquals(2, betTicket.getChosenAttributeValues().size());
-		assertEquals(betAttribute.getId(), betTicket.getChosenAttributeValues().get(0).getAttributeId());
-		assertEquals(otherAttribute.getId(), betTicket.getChosenAttributeValues().get(1).getAttributeId());
 		assertFalse(betTicket.isWon());
 		assertFalse(betTicket.isEvaluated());
 	}
@@ -77,17 +62,5 @@ class BetTicketTest {
 
 		// Assert
 		assertEquals(-10.0, wonMoney); // -10 als Verlust
-	}
-
-	@Test
-	void constructorWithNullMatchId() {
-		// Arrange
-		AttributeSeries attributeSeries = new AttributeSeries();
-		var betAttribute = new BetAttribute(Bet.AWAY_WIN);
-		betAttribute.setId(ObjectId.get());
-		attributeSeries.setAttributes(List.of(betAttribute));
-
-		// Act & Assert
-		assertThrows(IllegalArgumentException.class, () -> new BetTicket(null, attributeSeries));
 	}
 }

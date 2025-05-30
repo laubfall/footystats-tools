@@ -41,17 +41,60 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 		return attributeSeriesRepository.findByAttributeIdsContains(betAttribute.getId());
 	}
 
-	public AttributeSeries byChosenValues(List<ChosenAttributeValue> chosenAttributeValues) {
+	public List<AttributeSeries> byChosenValues(List<ChosenAttributeValue> chosenAttributeValues) {
 		if (chosenAttributeValues.isEmpty()) {
 			return null;
 		}
 
-		var attributeIds = chosenAttributeValues.stream().map(ChosenAttributeValue::getAttributeId).toList();
-		return by(attributeIds);
+		// Load matching series by resulting attributes.
+		List<List<BaseBetAttribute<?>>> possibleAttributeSeriesAttrs = flattenedAndMatched(chosenAttributeValues);
+
+		var result = new ArrayList<AttributeSeries>();
+		for (List<BaseBetAttribute<?>> pasa : possibleAttributeSeriesAttrs) {
+			final AttributeSeries maybe = attributeSeriesRepository.findByAttributeIds(
+				AttributeSeries.of(pasa).getAttributeIds());
+			if (maybe != null) {
+				result.add(maybe);
+			}
+		}
+
+		return result;
+	}
+
+
+	protected List<List<BaseBetAttribute<?>>> flattenedAndMatched(List<ChosenAttributeValue> chosenAttributeValues) {
+		List<List<BaseBetAttribute<?>>> result = new ArrayList<>();
+		result.add(new ArrayList<>()); // Start mit einer leeren Liste
+
+		for (ChosenAttributeValue value : chosenAttributeValues) {
+			List<BaseBetAttribute<?>> potentialAttributes = attributeRepository.findByName(
+				value.getChosenAttribute()).stream().filter(bba -> bba.match(value)).toList();
+
+			if (potentialAttributes.isEmpty()) {
+				continue; // Keine passenden Attribute gefunden
+			}
+
+			List<List<BaseBetAttribute<?>>> newResult = new ArrayList<>();
+
+			// Für jede bestehende Kombination in result
+			for (List<BaseBetAttribute<?>> combination : result) {
+				// Für jedes potentielle Attribut
+				for (BaseBetAttribute<?> attribute : potentialAttributes) {
+					// Erstelle eine neue Kombination mit dem aktuellen Attribut
+					List<BaseBetAttribute<?>> newCombination = new ArrayList<>(combination);
+					newCombination.add(attribute);
+					newResult.add(newCombination);
+				}
+			}
+
+			result = newResult;
+		}
+
+		return result;
 	}
 
 	public AttributeSeries by(List<ObjectId> attributeIds) {
-		return attributeSeriesRepository.searchByAttributeIds(attributeIds);
+		return attributeSeriesRepository.findByAttributeIds(attributeIds);
 	}
 
 	/**
@@ -74,7 +117,7 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 		}
 		List<AttributeSeries> attributeSeries = loadConfiguredSeries();
 		for (AttributeSeries series : attributeSeries) {
-			var persistedSeries = attributeSeriesRepository.searchByAttributeIds(series.getAttributeIds());
+			var persistedSeries = attributeSeriesRepository.findByAttributeIds(series.getAttributeIds());
 			if (persistedSeries == null) {
 				attributeSeriesRepository.insert(series);
 			}

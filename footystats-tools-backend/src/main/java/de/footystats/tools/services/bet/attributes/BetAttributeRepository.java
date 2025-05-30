@@ -5,25 +5,28 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface BetAttributeRepository extends MongoRepository<BaseBetAttribute<?>, ObjectId> {
-	@Cacheable("byUniqueName")
+	@Cacheable("attributeByUniqueName")
 	BaseBetAttribute<?> findByUniqueName(String uniqueName);
 
-	@Cacheable("byUniqueName")
+	@Cacheable("attributeByUniqueName")
 	<B extends BaseBetAttribute<?>> B findByUniqueName(String uniqueName, Class<B> clazz);
 
-	@Cacheable("byValueAndName")
+	@Cacheable("attributeByValueAndName")
 	BaseBetAttribute<?> findByValueAndName(Object value, Attribute name);
 
-	@Cacheable("byValueAndNameAndType")
-	<B extends BaseBetAttribute<?>> B findByValueAndName(Object value, Attribute name, Class<B> clazz);
+	@Cacheable("attributeByName")
+	List<BaseBetAttribute<?>> findByName(Attribute name);
 
 	<B extends BaseBetAttribute<?>> B findByNameAndIdIn(Attribute name, Collection<ObjectId> ids, Class<B> clazz);
 
 	@Cacheable("byId")
 	@Override
 	Optional<BaseBetAttribute<?>> findById(ObjectId objectId);
+
+	List<BaseBetAttribute<?>> findByNameIn(Collection<Attribute> names);
 }
 

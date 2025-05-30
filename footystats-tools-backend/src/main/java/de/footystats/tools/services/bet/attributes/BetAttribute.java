@@ -16,6 +16,6 @@ public class BetAttribute extends BaseBetAttribute<Bet> {
 
 	@Override
 	protected boolean match(ChosenAttributeValue value) {
-		return false;
+		return getValue().equals(value.getBet());
 	}
 }
