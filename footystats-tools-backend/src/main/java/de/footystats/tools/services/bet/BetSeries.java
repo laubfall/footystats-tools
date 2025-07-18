@@ -57,12 +57,15 @@ public class BetSeries {
 
 	/**
 	 * Updates the bet series based on the given ticket.
-	 * Be careful, method does not check if the tickets attributes are part of the series and
-	 * it does not check if the ticket is already evaluated.
+	 * Be careful, method does not check if the tickets attributes are part of the series.
 	 *
 	 * @param ticket Mandatory. The bet ticket to evaluate.
 	 */
 	void evaluatedBetTicket(BetTicket ticket) {
+
+		if (!ticket.isEvaluated()) {
+			return;
+		}
 
 		if (ticket.isWon()) {
 			if (ticket.isVirtual()) {

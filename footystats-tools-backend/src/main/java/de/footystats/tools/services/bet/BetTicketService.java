@@ -61,6 +61,7 @@ public class BetTicketService {
 	@Transactional
 	public void evaluateMatchingBetTickets(Match completedMatch) {
 		if (!MatchStatus.complete.equals(completedMatch.getState())) {
+			log.warn("Match {} is not complete, cannot evaluate bet tickets.", completedMatch.getId());
 			return;
 		}
 		// Find all bet tickets that match the completed match.
