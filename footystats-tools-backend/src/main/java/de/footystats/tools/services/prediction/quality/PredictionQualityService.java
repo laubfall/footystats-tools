@@ -109,14 +109,14 @@ public class PredictionQualityService extends MongoService<BetPredictionQuality>
 		return measurements;
 	}
 
-	private void measureBet(PredictionResult match, PredictionQualityRevision revision, Bet bet, Collection<BetPredictionQuality> measurements) {
-		if (match != null && relevantPredictionResult.apply(match)) {
+	private void measureBet(PredictionResult predictionResult, PredictionQualityRevision revision, Bet bet, Collection<BetPredictionQuality> measurements) {
+		if (predictionResult != null && relevantPredictionResult.apply(predictionResult)) {
 			BetPredictionQuality aggregate = BetPredictionQuality.builder().count(1L)
 				.revision(revision)
-				.betSucceeded(PredictionAnalyze.SUCCESS.equals(match.analyzeResult()) ? 1L : 0L)
-				.betFailed(PredictionAnalyze.FAILED.equals(match.analyzeResult()) ? 1L : 0L)
-				.predictionPercent(match.betSuccessInPercent()).bet(bet)
-				.influencerDistribution(addInfluencerDistribution(match)).build();
+				.betSucceeded(PredictionAnalyze.SUCCESS.equals(predictionResult.analyzeResult()) ? 1L : 0L)
+				.betFailed(PredictionAnalyze.FAILED.equals(predictionResult.analyzeResult()) ? 1L : 0L)
+				.predictionPercent(predictionResult.betSuccessInPercent()).bet(bet)
+				.influencerDistribution(addInfluencerDistribution(predictionResult)).build();
 			measurements.add(aggregate);
 		}
 	}

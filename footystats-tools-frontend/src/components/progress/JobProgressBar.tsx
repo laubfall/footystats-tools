@@ -15,7 +15,7 @@ export const JobProgressBar = ({
 	jobName,
 	status,
 }: JobProgressBarProps) => {
-	if (status === "COMPLETED" || status === null) {
+	if (status === "COMPLETED" || status === null || status === undefined) {
 		return null;
 	}
 
@@ -42,11 +42,19 @@ export type JobProgressBarProps = {
 	status: JobInformationJobEnum;
 };
 
+function anyRunningJobs(jobs: JobInformation[]): boolean {
+	if (jobs.length === 0) {
+		return false;
+	}
+
+	return jobs.some((job) => job.job === "RUNNING");
+}
+
 export const ObsJobProgressBar = observer(
 	({ jobs = [...JobProgressStore.jobs] }: any) => {
 		return (
 			<>
-				{jobs.length > 0 && (
+				{anyRunningJobs(jobs) && (
 					<>
 						<h3>{translate("renderer.progress.job.title")}</h3>
 						<ListGroup>

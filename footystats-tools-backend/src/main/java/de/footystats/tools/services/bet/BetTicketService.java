@@ -106,7 +106,9 @@ public class BetTicketService {
 						subsequentBetSeries.evaluatedBetTicket(ticket);
 						betSeriesRepository.save(subsequentBetSeries);
 
-						log.info("Saved bet series: {} for existing sub attribute series {}", subsequentBetSeries,
+						log.info(
+							"Saved bet series: {} for existing sub attribute series {} while evaluating bet ticket",
+							subsequentBetSeries,
 							existsMaybeSeries);
 					}
 				}

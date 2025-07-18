@@ -13,7 +13,12 @@ export const ReportList = ({
 	selectedBet,
 }: ReportListProps) => {
 	function percentDisplay(value: number, total: number) {
-		return `${value} (${Math.round((value / total) * 100)}%)`;
+		let displayValue = 0;
+		if (value !== 0 && total !== 0) {
+			displayValue = Math.round((value / total) * 100);
+		}
+
+		return `${value} (${displayValue}%)`;
 	}
 
 	const columns: TableColumn<BetPredictionQualityAllBetsAggregate>[] = [

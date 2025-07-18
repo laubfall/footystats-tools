@@ -39,6 +39,7 @@ class BetTicketServiceTest {
 
 	@Autowired
 	private BetAttributeRepository betAttributeRepository;
+	
 	@Autowired
 	private AttributeSeriesRepository attributeSeriesRepository;
 
