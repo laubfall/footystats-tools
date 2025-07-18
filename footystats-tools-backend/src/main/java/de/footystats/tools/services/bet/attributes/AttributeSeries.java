@@ -3,6 +3,7 @@ package de.footystats.tools.services.bet.attributes;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -18,6 +19,7 @@ import java.util.List;
 @Document
 @NoArgsConstructor
 @Getter
+@ToString
 public class AttributeSeries {
 	private List<ObjectId> attributeIds;
 

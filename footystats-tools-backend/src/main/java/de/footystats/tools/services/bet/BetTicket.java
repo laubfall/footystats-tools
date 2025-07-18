@@ -52,7 +52,7 @@ public class BetTicket {
 	private double odds;
 
 	/**
-	 * True if the bet ticket was evaluated (i.e. the match was played and the bet tickets result is written down to the bet series).
+	 * True if the bet ticket was evaluated (i.e. the match was played and the bet tickets result is written to the bet series).
 	 */
 	@Indexed
 	private boolean evaluated;

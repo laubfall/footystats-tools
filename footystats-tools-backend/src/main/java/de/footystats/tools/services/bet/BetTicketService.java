@@ -11,12 +11,14 @@ import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,10 +73,12 @@ public class BetTicketService {
 			ticket.setEvaluated(true);
 			betTicketRepository.save(ticket);
 
-
 			// Update the bet series with matching bet attributes.
 			final List<AttributeSeries> matchingSeries = attributeService.byChosenValues(
 				ticket.getChosenAttributeValues());
+
+			var subSequentSeriesDoneCache = new HashSet<ObjectId>();
+
 			for (AttributeSeries sery : matchingSeries) {
 				var mainSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(sery.getId());
 				mainSeries = safeGet(mainSeries, sery);
@@ -87,13 +91,22 @@ public class BetTicketService {
 					existsMaybeSeries.setAttributes(generateCombination);
 					existsMaybeSeries = attributeSeriesRepository.findByAttributeIds(
 						existsMaybeSeries.getAttributeIds());
-					BetSeries subsequentBetSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(
-						existsMaybeSeries.getId());
-
 					if (existsMaybeSeries != null) {
+						BetSeries subsequentBetSeries = betSeriesRepository.findBetSeriesByAttributeSeriesId(
+							existsMaybeSeries.getId());
+
 						subsequentBetSeries = safeGet(subsequentBetSeries, existsMaybeSeries);
+
+						if (!subSequentSeriesDoneCache.add(subsequentBetSeries.getId())) {
+							// If we already processed this series, skip it.
+							continue;
+						}
+
 						subsequentBetSeries.evaluatedBetTicket(ticket);
 						betSeriesRepository.save(subsequentBetSeries);
+
+						log.info("Saved bet series: {} for existing sub attribute series {}", subsequentBetSeries,
+							existsMaybeSeries);
 					}
 				}
 			}
