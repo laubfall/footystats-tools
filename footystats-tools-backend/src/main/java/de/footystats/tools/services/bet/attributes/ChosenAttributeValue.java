@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 /**
  * A chosen value for an attribute.
  * <p>
@@ -50,5 +52,12 @@ public class ChosenAttributeValue {
 			throw new IllegalStateException("Chosen attribute is not a bet attribute");
 		}
 		return Bet.valueOf(value);
+	}
+
+	public Optional<Bet> getBetOpt() {
+		if (chosenAttribute != Attribute.BET_ATTRIBUTE) {
+			return Optional.empty();
+		}
+		return Optional.of(Bet.valueOf(value));
 	}
 }

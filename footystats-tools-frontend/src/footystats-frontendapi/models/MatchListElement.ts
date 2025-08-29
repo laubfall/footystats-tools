@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { BetForMatch } from './BetForMatch';
+import {
+    BetForMatchFromJSON,
+    BetForMatchFromJSONTyped,
+    BetForMatchToJSON,
+} from './BetForMatch';
 import type { ObjectId } from './ObjectId';
 import {
     ObjectIdFromJSON,
@@ -154,10 +160,22 @@ export interface MatchListElement {
     revision?: PredictionQualityRevision;
     /**
      * 
+     * @type {boolean}
+     * @memberof MatchListElement
+     */
+    hasBet?: boolean;
+    /**
+     * 
      * @type {Array<StatisticalResultOutcome>}
      * @memberof MatchListElement
      */
     statisticalResultOutcome?: Array<StatisticalResultOutcome>;
+    /**
+     * 
+     * @type {Array<BetForMatch>}
+     * @memberof MatchListElement
+     */
+    placedBets?: Array<BetForMatch>;
 }
 
 
@@ -210,7 +228,9 @@ export function MatchListElementFromJSONTyped(json: any, ignoreDiscriminator: bo
         'awayTeamWin': !exists(json, 'awayTeamWin') ? undefined : PredictionResultFromJSON(json['awayTeamWin']),
         'bttsYes': !exists(json, 'bttsYes') ? undefined : PredictionResultFromJSON(json['bttsYes']),
         'revision': !exists(json, 'revision') ? undefined : PredictionQualityRevisionFromJSON(json['revision']),
+        'hasBet': !exists(json, 'hasBet') ? undefined : json['hasBet'],
         'statisticalResultOutcome': !exists(json, 'statisticalResultOutcome') ? undefined : ((json['statisticalResultOutcome'] as Array<any>).map(StatisticalResultOutcomeFromJSON)),
+        'placedBets': !exists(json, 'placedBets') ? undefined : ((json['placedBets'] as Array<any>).map(BetForMatchFromJSON)),
     };
 }
 
@@ -241,7 +261,9 @@ export function MatchListElementToJSON(value?: MatchListElement | null): any {
         'awayTeamWin': PredictionResultToJSON(value.awayTeamWin),
         'bttsYes': PredictionResultToJSON(value.bttsYes),
         'revision': PredictionQualityRevisionToJSON(value.revision),
+        'hasBet': value.hasBet,
         'statisticalResultOutcome': value.statisticalResultOutcome === undefined ? undefined : ((value.statisticalResultOutcome as Array<any>).map(StatisticalResultOutcomeToJSON)),
+        'placedBets': value.placedBets === undefined ? undefined : ((value.placedBets as Array<any>).map(BetForMatchToJSON)),
     };
 }
 

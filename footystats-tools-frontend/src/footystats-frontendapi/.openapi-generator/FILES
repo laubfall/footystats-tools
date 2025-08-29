@@ -8,6 +8,7 @@ apis/SettingsControllerApi.ts
 apis/index.ts
 index.ts
 models/Bet.ts
+models/BetForMatch.ts
 models/BetPredictionQualityAllBetsAggregate.ts
 models/BetPredictionQualityBetAggregate.ts
 models/BetPredictionQualityInfluencerAggregate.ts

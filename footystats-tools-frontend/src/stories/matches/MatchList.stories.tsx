@@ -1,6 +1,6 @@
 import React from "react";
 import { MatchList, MatchListEntry } from "../../components/matches/MatchList";
-import { BetPredictionQualityBetEnum } from "../../footystats-frontendapi/models/BetPredictionQuality";
+import { Bet } from "../../footystats-frontendapi";
 
 export default {
 	title: "Components/matches",
@@ -12,7 +12,7 @@ const matchListEntries: MatchListEntry[] = [
 		homeTeam: "team home",
 		betPredictions: [
 			{
-				bet: BetPredictionQualityBetEnum.OverZeroFive,
+				bet: Bet.OverZeroFive,
 				prediction: {
 					analyzeResult: "SUCCESS",
 					betSuccessInPercent: 40,

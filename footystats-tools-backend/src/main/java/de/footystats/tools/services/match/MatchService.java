@@ -8,6 +8,7 @@ import de.footystats.tools.services.prediction.influencer.BetPredictionContext;
 import de.footystats.tools.services.stats.LeagueStats;
 import de.footystats.tools.services.stats.LeagueStatsService;
 import de.footystats.tools.services.stats.MatchStats;
+import de.footystats.tools.services.stats.MatchStatus;
 import de.footystats.tools.services.stats.TeamStats;
 import de.footystats.tools.services.stats.TeamStatsService;
 import lombok.extern.slf4j.Slf4j;
@@ -86,11 +87,20 @@ public class MatchService extends MongoService<Match> {
 
 	public void writeMatch(MatchStats matchStats) {
 		Match match = convert(matchStats);
+
+
 		Match existingMatch = matchRepository.findByDateUnixAndCountryAndLeagueAndHomeTeamAndAwayTeam(
 			matchStats.getDateUnix(), matchStats.getCountry(),
 			matchStats.getLeague(), matchStats.getHomeTeam(), matchStats.getAwayTeam());
+
 		if (existingMatch != null) {
 			match.setRevision(existingMatch.getRevision());
+
+			// If the match exists there is a chance of an existing bet ticket.
+			if (MatchStatus.complete.equals(match.getState())) {
+				// TODO vllt. hier die BetTickets evaluieren?
+
+			}
 		}
 		upsert(match);
 	}

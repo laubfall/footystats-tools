@@ -1,6 +1,8 @@
 package de.footystats.tools.services.bet;
 
+import de.footystats.tools.FootystatsRuntimeException;
 import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
+import de.footystats.tools.services.prediction.Bet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A ticket for a bet with a specific set of bet attributes.
@@ -73,5 +76,19 @@ public class BetTicket {
 
 	public double getWonMoney() {
 		return won ? ((stake * odds) - stake) : -stake;
+	}
+
+	public Bet fromChosenAttribute() {
+		Optional<Bet> bet = getChosenAttributeValues().stream().filter(
+			cav -> cav.getBetOpt().isPresent()).findFirst().map(
+			ChosenAttributeValue::getBet);
+
+		if (bet.isEmpty()) {
+			throw new FootystatsRuntimeException(new FootystatsRuntimeException.ExceptionDetail(
+				FootystatsRuntimeException.Type.DATA_INTEGRITY, this.getClass(), "bet",
+				"BetTicket does not contain a Bet attribute."));
+		}
+
+		return bet.get();
 	}
 }

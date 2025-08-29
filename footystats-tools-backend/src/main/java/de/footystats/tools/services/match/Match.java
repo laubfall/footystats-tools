@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1, 'state': 1}")
+@CompoundIndex(name = "unique", def = "{'dateUnix' : 1, 'dateGMT': 1, 'country': 1, 'league': 1, 'homeTeam': 1, 'awayTeam': 1, 'state': 1, 'hasBet':1}")
 public class Match {
 
 	@Id
@@ -60,6 +60,8 @@ public class Match {
 	private PredictionResult awayTeamWin;
 	private PredictionResult bttsYes;
 	private PredictionQualityRevision revision;
+	// Indicates if there was at least one bet placed on this match.
+	private boolean hasBet;
 
 	/**
 	 * Access to prediction results via a given bet type.

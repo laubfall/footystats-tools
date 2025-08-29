@@ -12,6 +12,7 @@ import de.footystats.tools.services.prediction.PredictionAnalyze;
 import de.footystats.tools.services.stats.MatchStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -44,6 +45,7 @@ public class BetTicketService {
 		this.attributeSeriesRepository = attributeSeriesRepository;
 	}
 
+	@CacheEvict(value = "betTicketsByMatchId", key = "#match.id")
 	public BetTicket placeBet(Match match, Collection<ChosenAttributeValue> betValues, boolean virtual, double stake, double odds) {
 		Assert.notNull(match, "Match must not be null");
 		Assert.notNull(match.getId(), "Match id must not be null");
@@ -58,6 +60,7 @@ public class BetTicketService {
 		return ticket;
 	}
 
+	@CacheEvict(value = "betTicketsByMatchId", key = "#completedMatch.id")
 	@Transactional
 	public void evaluateMatchingBetTickets(Match completedMatch) {
 		if (!MatchStatus.complete.equals(completedMatch.getState())) {

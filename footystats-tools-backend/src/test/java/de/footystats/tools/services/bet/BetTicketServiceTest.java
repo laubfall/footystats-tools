@@ -16,7 +16,6 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,7 +24,6 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @DataMongoTest
-@AutoConfigureDataMongo
 @Import({BetTicktServiceConfiguration.class})
 class BetTicketServiceTest {
 	@Autowired
@@ -39,7 +37,7 @@ class BetTicketServiceTest {
 
 	@Autowired
 	private BetAttributeRepository betAttributeRepository;
-	
+
 	@Autowired
 	private AttributeSeriesRepository attributeSeriesRepository;
 

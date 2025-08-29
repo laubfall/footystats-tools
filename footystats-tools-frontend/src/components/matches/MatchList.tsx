@@ -1,9 +1,5 @@
 import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import {
-	PaginationChangePage,
-	PaginationChangeRowsPerPage,
-} from "react-data-table-component/dist/src/DataTable/types";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
@@ -15,6 +11,10 @@ import {
 } from "../../footystats-frontendapi";
 import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
 import { BetPredictionIcon } from "./BetPredictionIcon";
+import {
+	PaginationChangePage,
+	PaginationChangeRowsPerPage,
+} from "react-data-table-component/dist/DataTable/types";
 
 function createBetPredictionColumns(predictionForBets?: Bet[]) {
 	return (

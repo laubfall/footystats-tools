@@ -27,6 +27,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
 		ServiceException sexc = (ServiceException) ex;
 
-		return handleExceptionInternal(ex, new ExceptionResponse(sexc.getType().name()), new HttpHeaders(), HttpStatus.CONFLICT, request);
+		return handleExceptionInternal(ex, new ExceptionResponse(sexc.getType().name()), new HttpHeaders(),
+			HttpStatus.CONFLICT, request);
 	}
+
+	// TODO handle FootystatsRuntimeException
 }
