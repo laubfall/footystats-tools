@@ -6,7 +6,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface BetAttributeRepository extends MongoRepository<BaseBetAttribute<?>, ObjectId> {
 	@Cacheable("attributeByUniqueName")
@@ -28,5 +30,11 @@ public interface BetAttributeRepository extends MongoRepository<BaseBetAttribute
 	Optional<BaseBetAttribute<?>> findById(ObjectId objectId);
 
 	List<BaseBetAttribute<?>> findByNameIn(Collection<Attribute> names);
+
+	@Cacheable("groupedAttributes")
+	default Map<Attribute, List<BaseBetAttribute<?>>> findGroupedByAttribute() {
+		return findAll().stream()
+			.collect(Collectors.groupingBy(BaseBetAttribute::getName));
+	}
 }
 

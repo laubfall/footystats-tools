@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureDataJpa // Set up the transaction manager used by spring batch.
 @AutoConfigureTestDatabase // Set up the datasource used by spring batch.
 @AutoConfigureDataMongo
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@EnableAspectJAutoProxy
 public abstract class BaseControllerTest {
 
 	@Autowired

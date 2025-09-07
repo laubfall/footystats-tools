@@ -12,4 +12,5 @@ public interface AttributeSeriesRepository extends MongoRepository<AttributeSeri
 
 	List<AttributeSeries> findByAttributeIdsContains(ObjectId attributeId);
 
+	Object findAttributeById(ObjectId id);
 }

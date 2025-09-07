@@ -33,6 +33,12 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 		this.attributeSeriesRepository = attributeSeriesRepository;
 	}
 
+	/**
+	 * Find all attribute series that contain the given bet attribute.
+	 *
+	 * @param bet The bet attribute to search for.
+	 * @return A list of attribute series that contain the given bet attribute.
+	 */
 	public List<AttributeSeries> by(Bet bet) {
 		var betAttribute = attributeRepository.findByValueAndName(bet, Attribute.BET_ATTRIBUTE);
 		if (betAttribute == null) {
@@ -95,19 +101,6 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 
 	public AttributeSeries by(List<ObjectId> attributeIds) {
 		return attributeSeriesRepository.findByAttributeIds(attributeIds);
-	}
-
-	/**
-	 * Returns the attribute series that are subsequent to the given series.
-	 * For example, if the given series is o05, odds 1.5, first half, the subsequent series
-	 * would be all o05 series with or without of one the attributes of the given series.
-	 * Series with other attributes are not considered.
-	 *
-	 * @param series the series to check for subsequent series.
-	 * @return the list of subsequent series.
-	 */
-	public List<AttributeSeries> subsequent(AttributeSeries series) {
-		return null;
 	}
 
 	@Override

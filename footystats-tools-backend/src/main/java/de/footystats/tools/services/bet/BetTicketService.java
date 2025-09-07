@@ -5,7 +5,6 @@ import de.footystats.tools.services.bet.attributes.AttributeSeries;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesRepository;
 import de.footystats.tools.services.bet.attributes.AttributeSeriesService;
 import de.footystats.tools.services.bet.attributes.BaseBetAttribute;
-import de.footystats.tools.services.bet.attributes.BetAttributeRepository;
 import de.footystats.tools.services.bet.attributes.ChosenAttributeValue;
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.prediction.PredictionAnalyze;
@@ -31,16 +30,13 @@ public class BetTicketService {
 
 	private final BetSeriesRepository betSeriesRepository;
 
-	private final BetAttributeRepository betAttributeRepository;
-
 	private final AttributeSeriesService attributeService;
 
 	private final AttributeSeriesRepository attributeSeriesRepository;
 
-	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, BetAttributeRepository betAttributeRepository, AttributeSeriesService attributeService, AttributeSeriesRepository attributeSeriesRepository) {
+	public BetTicketService(BetTicketRepository betTicketRepository, BetSeriesRepository betSeriesRepository, AttributeSeriesService attributeService, AttributeSeriesRepository attributeSeriesRepository) {
 		this.betTicketRepository = betTicketRepository;
 		this.betSeriesRepository = betSeriesRepository;
-		this.betAttributeRepository = betAttributeRepository;
 		this.attributeService = attributeService;
 		this.attributeSeriesRepository = attributeSeriesRepository;
 	}

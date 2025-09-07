@@ -1,10 +1,5 @@
 package de.footystats.tools.controller;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import de.footystats.tools.services.match.Match;
 import de.footystats.tools.services.match.MatchRepository;
 import de.footystats.tools.services.prediction.InfluencerResult;
@@ -15,11 +10,6 @@ import de.footystats.tools.services.prediction.quality.PredictionQualityRevision
 import de.footystats.tools.services.stats.MatchStats;
 import de.footystats.tools.services.stats.MatchStatsRepository;
 import de.footystats.tools.services.stats.MatchStatus;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.AfterEach;
@@ -27,13 +17,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
-@AutoConfigureRestDocs(outputDir = "target/snippets")
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 class MatchControllerTest extends BaseControllerTest {
 
 	@Autowired
@@ -105,7 +104,8 @@ class MatchControllerTest extends BaseControllerTest {
 		match.setFootyStatsUrl("fjlksdjflkds");
 		match.setBttsYes(new PredictionResult(40, true, PredictionAnalyze.SUCCESS, null));
 		match.setO05(
-			new PredictionResult(40, true, PredictionAnalyze.SUCCESS, List.of(new InfluencerResult("testInfluencer", 40, PrecheckResult.OK))));
+			new PredictionResult(40, true, PredictionAnalyze.SUCCESS,
+				List.of(new InfluencerResult("testInfluencer", 40, PrecheckResult.OK))));
 		match.setState(MatchStatus.complete);
 		match.setGoalsAwayTeam(2);
 		match.setGoalsHomeTeam(1);

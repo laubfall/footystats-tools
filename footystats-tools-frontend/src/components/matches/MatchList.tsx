@@ -1,20 +1,20 @@
 import React from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { OverlayTrigger, Popover } from "react-bootstrap";
 import { format } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import translate from "../../i18n/translate";
 import {
 	Bet,
+	type BetForMatch,
 	PredictionResult,
 	StatisticalResultOutcome,
 } from "../../footystats-frontendapi";
-import { BetDetailInfoOverlay } from "./BetDetailInfoOverlay";
-import { BetPredictionIcon } from "./BetPredictionIcon";
 import {
 	PaginationChangePage,
 	PaginationChangeRowsPerPage,
 } from "react-data-table-component/dist/DataTable/types";
+import { BetPredictionCell } from "./BetPredictionCell";
+import { PlacedBetCell } from "./PlacedBetCell";
 
 function createBetPredictionColumns(predictionForBets?: Bet[]) {
 	return (
@@ -27,56 +27,7 @@ function createBetPredictionColumns(predictionForBets?: Bet[]) {
 					);
 					return `${betPrediction?.prediction.betSuccessInPercent}`;
 				},
-				// eslint-disable-next-line react/display-name
-				cell: (row) => {
-					const betPrediction = row.betPredictions.find(
-						(v) => v.bet === bet,
-					);
-
-					// In case of new bet prediction, we don't have a prediction yet.
-					if (betPrediction?.prediction === undefined) {
-						return null;
-					}
-
-					const statisticalOutcome =
-						row.statisticalResultOutcome.find(
-							(sro) => sro?.bet === bet,
-						);
-
-					return (
-						<OverlayTrigger
-							placement="right"
-							overlay={
-								<Popover id="popover-basic">
-									<Popover.Header as="h3">
-										{translate(
-											"renderer.matchlist.influencer.popup.title",
-										)}
-									</Popover.Header>
-									<Popover.Body>
-										<BetDetailInfoOverlay
-											betPrediction={betPrediction}
-											statisticalOutcome={
-												statisticalOutcome
-											}
-										/>
-									</Popover.Body>
-								</Popover>
-							}
-						>
-							<span>
-								{betPrediction?.prediction.betSuccessInPercent}
-								&nbsp;
-								<BetPredictionIcon
-									predictionResult={betPrediction?.prediction}
-									statisticalResultOutcome={
-										statisticalOutcome
-									}
-								/>
-							</span>
-						</OverlayTrigger>
-					);
-				},
+				cell: (row) => <BetPredictionCell bet={bet} row={row} />,
 				conditionalCellStyles: [
 					{
 						when: (row) => {
@@ -151,6 +102,10 @@ export const MatchList = ({
 			name: translate("renderer.matchlist.table.col.five"),
 			selector: (row) => row.result,
 		},
+		{
+			name: translate(""),
+			cell: (row) => <PlacedBetCell row={row} />,
+		},
 	];
 
 	columns = columns.concat(predictionColumns);
@@ -192,6 +147,7 @@ export type MatchListEntry = {
 	footyStatsUrl: string;
 	betPredictions: BetPrediction[];
 	statisticalResultOutcome?: StatisticalResultOutcome[];
+	placedBets: BetForMatch[];
 };
 
 export type MatchListProps = {

@@ -3,10 +3,12 @@ package de.footystats.tools.services.bet.attributes;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 @Aspect
 @Slf4j
 public class AttributeSeriesRepositoryAspect {
