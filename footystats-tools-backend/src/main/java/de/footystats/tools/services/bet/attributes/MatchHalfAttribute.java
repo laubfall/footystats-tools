@@ -8,7 +8,17 @@ public class MatchHalfAttribute extends BaseBetAttribute<MatchHalfAttribute.Matc
 
 	@Override
 	protected boolean match(ChosenAttributeValue value) {
-		return false;
+		if (!value.getChosenAttribute().equals(Attribute.HALF)) {
+			return false;
+		}
+
+		try {
+			MatchHalf.valueOf(value.getValue());
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public enum MatchHalf {

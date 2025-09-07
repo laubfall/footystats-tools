@@ -20,6 +20,7 @@ public class AvailableBetOptionsResponse implements Serializable {
 		return options.stream().map(Option::bet).distinct().toList();
 	}
 
+	// TODO possible values for the attributes need to be transmitted to the frontend (e.g. all countries, all leagues, etc.).
 	public record Option(Bet bet, List<Attribute> attribute) implements Serializable {
 
 	}
