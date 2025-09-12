@@ -47,6 +47,14 @@ public class AttributeSeriesService implements ApplicationListener<RepositoriesP
 		return attributeSeriesRepository.findByAttributeIdsContains(betAttribute.getId());
 	}
 
+	/**
+	 * Find all attribute series that match the given chosen attribute values.
+	 * The chosen attribute values are matched against the attributes in the repository.
+	 * If multiple attributes match a chosen attribute value, all combinations are considered.
+	 *
+	 * @param chosenAttributeValues The chosen attribute values to match.
+	 * @return A list of attribute series that match the given chosen attribute values, or null if no chosen attribute values are given.
+	 */
 	public List<AttributeSeries> byChosenValues(List<ChosenAttributeValue> chosenAttributeValues) {
 		if (chosenAttributeValues.isEmpty()) {
 			return null;
